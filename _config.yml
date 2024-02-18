@@ -3,10 +3,10 @@
 ## Source: https://github.com/hexojs/hexo/
 
 # Site
-title: qixuan_song
-subtitle: ''
+title: xuan9527
+subtitle: "常能遣其欲而心自静，澄其心而神自清。"
 description: ''
-keywords:
+keywords: "C语言,嵌入式软硬件,Linux,mcu"
 author: boollight
 language: en
 timezone: ''
@@ -64,6 +64,13 @@ index_generator:
   per_page: 10
   order_by: -date
 
+archive_generator:
+  # 0表示不分页，全部显示
+  per_page: 0  
+ 
+tag_generator:
+  per_page: 0
+
 # Category & Tag
 default_category: uncategorized
 category_map:
@@ -105,3 +112,12 @@ deploy:
   repo:
     github: git@github.com:XUAN9527/XUAN9527.github.io.git
   branch: master
+
+  symbols_count_time:
+  symbols: true
+  time: true
+  total_symbols: true
+  total_time: true
+  awl: 2
+  wpm: 300
+  suffix: "mins."
