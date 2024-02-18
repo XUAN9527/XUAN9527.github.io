@@ -3,11 +3,11 @@
 ## Source: https://github.com/hexojs/hexo/
 
 # Site
-title: Hexo
+title: qixuan_song
 subtitle: ''
 description: ''
 keywords:
-author: John Doe
+author: boollight
 language: en
 timezone: ''
 
@@ -96,9 +96,12 @@ ignore:
 # Extensions
 ## Plugins: https://hexo.io/plugins/
 ## Themes: https://hexo.io/themes/
-theme: landscape
+theme: next
 
 # Deployment
 ## Docs: https://hexo.io/docs/one-command-deployment
 deploy:
-  type: ''
+  type: git
+  repo:
+    github: git@github.com:XUAN9527/XUAN9527.github.io.git
+  branch: master

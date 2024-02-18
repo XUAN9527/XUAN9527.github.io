@@ -1,0 +1,20 @@
+---
+title: 草稿文件
+date: 2024-01-31 08:30:02
+tags:
+---
+
+1、内核复位（kernel reset）时，要注意初始化代码，如 ADC：
+``` bash
+board init时先要反初始化： DMA_DeInit(dma_chx);
+				    ADC_DeInit(adc_handler);
+
+driver init:
+int drv_adc_init(EADC_DEVICE adc_dev,EDMA_CHANNEL dma_ch)
+{
+	drv_adc_configuration(adc_dev);
+	drv_dma_configuration(adc_dev,dma_ch);
+	drv_adc_enable(adc_dev,DISABLE);
+	return 0;
+}
+```	
