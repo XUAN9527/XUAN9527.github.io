@@ -28,11 +28,10 @@
 <meta property="og:description" content="ESP32 是一款由乐鑫科技开发的低成本、低功耗、具有 Wi-Fi 和蓝牙功能的 SoC 芯片，广泛应用于物联网领域，如智能家居、可穿戴设备、工业控制等。本教程基于windows子系统WSL，官方开发环境ESP-IDF&#x2F;ESP-ADF。">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2024-02-19T10:12:00.000Z">
-<meta property="article:modified_time" content="2024-02-20T07:28:26.034Z">
+<meta property="article:modified_time" content="2024-02-21T07:28:13.342Z">
 <meta property="article:author" content="boollight">
 <meta property="article:tag" content="ESP32">
 <meta property="article:tag" content="ESP-IDF">
-<meta property="article:tag" content="ESP-ADF">
 <meta property="article:tag" content="Linux">
 <meta property="article:tag" content="Ubuntu">
 <meta name="twitter:card" content="summary">
@@ -206,7 +205,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2024-02-20 15:28:26" itemprop="dateModified" datetime="2024-02-20T15:28:26+08:00">2024-02-20</time>
+                <time title="Modified: 2024-02-21 15:28:13" itemprop="dateModified" datetime="2024-02-21T15:28:13+08:00">2024-02-21</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -232,14 +231,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">Symbols count in article: </span>
-              <span>770</span>
+              <span>1.1k</span>
             </span>
             <span class="post-meta-item" title="Reading time">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">Reading time &asymp;</span>
-              <span>3 mins.</span>
+              <span>4 mins.</span>
             </span>
             <div class="post-description">ESP32 是一款由乐鑫科技开发的低成本、低功耗、具有 Wi-Fi 和蓝牙功能的 SoC 芯片，广泛应用于物联网领域，如智能家居、可穿戴设备、工业控制等。本教程基于windows子系统WSL，官方开发环境ESP-IDF/ESP-ADF。</div>
 
@@ -284,7 +283,7 @@ git clone git@github.com:espressif/esp-idf.git
 </code></pre>
 <h3 id="设置环境变量"><a href="#设置环境变量" class="headerlink" title="设置环境变量"></a>设置环境变量</h3><p>按自己实际路径，可按自己喜好设置，也可不配置，手动敲指令也可。</p>
 <p>vi ~&#x2F;.bashrc<br>在后面加上以下代码：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#开启ESP32编译环境</span></span><br><span class="line"><span class="built_in">alias</span> get-idf=<span class="string">&#x27;. $HOME/esp/esp-adf/esp-idf/export.sh&#x27;</span></span><br><span class="line"><span class="built_in">alias</span> get-adf=<span class="string">&#x27;. $HOME/esp/esp-adf/export.sh&#x27;</span></span><br><span class="line"><span class="comment">#打开本地文件夹（wsl）</span></span><br><span class="line"><span class="built_in">alias</span> open-file=<span class="string">&#x27;explorer.exe .&#x27;</span></span><br><span class="line"><span class="comment">#烧录到设备，并打开监视器，/dev/ttyS15为USB挂载端口，需测试后填写</span></span><br><span class="line"><span class="built_in">alias</span> esp-make=<span class="string">&#x27;idf.py -p /dev/ttyS15 -b 230400 flash monitor&#x27;</span></span><br><span class="line"><span class="built_in">export</span> PATH=/home/qx_song/esp/esp-adf/esp-idf/tools:<span class="variable">$PATH</span></span><br><span class="line"><span class="built_in">export</span> IDF_PATH=/home/qx_song/esp/esp-adf/esp-idf</span><br><span class="line"><span class="built_in">export</span> ADF_PATH=/home/qx_song/esp/esp-adf</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#开启ESP32编译环境</span></span><br><span class="line"><span class="built_in">alias</span> get-idf=<span class="string">&#x27;. $HOME/esp/esp-adf/esp-idf/export.sh&#x27;</span></span><br><span class="line"><span class="built_in">alias</span> get-adf=<span class="string">&#x27;. $HOME/esp/esp-adf/export.sh&#x27;</span></span><br><span class="line"><span class="comment">#打开本地文件夹（wsl）</span></span><br><span class="line"><span class="built_in">alias</span> open-file=<span class="string">&#x27;explorer.exe .&#x27;</span></span><br><span class="line"><span class="comment">#烧录到设备，并打开监视器，/dev/ttyS15为USB挂载端口，需测试后填写，115200为监视器波特率，与设备UART0波特率对应</span></span><br><span class="line"><span class="built_in">alias</span> esp-download=<span class="string">&#x27;idf.py -p /dev/ttyS15 -b 115200 flash monitor&#x27;</span></span><br><span class="line"><span class="built_in">export</span> PATH=/home/qx_song/esp/esp-adf/esp-idf/tools:<span class="variable">$PATH</span></span><br><span class="line"><span class="built_in">export</span> IDF_PATH=/home/qx_song/esp/esp-adf/esp-idf</span><br><span class="line"><span class="built_in">export</span> ADF_PATH=/home/qx_song/esp/esp-adf</span><br></pre></td></tr></table></figure>
 <p>保存退出 :wq</p>
 <h3 id="设置工具"><a href="#设置工具" class="headerlink" title="设置工具"></a>设置工具</h3><p>除了 ESP-IDF 本身，还需要为支持 ESP32 的项目安装 ESP-IDF 使用的各种工具，比如编译器、调试器、Python 包等。</p>
 <pre><code>cd ~/esp/esp-adf/esp-idf
@@ -318,11 +317,11 @@ Component config -&gt; FreeRTOS -&gt;  [*]Run FreeRTOS only on first core
 </code></pre>
 <h3 id="烧录工程"><a href="#烧录工程" class="headerlink" title="烧录工程"></a>烧录工程</h3><pre><code>idf.py -p PORT flash
 </code></pre>
-<p>合并执行构建、烧录和监视过程：</p>
-<pre><code>idf.py -p PORT flash monitor
+<p>请将 PORT 替换为 ESP32 开发板的串口名称。如果 PORT 未经定义，idf.py 将尝试使用可用的串口自动连接。</p>
+<h3 id="合并执行构建、烧录和监视过程："><a href="#合并执行构建、烧录和监视过程：" class="headerlink" title="合并执行构建、烧录和监视过程："></a>合并执行构建、烧录和监视过程：</h3><pre><code>idf.py -p PORT [-b BAUD] flash monitor
 </code></pre>
-<p>举例:</p>
-<pre><code>idf.py -p /dev/ttyS15 -b  230400  flash monitor	
+<p>注：[-b BAUD] 和 monitor 配合使用，BAUD为程序中UART0的波特率	</p>
+<pre><code>idf.py -p /dev/ttyS15 -b  115200  flash monitor	
 idf.py -p [挂载端口]   -b [波特率] flash monitor
 </code></pre>
 <h3 id="擦除flash"><a href="#擦除flash" class="headerlink" title="擦除flash"></a>擦除flash</h3><pre><code>idf.py -p PORT erase-flash
@@ -333,7 +332,27 @@ idf.py -p [挂载端口]   -b [波特率] flash monitor
 <h3 id="挂载端口"><a href="#挂载端口" class="headerlink" title="挂载端口"></a>挂载端口</h3><h4 id="windows-子系统-wsl"><a href="#windows-子系统-wsl" class="headerlink" title="windows 子系统 wsl"></a>windows 子系统 wsl</h4><p>输入烧录指令：</p>
 <pre><code>idf.py flash
 </code></pre>
-<p>观察终端设备是挂载在哪个端口上，例如 &#x2F;dev&#x2F;ttyS15，下次就可以直接输此端口就可以烧录啦。</p>
+<p>观察终端设备是挂载在哪个端口上，有ERROR忽略，选择端口例如 &#x2F;dev&#x2F;ttyS15，程序中UART0的波特率115200，下次就可以直接输此端口就可以烧录啦。</p>
+<pre><code>idf.py -p /dev/ttyS15 -b 115200 flash monitor	
+</code></pre>
+<p>如果 ESP-IDF 监视器在烧录后很快发生错误，或打印信息全是乱码（如下），很有可能是因为开发板采用了 26 MHz 晶振，而 ESP-IDF 默认支持大多数开发板使用的 40 MHz 晶振。</p>
+<pre><code>x���ff�f�����`�~�~���f���x��f�f�����ff��`���f����`��~x������ff�f�����`�~�~�f����f����f`���x��f�f�����ff��`���f
+</code></pre>
+<p>此时，可以：<br>1、退出监视器。<br>2、返回 idf.py menuconfig。<br>3、进入 Component config –&gt; Hardware Settings –&gt; Main XTAL Config –&gt; Main XTAL frequency 进行配置，将 CONFIG_XTAL_FREQ_SEL 设置为 26 MHz。<br>4、重新编译和烧录应用程序。</p>
+<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p>启动终端ESP32编译只需要进行以下步骤：</p>
+<pre><code>. $HOME/esp/esp-adf/esp-idf/export.sh	//开启编译环境
+idf.py set-target esp32			//首次搭建项目时配置
+idf.py menuconfig   			//选择需要的配置
+idf.py build
+idf.py flash
+</code></pre>
+<p>快捷方式：</p>
+<pre><code>get-idf
+idf.py set-target esp32
+idf.py menuconfig
+idf.py build
+esp-download
+</code></pre>
 
     </div>
 
@@ -345,7 +364,6 @@ idf.py -p [挂载端口]   -b [波特率] flash monitor
           <div class="post-tags">
               <a href="/tags/ESP32/" rel="tag"># ESP32</a>
               <a href="/tags/ESP-IDF/" rel="tag"># ESP-IDF</a>
-              <a href="/tags/ESP-ADF/" rel="tag"># ESP-ADF</a>
               <a href="/tags/Linux/" rel="tag"># Linux</a>
               <a href="/tags/Ubuntu/" rel="tag"># Ubuntu</a>
           </div>
@@ -418,7 +436,7 @@ idf.py -p [挂载端口]   -b [波特率] flash monitor
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="nav-number">1.</span> <span class="nav-text">开发环境搭建</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96ESP-ADF"><span class="nav-number">1.1.</span> <span class="nav-text">获取ESP-ADF</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AE%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="nav-number">1.2.</span> <span class="nav-text">设置环境变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AE%E5%B7%A5%E5%85%B7"><span class="nav-number">1.3.</span> <span class="nav-text">设置工具</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ESP32%E5%B7%A5%E7%A8%8B%E7%A4%BA%E4%BE%8B"><span class="nav-number">2.</span> <span class="nav-text">ESP32工程示例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%80%E5%A7%8B%E5%88%9B%E5%BB%BA%E5%B7%A5%E7%A8%8B"><span class="nav-number">2.1.</span> <span class="nav-text">开始创建工程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E5%B7%A5%E7%A8%8B"><span class="nav-number">2.2.</span> <span class="nav-text">配置工程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%96%E8%AF%91%E5%B7%A5%E7%A8%8B"><span class="nav-number">2.3.</span> <span class="nav-text">编译工程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%83%A7%E5%BD%95%E5%B7%A5%E7%A8%8B"><span class="nav-number">2.4.</span> <span class="nav-text">烧录工程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%93%A6%E9%99%A4flash"><span class="nav-number">2.5.</span> <span class="nav-text">擦除flash</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8C%82%E8%BD%BD%E7%AB%AF%E5%8F%A3"><span class="nav-number">2.6.</span> <span class="nav-text">挂载端口</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#windows-%E5%AD%90%E7%B3%BB%E7%BB%9F-wsl"><span class="nav-number">2.6.1.</span> <span class="nav-text">windows 子系统 wsl</span></a></li></ol></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="nav-number">1.</span> <span class="nav-text">开发环境搭建</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96ESP-ADF"><span class="nav-number">1.1.</span> <span class="nav-text">获取ESP-ADF</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AE%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="nav-number">1.2.</span> <span class="nav-text">设置环境变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AE%E5%B7%A5%E5%85%B7"><span class="nav-number">1.3.</span> <span class="nav-text">设置工具</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ESP32%E5%B7%A5%E7%A8%8B%E7%A4%BA%E4%BE%8B"><span class="nav-number">2.</span> <span class="nav-text">ESP32工程示例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%80%E5%A7%8B%E5%88%9B%E5%BB%BA%E5%B7%A5%E7%A8%8B"><span class="nav-number">2.1.</span> <span class="nav-text">开始创建工程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E5%B7%A5%E7%A8%8B"><span class="nav-number">2.2.</span> <span class="nav-text">配置工程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%96%E8%AF%91%E5%B7%A5%E7%A8%8B"><span class="nav-number">2.3.</span> <span class="nav-text">编译工程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%83%A7%E5%BD%95%E5%B7%A5%E7%A8%8B"><span class="nav-number">2.4.</span> <span class="nav-text">烧录工程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%88%E5%B9%B6%E6%89%A7%E8%A1%8C%E6%9E%84%E5%BB%BA%E3%80%81%E7%83%A7%E5%BD%95%E5%92%8C%E7%9B%91%E8%A7%86%E8%BF%87%E7%A8%8B%EF%BC%9A"><span class="nav-number">2.5.</span> <span class="nav-text">合并执行构建、烧录和监视过程：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%93%A6%E9%99%A4flash"><span class="nav-number">2.6.</span> <span class="nav-text">擦除flash</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8C%82%E8%BD%BD%E7%AB%AF%E5%8F%A3"><span class="nav-number">2.7.</span> <span class="nav-text">挂载端口</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#windows-%E5%AD%90%E7%B3%BB%E7%BB%9F-wsl"><span class="nav-number">2.7.1.</span> <span class="nav-text">windows 子系统 wsl</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">2.7.2.</span> <span class="nav-text">总结</span></a></li></ol></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -481,12 +499,12 @@ idf.py -p [挂载端口]   -b [波特率] flash monitor
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="Symbols count total">1k</span>
+    <span title="Symbols count total">2k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="Reading time total">4 mins.</span>
+    <span title="Reading time total">5 mins.</span>
 </div>
   <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
   </div>
