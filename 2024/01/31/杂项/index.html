@@ -29,7 +29,7 @@
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="http://example.com/pictures/mcu%E5%90%AF%E5%8A%A8%E9%80%89%E9%A1%B9%E8%A1%A8.png">
 <meta property="article:published_time" content="2024-01-31T00:30:02.000Z">
-<meta property="article:modified_time" content="2024-02-28T02:17:03.858Z">
+<meta property="article:modified_time" content="2024-03-05T09:46:49.917Z">
 <meta property="article:author" content="boollight">
 <meta property="article:tag" content="C语言,嵌入式软硬件,Linux,mcu">
 <meta name="twitter:card" content="summary">
@@ -204,7 +204,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2024-02-28 10:17:03" itemprop="dateModified" datetime="2024-02-28T10:17:03+08:00">2024-02-28</time>
+                <time title="Modified: 2024-03-05 17:46:49" itemprop="dateModified" datetime="2024-03-05T17:46:49+08:00">2024-03-05</time>
               </span>
 
           <br>
@@ -213,14 +213,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">Symbols count in article: </span>
-              <span>918</span>
+              <span>1.4k</span>
             </span>
             <span class="post-meta-item" title="Reading time">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">Reading time &asymp;</span>
-              <span>3 mins.</span>
+              <span>5 mins.</span>
             </span>
             <div class="post-description">记录日常开发过程中遇到的一些小问题，以及解决方法。</div>
 
@@ -298,6 +298,13 @@ E: Sub-process /usr/bin/dpkg returned an error code (1)
 <pre><code>sudo dpkg --configure -a
 sudo apt upgrade
 </code></pre>
+<h2 id="Breo蓝牙启动异常"><a href="#Breo蓝牙启动异常" class="headerlink" title="Breo蓝牙启动异常"></a>Breo蓝牙启动异常</h2><h3 id="Breo蓝牙初始化"><a href="#Breo蓝牙初始化" class="headerlink" title="Breo蓝牙初始化"></a>Breo蓝牙初始化</h3><p>蓝牙初始化没完成，透传未开启，app就连接蓝牙了。<br>设置透传参数，开启透传的的状态中增加连接蓝牙接受指令。</p>
+<h3 id="心跳包回复超时"><a href="#心跳包回复超时" class="headerlink" title="心跳包回复超时"></a>心跳包回复超时</h3><p>现在是接收&#x2F;刷新设备数据200ms超时，延迟太长还可以缩短。</p>
+<h2 id="SPI级联led灯调试小助手"><a href="#SPI级联led灯调试小助手" class="headerlink" title="SPI级联led灯调试小助手"></a>SPI级联led灯调试小助手</h2><p>产品名称：1209RGB幻彩雾状<br>产品型号：XTQ-016B.RGB-2307125-20</p>
+<h3 id="SPI级联led灯问题汇总"><a href="#SPI级联led灯问题汇总" class="headerlink" title="SPI级联led灯问题汇总"></a>SPI级联led灯问题汇总</h3><h4 id="充电闪灯问题"><a href="#充电闪灯问题" class="headerlink" title="充电闪灯问题"></a>充电闪灯问题</h4><h5 id="问题分析"><a href="#问题分析" class="headerlink" title="问题分析"></a>问题分析</h5><p>充电中拔掉电源，立即再次插入，会闪一下灯；若等两秒再插入则不会出现，初步判断是此款芯片有锁存功能，会保存到寄存器中，未完全掉电再次插入则会继续执行上次的寄存器数据。</p>
+<h5 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h5><p>充电中拔掉电源，程序不要立即断电，持续两秒反初始化spi灯珠，即给spi寄存器写全灭数据。</p>
+<h4 id="呼吸灯闪烁问题"><a href="#呼吸灯闪烁问题" class="headerlink" title="呼吸灯闪烁问题"></a>呼吸灯闪烁问题</h4><h5 id="问题分析-1"><a href="#问题分析-1" class="headerlink" title="问题分析"></a>问题分析</h5><p>程序中呼吸灯会跑偶尔闪烁，影响显示效果。分析发现，代码中有电机的FG检测，此检测开启了输入捕获功能，会持续中断触发，虽然spi灯的驱动是dma发送，但是也是由CPU来调度的，并不能与中断并行。spi呼吸灯效果需要持续发送数据，且时序要求很高，中断会抢占spi的dma发送，打断spi传输数据，导致数据传输出错，造成闪灯效果。</p>
+<h5 id="解决方法-1"><a href="#解决方法-1" class="headerlink" title="解决方法"></a>解决方法</h5><p>1、提高芯片主频，n32l403KB最高主频为64MHz，如果主频提高效果会好一些。<br>2、spi呼吸灯效果持续发送数据，不能与中断频繁的代码一起使用。</p>
 
     </div>
 
@@ -312,10 +319,7 @@ sudo apt upgrade
 
         
     <div class="post-nav">
-      <div class="post-nav-item">
-    <a href="/2023/12/28/hello-world/" rel="prev" title="Hello World">
-      <i class="fa fa-chevron-left"></i> Hello World
-    </a></div>
+      <div class="post-nav-item"></div>
       <div class="post-nav-item">
     <a href="/2024/02/19/Markdown%E5%B0%8F%E8%B4%B4%E5%A3%AB/" rel="next" title="Markdown小贴士">
       Markdown小贴士 <i class="fa fa-chevron-right"></i>
@@ -378,7 +382,7 @@ sudo apt upgrade
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E6%A0%B8%E5%A4%8D%E4%BD%8D%EF%BC%88kernel-reset%EF%BC%89%E6%97%B6%EF%BC%8C%E8%A6%81%E6%B3%A8%E6%84%8F%E5%88%9D%E5%A7%8B%E5%8C%96%E4%BB%A3%E7%A0%81%EF%BC%8C%E5%A6%82-ADC%EF%BC%9A"><span class="nav-number">1.</span> <span class="nav-text">内核复位（kernel reset）时，要注意初始化代码，如 ADC：</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#MCU%E5%A4%8D%E4%BD%8D%E5%90%8E%E7%8A%B6%E6%80%81"><span class="nav-number">1.1.</span> <span class="nav-text">MCU复位后状态</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%8D%E4%BD%8D%E5%90%8E%EF%BC%8C%E8%B0%83%E8%AF%95%E7%B3%BB%E7%BB%9F%E7%9B%B8%E5%85%B3%E7%9A%84%E5%BC%95%E8%84%9A%E9%BB%98%E8%AE%A4%E7%8A%B6%E6%80%81%E4%B8%BA%E5%90%AF%E5%8A%A8-SWD-JTAG%EF%BC%8C-JTAG-%E5%BC%95%E8%84%9A%E8%A2%AB%E7%BD%AE%E4%BA%8E%E8%BE%93%E5%85%A5%E4%B8%8A%E6%8B%89%E6%88%96%E4%B8%8B%E6%8B%89%E6%A8%A1%E5%BC%8F%EF%BC%9A"><span class="nav-number">1.1.1.</span> <span class="nav-text">复位后，调试系统相关的引脚默认状态为启动 SWD-JTAG， JTAG 引脚被置于输入上拉或下拉模式：</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Linux-%E6%89%93%E5%BC%80%E7%AB%AF%E5%8F%A3-bashrc%E4%B8%8D%E4%BC%9A%E8%87%AA%E5%8A%A8%E5%88%B7%E6%96%B0"><span class="nav-number">2.</span> <span class="nav-text">Linux 打开端口~&#x2F;.bashrc不会自动刷新</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#J-Link-J-Flash"><span class="nav-number">3.</span> <span class="nav-text">J-Link&#x2F;J-Flash</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Ubantu-%E6%97%A0%E6%B3%95%E6%9B%B4%E6%96%B0%E9%97%AE%E9%A2%98"><span class="nav-number">4.</span> <span class="nav-text">Ubantu 无法更新问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9B%B4%E6%94%B9%E8%BD%AF%E4%BB%B6%E6%BA%90"><span class="nav-number">4.1.</span> <span class="nav-text">更改软件源</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B8%85%E9%99%A4-apt-%E7%BC%93%E5%AD%98"><span class="nav-number">4.2.</span> <span class="nav-text">清除 apt 缓存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%9D%E8%AF%95%E6%9B%B4%E6%96%B0%E7%B3%BB%E7%BB%9F"><span class="nav-number">4.3.</span> <span class="nav-text">尝试更新系统</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E6%A0%B8%E5%A4%8D%E4%BD%8D%EF%BC%88kernel-reset%EF%BC%89%E6%97%B6%EF%BC%8C%E8%A6%81%E6%B3%A8%E6%84%8F%E5%88%9D%E5%A7%8B%E5%8C%96%E4%BB%A3%E7%A0%81%EF%BC%8C%E5%A6%82-ADC%EF%BC%9A"><span class="nav-number">1.</span> <span class="nav-text">内核复位（kernel reset）时，要注意初始化代码，如 ADC：</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#MCU%E5%A4%8D%E4%BD%8D%E5%90%8E%E7%8A%B6%E6%80%81"><span class="nav-number">1.1.</span> <span class="nav-text">MCU复位后状态</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%8D%E4%BD%8D%E5%90%8E%EF%BC%8C%E8%B0%83%E8%AF%95%E7%B3%BB%E7%BB%9F%E7%9B%B8%E5%85%B3%E7%9A%84%E5%BC%95%E8%84%9A%E9%BB%98%E8%AE%A4%E7%8A%B6%E6%80%81%E4%B8%BA%E5%90%AF%E5%8A%A8-SWD-JTAG%EF%BC%8C-JTAG-%E5%BC%95%E8%84%9A%E8%A2%AB%E7%BD%AE%E4%BA%8E%E8%BE%93%E5%85%A5%E4%B8%8A%E6%8B%89%E6%88%96%E4%B8%8B%E6%8B%89%E6%A8%A1%E5%BC%8F%EF%BC%9A"><span class="nav-number">1.1.1.</span> <span class="nav-text">复位后，调试系统相关的引脚默认状态为启动 SWD-JTAG， JTAG 引脚被置于输入上拉或下拉模式：</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Linux-%E6%89%93%E5%BC%80%E7%AB%AF%E5%8F%A3-bashrc%E4%B8%8D%E4%BC%9A%E8%87%AA%E5%8A%A8%E5%88%B7%E6%96%B0"><span class="nav-number">2.</span> <span class="nav-text">Linux 打开端口~&#x2F;.bashrc不会自动刷新</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#J-Link-J-Flash"><span class="nav-number">3.</span> <span class="nav-text">J-Link&#x2F;J-Flash</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Ubantu-%E6%97%A0%E6%B3%95%E6%9B%B4%E6%96%B0%E9%97%AE%E9%A2%98"><span class="nav-number">4.</span> <span class="nav-text">Ubantu 无法更新问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9B%B4%E6%94%B9%E8%BD%AF%E4%BB%B6%E6%BA%90"><span class="nav-number">4.1.</span> <span class="nav-text">更改软件源</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B8%85%E9%99%A4-apt-%E7%BC%93%E5%AD%98"><span class="nav-number">4.2.</span> <span class="nav-text">清除 apt 缓存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%9D%E8%AF%95%E6%9B%B4%E6%96%B0%E7%B3%BB%E7%BB%9F"><span class="nav-number">4.3.</span> <span class="nav-text">尝试更新系统</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Breo%E8%93%9D%E7%89%99%E5%90%AF%E5%8A%A8%E5%BC%82%E5%B8%B8"><span class="nav-number">5.</span> <span class="nav-text">Breo蓝牙启动异常</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Breo%E8%93%9D%E7%89%99%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">5.1.</span> <span class="nav-text">Breo蓝牙初始化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BF%83%E8%B7%B3%E5%8C%85%E5%9B%9E%E5%A4%8D%E8%B6%85%E6%97%B6"><span class="nav-number">5.2.</span> <span class="nav-text">心跳包回复超时</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SPI%E7%BA%A7%E8%81%94led%E7%81%AF%E8%B0%83%E8%AF%95%E5%B0%8F%E5%8A%A9%E6%89%8B"><span class="nav-number">6.</span> <span class="nav-text">SPI级联led灯调试小助手</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#SPI%E7%BA%A7%E8%81%94led%E7%81%AF%E9%97%AE%E9%A2%98%E6%B1%87%E6%80%BB"><span class="nav-number">6.1.</span> <span class="nav-text">SPI级联led灯问题汇总</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%85%E7%94%B5%E9%97%AA%E7%81%AF%E9%97%AE%E9%A2%98"><span class="nav-number">6.1.1.</span> <span class="nav-text">充电闪灯问题</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90"><span class="nav-number">6.1.1.1.</span> <span class="nav-text">问题分析</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95"><span class="nav-number">6.1.1.2.</span> <span class="nav-text">解决方法</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%91%BC%E5%90%B8%E7%81%AF%E9%97%AA%E7%83%81%E9%97%AE%E9%A2%98"><span class="nav-number">6.1.2.</span> <span class="nav-text">呼吸灯闪烁问题</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90-1"><span class="nav-number">6.1.2.1.</span> <span class="nav-text">问题分析</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95-1"><span class="nav-number">6.1.2.2.</span> <span class="nav-text">解决方法</span></a></li></ol></li></ol></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -392,7 +396,7 @@ sudo apt upgrade
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">6</span>
+          <span class="site-state-item-count">5</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -446,7 +450,7 @@ sudo apt upgrade
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="Reading time total">16 mins.</span>
+    <span title="Reading time total">17 mins.</span>
 </div>
   <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
   </div>
