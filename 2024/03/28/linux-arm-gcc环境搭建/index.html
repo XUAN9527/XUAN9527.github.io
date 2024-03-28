@@ -20,20 +20,21 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="Markdown 是一种轻量级标记语言，它允许人们使用易读易写的纯文本格式编写文档。Markdown 语言在2004 由约翰·格鲁伯（英语：John Gruber）创建。Markdown 编写的文档可以导出 HTML 、Word、图像、PDF、Epub 等多种格式的文档。">
+  <meta name="description" content="Linux环境搭建Arm-gcc平台，使用Make编译，方便代码移植。此教程使用Windows10系统的Wsl+Vscode开发，Linux版本为Unbantu 20.04。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Markdown小贴士">
-<meta property="og:url" content="http://example.com/2024/02/19/Markdown%E5%B0%8F%E8%B4%B4%E5%A3%AB/index.html">
+<meta property="og:title" content="Linux-arm-gcc开发环境搭建">
+<meta property="og:url" content="http://example.com/2024/03/28/linux-arm-gcc%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/index.html">
 <meta property="og:site_name" content="xuan9527">
-<meta property="og:description" content="Markdown 是一种轻量级标记语言，它允许人们使用易读易写的纯文本格式编写文档。Markdown 语言在2004 由约翰·格鲁伯（英语：John Gruber）创建。Markdown 编写的文档可以导出 HTML 、Word、图像、PDF、Epub 等多种格式的文档。">
+<meta property="og:description" content="Linux环境搭建Arm-gcc平台，使用Make编译，方便代码移植。此教程使用Windows10系统的Wsl+Vscode开发，Linux版本为Unbantu 20.04。">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2024-02-19T06:56:40.000Z">
-<meta property="article:modified_time" content="2024-02-19T08:26:19.000Z">
+<meta property="article:published_time" content="2024-03-28T03:07:00.000Z">
+<meta property="article:modified_time" content="2024-03-28T06:41:57.732Z">
 <meta property="article:author" content="boollight">
-<meta property="article:tag" content="Markdown">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="Wsl">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="http://example.com/2024/02/19/Markdown%E5%B0%8F%E8%B4%B4%E5%A3%AB/">
+<link rel="canonical" href="http://example.com/2024/03/28/linux-arm-gcc%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">
 
 
 <script id="page-configurations">
@@ -46,7 +47,7 @@
   };
 </script>
 
-  <title>Markdown小贴士 | xuan9527</title>
+  <title>Linux-arm-gcc开发环境搭建 | xuan9527</title>
   
 
 
@@ -172,7 +173,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2024/02/19/Markdown%E5%B0%8F%E8%B4%B4%E5%A3%AB/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/03/28/linux-arm-gcc%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -185,7 +186,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Markdown小贴士
+          Linux-arm-gcc开发环境搭建
         </h1>
 
         <div class="post-meta">
@@ -196,7 +197,7 @@
               <span class="post-meta-item-text">Posted on</span>
               
 
-              <time title="Created: 2024-02-19 14:56:40 / Modified: 16:26:19" itemprop="dateCreated datePublished" datetime="2024-02-19T14:56:40+08:00">2024-02-19</time>
+              <time title="Created: 2024-03-28 11:07:00 / Modified: 14:41:57" itemprop="dateCreated datePublished" datetime="2024-03-28T11:07:00+08:00">2024-03-28</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -204,7 +205,11 @@
               </span>
               <span class="post-meta-item-text">In</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%96%87%E6%9C%AC%E7%BC%96%E8%BE%91%E5%B7%A5%E5%85%B7/" itemprop="url" rel="index"><span itemprop="name">文本编辑工具</span></a>
+                  <a href="/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">嵌入式</span></a>
+                </span>
+                  , 
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/" itemprop="url" rel="index"><span itemprop="name">环境搭建</span></a>
                 </span>
             </span>
 
@@ -214,16 +219,16 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">Symbols count in article: </span>
-              <span>399</span>
+              <span>451</span>
             </span>
             <span class="post-meta-item" title="Reading time">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">Reading time &asymp;</span>
-              <span>1 mins.</span>
+              <span>2 mins.</span>
             </span>
-            <div class="post-description">Markdown 是一种轻量级标记语言，它允许人们使用易读易写的纯文本格式编写文档。Markdown 语言在2004 由约翰·格鲁伯（英语：John Gruber）创建。Markdown 编写的文档可以导出 HTML 、Word、图像、PDF、Epub 等多种格式的文档。</div>
+            <div class="post-description">Linux环境搭建Arm-gcc平台，使用Make编译，方便代码移植。此教程使用Windows10系统的Wsl+Vscode开发，Linux版本为Unbantu 20.04。</div>
 
         </div>
       </header>
@@ -234,68 +239,72 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h3 id="Markdown-的基本语法"><a href="#Markdown-的基本语法" class="headerlink" title="Markdown 的基本语法"></a>Markdown 的基本语法</h3><p>Markdown 的语法非常简单，常用的标记符号不超过十个，用于日常写作记录绰绰有余，不到半小时就能完全掌握。以下是一些常用的 Markdown 标记符号：</p>
-<h4 id="标题"><a href="#标题" class="headerlink" title="标题"></a>标题</h4><pre><code># 一级标题
-## 二级标题
-### 三级标题
-#### 四级标题
-##### 五级标题
-###### 六级标题	
-</code></pre>
-<h4 id="文本"><a href="#文本" class="headerlink" title="文本"></a>文本</h4><pre><code>普通文本
-**加粗文本**
-* 斜体文本*
-**~删除线文本~**
-</code></pre>
-<h4 id="列表"><a href="#列表" class="headerlink" title="列表"></a>列表</h4><pre><code>* 无序列表
-1. 有序列表
-    * 嵌套列表
-</code></pre>
-<h4 id="代码块"><a href="#代码块" class="headerlink" title="代码块"></a>代码块</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span> &#123;</span><br><span class="line"><span class="built_in">printf</span>(<span class="string">&quot;Hello, world!\n&quot;</span>);</span><br><span class="line"><span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        <h2 id="Windows10系统安装wsl"><a href="#Windows10系统安装wsl" class="headerlink" title="Windows10系统安装wsl"></a>Windows10系统安装wsl</h2><p><strong>1. 通过 Microsoft Store 安装</strong></p>
+<ul>
+<li>打开 Microsoft Store。</li>
+<li>搜索 “适用于 Linux 的 Windows 子系统”。</li>
+<li>选择 “Ubuntu” 或您喜欢的其他 Linux 发行版。</li>
+<li>点击 “获取”。</li>
+<li>安装完成后，点击 “启动”。</li>
+</ul>
+<p><strong>2. 通过命令行</strong></p>
+<ul>
+<li><p>打开 PowerShell 或 命令提示符 以管理员身份运行。</p>
+</li>
+<li><p>输入以下命令:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wsl --install</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>重启您的计算机。</p>
+</li>
+<li><p>安装完成后，您可以通过以下命令启动 WSL：</p>
+</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wsl</span><br></pre></td></tr></table></figure>
 
-<h4 id="链接"><a href="#链接" class="headerlink" title="链接"></a>链接</h4><pre><code>链接文本: [https://www.example.com](https://www.example.com)
-</code></pre>
-<h4 id="图片"><a href="#图片" class="headerlink" title="图片"></a>图片</h4><pre><code>网络地址: ![这是一张示例图片](https://www.example.com/example.png)
-本地文件路径：![这是一张示例图片](../pictures/这是一张示例图片.png)
-图片链接跳转: ![这是一张示例图片](example.png) &#123;link=https://www.example.com/&#125;
-图片标题: ![这是一张示例图片](example.png) &#123;title=这是一张示例图片&#125;
-图片居中: ![这是一张示例图片](example.png) &#123;align=center&#125;
+<p><strong>注意:</strong></p>
+<ul>
+<li>WSL 需要 Windows 10 版本 1709 或更高版本。</li>
+<li>您可以通过以下命令检查您的 Windows 版本：</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">winver</span><br></pre></td></tr></table></figure>
 
-示例：
-![这是一张示例图片](example.png)
-![这是一张 200x100 像素的图片](example.png) &#123;width=200 height=100&#125;
-![这是一张居中的图片](example.png) &#123;align=center&#125;
-![点击图片跳转到 https://www.example.com/](example.png) &#123;link=https://www.example.com/&#125;
-![这是一张示例图片](example.png) &#123;title=这是一张示例图片&#125;
-</code></pre>
-<h4 id="表格"><a href="#表格" class="headerlink" title="表格"></a>表格</h4><table>
-<thead>
-<tr>
-<th>头部1</th>
-<th>头部2</th>
-<th>头部3</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>内容1</td>
-<td>内容2</td>
-<td>内容3</td>
-</tr>
-<tr>
-<td>内容4</td>
-<td>内容5</td>
-<td>内容6</td>
-</tr>
-</tbody></table>
-<h3 id="Markdown-的应用"><a href="#Markdown-的应用" class="headerlink" title="Markdown 的应用"></a>Markdown 的应用</h3><pre><code>博客文章
-技术文档
-README 文件
-演示文稿
-电子书
-</code></pre>
-<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><pre><code>Markdown 是一种易于学习和使用的标记语言，非常适合编写各种文档。如果您还没有使用过 Markdown，建议您尝试一下。
-</code></pre>
-<p>以下是 Markdown 官方教学网站：<br><a target="_blank" rel="noopener" href="https://markdown.com.cn/basic-syntax/headings.html">Markdown 官方网站</a></p>
+<ul>
+<li><p>如果您使用的是 Windows 10 家庭版，您需要启用 “<strong>适用于 Linux 的 Windows 子系统</strong>” 功能：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">控制面板-&gt;程序和功能-&gt;启用或关闭 Windows 功能-&gt;适用于 Linux 的 Windows 子系统-&gt;确定</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>您可以通过以下命令启用 “<strong>适用于 Linux 的 Windows 子系统</strong>” 功能：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>重启您的计算机后，您就可以通过上述方法安装 WSL 了。</p>
+</li>
+</ul>
+<p>安装Windows Terminal</p>
+<h2 id="编译环境配置"><a href="#编译环境配置" class="headerlink" title="编译环境配置"></a>编译环境配置</h2><ul>
+<li><p>gcc-arm-none-eabi工具链安装</p>
+<ul>
+<li>手动安装：<a target="_blank" rel="noopener" href="https://developer.arm.com/downloads/-/gnu-rm">官方链接地址</a> 下载所需版本；  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install bzip2</span><br><span class="line">sudo tar -xvf ~/n32_gcc/software_package/gcc-arm-none-eabi-9-2019-q4-major-x86_64-linux.tar.bz2 -C ~/n32_gcc</span><br></pre></td></tr></table></figure></li>
+<li>自动安装：sudo apt-get install gcc-arm-none-eabi</li>
+<li>打开 ~&#x2F;.bashrc</li>
+<li>添加export PATH&#x3D;$PATH:~&#x2F;n32_gcc&#x2F;gcc-arm-none-eabi-9-2019-q4-major&#x2F;bin</li>
+<li>添加alias open-file&#x3D;’explorer.exe .’</li>
+<li>使能用户环境变量source ~&#x2F;.bashrc</li>
+</ul>
+</li>
+<li><p>Make</p>
+<ul>
+<li>sudo apt-get install make</li>
+</ul>
+</li>
+</ul>
+<h2 id="Winodows-Gcc-Make-环境搭建"><a href="#Winodows-Gcc-Make-环境搭建" class="headerlink" title="Winodows Gcc + Make 环境搭建"></a>Winodows Gcc + Make 环境搭建</h2><ul>
+<li>安装software_package目录下的gcc-arm-none-eabi-9-2019-q4-major-win32-sha2.exe和make-3.81.exe</li>
+<li>分别将其安装目录下的 .&#x2F;bin添加到系统环境变量，重启生效</li>
+<li>复制裸机工程至Windows下，修改部分Makefile的linux指令以适配Windows即可</li>
+</ul>
+<h2 id="裸机工程编译"><a href="#裸机工程编译" class="headerlink" title="裸机工程编译"></a>裸机工程编译</h2><ul>
+<li>cd n32g452_gcc</li>
+<li>make</li>
+</ul>
 
     </div>
 
@@ -305,7 +314,8 @@ README 文件
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/Markdown/" rel="tag"># Markdown</a>
+              <a href="/tags/Linux/" rel="tag"># Linux</a>
+              <a href="/tags/Wsl/" rel="tag"># Wsl</a>
           </div>
 
         
@@ -314,13 +324,10 @@ README 文件
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2024/01/31/%E6%9D%82%E9%A1%B9/" rel="prev" title="草稿文件">
-      <i class="fa fa-chevron-left"></i> 草稿文件
+    <a href="/2024/03/01/I2C%E8%B0%83%E8%AF%95%E8%AE%B0%E5%BD%95/" rel="prev" title="I2C调试记录">
+      <i class="fa fa-chevron-left"></i> I2C调试记录
     </a></div>
-      <div class="post-nav-item">
-    <a href="/2024/02/19/ESP32%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/" rel="next" title="ESP32开发环境搭建">
-      ESP32开发环境搭建 <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -379,7 +386,7 @@ README 文件
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Markdown-%E7%9A%84%E5%9F%BA%E6%9C%AC%E8%AF%AD%E6%B3%95"><span class="nav-number">1.</span> <span class="nav-text">Markdown 的基本语法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%87%E9%A2%98"><span class="nav-number">1.1.</span> <span class="nav-text">标题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%96%87%E6%9C%AC"><span class="nav-number">1.2.</span> <span class="nav-text">文本</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%97%E8%A1%A8"><span class="nav-number">1.3.</span> <span class="nav-text">列表</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E5%9D%97"><span class="nav-number">1.4.</span> <span class="nav-text">代码块</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%93%BE%E6%8E%A5"><span class="nav-number">1.5.</span> <span class="nav-text">链接</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9B%BE%E7%89%87"><span class="nav-number">1.6.</span> <span class="nav-text">图片</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A1%A8%E6%A0%BC"><span class="nav-number">1.7.</span> <span class="nav-text">表格</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Markdown-%E7%9A%84%E5%BA%94%E7%94%A8"><span class="nav-number">2.</span> <span class="nav-text">Markdown 的应用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Windows10%E7%B3%BB%E7%BB%9F%E5%AE%89%E8%A3%85wsl"><span class="nav-number">1.</span> <span class="nav-text">Windows10系统安装wsl</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%96%E8%AF%91%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE"><span class="nav-number">2.</span> <span class="nav-text">编译环境配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Winodows-Gcc-Make-%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="nav-number">3.</span> <span class="nav-text">Winodows Gcc + Make 环境搭建</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A3%B8%E6%9C%BA%E5%B7%A5%E7%A8%8B%E7%BC%96%E8%AF%91"><span class="nav-number">4.</span> <span class="nav-text">裸机工程编译</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
