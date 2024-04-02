@@ -1,5 +1,5 @@
 ---
-title: Linux-arm-gcc开发环境搭建
+title: Linux下开发单片机
 date: 2024-3-28 11:07:00
 #updated: 2023-12-04
 tags:
@@ -8,10 +8,12 @@ tags:
 categories: 
 - [嵌入式]
 - [环境搭建]
-description: Linux环境搭建Arm-gcc平台，使用Make编译，方便代码移植。此教程使用Windows10系统的Wsl+Vscode开发，Linux版本为Unbantu 20.04。
+description: Linux环境搭建Arm-gcc平台，使用Make编译，方便代码移植。此教程使用Windows10系统的Wsl+Vscode开发，Linux版本为Ubantu 20.04。
 ---
 
-## Windows10系统安装wsl
+## Ubantu Wsl环境搭建
+
+### Windows10系统安装子系统Wsl
 
 **1. 通过 Microsoft Store 安装**
 
@@ -58,7 +60,7 @@ dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux
 
 安装Windows Terminal
 
-## 编译环境配置
+### 编译环境配置
 
 - gcc-arm-none-eabi工具链安装
 	- 手动安装：[官方链接地址](https://developer.arm.com/downloads/-/gnu-rm) 下载所需版本；
@@ -75,13 +77,14 @@ dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux
 - Make
 	- sudo apt-get install make
 
-## Winodows Gcc + Make 环境搭建
+### Winodows Gcc + Make 环境搭建
 
 - 安装software_package目录下的gcc-arm-none-eabi-9-2019-q4-major-win32-sha2.exe和make-3.81.exe
 - 分别将其安装目录下的 ./bin添加到系统环境变量，重启生效
 - 复制裸机工程至Windows下，修改部分Makefile的linux指令以适配Windows即可
 
-## 裸机工程编译
+### 裸机工程编译
 
 - cd n32g452_gcc
 - make
+
