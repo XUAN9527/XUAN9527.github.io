@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="记录日常开发单片机过程中遇到的一些小问题，以及解决方法。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="单片机开发问题汇总">
+<meta property="og:url" content="http://example.com/2024/01/31/MCU%E5%BC%80%E5%8F%91%E9%97%AE%E9%A2%98%E6%B1%87%E6%80%BB/index.html">
+<meta property="og:site_name" content="xuan9527">
+<meta property="og:description" content="记录日常开发单片机过程中遇到的一些小问题，以及解决方法。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/pictures/mcu%E5%90%AF%E5%8A%A8%E9%80%89%E9%A1%B9%E8%A1%A8.png">
+<meta property="article:published_time" content="2024-01-31T00:30:02.000Z">
+<meta property="article:modified_time" content="2024-04-07T06:19:20.381Z">
+<meta property="article:author" content="boollight">
+<meta property="article:tag" content="MCU">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/pictures/mcu%E5%90%AF%E5%8A%A8%E9%80%89%E9%A1%B9%E8%A1%A8.png">
+
+<link rel="canonical" href="http://example.com/2024/01/31/MCU%E5%BC%80%E5%8F%91%E9%97%AE%E9%A2%98%E6%B1%87%E6%80%BB/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>单片机开发问题汇总 | xuan9527</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">xuan9527</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">常能遣其欲而心自静，澄其心而神自清。</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>Schedule</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/01/31/MCU%E5%BC%80%E5%8F%91%E9%97%AE%E9%A2%98%E6%B1%87%E6%80%BB/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="boollight">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="xuan9527">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          单片机开发问题汇总
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2024-01-31 08:30:02" itemprop="dateCreated datePublished" datetime="2024-01-31T08:30:02+08:00">2024-01-31</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2024-04-07 14:19:20" itemprop="dateModified" datetime="2024-04-07T14:19:20+08:00">2024-04-07</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">嵌入式</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="Symbols count in article">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">Symbols count in article: </span>
+              <span>1.6k</span>
+            </span>
+            <span class="post-meta-item" title="Reading time">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">Reading time &asymp;</span>
+              <span>5 mins.</span>
+            </span>
+            <div class="post-description">记录日常开发单片机过程中遇到的一些小问题，以及解决方法。</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="内核复位（kernel-reset）"><a href="#内核复位（kernel-reset）" class="headerlink" title="内核复位（kernel reset）"></a>内核复位（kernel reset）</h2><ul>
+<li><strong>内核复位代码，如ADC：</strong></li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">kernel_reset</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    __DSB();</span><br><span class="line">    __disable_irq();							<span class="comment">//close irq</span></span><br><span class="line">	drv_adc_deinit(EADC_DEV1,EDMA_CH6);			<span class="comment">//disable adc data</span></span><br><span class="line">    SCB-&gt;AIRCR = ((<span class="number">0x5FA</span> &lt;&lt; SCB_AIRCR_VECTKEY_Pos)      |</span><br><span class="line">                  (SCB-&gt;AIRCR &amp; SCB_AIRCR_PRIGROUP_Msk) |</span><br><span class="line">                   SCB_AIRCR_VECTRESET_Msk);</span><br><span class="line">    __DSB();</span><br><span class="line">    <span class="keyword">while</span>(<span class="number">1</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>板级初始化前先要重置状态：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">DMA_DeInit(dma_chx);		<span class="comment">//DMA开启循环接收后会持续接收字节</span></span><br><span class="line">ADC_DeInit(adc_handler);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>ADC驱动初始化&#x2F;反初始化:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">drv_adc_init</span><span class="params">(EADC_DEVICE adc_dev,EDMA_CHANNEL dma_ch)</span></span><br><span class="line">&#123;</span><br><span class="line">	drv_adc_configuration(adc_dev);</span><br><span class="line">	drv_dma_configuration(adc_dev,dma_ch);</span><br><span class="line">	drv_adc_enable(adc_dev,DISABLE);</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">drv_adc_deinit</span><span class="params">(EADC_DEVICE adc_dev,EDMA_CHANNEL dma_ch)</span></span><br><span class="line">&#123;</span><br><span class="line">	ADC_Module *adc_handler = drv_get_adc_device(adc_dev)-&gt;ADC_Handler;</span><br><span class="line">	DMA_ChannelType * dma_chx = drv_get_dma_channel(dma_ch);</span><br><span class="line">	</span><br><span class="line">	drv_adc_enable(adc_dev,DISABLE);</span><br><span class="line">	DMA_EnableChannel(dma_chx,DISABLE);</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<br></li>
+</ul>
+<h2 id="MCU复位后状态"><a href="#MCU复位后状态" class="headerlink" title="MCU复位后状态"></a>MCU复位后状态</h2><ul>
+<li>复位期间和刚复位后,复用功能未开启,I&#x2F;O端口被配置成模拟功能模式(PCFGy[1:0]&#x3D;00b, PMODEy[1:0]&#x3D;00b)。<br></li>
+<li>但有以下几个例外的信号：BOOT0、 NRST、 OSC_IN、 OSC_OUT 默认无 GPIO 功能：<ul>
+<li>BOOT0 引脚默认输入下拉</li>
+<li>NRST 上拉输入输出<br></li>
+</ul>
+</li>
+<li>复位后，调试系统相关的引脚默认状态为启动 SWD-JTAG， JTAG 引脚被置于输入上拉或下拉模式：<ul>
+<li>PA15:JTDI 置于输入上拉模式 </li>
+<li>PA14:JTCK 置于输入下拉模式 </li>
+<li>PA13:JTMS 置于输入上拉模式</li>
+<li>PB4:NJTRST 置于输入上拉模式</li>
+<li>PB3:JTD0 置于推挽输出无上下拉<br></li>
+</ul>
+</li>
+<li>PD0 和 PD1<ul>
+<li>PD0 和 PD1 在 80 及以上引脚封装默认为模拟模式</li>
+<li>PD0 和 PD1 在 80 以下引脚封装复用到 OSC_IN&#x2F;OUT</li>
+</ul>
+</li>
+<li>PC13、 PC14、 PC15：<ul>
+<li>PC13～15 为备电域下的三个 IO， 备份域初次上电默认为模拟模式；<br></li>
+</ul>
+</li>
+<li>PB2&#x2F;BOOT1：<ul>
+<li>PB2&#x2F;BOOT1 默认处于下拉输入状态；<br></li>
+</ul>
+</li>
+<li>BOOT0 默认输入下拉，参照下表， 若 BOOT 的引脚未连接，则默认选择 Flash 主存储区。</li>
+</ul>
+<p><img src="/../pictures/mcu%E5%90%AF%E5%8A%A8%E9%80%89%E9%A1%B9%E8%A1%A8.png" alt="mcu启动选项表"><br><br></p>
+<h2 id="printf重定向"><a href="#printf重定向" class="headerlink" title="printf重定向"></a>printf重定向</h2><ul>
+<li>MDK版本，勾选Use MicroLIB选项：</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">static</span> <span class="type">int</span> is_lr_sent = <span class="number">0</span>;</span><br><span class="line"><span class="type">int</span> <span class="title function_">fputc</span><span class="params">(<span class="type">int</span> ch, FILE* f)</span></span><br><span class="line">&#123;</span><br><span class="line">   <span class="keyword">if</span> (ch == <span class="string">&#x27;\r&#x27;</span>)</span><br><span class="line">   &#123;</span><br><span class="line">       is_lr_sent = <span class="number">1</span>;</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">else</span> <span class="keyword">if</span> (ch == <span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line">   &#123;</span><br><span class="line">       <span class="keyword">if</span> (!is_lr_sent)</span><br><span class="line">   	&#123;</span><br><span class="line">           USART_SendData(USART1, <span class="string">&#x27;\r&#x27;</span>);</span><br><span class="line">           <span class="keyword">while</span> (USART_GetFlagStatus(USART1, USART_FLAG_TXDE) == RESET);</span><br><span class="line">   	&#125;</span><br><span class="line">   	is_lr_sent = <span class="number">0</span>;</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">else</span></span><br><span class="line">   &#123;</span><br><span class="line">   	is_lr_sent = <span class="number">0</span>;</span><br><span class="line">   &#125;</span><br><span class="line">   USART_SendData(USART1, ch);</span><br><span class="line">   <span class="keyword">while</span> (USART_GetFlagStatus(USART1, USART_FLAG_TXDE) == RESET);</span><br><span class="line">   <span class="keyword">return</span> ch;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>GCC版本</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> _write(<span class="type">int</span> fd, <span class="type">char</span>* pBuffer, <span class="type">int</span> size)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; size; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        USART_SendData(USART1, pBuffer[i]);</span><br><span class="line">        <span class="keyword">while</span> (USART_GetFlagStatus(USART1, USART_FLAG_TXDE) == RESET);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> size;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<br>
+
+<h2 id="RT-THREAD调试问题"><a href="#RT-THREAD调试问题" class="headerlink" title="RT-THREAD调试问题"></a>RT-THREAD调试问题</h2><h3 id="串口通信异常"><a href="#串口通信异常" class="headerlink" title="串口通信异常"></a>串口通信异常</h3><ul>
+<li>打开UART7接收为DMA IDLE中断，申请一个超时定时器，发送&#x2F;接受各一个任务，发送&#x2F;接受两个队列,以下是错误信息：</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">psr: 0x60000000</span><br><span class="line">r00: 0x00000000</span><br><span class="line">r01: 0x20007978</span><br><span class="line">r02: 0x20007978</span><br><span class="line">r03: 0x00000000</span><br><span class="line">r04: 0x00000000</span><br><span class="line">r05: 0x00000000</span><br><span class="line">r06: 0x00000000</span><br><span class="line">r07: 0x20000920</span><br><span class="line">r08: 0x20005908</span><br><span class="line">r09: 0x20000568</span><br><span class="line">r10: 0xdeadbeef</span><br><span class="line">r11: 0xdeadbeef</span><br><span class="line">r12: 0x00000000</span><br><span class="line"> lr: 0x0801156f</span><br><span class="line"> pc: 0x00000000</span><br><span class="line">hard fault on thread: timer</span><br><span class="line"></span><br><span class="line">E [00:00:07,324] (rtt-nano/src/kservice.c) rt_assert_handler [1340]: (rt_object_get_type(&amp;mq-&gt;parent.parent) == RT_Object_Class_MessageQueue) assertion failed at <span class="keyword">function</span>:rt_mq_send_wait, line number:2026 </span><br><span class="line"></span><br><span class="line">E [00:00:00,659] (rtt-nano/src/kservice.c) rt_assert_handler [1340]: (rt_object_get_type(&amp;timer-&gt;parent) == RT_Object_Class_Timer) assertion failed at <span class="keyword">function</span>:rt_timer_control, line number:474 </span><br><span class="line"></span><br><span class="line">E [00:00:39,282] (rtt-nano/src/kservice.c) rt_assert_handler [1340]: (rt_object_get_type((rt_object_t)thread) == RT_Object_Class_Thread) assertion failed at function:rt_thread_resume, line number:<span class="number">760</span> </span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>问题定位到指针变量p_srx_mq[0]和&amp;p_srx_mq[0]的区别，代码如下：</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#define COMM_MAX_NUM     3</span></span><br><span class="line">static uint8_t *p_srx_mq[COMM_MAX_NUM];</span><br><span class="line">static struct comm_serial_mq srx_mq_data[COMM_MAX_NUM];</span><br><span class="line">static struct rt_timer comm_rx_stimer[COMM_MAX_NUM];</span><br><span class="line"></span><br><span class="line">static void comm_serial_recieve_data_deinit(uint8_t num)</span><br><span class="line">&#123;</span><br><span class="line">	srx_mq_data[num].size = 0;</span><br><span class="line">	p_srx_mq[num] = srx_mq_data[num].data;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">static int usart_key_rx_indicate(ESERIAL_DEV serial_dev, uint16_t size)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">if</span>(p_srx_mq[0] - srx_mq_data[0].data + size &gt; sizeof(srx_mq_data[0].data))</span><br><span class="line">	&#123;</span><br><span class="line">		comm_serial_recieve_data_deinit(0);</span><br><span class="line">		<span class="built_in">return</span> -1;</span><br><span class="line">	&#125;</span><br><span class="line">	rt_timer_start(&amp;comm_rx_stimer[0]);                   // 启动定时器</span><br><span class="line">	drv_fifo_data_get(serial_dev, (uint8_t *)p_srx_mq[0], size);</span><br><span class="line">	logPrintln(<span class="string">&quot;test = [%p][%p][%p]&quot;</span>,p_srx_mq[0],&amp;p_srx_mq[0],srx_mq_data[0].data);</span><br><span class="line">	p_srx_mq[0] += size;</span><br><span class="line">	srx_mq_data[0].size += size;</span><br><span class="line">	<span class="built_in">return</span> 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="指针取址符-与取值-的区别"><a href="#指针取址符-与取值-的区别" class="headerlink" title="指针取址符&amp;与取值*的区别"></a>指针取址符&amp;与取值*的区别</h4><p><strong>1. 指针取址符(&amp;)</strong></p>
+<pre><code>指针取址符 &amp; 用于获取一个变量的地址，并将该地址存储在一个指针变量中。
+</code></pre>
+<p><strong>具体来说:</strong></p>
+<ul>
+<li>&amp; 运算符位于变量名前面。</li>
+<li>&amp; 运算符的返回值是一个指针，指向该变量的内存地址。</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> num = <span class="number">10</span>;</span><br><span class="line"><span class="type">int</span> *p = &amp;num; <span class="comment">// p 指向 num 的地址</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>2. 取值符(*)</strong></p>
+<pre><code>取值符 * 用于获取指针变量所指向的变量的值。
+</code></pre>
+<p><strong>具体来说:</strong></p>
+<ul>
+<li>运算符位于指针变量名前面。</li>
+<li>运算符的返回值是该指针变量所指向变量的值。</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> num = <span class="number">10</span>;</span><br><span class="line"><span class="type">int</span> *p = &amp;num;</span><br><span class="line"><span class="type">int</span> value = *p;		<span class="comment">// 访问 num 的值</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>总结：</strong></p>
+<ul>
+<li>指针取址符 &amp; 用于获取变量的地址，并将该地址存储在一个指针变量中。</li>
+<li>取值符 * 用于获取指针变量所指向的变量的值。</li>
+</ul>
+<p><strong>需要注意的是：</strong></p>
+<ul>
+<li>不能对不存在的变量进行取址。</li>
+<li>**<code>不能对指针变量进行取址</code>**。</li>
+<li>取址操作可能会产生空指针，需要进行空指针检查。</li>
+</ul>
+<h4 id="为什么不能对指针变量进行取址"><a href="#为什么不能对指针变量进行取址" class="headerlink" title="为什么不能对指针变量进行取址"></a>为什么不能对指针变量进行取址</h4><p><strong>1. 指针变量本身也是一个变量</strong></p>
+<p>指针变量也是一个变量，它存储的是另一个变量的地址。与其他变量一样，**<code>指针变量也存在于内存中，并拥有自己的地址</code>**。</p>
+<p><strong>2. 取址操作会产生无限循环</strong></p>
+<p>**<code>如果对指针变量进行取址，那么就会得到该指针变量的地址</code>**。但是，该指针变量本身也是一个变量，所以其地址也是存储在另一个变量中的。如此循环往复，就会产生无限循环。</p>
+<p><strong>3. 违背了指针的定义</strong></p>
+<p>指针的定义是指向另一个变量的地址。如果对指针变量进行取址，那么就意味着指针指向了它自己的地址，这违背了指针的定义。</p>
+<p><strong>4. 可能导致程序崩溃</strong></p>
+<p>在大多数情况下，对指针变量进行取址会导致程序崩溃。这是因为程序会试图访问一个不存在的内存地址。<br><br></p>
+<h2 id="TFT屏ST7735S调试问题"><a href="#TFT屏ST7735S调试问题" class="headerlink" title="TFT屏ST7735S调试问题"></a>TFT屏ST7735S调试问题</h2><h3 id="硬件-软件spi初始化"><a href="#硬件-软件spi初始化" class="headerlink" title="硬件&#x2F;软件spi初始化"></a>硬件&#x2F;软件spi初始化</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//头文件定义</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> HARDWARE_SPI_MODE 1	<span class="comment">//1：hardware；0：software</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> LCD_SCLK_Clr() GPIO_ResetBits(GPIOA, GPIO_PIN_5)	<span class="comment">//SCL=SCLK</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> LCD_SCLK_Set() GPIO_SetBits(GPIOA, GPIO_PIN_5)</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> LCD_MOSI_Clr() GPIO_ResetBits(GPIOA, GPIO_PIN_7)		<span class="comment">//SDA=MOSI</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> LCD_MOSI_Set() GPIO_SetBits(GPIOA, GPIO_PIN_7)</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> LCD_RES_Clr()  GPIO_ResetBits(GPIOB, GPIO_PIN_0)		<span class="comment">//RES</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> LCD_RES_Set()  GPIO_SetBits(GPIOB, GPIO_PIN_0)</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> LCD_DC_Clr()   GPIO_ResetBits(GPIOB, GPIO_PIN_1)		<span class="comment">//DC</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> LCD_DC_Set()   GPIO_SetBits(GPIOB, GPIO_PIN_1)</span></span><br><span class="line"> 		     </span><br><span class="line"><span class="meta">#<span class="keyword">define</span> LCD_CS_Clr()   GPIO_ResetBits(GPIOA, GPIO_PIN_4)		<span class="comment">//CS</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> LCD_CS_Set()   GPIO_SetBits(GPIOA, GPIO_PIN_4)</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> LCD_BLK_Clr()											<span class="comment">//BLK</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> LCD_BLK_Set()</span></span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">LCD_GPIO_Init</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">	GPIO_InitType GPIO_InitStructure;</span><br><span class="line">	RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOA | RCC_APB2_PERIPH_GPIOB , ENABLE);</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">if</span> HARDWARE_SPI_MODE</span></span><br><span class="line">	SPI_InitType SPI_InitStructure;</span><br><span class="line">	RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_SPI1 | RCC_APB2_PERIPH_AFIO, ENABLE);</span><br><span class="line"></span><br><span class="line">    GPIO_InitStruct(&amp;GPIO_InitStructure);</span><br><span class="line">    GPIO_InitStructure.Pin        = GPIO_PIN_4 | GPIO_PIN_5 | GPIO_PIN_7;</span><br><span class="line">    GPIO_InitStructure.GPIO_Alternate = GPIO_AF0_SPI1;</span><br><span class="line">    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;</span><br><span class="line">    GPIO_InitPeripheral(GPIOA, &amp;GPIO_InitStructure);</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* SPIy Config -------------------------------------------------------------*/</span></span><br><span class="line">    SPI_InitStructure.DataDirection = SPI_DIR_SINGLELINE_TX;</span><br><span class="line">    SPI_InitStructure.SpiMode       = SPI_MODE_MASTER;</span><br><span class="line">    SPI_InitStructure.DataLen       = SPI_DATA_SIZE_8BITS;</span><br><span class="line">    SPI_InitStructure.CLKPOL        = SPI_CLKPOL_HIGH;</span><br><span class="line">    SPI_InitStructure.CLKPHA        = SPI_CLKPHA_FIRST_EDGE;</span><br><span class="line">    SPI_InitStructure.NSS           = SPI_NSS_HARD;</span><br><span class="line">    SPI_InitStructure.BaudRatePres  = SPI_BR_PRESCALER_2;</span><br><span class="line">    SPI_InitStructure.FirstBit      = SPI_FB_MSB;</span><br><span class="line">    SPI_InitStructure.CRCPoly       = <span class="number">7</span>;</span><br><span class="line">    SPI_Init(SPI1, &amp;SPI_InitStructure);</span><br><span class="line"></span><br><span class="line">	SPI_SSOutputEnable(SPI1, ENABLE);</span><br><span class="line">	SPI_EnableCalculateCrc(SPI1, DISABLE);</span><br><span class="line">    <span class="comment">/* Enable SPIy */</span></span><br><span class="line">    SPI_Enable(SPI1, ENABLE);</span><br><span class="line"><span class="meta">#<span class="keyword">else</span></span></span><br><span class="line">	GPIO_InitStruct(&amp;GPIO_InitStructure);</span><br><span class="line">	GPIO_InitStructure.Pin = GPIO_PIN_4 | GPIO_PIN_5 | GPIO_PIN_7;</span><br><span class="line">	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;</span><br><span class="line">	GPIO_InitPeripheral(GPIOA, &amp;GPIO_InitStructure);</span><br><span class="line">	</span><br><span class="line">	GPIO_SetBits(GPIOA, GPIO_PIN_4 | GPIO_PIN_5 | GPIO_PIN_7);</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line">	GPIO_InitStruct(&amp;GPIO_InitStructure);</span><br><span class="line">	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;</span><br><span class="line">	GPIO_InitStructure.Pin = GPIO_PIN_0 | GPIO_PIN_1;</span><br><span class="line">	GPIO_InitPeripheral(GPIOB, &amp;GPIO_InitStructure);</span><br><span class="line">	</span><br><span class="line">	GPIO_SetBits(GPIOB, GPIO_PIN_0 | GPIO_PIN_1);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">LCD_Writ_Bus</span><span class="params">(u8 dat)</span> </span><br><span class="line">&#123;	</span><br><span class="line">	LCD_CS_Clr();</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">if</span> HARDWARE_SPI_MODE</span></span><br><span class="line">	SPI_I2S_TransmitData(SPI1, dat);</span><br><span class="line">	<span class="keyword">while</span> (SPI_I2S_GetStatus(SPI1, SPI_I2S_TE_FLAG) == RESET); <span class="comment">//必须等到SPI数据发完，才能拉高CS片选，发下一次数据，否则数据会出错</span></span><br><span class="line"><span class="meta">#<span class="keyword">else</span></span></span><br><span class="line">	u8 i;</span><br><span class="line">	<span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;<span class="number">8</span>;i++)</span><br><span class="line">	&#123;			  </span><br><span class="line">		LCD_SCLK_Clr();</span><br><span class="line">		<span class="keyword">if</span>(dat&amp;<span class="number">0x80</span>)</span><br><span class="line">		&#123;</span><br><span class="line">		   LCD_MOSI_Set();</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">else</span></span><br><span class="line">		&#123;</span><br><span class="line">		   LCD_MOSI_Clr();</span><br><span class="line">		&#125;</span><br><span class="line">		LCD_SCLK_Set();</span><br><span class="line">		dat&lt;&lt;=<span class="number">1</span>;</span><br><span class="line">	&#125;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"></span><br><span class="line">   LCD_CS_Set();	</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">LCD_WR_DATA8</span><span class="params">(u8 dat)</span></span><br><span class="line">&#123;</span><br><span class="line">	LCD_Writ_Bus(dat);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">LCD_WR_DATA</span><span class="params">(u16 dat)</span></span><br><span class="line">&#123;</span><br><span class="line">	LCD_Writ_Bus(dat&gt;&gt;<span class="number">8</span>);</span><br><span class="line">	LCD_Writ_Bus(dat);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/MCU/" rel="tag"># MCU</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2024/01/31/%E6%9D%82%E9%A1%B9/" rel="next" title="草稿文件">
+      草稿文件 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E6%A0%B8%E5%A4%8D%E4%BD%8D%EF%BC%88kernel-reset%EF%BC%89"><span class="nav-number">1.</span> <span class="nav-text">内核复位（kernel reset）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MCU%E5%A4%8D%E4%BD%8D%E5%90%8E%E7%8A%B6%E6%80%81"><span class="nav-number">2.</span> <span class="nav-text">MCU复位后状态</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#printf%E9%87%8D%E5%AE%9A%E5%90%91"><span class="nav-number">3.</span> <span class="nav-text">printf重定向</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RT-THREAD%E8%B0%83%E8%AF%95%E9%97%AE%E9%A2%98"><span class="nav-number">4.</span> <span class="nav-text">RT-THREAD调试问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%B2%E5%8F%A3%E9%80%9A%E4%BF%A1%E5%BC%82%E5%B8%B8"><span class="nav-number">4.1.</span> <span class="nav-text">串口通信异常</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8C%87%E9%92%88%E5%8F%96%E5%9D%80%E7%AC%A6-%E4%B8%8E%E5%8F%96%E5%80%BC-%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">4.1.1.</span> <span class="nav-text">指针取址符&amp;与取值*的区别</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E8%83%BD%E5%AF%B9%E6%8C%87%E9%92%88%E5%8F%98%E9%87%8F%E8%BF%9B%E8%A1%8C%E5%8F%96%E5%9D%80"><span class="nav-number">4.1.2.</span> <span class="nav-text">为什么不能对指针变量进行取址</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#TFT%E5%B1%8FST7735S%E8%B0%83%E8%AF%95%E9%97%AE%E9%A2%98"><span class="nav-number">5.</span> <span class="nav-text">TFT屏ST7735S调试问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A1%AC%E4%BB%B6-%E8%BD%AF%E4%BB%B6spi%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">5.1.</span> <span class="nav-text">硬件&#x2F;软件spi初始化</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">boollight</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">7</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">boollight</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="Symbols count total">8k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="Reading time total">25 mins.</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
