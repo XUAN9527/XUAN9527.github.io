@@ -8,10 +8,10 @@ tags:
 categories: 
 - [嵌入式]
 - [环境搭建]
-description: Linux环境搭建Arm-gcc平台，使用Make编译，方便代码移植。此教程使用Windows10系统的Wsl+Vscode开发，Linux版本为Ubantu 20.04。
+description: Linux环境搭建Arm-gcc平台，使用Make编译，方便代码移植。此教程使用Windows10系统的Wsl+Vscode开发，Linux版本为Ubuntu 20.04。
 ---
 
-## Ubantu Wsl环境搭建
+## Ubuntu Wsl环境搭建
 
 ### Windows10系统安装子系统Wsl
 
