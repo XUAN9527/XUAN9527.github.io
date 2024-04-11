@@ -28,7 +28,7 @@
 <meta property="og:description" content="记录日常开发过程中遇到的一些小问题，以及解决方法。">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2024-01-31T00:30:02.000Z">
-<meta property="article:modified_time" content="2024-04-11T03:59:02.185Z">
+<meta property="article:modified_time" content="2024-04-11T04:01:30.753Z">
 <meta property="article:author" content="boollight">
 <meta property="article:tag" content="C语言,嵌入式软硬件,Linux,mcu">
 <meta name="twitter:card" content="summary">
@@ -202,7 +202,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2024-04-11 11:59:02" itemprop="dateModified" datetime="2024-04-11T11:59:02+08:00">2024-04-11</time>
+                <time title="Modified: 2024-04-11 12:01:30" itemprop="dateModified" datetime="2024-04-11T12:01:30+08:00">2024-04-11</time>
               </span>
 
           <br>
@@ -331,6 +331,8 @@ sudo apt upgrade
 <li><code>git branch -M main</code>将当前分支重命名为<code>main</code>，M即<code>--move --force</code>的缩写。（可以分别输入<code>git add --all</code>，<code>git commit -m &quot;first commit&quot;</code>完成对本地分支的首次提交）</li>
 <li>使用<code>git pull origin main</code>，将远程仓库的main分支拉取到本地，或者<code>git push -u origin main -f</code>将本地的xxx分支强制推送到远端main分支，其中-u是<code>--set-upstream</code>的缩写，后续会保持这个跟踪关系</li>
 </ul>
+<br>
+
 <h2 id="makefile问题汇总"><a href="#makefile问题汇总" class="headerlink" title="makefile问题汇总"></a>makefile问题汇总</h2><h3 id="修改-h文件没有重新编译"><a href="#修改-h文件没有重新编译" class="headerlink" title="修改.h文件没有重新编译"></a>修改.h文件没有重新编译</h3><p>原来的编译规则：</p>
 <pre><code>-include $(wildcard $(OUTPUT_DIR)/*/*.d)	# 包含所有生成的依赖文件，避免重复编译、提高效率
 
@@ -350,6 +352,8 @@ DEP_FILES := $(shell find $(BUILD_DIR) -type f -name &#39;*.d&#39;)# 包含所�
 /**/*.d 意思是当前目录下的二级所有文件检索，根据具体情况修改。
 /*/*/*.d 意思是当前目录下的三级所有文件检索，根据具体情况修改。
 </code></pre>
+<br>
+
 <h2 id="windows子系统wsl"><a href="#windows子系统wsl" class="headerlink" title="windows子系统wsl"></a>windows子系统wsl</h2><h3 id="arm-none-eabi-gcc工具链问题"><a href="#arm-none-eabi-gcc工具链问题" class="headerlink" title="arm-none-eabi-gcc工具链问题"></a>arm-none-eabi-gcc工具链问题</h3><p>arm-none-eabi-gcc工具链需加入用户变量：</p>
 <pre><code>export PATH=/home/xuan/OpenHarmony/install-software/gcc-arm-none-eabi-9-2019-q4-major/bin:$PATH
 </code></pre>
