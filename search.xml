@@ -7,7 +7,7 @@
 <h4 id="示例说明"><a href="#示例说明" class="headerlink" title="示例说明"></a>示例说明</h4><p>此示例在《ESP32 smart_config和airkiss配网》<br><a href="https://zhuanlan.zhihu.com/p/440454542">https://zhuanlan.zhihu.com/p/440454542</a><br><a href="https://link.zhihu.com/?target=https://blog.csdn.net/chentuo2000/article/details/121687760">https://link.zhihu.com/?target=https%3A//blog.csdn.net/chentuo2000/article/details/121687760</a><br>基础上，增加连接成功后点亮板载LED功能。<br>实现所需功能后将各功能代码分离，再将分离后的代码构造成组件，使得项目有清晰的结构，方便功能代码移植.</p>
 <h3 id="开发环境"><a href="#开发环境" class="headerlink" title="开发环境"></a>开发环境</h3><p>《Win10启用Linux子系统安装Ubuntu》<br><a href="https://link.zhihu.com/?target=https://blog.csdn.net/chentuo2000/article/details/112131624">https://link.zhihu.com/?target=https%3A//blog.csdn.net/chentuo2000/article/details/112131624</a></p>
 <p>《用乐鑫国内Gitee镜像搭建ESP32开发环境》<br><a href="https://link.zhihu.com/?target=https://blog.csdn.net/chentuo2000/article/details/113424934">https://link.zhihu.com/?target=https%3A//blog.csdn.net/chentuo2000/article/details/113424934</a></p>
-<h3 id="构建项目"><a href="#构建项目" class="headerlink" title="构建项目"></a>构建项目</h3><h4 id="拷贝-初始化例程"><a href="#拷贝-初始化例程" class="headerlink" title="拷贝 &amp;&amp; 初始化例程"></a>拷贝 &amp;&amp; 初始化例程</h4><p>将例子项目hello_world复制到ESP-IDF开发工具之外,更名为components_demo:</p>
+<h3 id="构建项目"><a href="#构建项目" class="headerlink" title="构建项目"></a>构建项目</h3><h4 id="拷贝-初始化例程"><a href="#拷贝-初始化例程" class="headerlink" title="拷贝 &amp;&amp; 初始化例程"></a>拷贝 &amp;&amp; 初始化例程</h4><p>将例子项目<code>hello_world</code>复制到ESP-IDF开发工具之外,更名为components_demo:</p>
 <pre><code>cd ~/esp
 cp -r ~/esp/esp-adf/esp-idf/examples/get-started/hello_world ./components_demo
 </code></pre>
@@ -33,7 +33,7 @@ cmake_minimum_required(VERSION 3.16)
 include($ENV&#123;IDF_PATH&#125;/tools/cmake/project.cmake)
 project(components_demo)
 </code></pre>
-<p>只需要修改project中的项目名称。</p>
+<p>只需要修改<code>project</code>中的项目名称。</p>
 <h4 id="main目录"><a href="#main目录" class="headerlink" title="main目录"></a>main目录</h4><p>CMakeLists.txt</p>
 <pre><code>idf_component_register(SRCS &quot;main.c&quot;
                 INCLUDE_DIRS &quot;.&quot;)
@@ -41,7 +41,7 @@ project(components_demo)
 <p>main.c</p>
 <figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;freertos/FreeRTOS.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;freertos/task.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;freertos/queue.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;esp_log.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;shell_port.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;log.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;nvs_flash.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="type">const</span> <span class="type">char</span> *TAG = <span class="string">&quot;sample test&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">app_main</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="type">esp_err_t</span> ret;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Initialize NVS.</span></span><br><span class="line">    ret = nvs_flash_init();</span><br><span class="line">    <span class="keyword">if</span> (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) &#123;</span><br><span class="line">        ESP_ERROR_CHECK(nvs_flash_erase());</span><br><span class="line">        ret = nvs_flash_init();</span><br><span class="line">    &#125;</span><br><span class="line">    ESP_ERROR_CHECK( ret );</span><br><span class="line"></span><br><span class="line">	esp_log_level_set(TAG, ESP_LOG_INFO);</span><br><span class="line">	ESP_LOGI(TAG,<span class="string">&quot;this is a test program&quot;</span>);</span><br><span class="line">    </span><br><span class="line">	userShellInit();</span><br><span class="line"></span><br><span class="line">	logInfo(<span class="string">&quot;log info!&quot;</span>);</span><br><span class="line">	logDebug(<span class="string">&quot;log debug!&quot;</span>);</span><br><span class="line">	logWarning(<span class="string">&quot;log warning!&quot;</span>);</span><br><span class="line">	logError(<span class="string">&quot;log error!&quot;</span>);</span><br><span class="line">	<span class="keyword">while</span>(<span class="number">1</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		logDebug(<span class="string">&quot;log loop!&quot;</span>);</span><br><span class="line">		vTaskDelay(pdMS_TO_TICKS(<span class="number">2000</span>));</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>头文件nvs_flash.h是对系统组件的引用，shell_port.h是对自定义组件的引用。</p>
-<h4 id="letter-shell组件"><a href="#letter-shell组件" class="headerlink" title="letter_shell组件"></a>letter_shell组件</h4><p>CMakeLists.txt</p>
+<h4 id="letter-shell组件"><a href="#letter-shell组件" class="headerlink" title="letter_shell组件"></a>letter_shell组件</h4><p><code>CMakeLists.txt</code>:</p>
 <pre><code>idf_component_register(
     SRCS &quot;shell.c&quot;
         &quot;shell_ext.c&quot;
@@ -54,31 +54,31 @@ project(components_demo)
 )
 </code></pre>
 <h5 id="说明："><a href="#说明：" class="headerlink" title="说明："></a>说明：</h5><p>1、PRIV_REQUIRES<br>该参数指定对其它自定义组件的依赖，即私有依赖项。</p>
-<p>PRIV_REQUIRES led表示指出在smart_config组件中要用到自定义的led组件。组件名字可以加引号，也可以不加。多个组件用空格分开。</p>
+<p><code>PRIV_REQUIRES led</code>表示指出在<code>smart_config</code>组件中要用到自定义的<code>led</code>组件。组件名字可以加引号，也可以不加。多个组件用空格分开。</p>
 <p>2、 REQUIRES<br>该参数指定对系统组件的依赖，即公共依赖项。</p>
-<p>REQUIRES esp_driver_uart 表示在letter_shell组件中要用到系统组件esp_driver_uart。</p>
+<p><code>REQUIRES esp_driver_uart</code> 表示在<code>letter_shell</code>组件中要用到系统组件<code>esp_driver_uart</code>。</p>
 <p>3、系统组件的确定</p>
 <p>对于要依赖的系统组件不像私有依赖项那样一目了然，有时我们并不清楚所要的系统组件名称。比如我们不知道需要组件wpa_supplicant，这时我们可以先编译一次，看看错误信息：</p>
 <p><img src="/../pictures/requires_error.png" alt="requires_error"></p>
-<p>在CMakeLists.txt中添加依赖组件REQUIRES esp_driver_uart，编译通过。</p>
-<h4 id="关于CMakeLists-txt文件"><a href="#关于CMakeLists-txt文件" class="headerlink" title="关于CMakeLists.txt文件"></a>关于CMakeLists.txt文件</h4><p>根和每个目录都有一个CMakeLists.txt文件，开始遇到的问题是不知道目录结构和怎样写CMakeLists.txt文件，要注意每一层目录中CMakeLists.txt文件的写法，本文的例子给出了一个简单的示范。对于复杂的项目还需要更多编写CMakeLists.txt文件的知识，请看简介中给出的官方文档。</p>
+<p>在<code>CMakeLists.txt</code>中添加依赖组件<code>REQUIRES esp_driver_uart</code>，编译通过。</p>
+<h4 id="关于CMakeLists-txt文件"><a href="#关于CMakeLists-txt文件" class="headerlink" title="关于CMakeLists.txt文件"></a>关于CMakeLists.txt文件</h4><p>根和每个目录都有一个<code>CMakeLists.txt</code>文件，开始遇到的问题是不知道目录结构和怎样写<code>CMakeLists.txt</code>文件，要注意每一层目录中<code>CMakeLists.txt</code>文件的写法，本文的例子给出了一个简单的示范。对于复杂的项目还需要更多编写<code>CMakeLists.txt</code>文件的知识，请看简介中给出的官方文档。</p>
 <h2 id="ESP32移植Letter-shell问题"><a href="#ESP32移植Letter-shell问题" class="headerlink" title="ESP32移植Letter_shell问题"></a>ESP32移植Letter_shell问题</h2><h3 id="添加shell组件及其log，编译出错"><a href="#添加shell组件及其log，编译出错" class="headerlink" title="添加shell组件及其log，编译出错"></a>添加shell组件及其log，编译出错</h3><h4 id="可能原因"><a href="#可能原因" class="headerlink" title="可能原因:"></a>可能原因:</h4><ol>
-<li><p>宏使用不正确: 如果 SHELL_FREE 旨在实际释放与 companions 对象关联的内存或资源，则当前定义不正确。它应该调用内存管理函数或执行其他必要的清理任务。</p>
+<li><p>宏使用不正确: 如果 SHELL_FREE 旨在实际释放与 <code>companions</code> 对象关联的内存或资源，则当前定义不正确。它应该调用内存管理函数或执行其他必要的清理任务。</p>
 </li>
-<li><p>编译器警告被视为错误: -Werror&#x3D;unused-value 标志已启用，它将警告视为错误。即使宏使用本身可能不是关键问题，这也可能导致编译失败。</p>
+<li><p>编译器警告被视为错误: <code>-Werror=unused-value</code> 标志已启用，它将警告视为错误。即使宏使用本身可能不是关键问题，这也可能导致编译失败。</p>
 </li>
 </ol>
 <h4 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案:"></a>解决方案:</h4><h5 id="修复-SHELL-FREE-定义"><a href="#修复-SHELL-FREE-定义" class="headerlink" title="修复 SHELL_FREE 定义:"></a>修复 SHELL_FREE 定义:</h5><ol>
-<li>如果 companions 需要内存分配，请更新 shell_cfg.h 中的 SHELL_FREE 宏以调用适当的内存管理函数，例如 free()。</li>
-<li>如果 companions 不需要内存管理，请从 shell_companion.c 中的第 57 行删除 SHELL_FREE 调用；或者将shell_cfg.h 中的第 36 行 SHELL_USING_COMPANION 的宏定义改为0。</li>
+<li>如果 <code>companions</code> 需要内存分配，请更新 <code>shell_cfg.h</code> 中的 SHELL_FREE 宏以调用适当的内存管理函数，例如 <code>free()</code>。</li>
+<li>如果 <code>companions</code> 不需要内存管理，请从 <code>shell_companion.c</code> 中的第 57 行删除 <code>SHELL_FREE</code> 调用；或者将<code>shell_cfg.h</code> 中的第 36 行 <code>SHELL_USING_COMPANION</code> 的宏定义改为 0。</li>
 </ol>
-<h5 id="禁用-Werror-unused-value-如果适用"><a href="#禁用-Werror-unused-value-如果适用" class="headerlink" title="禁用 -Werror&#x3D;unused-value (如果适用):"></a>禁用 -Werror&#x3D;unused-value (如果适用):</h5><p>如果您希望将未使用的值警告视为警告而不是错误，您可以暂时在编译期间禁用 -Werror&#x3D;unused-value 标志。但是，通常建议修复底层问题以避免潜在的内存泄漏或资源管理问题。</p>
+<h5 id="禁用-Werror-unused-value-如果适用"><a href="#禁用-Werror-unused-value-如果适用" class="headerlink" title="禁用 -Werror&#x3D;unused-value (如果适用):"></a>禁用 -Werror&#x3D;unused-value (如果适用):</h5><p>如果您希望将未使用的值警告视为警告而不是错误，您可以暂时在编译期间禁用 <code>-Werror=unused-value</code> 标志。但是，通常建议修复底层问题以避免潜在的内存泄漏或资源管理问题。</p>
 <h5 id="其他提示"><a href="#其他提示" class="headerlink" title="其他提示:"></a>其他提示:</h5><ol>
-<li>提供有关您的项目更多信息，例如具体的 ESP-IDF 版本、涉及的组件以及 SHELL_FREE 宏的用途。这将有助于了解根本原因并提供更定制的指导。</li>
-<li>分享 shell_cfg.h 头文件和 shell_companion.c 文件的相关部分，以便分析代码结构和上下文。<br>考虑使用调试器逐步执行代码并检查 companions 在 SHELL_FREE 调用之前和之后的 值，以了解其使用情况和潜在的内存管理问题。</li>
+<li>提供有关您的项目更多信息，例如具体的 ESP-IDF 版本、涉及的组件以及 <code>SHELL_FREE</code> 宏的用途。这将有助于了解根本原因并提供更定制的指导。</li>
+<li>分享 <code>shell_cfg.h</code> 头文件和 <code>shell_companion.c</code> 文件的相关部分，以便分析代码结构和上下文。<br>考虑使用调试器逐步执行代码并检查 <code>companions</code> 在 <code>SHELL_FREE</code> 调用之前和之后的 值，以了解其使用情况和潜在的内存管理问题。</li>
 <li>通过遵循这些步骤并提供更多信息，我可以帮助您有效地解决编译错误并确保您的 ESP-IDF 项目成功构建。</li>
 </ol>
-<h4 id="配置shell优先级"><a href="#配置shell优先级" class="headerlink" title="配置shell优先级"></a>配置shell优先级</h4><p>将shell的freertos优先级设置为 tskIDLE_PRIORITY，为0级，跟空闲函数优先级一样，所有其他优先级任务执行完后才会执行 tskIDLE_PRIORITY 优先级任务。</p>
+<h4 id="配置shell优先级"><a href="#配置shell优先级" class="headerlink" title="配置shell优先级"></a>配置shell优先级</h4><p>将shell的freertos优先级设置为 <code>tskIDLE_PRIORITY</code>，为0级，跟空闲函数优先级一样，所有其他优先级任务执行完后才会执行 <code>tskIDLE_PRIORITY</code>优先级任务。</p>
 <h4 id="源代码例程"><a href="#源代码例程" class="headerlink" title="源代码例程"></a>源代码例程</h4><p><a href="git@github.com:XUAN9527/components_demo.git">ESP32移植letter_shell组件例程</a></p>
 ]]></content>
       <categories>
@@ -122,9 +122,9 @@ cd ~/esp/esp-adf
 git clone git@github.com:espressif/esp-idf.git
 </code></pre>
 <h3 id="设置环境变量"><a href="#设置环境变量" class="headerlink" title="设置环境变量"></a>设置环境变量</h3><p>按自己实际路径，可按自己喜好设置，也可不配置，手动敲指令也可。</p>
-<p>vi ~&#x2F;.bashrc<br>在后面加上以下代码：</p>
+<p><code>vi ~/.bashrc</code><br>在后面加上以下代码：</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment">#开启ESP32编译环境</span></span><br><span class="line"><span class="built_in">alias</span> get-idf=<span class="string">&#x27;. $HOME/esp/esp-adf/esp-idf/export.sh&#x27;</span></span><br><span class="line"><span class="built_in">alias</span> get-adf=<span class="string">&#x27;. $HOME/esp/esp-adf/export.sh&#x27;</span></span><br><span class="line"><span class="comment">#打开本地文件夹（wsl）</span></span><br><span class="line"><span class="built_in">alias</span> open-file=<span class="string">&#x27;explorer.exe .&#x27;</span></span><br><span class="line"><span class="comment">#烧录到设备，并打开监视器，/dev/ttyS15为USB挂载端口，需测试后填写，115200为监视器波特率，与设备UART0波特率对应</span></span><br><span class="line"><span class="built_in">alias</span> esp-download=<span class="string">&#x27;idf.py -p /dev/ttyS15 -b 115200 flash monitor&#x27;</span></span><br><span class="line"><span class="built_in">export</span> PATH=/home/qx_song/esp/esp-adf/esp-idf/tools:<span class="variable">$PATH</span></span><br><span class="line"><span class="built_in">export</span> IDF_PATH=/home/qx_song/esp/esp-adf/esp-idf</span><br><span class="line"><span class="built_in">export</span> ADF_PATH=/home/qx_song/esp/esp-adf</span><br></pre></td></tr></table></figure>
-<p>保存退出 :wq</p>
+<p>保存退出 <code>:wq</code></p>
 <h3 id="设置工具"><a href="#设置工具" class="headerlink" title="设置工具"></a>设置工具</h3><p>除了 ESP-IDF 本身，还需要为支持 ESP32 的项目安装 ESP-IDF 使用的各种工具，比如编译器、调试器、Python 包等。</p>
 <pre><code>cd ~/esp/esp-adf/esp-idf
 </code></pre>
@@ -140,7 +140,7 @@ git clone git@github.com:espressif/esp-idf.git
 <p>或者使用快捷指令：</p>
 <pre><code>get-idf
 </code></pre>
-<h2 id="ESP32工程示例"><a href="#ESP32工程示例" class="headerlink" title="ESP32工程示例"></a>ESP32工程示例</h2><h3 id="开始创建工程"><a href="#开始创建工程" class="headerlink" title="开始创建工程"></a>开始创建工程</h3><p>现在，可以准备开发 ESP32 应用程序了。<br>从 ESP-IDF 中 examples 目录下的 get-started&#x2F;hello_world 工程开始，将 get-started&#x2F;hello_world 工程复制至本地的 ~&#x2F;esp 目录下：</p>
+<h2 id="ESP32工程示例"><a href="#ESP32工程示例" class="headerlink" title="ESP32工程示例"></a>ESP32工程示例</h2><h3 id="开始创建工程"><a href="#开始创建工程" class="headerlink" title="开始创建工程"></a>开始创建工程</h3><p>现在，可以准备开发 ESP32 应用程序了。<br>从 ESP-IDF 中 examples 目录下的 <code>get-started/hello_world</code> 工程开始，将 <code>get-started/hello_world</code> 工程复制至本地的 ~&#x2F;esp 目录下：</p>
 <pre><code>cd ~/esp
 get-idf
 cp -r $IDF_PATH/examples/get-started/hello_world .
@@ -157,7 +157,7 @@ Component config -&gt; FreeRTOS -&gt;  [*]Run FreeRTOS only on first core
 </code></pre>
 <h3 id="烧录工程"><a href="#烧录工程" class="headerlink" title="烧录工程"></a>烧录工程</h3><pre><code>idf.py -p PORT flash
 </code></pre>
-<p>请将 PORT 替换为 ESP32 开发板的串口名称。如果 PORT 未经定义，idf.py 将尝试使用可用的串口自动连接。</p>
+<p>请将 PORT 替换为 ESP32 开发板的串口名称。如果 PORT 未经定义，<code>idf.py</code> 将尝试使用可用的串口自动连接。</p>
 <h3 id="合并执行构建、烧录和监视过程："><a href="#合并执行构建、烧录和监视过程：" class="headerlink" title="合并执行构建、烧录和监视过程："></a>合并执行构建、烧录和监视过程：</h3><pre><code>idf.py -p PORT [-b BAUD] flash monitor
 </code></pre>
 <p>注：[-b BAUD] 和 monitor 配合使用，BAUD为程序中UART0的波特率	</p>
@@ -172,7 +172,7 @@ idf.py -p [挂载端口]   -b [波特率] flash monitor
 <h3 id="挂载端口"><a href="#挂载端口" class="headerlink" title="挂载端口"></a>挂载端口</h3><h4 id="windows-子系统-wsl"><a href="#windows-子系统-wsl" class="headerlink" title="windows 子系统 wsl"></a>windows 子系统 wsl</h4><p>输入烧录指令：</p>
 <pre><code>idf.py flash
 </code></pre>
-<p>观察终端设备是挂载在哪个端口上，有ERROR忽略，选择端口例如 &#x2F;dev&#x2F;ttyS15，程序中UART0的波特率115200，下次就可以直接输此端口就可以烧录啦。</p>
+<p>观察终端设备是挂载在哪个端口上，有ERROR忽略，选择端口例如 <code>/dev/ttyS15</code>，程序中<code>UART0</code>的波特率115200，下次就可以直接输此端口就可以烧录啦。</p>
 <pre><code>idf.py -p /dev/ttyS15 -b 115200 flash monitor	
 </code></pre>
 <p>如果 ESP-IDF 监视器在烧录后很快发生错误，或打印信息全是乱码（如下），很有可能是因为开发板采用了 26 MHz 晶振，而 ESP-IDF 默认支持大多数开发板使用的 40 MHz 晶振。</p>
@@ -222,7 +222,7 @@ esp-download
 <h6 id="对比波形"><a href="#对比波形" class="headerlink" title="对比波形"></a>对比波形</h6><p>对比协议来看基本上是一致的，用JI2C工具测的i2c波形也基本上一致，但是我自己写的软件i2c驱动，Vishay可以正常使用，亿光读取的数据就有问题，用逻辑分析仪抓一波波形分析一下。</p>
 <p>发现每次读完都会多恢复一个ack，而协议上读完最后一个字节需要恢复nack。</p>
 <h6 id="修改了以下代码"><a href="#修改了以下代码" class="headerlink" title="修改了以下代码"></a>修改了以下代码</h6><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">static int i2c_send_ack_or_nack(struct drv_i2c_bit_ops *bus, int ack)</span><br><span class="line">&#123;</span><br><span class="line">    struct drv_i2c_bit_ops *ops = bus;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (ack)				//if(ack &gt;= 0) 改成 <span class="keyword">if</span>(ack)</span><br><span class="line">        SET_SDA(ops, 0);</span><br><span class="line">    i2c_delay(ops);</span><br><span class="line">    <span class="keyword">if</span> (SCL_H(ops) &lt; 0)</span><br><span class="line">    &#123;</span><br><span class="line">//        logVerbose(<span class="string">&quot;ACK or NACK timeout.&quot;</span>);</span><br><span class="line">        <span class="built_in">return</span> -2;</span><br><span class="line">    &#125;</span><br><span class="line">    SCL_L(ops);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">return</span> 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>static int i2c_send_ack_or_nack(struct drv_i2c_bit_ops *bus, int ack){}<br>函数主要处理响应回复。</p>
+<p><code>static int i2c_send_ack_or_nack(struct drv_i2c_bit_ops *bus, int ack)&#123;&#125;</code><br>函数主要处理响应回复。</p>
 <pre><code>if(ack &gt;= 0)表示每次都会回复ack/nack
 if(ack)表示除最后一次数据不回复，其他每次都会回复ack/nack
 </code></pre>
@@ -294,12 +294,12 @@ if(ack)表示除最后一次数据不回复，其他每次都会回复ack/nack
 <br>
 
 <h2 id="RT-THREAD调试问题"><a href="#RT-THREAD调试问题" class="headerlink" title="RT-THREAD调试问题"></a>RT-THREAD调试问题</h2><h3 id="串口通信异常"><a href="#串口通信异常" class="headerlink" title="串口通信异常"></a>串口通信异常</h3><ul>
-<li>打开UART7接收为DMA IDLE中断，申请一个超时定时器，发送&#x2F;接受各一个任务，发送&#x2F;接受两个队列,以下是错误信息：</li>
+<li>打开UART7接收为<code>DMA IDLE</code>中断，申请一个超时定时器，发送&#x2F;接受各一个任务，发送&#x2F;接受两个队列,以下是错误信息：</li>
 </ul>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">psr: 0x60000000</span><br><span class="line">r00: 0x00000000</span><br><span class="line">r01: 0x20007978</span><br><span class="line">r02: 0x20007978</span><br><span class="line">r03: 0x00000000</span><br><span class="line">r04: 0x00000000</span><br><span class="line">r05: 0x00000000</span><br><span class="line">r06: 0x00000000</span><br><span class="line">r07: 0x20000920</span><br><span class="line">r08: 0x20005908</span><br><span class="line">r09: 0x20000568</span><br><span class="line">r10: 0xdeadbeef</span><br><span class="line">r11: 0xdeadbeef</span><br><span class="line">r12: 0x00000000</span><br><span class="line"> lr: 0x0801156f</span><br><span class="line"> pc: 0x00000000</span><br><span class="line">hard fault on thread: timer</span><br><span class="line"></span><br><span class="line">E [00:00:07,324] (rtt-nano/src/kservice.c) rt_assert_handler [1340]: (rt_object_get_type(&amp;mq-&gt;parent.parent) == RT_Object_Class_MessageQueue) assertion failed at <span class="keyword">function</span>:rt_mq_send_wait, line number:2026 </span><br><span class="line"></span><br><span class="line">E [00:00:00,659] (rtt-nano/src/kservice.c) rt_assert_handler [1340]: (rt_object_get_type(&amp;timer-&gt;parent) == RT_Object_Class_Timer) assertion failed at <span class="keyword">function</span>:rt_timer_control, line number:474 </span><br><span class="line"></span><br><span class="line">E [00:00:39,282] (rtt-nano/src/kservice.c) rt_assert_handler [1340]: (rt_object_get_type((rt_object_t)thread) == RT_Object_Class_Thread) assertion failed at function:rt_thread_resume, line number:<span class="number">760</span> </span><br></pre></td></tr></table></figure>
 
 <ul>
-<li>问题定位到指针变量p_srx_mq[0]和&amp;p_srx_mq[0]的区别，代码如下：</li>
+<li>问题定位到指针变量<code>p_srx_mq[0]</code>和<code>&amp;p_srx_mq[0]</code>的区别，代码如下：</li>
 </ul>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment">#define COMM_MAX_NUM     3</span></span><br><span class="line">static uint8_t *p_srx_mq[COMM_MAX_NUM];</span><br><span class="line">static struct comm_serial_mq srx_mq_data[COMM_MAX_NUM];</span><br><span class="line">static struct rt_timer comm_rx_stimer[COMM_MAX_NUM];</span><br><span class="line"></span><br><span class="line">static void comm_serial_recieve_data_deinit(uint8_t num)</span><br><span class="line">&#123;</span><br><span class="line">	srx_mq_data[num].size = 0;</span><br><span class="line">	p_srx_mq[num] = srx_mq_data[num].data;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">static int usart_key_rx_indicate(ESERIAL_DEV serial_dev, uint16_t size)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">if</span>(p_srx_mq[0] - srx_mq_data[0].data + size &gt; sizeof(srx_mq_data[0].data))</span><br><span class="line">	&#123;</span><br><span class="line">		comm_serial_recieve_data_deinit(0);</span><br><span class="line">		<span class="built_in">return</span> -1;</span><br><span class="line">	&#125;</span><br><span class="line">	rt_timer_start(&amp;comm_rx_stimer[0]);                   // 启动定时器</span><br><span class="line">	drv_fifo_data_get(serial_dev, (uint8_t *)p_srx_mq[0], size);</span><br><span class="line">	logPrintln(<span class="string">&quot;test = [%p][%p][%p]&quot;</span>,p_srx_mq[0],&amp;p_srx_mq[0],srx_mq_data[0].data);</span><br><span class="line">	p_srx_mq[0] += size;</span><br><span class="line">	srx_mq_data[0].size += size;</span><br><span class="line">	<span class="built_in">return</span> 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
@@ -471,16 +471,16 @@ README 文件
 <li><p>gcc-arm-none-eabi工具链安装</p>
 <ul>
 <li>手动安装：<a href="https://developer.arm.com/downloads/-/gnu-rm">官方链接地址</a> 下载所需版本；  <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install bzip2</span><br><span class="line">sudo tar -xvf ~/n32_gcc/software_package/gcc-arm-none-eabi-9-2019-q4-major-x86_64-linux.tar.bz2 -C ~/n32_gcc</span><br></pre></td></tr></table></figure></li>
-<li>自动安装：sudo apt-get install gcc-arm-none-eabi</li>
-<li>打开 ~&#x2F;.bashrc</li>
-<li>添加export PATH&#x3D;$PATH:~&#x2F;n32_gcc&#x2F;gcc-arm-none-eabi-9-2019-q4-major&#x2F;bin</li>
-<li>添加alias open-file&#x3D;’explorer.exe .’</li>
-<li>使能用户环境变量source ~&#x2F;.bashrc</li>
+<li>自动安装：<code>sudo apt-get install gcc-arm-none-eabi</code></li>
+<li>打开 <code>~/.bashrc</code></li>
+<li>添加<code>export PATH=$PATH:~/n32_gcc/gcc-arm-none-eabi-9-2019-q4-major/bin</code></li>
+<li>添加<code>alias open-file=&#39;explorer.exe .&#39;</code></li>
+<li>使能用户环境变量<code>source ~/.bashrc</code></li>
 </ul>
 </li>
 <li><p>Make</p>
 <ul>
-<li>sudo apt-get install make</li>
+<li><code>sudo apt-get install make</code></li>
 </ul>
 </li>
 </ul>
@@ -506,19 +506,19 @@ README 文件
   <entry>
     <title>杂项</title>
     <url>/2024/01/31/%E6%9D%82%E9%A1%B9/</url>
-    <content><![CDATA[<h2 id="Linux-打开端口-bashrc不会自动刷新"><a href="#Linux-打开端口-bashrc不会自动刷新" class="headerlink" title="Linux 打开端口~&#x2F;.bashrc不会自动刷新"></a>Linux 打开端口~&#x2F;.bashrc不会自动刷新</h2><p>解决linux每次打开新终端都要重新source ~&#x2F;.bashrc问题<br>执行以下代码：</p>
+    <content><![CDATA[<h2 id="Linux-打开端口-bashrc不会自动刷新"><a href="#Linux-打开端口-bashrc不会自动刷新" class="headerlink" title="Linux 打开端口~&#x2F;.bashrc不会自动刷新"></a>Linux 打开端口~&#x2F;.bashrc不会自动刷新</h2><p>解决linux每次打开新终端都要重新<code>source ~/.bashrc</code>问题<br>执行以下代码：</p>
 <pre><code>vi ~/.bash_profile
 </code></pre>
 <p>有可能此文件是空白新建的，无所谓。然后在此文件末尾加入：</p>
 <figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> [ -f ~/.bashrc ];then</span><br><span class="line">source ~/.bashrc</span><br><span class="line">fi</span><br></pre></td></tr></table></figure>
-<p>然后:wq保存即可。<br>此时打开新终端可以自动执行source ~&#x2F;.bashrc</p>
+<p>然后<code>:wq</code>保存即可。<br>此时打开新终端可以自动执行<code>source ~/.bashrc</code></p>
 <h2 id="J-Link-J-Flash"><a href="#J-Link-J-Flash" class="headerlink" title="J-Link&#x2F;J-Flash"></a>J-Link&#x2F;J-Flash</h2><p><strong>J-Flash批处理脚本配置烧录：</strong>当然，前提是要添加J-Link的可执行程序路径到<code>$PATH</code>环境变量中</p>
 <ul>
-<li>program.bat脚本代码如下，参考修改即可：<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">echo start...</span><br><span class="line"></span><br><span class="line">JLink -device N32L406CB -if swd -speed 4000 -CommanderScript &quot;C:\Users\Breo\Desktop\Wireless moxibustion\Software\program.jlink&quot;</span><br></pre></td></tr></table></figure></li>
-<li>program.jlink文件代码如下，其中目标设备、文件路径、烧录地址等根据需要配置：<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">connect</span><br><span class="line">device N32L406CB</span><br><span class="line">si SWD</span><br><span class="line">speed 4000</span><br><span class="line">h		// halt-停止</span><br><span class="line">r		// 复位，可以考虑去掉</span><br><span class="line">erase		// 或 erase 0x8002800，去掉也行，但可能会出现error fail address 0x00000000错误提示</span><br><span class="line"></span><br><span class="line">loadfile app.bin 0x8002800      // loadfile app.hex 或 loadfile app.bin 0x8000000</span><br><span class="line">verifybin app.bin 0x8002800</span><br><span class="line">r</span><br><span class="line">go		// r go表示reset and run</span><br><span class="line">q		// 退出J-Link命令行工具</span><br></pre></td></tr></table></figure></li>
+<li><code>program.bat</code>脚本代码如下，参考修改即可：<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">echo start...</span><br><span class="line"></span><br><span class="line">JLink -device N32L406CB -if swd -speed 4000 -CommanderScript &quot;C:\Users\Breo\Desktop\Wireless moxibustion\Software\program.jlink&quot;</span><br></pre></td></tr></table></figure></li>
+<li><code>program.jlink</code>文件代码如下，其中目标设备、文件路径、烧录地址等根据需要配置：<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">connect</span><br><span class="line">device N32L406CB</span><br><span class="line">si SWD</span><br><span class="line">speed 4000</span><br><span class="line">h		// halt-停止</span><br><span class="line">r		// 复位，可以考虑去掉</span><br><span class="line">erase		// 或 erase 0x8002800，去掉也行，但可能会出现error fail address 0x00000000错误提示</span><br><span class="line"></span><br><span class="line">loadfile app.bin 0x8002800      // loadfile app.hex 或 loadfile app.bin 0x8000000</span><br><span class="line">verifybin app.bin 0x8002800</span><br><span class="line">r</span><br><span class="line">go		// r go表示reset and run</span><br><span class="line">q		// 退出J-Link命令行工具</span><br></pre></td></tr></table></figure></li>
 </ul>
-<h2 id="Ubuntu-无法更新问题"><a href="#Ubuntu-无法更新问题" class="headerlink" title="Ubuntu 无法更新问题"></a>Ubuntu 无法更新问题</h2><p>Ubuntu 无法使用apt update</p>
-<h3 id="更改软件源"><a href="#更改软件源" class="headerlink" title="更改软件源"></a>更改软件源</h3><p>编辑 &#x2F;etc&#x2F;apt&#x2F;sources.list 文件，将以下内容添加到文件末尾</p>
+<h2 id="Ubuntu-无法更新问题"><a href="#Ubuntu-无法更新问题" class="headerlink" title="Ubuntu 无法更新问题"></a>Ubuntu 无法更新问题</h2><p>Ubuntu 无法使用<code>apt update</code></p>
+<h3 id="更改软件源"><a href="#更改软件源" class="headerlink" title="更改软件源"></a>更改软件源</h3><p>编辑 <code>/etc/apt/sources.list</code> 文件，将以下内容添加到文件末尾</p>
 <pre><code>deb https://mirrors.aliyun.com/ubuntu/ jammy main restricted universe multiverse
 deb-src https://mirrors.aliyun.com/ubuntu/ jammy main restricted universe multiverse
 
@@ -533,7 +533,7 @@ sudo apt autoclean
 </code></pre>
 <h3 id="尝试更新系统"><a href="#尝试更新系统" class="headerlink" title="尝试更新系统"></a>尝试更新系统</h3><pre><code>sudo apt update
 </code></pre>
-<p>显示 ModuleNotFoundError: No module named ‘apt_pkg’，重新安装 “apt_pkg” 模块：</p>
+<p>显示 <code>ModuleNotFoundError: No module named &#39;apt_pkg&#39;</code>，重新安装 “<code>apt_pkg</code>“ 模块：</p>
 <pre><code>sudo apt install --reinstall python3-apt
 </code></pre>
 <p>显示 ERROR：</p>
@@ -546,7 +546,7 @@ sudo apt autoclean
 <pre><code>sudo apt update
 sudo apt upgrade
 </code></pre>
-<p>执行sudo apt upgrade后显示ERROR：</p>
+<p>执行<code>sudo apt upgrade</code>后显示ERROR：</p>
 <pre><code>Errors were encountered while processing:
 /tmp/apt-dpkg-install-cQBLJW/626-linux-iot-tools-common_5.4.0-1030.31_all.deb
 E: Sub-process /usr/bin/dpkg returned an error code (1)
@@ -574,8 +574,8 @@ sudo apt upgrade
 
 <p><code>git pull</code>会自动获取远程仓库的更新，并且合并到当前分支上，相当于<code>git fetch</code> + <code>git merge FETCH_HEAD</code></p>
 <ul>
-<li>将远程仓库中指定分支的最新提交 ID 保存到本地的 FETCH_HEAD 分支中</li>
-<li>将 FETCH_HEAD 分支合并到当前工作分支中</li>
+<li>将远程仓库中指定分支的最新提交 ID 保存到本地的 <code>FETCH_HEAD</code> 分支中</li>
+<li>将 <code>FETCH_HEAD</code> 分支合并到当前工作分支中</li>
 </ul>
 <h3 id="基础非典型操作"><a href="#基础非典型操作" class="headerlink" title="基础非典型操作"></a>基础非典型操作</h3><h3 id="本地git配置"><a href="#本地git配置" class="headerlink" title="本地git配置"></a>本地git配置</h3><br>
 
@@ -611,7 +611,7 @@ sudo apt upgrade
 <h2 id="makefile问题汇总"><a href="#makefile问题汇总" class="headerlink" title="makefile问题汇总"></a>makefile问题汇总</h2><h3 id="修改-h文件没有重新编译"><a href="#修改-h文件没有重新编译" class="headerlink" title="修改.h文件没有重新编译"></a>修改.h文件没有重新编译</h3><p>原来的编译规则：</p>
 <pre><code>-include $(wildcard $(OUTPUT_DIR)/*/*.d)	# 包含所有生成的依赖文件，避免重复编译、提高效率
 
-/*/*.d 意思是当前目录下的二级所有文件检索。
+/*/*.d 当前目录下的二级所有文件检索。
 </code></pre>
 <p>修改为以下编译规则：</p>
 <pre><code># 找到所有的 .d 文件
@@ -624,8 +624,8 @@ DEP_FILES := $(shell find $(BUILD_DIR) -type f -name &#39;*.d&#39;)# 包含所�
 <pre><code>-include $(wildcard $(OUTPUT_DIR)/**/*.d)
 -include $(wildcard $(OUTPUT_DIR)/*/*/*.d)
 
-/**/*.d 意思是当前目录下的二级所有文件检索，根据具体情况修改。
-/*/*/*.d 意思是当前目录下的三级所有文件检索，根据具体情况修改。
+/**/*.d 当前目录下的二级所有文件检索，根据具体情况修改。
+/*/*/*.d 当前目录下的三级所有文件检索，根据具体情况修改。
 </code></pre>
 <br>
 
@@ -647,24 +647,27 @@ DEP_FILES := $(shell find $(BUILD_DIR) -type f -name &#39;*.d&#39;)# 包含所�
 <p><strong>3. 打包 Python 程序</strong></p>
 <p><strong>参数说明：</strong></p>
 <ul>
-<li>-F：生成单一可执行文件。</li>
-<li>-D：生成包含所有依赖项的目录。</li>
-<li>-n：指定可执行文件名。</li>
-<li>–distpath：指定可执行文件输出目录。</li>
-<li>–noconfirm：覆盖输出文件时无需确认。</li>
+<li><code>-F</code>：生成单一可执行文件。</li>
+<li><code>-D</code>：生成包含所有依赖项的目录。</li>
+<li><code>-n</code>：指定可执行文件名。</li>
+<li><code>--distpath</code>：指定可执行文件输出目录。</li>
+<li><code>--noconfirm</code>：覆盖输出文件时无需确认。</li>
 </ul>
 <p><strong>以下是一些常用的高级选项：</strong></p>
 <ul>
-<li>–hidden-import：指定要隐藏导入的模块。</li>
-<li>–exclude-module：指定要排除的模块。</li>
-<li>–onefile：将所有文件打包成一个可执行文件。</li>
-<li>–runtime：指定 Python 运行时版本。</li>
+<li><code>--hidden-import</code>：指定要隐藏导入的模块。</li>
+<li><code>--exclude-module</code>：指定要排除的模块。</li>
+<li><code>--onefile</code>：将所有文件打包成一个可执行文件。</li>
+<li><code>--runtime</code>：指定 Python 运行时版本。</li>
 </ul>
 <p><strong>执行规则:</strong></p>
 <pre><code>cd new_file,copy file.py and file.ico
 pyinstaller -F -w (-i icofile) 文件名.py
 </code></pre>
-<p><strong>example:</strong><br>    pyinstaller -F file.py<br>    pyinstaller -F -w -i file.ico file.py</p>
+<p><strong>example:</strong></p>
+<pre><code>pyinstaller -F file.py
+pyinstaller -F -w -i file.ico file.py
+</code></pre>
 <br>
 
 <p><strong>4. 运行可执行文件</strong></p>
@@ -679,21 +682,21 @@ pyinstaller -F -w (-i icofile) 文件名.py
 <p><strong>6. 实际应用场景</strong></p>
 <ul>
 <li>单独使用：Linux环境下单独执行使用。</li>
-<li>集成在makefile中，使用make编译自动生成文件：<ul>
-<li>将papp_up和mix_10K打包至tools文件夹，放在makefile同一目录下。</li>
-<li>需要bootloder.bin在..&#x2F;bootloader目录下。</li>
+<li>集成在<code>makefile</code>中，使用<code>make</code>编译自动生成文件：<ul>
+<li>将<code>papp_up</code>和<code>mix_10K</code>打包至<code>tools</code>文件夹，放在<code>makefile</code>同一目录下。</li>
+<li>需要<code>bootloder.bin</code>在<code>../bootloader</code>目录下。</li>
 <li>修改makefile生成规则。<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">.PHONY : clean all</span><br><span class="line"></span><br><span class="line">all: $(TARGET).bin $(TARGET).<span class="built_in">list</span> $(TARGET).hex</span><br><span class="line">	$(SZ) $(TARGET).elf</span><br><span class="line">	@make copy</span><br><span class="line">	@make mix</span><br><span class="line"></span><br><span class="line">.PHONY: copy</span><br><span class="line"></span><br><span class="line">copy: $(TARGET).bin</span><br><span class="line">	cp $(TARGET).bin app.bin</span><br><span class="line">	cp ../bootloader/bootloader.bin bootloader.bin</span><br><span class="line"><span class="meta">#	cp $(TARGET).hex app.hex</span></span><br><span class="line"></span><br><span class="line">mix:</span><br><span class="line">	./tools/papp_up</span><br><span class="line">	./tools/mix_10K</span><br><span class="line">	$(OC) -I binary -O ihex --change-addresses <span class="number">0x8000000</span> mix.bin mix.hex</span><br><span class="line">	rm bootloader.bin</span><br><span class="line">	rm app.bin</span><br><span class="line">	rm mix.bin</span><br><span class="line"></span><br><span class="line">clean:</span><br><span class="line">	rm -rf $(BUILD_DIR)</span><br><span class="line">	rm papp.bin</span><br><span class="line">	rm mix.hex</span><br></pre></td></tr></table></figure></li>
 </ul>
 </li>
 </ul>
 <br>
 
-<h2 id="可变参数函数详解"><a href="#可变参数函数详解" class="headerlink" title="可变参数函数详解"></a>可变参数函数详解</h2><p>在C语言中，printf 是一个标准库函数，用于在终端或其他输出设备上打印格式化的文本。它是一个<strong>可变参数函数</strong>，接受一个格式字符串作为第一个参数，后面是可变数量的参数，用于替换格式字符串中的格式占位符。</p>
-<p>让我们来详细解析一下可变参数函数和宏，以及如何实现一个类似于 printf 的函数。</p>
+<h2 id="可变参数函数详解"><a href="#可变参数函数详解" class="headerlink" title="可变参数函数详解"></a>可变参数函数详解</h2><p>在C语言中，<code>printf</code> 是一个标准库函数，用于在终端或其他输出设备上打印格式化的文本。它是一个<strong>可变参数函数</strong>，接受一个格式字符串作为第一个参数，后面是可变数量的参数，用于替换格式字符串中的格式占位符。</p>
+<p>让我们来详细解析一下可变参数函数和宏，以及如何实现一个类似于 <code>printf</code> 的函数。</p>
 <p><strong>1. 可变参数函数：</strong></p>
 <ul>
 <li>可变参数函数允许在函数定义中接受不定数量的参数。</li>
-<li>C语言提供了 stdarg.h 头文件来支持可变参数函数的实现。</li>
+<li>C语言提供了 <code>stdarg.h</code> 头文件来支持可变参数函数的实现。</li>
 <li>下面是一个示例代码，展示了如何实现一个可变参数函数 sum，它接受一个整数参数 count，表示接下来的可变参数的数量：</li>
 </ul>
 <figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdarg.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">sum</span><span class="params">(<span class="type">int</span> count, ...)</span> &#123;</span><br><span class="line">    <span class="type">int</span> total = <span class="number">0</span>;</span><br><span class="line">    va_list args;</span><br><span class="line">    va_start(args, count);</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; count; i++) &#123;</span><br><span class="line">        <span class="type">int</span> num = va_arg(args, <span class="type">int</span>);</span><br><span class="line">        total += num;</span><br><span class="line">    &#125;</span><br><span class="line">    va_end(args);</span><br><span class="line">    <span class="keyword">return</span> total;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="type">int</span> result = sum(<span class="number">4</span>, <span class="number">10</span>, <span class="number">20</span>, <span class="number">30</span>, <span class="number">40</span>);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;Sum: %d\n&quot;</span>, result);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -706,13 +709,13 @@ pyinstaller -F -w (-i icofile) 文件名.py
 <p><strong>2. 可变参数宏：</strong></p>
 <ul>
 <li>可变参数宏允许在宏调用中接受可变数量的参数。</li>
-<li>在C语言中，可变参数宏使用 <strong>VA_ARGS</strong> 表示可变参数的部分。</li>
-<li>下面是一个示例代码，展示了如何定义一个可变参数宏 PRINT_VALUES，它使用 printf 函数来打印可变数量的值:</li>
+<li>在C语言中，可变参数宏使用 <code>__VA_ARGS__</code> 表示可变参数的部分。</li>
+<li>下面是一个示例代码，展示了如何定义一个可变参数宏 <code>PRINT_VALUES</code>，它使用 printf 函数来打印可变数量的值:</li>
 </ul>
 <figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PRINT_VALUES(...) do &#123; \</span></span><br><span class="line"><span class="meta">    printf(<span class="string">&quot;Values: &quot;</span>); \</span></span><br><span class="line"><span class="meta">    printf(__VA_ARGS__); \</span></span><br><span class="line"><span class="meta">    printf(<span class="string">&quot;\n&quot;</span>); \</span></span><br><span class="line"><span class="meta">&#125; while (0)</span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span> &#123;</span><br><span class="line">    PRINT_VALUES(<span class="string">&quot;%d %s %f&quot;</span>, <span class="number">10</span>, <span class="string">&quot;hello&quot;</span>, <span class="number">3.14</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <ul>
-<li>在这个示例中，我们定义了一个可变参数宏 PRINT_VALUES，它使用 printf 函数来打印多个值。</li>
+<li>在这个示例中，我们定义了一个可变参数宏 <code>PRINT_VALUES</code>，它使用 <code>printf</code> 函数来打印多个值。</li>
 </ul>
 <br>
 
@@ -724,6 +727,7 @@ pyinstaller -F -w (-i icofile) 文件名.py
 <figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdarg.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">my_printf</span><span class="params">(<span class="type">const</span> <span class="type">char</span>* format, ...)</span> &#123;</span><br><span class="line">    va_list args;</span><br><span class="line">    va_start(args, format);</span><br><span class="line">    <span class="keyword">while</span> (*format != <span class="string">&#x27;\0&#x27;</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (*format == <span class="string">&#x27;%&#x27;</span>) &#123;</span><br><span class="line">            format++; <span class="comment">// 移动到占位符的下一个字符</span></span><br><span class="line">            <span class="keyword">if</span> (*format == <span class="string">&#x27;d&#x27;</span>) &#123;</span><br><span class="line">                <span class="type">int</span> value = va_arg(args, <span class="type">int</span>);</span><br><span class="line">                <span class="built_in">printf</span>(<span class="string">&quot;%d&quot;</span>, value);</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (*format == <span class="string">&#x27;f&#x27;</span>) &#123;</span><br><span class="line">                <span class="type">double</span> value = va_arg(args, <span class="type">double</span>);</span><br><span class="line">                <span class="built_in">printf</span>(<span class="string">&quot;%f&quot;</span>, value);</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (*format == <span class="string">&#x27;s&#x27;</span>) &#123;</span><br><span class="line">                <span class="type">char</span>* value = va_arg(args, <span class="type">char</span>*);</span><br><span class="line">                <span class="built_in">printf</span>(<span class="string">&quot;%s&quot;</span>, value);</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (*format == <span class="string">&#x27;c&#x27;</span>) &#123;</span><br><span class="line">                <span class="type">int</span> value = va_arg(args, <span class="type">int</span>);</span><br><span class="line">                <span class="built_in">printf</span>(<span class="string">&quot;%c&quot;</span>, value);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="built_in">printf</span>(<span class="string">&quot;Unsupported format specifier: %c&quot;</span>, *format);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">&quot;%c&quot;</span>, *format);</span><br><span class="line">        &#125;</span><br><span class="line">        format++; <span class="comment">// 移动到下一个字符</span></span><br><span class="line">    &#125;</span><br><span class="line">    va_end(args);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span> &#123;</span><br><span class="line">	<span class="type">int</span> num = <span class="number">42</span>;</span><br><span class="line">	<span class="type">double</span> pi = <span class="number">3.14159</span>;</span><br><span class="line">	<span class="type">char</span> str[] = <span class="string">&quot;Hello, world!&quot;</span>;</span><br><span class="line">	<span class="type">char</span> ch = <span class="string">&#x27;A&#x27;</span>;</span><br><span class="line"></span><br><span class="line">	my_printf(<span class="string">&quot;Integer: %d\n&quot;</span>, num);</span><br><span class="line">	my_printf(<span class="string">&quot;Float: %f\n&quot;</span>, pi);</span><br><span class="line">	my_printf(<span class="string">&quot;Float: %s\n&quot;</span>, str);</span><br><span class="line">	my_printf(<span class="string">&quot;Float: %c\n&quot;</span>, ch);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <br>
-]]></content>
+
+<h2 id="移植cmbacktrace到cm4内核"><a href="#移植cmbacktrace到cm4内核" class="headerlink" title="移植cmbacktrace到cm4内核"></a>移植cmbacktrace到cm4内核</h2>]]></content>
   </entry>
 </search>
