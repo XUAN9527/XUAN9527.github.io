@@ -68,14 +68,14 @@ dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux
 	sudo apt install bzip2
 	sudo tar -xvf ~/n32_gcc/software_package/gcc-arm-none-eabi-9-2019-q4-major-x86_64-linux.tar.bz2 -C ~/n32_gcc
 	```
-	- 自动安装：sudo apt-get install gcc-arm-none-eabi
-	- 打开 ~/.bashrc
-	- 添加export PATH=$PATH:~/n32_gcc/gcc-arm-none-eabi-9-2019-q4-major/bin
-	- 添加alias open-file='explorer.exe .'
-	- 使能用户环境变量source ~/.bashrc
+	- 自动安装：`sudo apt-get install gcc-arm-none-eabi`
+	- 打开 `~/.bashrc`
+	- 添加`export PATH=$PATH:~/n32_gcc/gcc-arm-none-eabi-9-2019-q4-major/bin`
+	- 添加`alias open-file='explorer.exe .'`
+	- 使能用户环境变量`source ~/.bashrc`
 
 - Make
-	- sudo apt-get install make
+	- `sudo apt-get install make`
 
 ### Winodows Gcc + Make 环境搭建
 

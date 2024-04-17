@@ -133,7 +133,7 @@ int _write(int fd, char* pBuffer, int size)
 
 ### 串口通信异常
 
-- 打开UART7接收为DMA IDLE中断，申请一个超时定时器，发送/接受各一个任务，发送/接受两个队列,以下是错误信息：
+- 打开UART7接收为`DMA IDLE`中断，申请一个超时定时器，发送/接受各一个任务，发送/接受两个队列,以下是错误信息：
 
 ``` bash
 psr: 0x60000000
@@ -161,7 +161,7 @@ E [00:00:00,659] (rtt-nano/src/kservice.c) rt_assert_handler [1340]: (rt_object_
 E [00:00:39,282] (rtt-nano/src/kservice.c) rt_assert_handler [1340]: (rt_object_get_type((rt_object_t)thread) == RT_Object_Class_Thread) assertion failed at function:rt_thread_resume, line number:760 
 ```
 
-- 问题定位到指针变量p_srx_mq[0]和&p_srx_mq[0]的区别，代码如下：
+- 问题定位到指针变量`p_srx_mq[0]`和`&p_srx_mq[0]`的区别，代码如下：
 
 ```bash
 #define COMM_MAX_NUM     3

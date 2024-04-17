@@ -58,7 +58,7 @@ Arch:
 ### 设置环境变量
 按自己实际路径，可按自己喜好设置，也可不配置，手动敲指令也可。
 
-vi ~/.bashrc
+`vi ~/.bashrc`
 在后面加上以下代码：
 ```bash
 #开启ESP32编译环境
@@ -72,7 +72,7 @@ export PATH=/home/qx_song/esp/esp-adf/esp-idf/tools:$PATH
 export IDF_PATH=/home/qx_song/esp/esp-adf/esp-idf
 export ADF_PATH=/home/qx_song/esp/esp-adf
 ```
-保存退出 :wq
+保存退出 `:wq`
 
 ### 设置工具
 除了 ESP-IDF 本身，还需要为支持 ESP32 的项目安装 ESP-IDF 使用的各种工具，比如编译器、调试器、Python 包等。
@@ -99,7 +99,7 @@ export ADF_PATH=/home/qx_song/esp/esp-adf
 
 ### 开始创建工程
 现在，可以准备开发 ESP32 应用程序了。
-从 ESP-IDF 中 examples 目录下的 get-started/hello_world 工程开始，将 get-started/hello_world 工程复制至本地的 ~/esp 目录下：
+从 ESP-IDF 中 examples 目录下的 `get-started/hello_world` 工程开始，将 `get-started/hello_world` 工程复制至本地的 ~/esp 目录下：
 
 	cd ~/esp
 	get-idf
@@ -122,7 +122,7 @@ export ADF_PATH=/home/qx_song/esp/esp-adf
 ### 烧录工程
 	idf.py -p PORT flash
 
-请将 PORT 替换为 ESP32 开发板的串口名称。如果 PORT 未经定义，idf.py 将尝试使用可用的串口自动连接。
+请将 PORT 替换为 ESP32 开发板的串口名称。如果 PORT 未经定义，`idf.py` 将尝试使用可用的串口自动连接。
 
 ### 合并执行构建、烧录和监视过程：
 
@@ -147,7 +147,7 @@ export ADF_PATH=/home/qx_song/esp/esp-adf
 
 	idf.py flash
 
-观察终端设备是挂载在哪个端口上，有ERROR忽略，选择端口例如 /dev/ttyS15，程序中UART0的波特率115200，下次就可以直接输此端口就可以烧录啦。
+观察终端设备是挂载在哪个端口上，有ERROR忽略，选择端口例如 `/dev/ttyS15`，程序中`UART0`的波特率115200，下次就可以直接输此端口就可以烧录啦。
 
 	idf.py -p /dev/ttyS15 -b 115200 flash monitor	
 

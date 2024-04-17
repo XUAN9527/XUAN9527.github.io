@@ -171,7 +171,7 @@ static int i2c_send_ack_or_nack(struct drv_i2c_bit_ops *bus, int ack)
     return 0;
 }
 ```
-static int i2c_send_ack_or_nack(struct drv_i2c_bit_ops *bus, int ack){}
+`static int i2c_send_ack_or_nack(struct drv_i2c_bit_ops *bus, int ack){}`
 函数主要处理响应回复。
 
 	if(ack >= 0)表示每次都会回复ack/nack

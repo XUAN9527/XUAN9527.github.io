@@ -34,7 +34,7 @@ https://link.zhihu.com/?target=https%3A//blog.csdn.net/chentuo2000/article/detai
 ### 构建项目
 
 #### 拷贝 && 初始化例程
-将例子项目hello_world复制到ESP-IDF开发工具之外,更名为components_demo:
+将例子项目`hello_world`复制到ESP-IDF开发工具之外,更名为components_demo:
 
 	cd ~/esp
 	cp -r ~/esp/esp-adf/esp-idf/examples/get-started/hello_world ./components_demo
@@ -76,7 +76,7 @@ https://link.zhihu.com/?target=https%3A//blog.csdn.net/chentuo2000/article/detai
 	include($ENV{IDF_PATH}/tools/cmake/project.cmake)
 	project(components_demo)
 
-只需要修改project中的项目名称。
+只需要修改`project`中的项目名称。
 
 #### main目录
 CMakeLists.txt
@@ -129,7 +129,8 @@ void app_main(void)
 头文件nvs_flash.h是对系统组件的引用，shell_port.h是对自定义组件的引用。
 
 #### letter_shell组件
-CMakeLists.txt
+
+`CMakeLists.txt`:
 
 	idf_component_register(
 		SRCS "shell.c"
@@ -147,12 +148,12 @@ CMakeLists.txt
 1、PRIV_REQUIRES
 该参数指定对其它自定义组件的依赖，即私有依赖项。
 
-PRIV_REQUIRES led表示指出在smart_config组件中要用到自定义的led组件。组件名字可以加引号，也可以不加。多个组件用空格分开。
+`PRIV_REQUIRES led`表示指出在`smart_config`组件中要用到自定义的`led`组件。组件名字可以加引号，也可以不加。多个组件用空格分开。
 
 2、 REQUIRES
 该参数指定对系统组件的依赖，即公共依赖项。
 
-REQUIRES esp_driver_uart 表示在letter_shell组件中要用到系统组件esp_driver_uart。
+`REQUIRES esp_driver_uart` 表示在`letter_shell`组件中要用到系统组件`esp_driver_uart`。
 
 3、系统组件的确定
 
@@ -160,40 +161,40 @@ REQUIRES esp_driver_uart 表示在letter_shell组件中要用到系统组件esp_
 
 ![requires_error](../pictures/requires_error.png)
 
-在CMakeLists.txt中添加依赖组件REQUIRES esp_driver_uart，编译通过。
+在`CMakeLists.txt`中添加依赖组件`REQUIRES esp_driver_uart`，编译通过。
 
 #### 关于CMakeLists.txt文件
-根和每个目录都有一个CMakeLists.txt文件，开始遇到的问题是不知道目录结构和怎样写CMakeLists.txt文件，要注意每一层目录中CMakeLists.txt文件的写法，本文的例子给出了一个简单的示范。对于复杂的项目还需要更多编写CMakeLists.txt文件的知识，请看简介中给出的官方文档。
+根和每个目录都有一个`CMakeLists.txt`文件，开始遇到的问题是不知道目录结构和怎样写`CMakeLists.txt`文件，要注意每一层目录中`CMakeLists.txt`文件的写法，本文的例子给出了一个简单的示范。对于复杂的项目还需要更多编写`CMakeLists.txt`文件的知识，请看简介中给出的官方文档。
 
 ## ESP32移植Letter_shell问题
 
 ### 添加shell组件及其log，编译出错
 
 #### 可能原因:
-1) 宏使用不正确: 如果 SHELL_FREE 旨在实际释放与 companions 对象关联的内存或资源，则当前定义不正确。它应该调用内存管理函数或执行其他必要的清理任务。
+1) 宏使用不正确: 如果 SHELL_FREE 旨在实际释放与 `companions` 对象关联的内存或资源，则当前定义不正确。它应该调用内存管理函数或执行其他必要的清理任务。
 
-1) 编译器警告被视为错误: -Werror=unused-value 标志已启用，它将警告视为错误。即使宏使用本身可能不是关键问题，这也可能导致编译失败。
+1) 编译器警告被视为错误: `-Werror=unused-value` 标志已启用，它将警告视为错误。即使宏使用本身可能不是关键问题，这也可能导致编译失败。
 
 #### 解决方案:
 
 ##### 修复 SHELL_FREE 定义:
 
-1) 如果 companions 需要内存分配，请更新 shell_cfg.h 中的 SHELL_FREE 宏以调用适当的内存管理函数，例如 free()。
-2) 如果 companions 不需要内存管理，请从 shell_companion.c 中的第 57 行删除 SHELL_FREE 调用；或者将shell_cfg.h 中的第 36 行 SHELL_USING_COMPANION 的宏定义改为0。
+1) 如果 `companions` 需要内存分配，请更新 `shell_cfg.h` 中的 SHELL_FREE 宏以调用适当的内存管理函数，例如 `free()`。
+2) 如果 `companions` 不需要内存管理，请从 `shell_companion.c` 中的第 57 行删除 `SHELL_FREE` 调用；或者将`shell_cfg.h` 中的第 36 行 `SHELL_USING_COMPANION` 的宏定义改为 0。
 
 ##### 禁用 -Werror=unused-value (如果适用):
 
-如果您希望将未使用的值警告视为警告而不是错误，您可以暂时在编译期间禁用 -Werror=unused-value 标志。但是，通常建议修复底层问题以避免潜在的内存泄漏或资源管理问题。
+如果您希望将未使用的值警告视为警告而不是错误，您可以暂时在编译期间禁用 `-Werror=unused-value` 标志。但是，通常建议修复底层问题以避免潜在的内存泄漏或资源管理问题。
 
 ##### 其他提示:
 
-1) 提供有关您的项目更多信息，例如具体的 ESP-IDF 版本、涉及的组件以及 SHELL_FREE 宏的用途。这将有助于了解根本原因并提供更定制的指导。
-2) 分享 shell_cfg.h 头文件和 shell_companion.c 文件的相关部分，以便分析代码结构和上下文。
-考虑使用调试器逐步执行代码并检查 companions 在 SHELL_FREE 调用之前和之后的 值，以了解其使用情况和潜在的内存管理问题。
+1) 提供有关您的项目更多信息，例如具体的 ESP-IDF 版本、涉及的组件以及 `SHELL_FREE` 宏的用途。这将有助于了解根本原因并提供更定制的指导。
+2) 分享 `shell_cfg.h` 头文件和 `shell_companion.c` 文件的相关部分，以便分析代码结构和上下文。
+考虑使用调试器逐步执行代码并检查 `companions` 在 `SHELL_FREE` 调用之前和之后的 值，以了解其使用情况和潜在的内存管理问题。
 3) 通过遵循这些步骤并提供更多信息，我可以帮助您有效地解决编译错误并确保您的 ESP-IDF 项目成功构建。
 
 #### 配置shell优先级
-将shell的freertos优先级设置为 tskIDLE_PRIORITY，为0级，跟空闲函数优先级一样，所有其他优先级任务执行完后才会执行 tskIDLE_PRIORITY 优先级任务。
+将shell的freertos优先级设置为 `tskIDLE_PRIORITY`，为0级，跟空闲函数优先级一样，所有其他优先级任务执行完后才会执行 `tskIDLE_PRIORITY`优先级任务。
 
 #### 源代码例程
 
