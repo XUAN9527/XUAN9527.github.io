@@ -20,18 +20,21 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta property="og:type" content="website">
-<meta property="og:title" content="about">
-<meta property="og:url" content="http://example.com/about/index.html">
+  <meta name="description" content="CmBacktrace是一款针对 ARM Cortex-M 系列 MCU 的错误代码自动追踪、定位，错误原因自动分析的开源库，作者armink，目前收获 611 个 star，遵循 MIT 开源许可协议。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CmBacktrace移植">
+<meta property="og:url" content="http://example.com/2024/04/19/CmBacktrace%E7%A7%BB%E6%A4%8D/index.html">
 <meta property="og:site_name" content="xuan9527">
+<meta property="og:description" content="CmBacktrace是一款针对 ARM Cortex-M 系列 MCU 的错误代码自动追踪、定位，错误原因自动分析的开源库，作者armink，目前收获 611 个 star，遵循 MIT 开源许可协议。">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2024-02-18T07:59:58.000Z">
-<meta property="article:modified_time" content="2024-02-18T08:01:08.798Z">
+<meta property="article:published_time" content="2024-04-19T06:27:00.000Z">
+<meta property="article:modified_time" content="2024-04-19T06:36:04.854Z">
 <meta property="article:author" content="boollight">
-<meta property="article:tag" content="C语言,嵌入式软硬件,Linux,mcu">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="Cortex-M">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="http://example.com/about/">
+<link rel="canonical" href="http://example.com/2024/04/19/CmBacktrace%E7%A7%BB%E6%A4%8D/">
 
 
 <script id="page-configurations">
@@ -39,13 +42,12 @@
   CONFIG.page = {
     sidebar: "",
     isHome : false,
-    isPost : false,
+    isPost : true,
     lang   : 'en'
   };
 </script>
 
-  <title>about | xuan9527
-</title>
+  <title>CmBacktrace移植 | xuan9527</title>
   
 
 
@@ -186,43 +188,130 @@
       <div class="main-inner">
         <div class="content-wrap">
           
-  
-  
 
-          <div class="content page posts-expand">
+          <div class="content post posts-expand">
             
 
     
-    
-    
-    <div class="post-block" lang="en">
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/04/19/CmBacktrace%E7%A7%BB%E6%A4%8D/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="boollight">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="xuan9527">
+    </span>
       <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          CmBacktrace移植
+        </h1>
 
-<h1 class="post-title" itemprop="name headline">about
-</h1>
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
 
-<div class="post-meta">
+              <time title="Created: 2024-04-19 14:27:00 / Modified: 14:36:04" itemprop="dateCreated datePublished" datetime="2024-04-19T14:27:00+08:00">2024-04-19</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">嵌入式</span></a>
+                </span>
+                  , 
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E9%94%99%E8%AF%AF%E8%BF%BD%E8%B8%AA/" itemprop="url" rel="index"><span itemprop="name">错误追踪</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="Symbols count in article">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">Symbols count in article: </span>
+              <span>200</span>
+            </span>
+            <span class="post-meta-item" title="Reading time">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">Reading time &asymp;</span>
+              <span>1 mins.</span>
+            </span>
+            <div class="post-description">CmBacktrace是一款针对 ARM Cortex-M 系列 MCU 的错误代码自动追踪、定位，错误原因自动分析的开源库，作者armink，目前收获 611 个 star，遵循 MIT 开源许可协议。</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="CmBacktrace简介"><a href="#CmBacktrace简介" class="headerlink" title="CmBacktrace简介"></a>CmBacktrace简介</h2><ul>
+<li>支持断言（assert）和故障（Hard Fault）</li>
+<li>故障原因自动诊断</li>
+<li>输出错误现场的 函数调用栈</li>
+<li>适配 Cortex-M0&#x2F;M3&#x2F;M4&#x2F;M7 MCU；</li>
+<li>支持 IAR、KEIL、GCC 编译器；</li>
+</ul>
+<h2 id="移植步骤"><a href="#移植步骤" class="headerlink" title="移植步骤"></a>移植步骤</h2><p><strong>2.1. 移植思路</strong></p>
+<p>在移植过程中主要参考两个资料：项目的readme文档和demo工程。<br>对于这些开源项目，其实移植起来也就两步：</p>
+<ul>
+<li>① 添加源码到裸机工程中；</li>
+<li>② 实现需要的接口即可；</li>
+</ul>
+<p><strong>2.2. 准备裸机工程</strong></p>
+<p>本文中我使用的是N32L40X系列demo板，主控芯片为N32L403KBQ7：<br>移植之前需要准备一份裸机工程，我使用STM32CubeMX生成，需要初始化以下配置：</p>
+<ul>
+<li>配置一个串口用于打印信息</li>
+<li>printf重定向(串口DMA发送版本)<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Linux/" rel="tag"># Linux</a>
+              <a href="/tags/Cortex-M/" rel="tag"># Cortex-M</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2024/03/28/linux-arm-gcc%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/" rel="prev" title="Linux下开发单片机">
+      <i class="fa fa-chevron-left"></i> Linux下开发单片机
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
   
 
-</div>
-
-</header>
-
-      
-      
-      
-      <div class="post-body">
-          
-      </div>
-      
-      
-      
-    </div>
-    
-
-    
-    
-    
 
 
           </div>
@@ -273,6 +362,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#CmBacktrace%E7%AE%80%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text">CmBacktrace简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A7%BB%E6%A4%8D%E6%AD%A5%E9%AA%A4"><span class="nav-number">2.</span> <span class="nav-text">移植步骤</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
