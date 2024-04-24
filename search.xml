@@ -238,7 +238,7 @@ if(ack)表示除最后一次数据不回复，其他每次都会回复ack/nack
   <entry>
     <title>单片机开发问题汇总</title>
     <url>/2024/01/31/MCU%E5%BC%80%E5%8F%91%E9%97%AE%E9%A2%98%E6%B1%87%E6%80%BB/</url>
-    <content><![CDATA[<h2 id="内核复位（kernel-reset）"><a href="#内核复位（kernel-reset）" class="headerlink" title="内核复位（kernel reset）"></a>内核复位（kernel reset）</h2><ul>
+    <content><![CDATA[<h2 id="内核复位（kernel-reset）"><a href="#内核复位（kernel-reset）" class="headerlink" title="内核复位（kernel reset）"></a>内核复位（kernel reset）</h2><h3 id="常见通用问题"><a href="#常见通用问题" class="headerlink" title="常见通用问题"></a>常见通用问题</h3><ul>
 <li><strong>内核复位代码，如ADC：</strong></li>
 </ul>
 <figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">kernel_reset</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    __DSB();</span><br><span class="line">    __disable_irq();							<span class="comment">//close irq</span></span><br><span class="line">	drv_adc_deinit(EADC_DEV1,EDMA_CH6);			<span class="comment">//disable adc data</span></span><br><span class="line">    SCB-&gt;AIRCR = ((<span class="number">0x5FA</span> &lt;&lt; SCB_AIRCR_VECTKEY_Pos)      |</span><br><span class="line">                  (SCB-&gt;AIRCR &amp; SCB_AIRCR_PRIGROUP_Msk) |</span><br><span class="line">                   SCB_AIRCR_VECTRESET_Msk);</span><br><span class="line">    __DSB();</span><br><span class="line">    <span class="keyword">while</span>(<span class="number">1</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -248,9 +248,16 @@ if(ack)表示除最后一次数据不回复，其他每次都会回复ack/nack
 <figure class="highlight c"><table><tr><td class="code"><pre><span class="line">DMA_DeInit(dma_chx);		<span class="comment">//DMA开启循环接收后会持续接收字节</span></span><br><span class="line">ADC_DeInit(adc_handler);</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>ADC驱动初始化&#x2F;反初始化:</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">drv_adc_init</span><span class="params">(EADC_DEVICE adc_dev,EDMA_CHANNEL dma_ch)</span></span><br><span class="line">&#123;</span><br><span class="line">	drv_adc_configuration(adc_dev);</span><br><span class="line">	drv_dma_configuration(adc_dev,dma_ch);</span><br><span class="line">	drv_adc_enable(adc_dev,DISABLE);</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">drv_adc_deinit</span><span class="params">(EADC_DEVICE adc_dev,EDMA_CHANNEL dma_ch)</span></span><br><span class="line">&#123;</span><br><span class="line">	ADC_Module *adc_handler = drv_get_adc_device(adc_dev)-&gt;ADC_Handler;</span><br><span class="line">	DMA_ChannelType * dma_chx = drv_get_dma_channel(dma_ch);</span><br><span class="line">	</span><br><span class="line">	drv_adc_enable(adc_dev,DISABLE);</span><br><span class="line">	DMA_EnableChannel(dma_chx,DISABLE);</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">drv_adc_init</span><span class="params">(EADC_DEVICE adc_dev,EDMA_CHANNEL dma_ch)</span></span><br><span class="line">&#123;</span><br><span class="line">	drv_adc_configuration(adc_dev);</span><br><span class="line">	drv_dma_configuration(adc_dev,dma_ch);</span><br><span class="line">	drv_adc_enable(adc_dev,DISABLE);</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">drv_adc_deinit</span><span class="params">(EADC_DEVICE adc_dev,EDMA_CHANNEL dma_ch)</span></span><br><span class="line">&#123;</span><br><span class="line">	ADC_Module *adc_handler = drv_get_adc_device(adc_dev)-&gt;ADC_Handler;</span><br><span class="line">	DMA_ChannelType * dma_chx = drv_get_dma_channel(dma_ch);</span><br><span class="line">	</span><br><span class="line">	drv_adc_enable(adc_dev,DISABLE);</span><br><span class="line">	DMA_EnableChannel(dma_chx,DISABLE);</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<br></li>
 </ul>
-<h3 id="n32g452rc内核复位问题"><a href="#n32g452rc内核复位问题" class="headerlink" title="n32g452rc内核复位问题"></a>n32g452rc内核复位问题</h3><h4 id="bootloader-app"><a href="#bootloader-app" class="headerlink" title="bootloader-&gt;app"></a>bootloader-&gt;app</h4><p>（先改波特率到90K） 代码大小变化后跳转失败</p>
+<h3 id="n32g452rc内核复位问题"><a href="#n32g452rc内核复位问题" class="headerlink" title="n32g452rc内核复位问题"></a>n32g452rc内核复位问题</h3><h4 id="bootloader跳转到app"><a href="#bootloader跳转到app" class="headerlink" title="bootloader跳转到app"></a>bootloader跳转到app</h4><ul>
+<li>代码大小变化后跳转失败：<ul>
+<li>代码段变长，能跑进<code>system_init</code>,跑飞待查</li>
+<li>代码段变短，不能跑进<code>system_init</code>,跑飞待查</li>
+</ul>
+</li>
+</ul>
 <br>
 
 <h2 id="MCU复位后状态"><a href="#MCU复位后状态" class="headerlink" title="MCU复位后状态"></a>MCU复位后状态</h2><ul>
@@ -778,7 +785,7 @@ pyinstaller -F -w -i file.ico file.py
 <li>支持 IAR、KEIL、GCC 编译器；</li>
 </ul>
 <h2 id="移植步骤"><a href="#移植步骤" class="headerlink" title="移植步骤"></a>移植步骤</h2><p><strong>1. 下载源码</strong></p>
-<p><strong>项目地址</strong> : <a href="https://github.com/armink/CmBacktrace">https://github.com/armink/CmBacktrace</a></p>
+<p><strong>官方源码地址</strong> : <a href="https://github.com/armink/CmBacktrace">https://github.com/armink/CmBacktrace</a><br><strong>示例项目地址</strong> : <a href="https://github.com/XUAN9527/cmbacktrace-demo">https://github.com/XUAN9527/cmbacktrace-demo</a></p>
 <p><strong>2. copy源码文件</strong></p>
 <p><img src="/../pictures/cmbacktrace%E7%9B%AE%E5%BD%95.png" alt="cmbacktrace目录"></p>
 <ul>
