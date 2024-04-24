@@ -10,6 +10,8 @@ description: 记录日常开发单片机过程中遇到的一些小问题，以�
 
 ## 内核复位（kernel reset）
 
+### 常见通用问题
+
 - **内核复位代码，如ADC：**
 
 ``` c
@@ -52,6 +54,15 @@ int drv_adc_deinit(EADC_DEVICE adc_dev,EDMA_CHANNEL dma_ch)
 	return 0;
 }
 ```	
+<br>
+
+### n32g452rc内核复位问题
+
+#### bootloader跳转到app
+- 代码大小变化后跳转失败：
+	- 代码段变长，能跑进`system_init`,跑飞待查
+	- 代码段变短，不能跑进`system_init`,跑飞待查
+
 <br>
 
 ## MCU复位后状态
