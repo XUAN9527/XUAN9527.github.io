@@ -29,7 +29,7 @@
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="http://example.com/pictures/mcu%E5%90%AF%E5%8A%A8%E9%80%89%E9%A1%B9%E8%A1%A8.png">
 <meta property="article:published_time" content="2024-01-31T00:30:02.000Z">
-<meta property="article:modified_time" content="2024-04-26T03:49:39.512Z">
+<meta property="article:modified_time" content="2024-04-26T04:00:39.839Z">
 <meta property="article:author" content="boollight">
 <meta property="article:tag" content="MCU">
 <meta name="twitter:card" content="summary">
@@ -227,7 +227,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2024-04-26 11:49:39" itemprop="dateModified" datetime="2024-04-26T11:49:39+08:00">2024-04-26</time>
+                <time title="Modified: 2024-04-26 12:00:39" itemprop="dateModified" datetime="2024-04-26T12:00:39+08:00">2024-04-26</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -455,9 +455,9 @@
 <li>结构体内每个变量按照自身字节数对齐；</li>
 <li>结构体的大小<code>(sizeof(myst))</code>是最大变量字节数的整数倍（8&#x2F;4&#x3D;2）；</li>
 </ul>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">st_tag</span> &#123;</span></span><br><span class="line">	<span class="type">int</span> a;</span><br><span class="line">	<span class="type">char</span> b;</span><br><span class="line">&#125;  __attribute__((__aligned__(<span class="number">64</span>))) ST1;</span><br><span class="line">ST1 myst；</span><br><span class="line"><span class="keyword">sizeof</span>（ST1） = <span class="keyword">sizeof</span>(myst) = <span class="number">64</span>; </span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">st_tag</span> &#123;</span></span><br><span class="line">	<span class="type">int</span> a;</span><br><span class="line">	<span class="type">char</span> b;</span><br><span class="line">&#125;  __attribute__((__aligned__(<span class="number">64</span>))) ST1;</span><br><span class="line">ST1 myst；</span><br><span class="line"><span class="keyword">sizeof</span>(ST1) = <span class="keyword">sizeof</span>(myst) = <span class="number">64</span>; </span><br></pre></td></tr></table></figure>
 <p>对比：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">st_tag</span> &#123;</span></span><br><span class="line">	<span class="type">int</span> a;</span><br><span class="line">	<span class="type">char</span> b;</span><br><span class="line">&#125;  ST1 __attribute__((__aligned__(<span class="number">64</span>)));</span><br><span class="line">ST1 myst；</span><br><span class="line"><span class="keyword">sizeof</span>（ST1） = <span class="keyword">sizeof</span>(myst) = <span class="number">8</span> ;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">st_tag</span> &#123;</span></span><br><span class="line">	<span class="type">int</span> a;</span><br><span class="line">	<span class="type">char</span> b;</span><br><span class="line">&#125;  ST1 __attribute__((__aligned__(<span class="number">64</span>)));</span><br><span class="line">ST1 myst；</span><br><span class="line"><span class="keyword">sizeof</span>(ST1) = <span class="keyword">sizeof</span>(myst) = <span class="number">8</span> ;</span><br></pre></td></tr></table></figure>
 
 <p>这第二种情况可以理解为<code>__attribute__((aligned(64)))</code>作用于变量ST1 ，只影响对齐，不影响结构的大小。</p>
 <p><strong>例子2</strong>：</p>
