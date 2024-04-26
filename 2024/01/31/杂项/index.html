@@ -22,13 +22,13 @@
 
   <meta name="description" content="记录日常开发过程中遇到的一些小问题，以及解决方法。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="杂项">
+<meta property="og:title" content="杂项笔记">
 <meta property="og:url" content="http://example.com/2024/01/31/%E6%9D%82%E9%A1%B9/index.html">
 <meta property="og:site_name" content="xuan9527">
 <meta property="og:description" content="记录日常开发过程中遇到的一些小问题，以及解决方法。">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2024-01-31T00:30:02.000Z">
-<meta property="article:modified_time" content="2024-04-22T05:40:09.080Z">
+<meta property="article:modified_time" content="2024-04-26T01:53:08.679Z">
 <meta property="article:author" content="boollight">
 <meta property="article:tag" content="C语言,嵌入式软硬件,Linux,mcu">
 <meta name="twitter:card" content="summary">
@@ -46,7 +46,7 @@
   };
 </script>
 
-  <title>杂项 | xuan9527</title>
+  <title>杂项笔记 | xuan9527</title>
   
 
 
@@ -208,7 +208,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          杂项
+          杂项笔记
         </h1>
 
         <div class="post-meta">
@@ -225,7 +225,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2024-04-22 13:40:09" itemprop="dateModified" datetime="2024-04-22T13:40:09+08:00">2024-04-22</time>
+                <time title="Modified: 2024-04-26 09:53:08" itemprop="dateModified" datetime="2024-04-26T09:53:08+08:00">2024-04-26</time>
               </span>
 
           <br>
@@ -234,14 +234,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">Symbols count in article: </span>
-              <span>3.8k</span>
+              <span>3.1k</span>
             </span>
             <span class="post-meta-item" title="Reading time">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">Reading time &asymp;</span>
-              <span>13 mins.</span>
+              <span>10 mins.</span>
             </span>
             <div class="post-description">记录日常开发过程中遇到的一些小问题，以及解决方法。</div>
 
@@ -254,13 +254,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h2 id="Linux-打开端口-bashrc不会自动刷新"><a href="#Linux-打开端口-bashrc不会自动刷新" class="headerlink" title="Linux 打开端口~&#x2F;.bashrc不会自动刷新"></a>Linux 打开端口~&#x2F;.bashrc不会自动刷新</h2><p>解决linux每次打开新终端都要重新<code>source ~/.bashrc</code>问题<br>执行以下代码：</p>
-<pre><code>vi ~/.bash_profile
-</code></pre>
-<p>有可能此文件是空白新建的，无所谓。然后在此文件末尾加入：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> [ -f ~/.bashrc ];then</span><br><span class="line">source ~/.bashrc</span><br><span class="line">fi</span><br></pre></td></tr></table></figure>
-<p>然后<code>:wq</code>保存即可。<br>此时打开新终端可以自动执行<code>source ~/.bashrc</code></p>
-<h2 id="J-Link-J-Flash"><a href="#J-Link-J-Flash" class="headerlink" title="J-Link&#x2F;J-Flash"></a>J-Link&#x2F;J-Flash</h2><p><strong>J-Flash批处理脚本配置烧录：</strong>当然，前提是要添加J-Link的可执行程序路径到<code>$PATH</code>环境变量中</p>
+        <h2 id="J-Link-J-Flash"><a href="#J-Link-J-Flash" class="headerlink" title="J-Link&#x2F;J-Flash"></a>J-Link&#x2F;J-Flash</h2><p><strong>J-Flash批处理脚本配置烧录：</strong>当然，前提是要添加J-Link的可执行程序路径到<code>$PATH</code>环境变量中</p>
 <ul>
 <li><code>program.bat</code>脚本代码如下，参考修改即可：<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">echo start...</span><br><span class="line"></span><br><span class="line">JLink -device N32L406CB -if swd -speed 4000 -CommanderScript &quot;C:\Users\Breo\Desktop\Wireless moxibustion\Software\program.jlink&quot;</span><br></pre></td></tr></table></figure></li>
 <li><code>program.jlink</code>文件代码如下，其中目标设备、文件路径、烧录地址等根据需要配置：<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">connect</span><br><span class="line">device N32L406CB</span><br><span class="line">si SWD</span><br><span class="line">speed 4000</span><br><span class="line">h		// halt-停止</span><br><span class="line">r		// 复位，可以考虑去掉</span><br><span class="line">erase		// 或 erase 0x8002800，去掉也行，但可能会出现error fail address 0x00000000错误提示</span><br><span class="line"></span><br><span class="line">loadfile app.bin 0x8002800      // loadfile app.hex 或 loadfile app.bin 0x8000000</span><br><span class="line">verifybin app.bin 0x8002800</span><br><span class="line">r</span><br><span class="line">go		// r go表示reset and run</span><br><span class="line">q		// 退出J-Link命令行工具</span><br></pre></td></tr></table></figure></li>
@@ -353,82 +347,6 @@ sudo apt upgrade
 <li>添加远程仓库：<code>git remote add origin &lt;远程仓库地址&gt;</code></li>
 <li><code>git branch -M main</code>将当前分支重命名为<code>main</code>，M即<code>--move --force</code>的缩写。（可以分别输入<code>git add --all</code>，<code>git commit -m &quot;first commit&quot;</code>完成对本地分支的首次提交）</li>
 <li>使用<code>git pull origin main</code>，将远程仓库的main分支拉取到本地，或者<code>git push -u origin main -f</code>将本地的xxx分支强制推送到远端main分支，其中-u是<code>--set-upstream</code>的缩写，后续会保持这个跟踪关系</li>
-</ul>
-<br>
-
-<h2 id="makefile问题汇总"><a href="#makefile问题汇总" class="headerlink" title="makefile问题汇总"></a>makefile问题汇总</h2><h3 id="修改-h文件没有重新编译"><a href="#修改-h文件没有重新编译" class="headerlink" title="修改.h文件没有重新编译"></a>修改.h文件没有重新编译</h3><ul>
-<li><code>$(BUILD_DIR)</code>为编译文件目录，跟进自身makefile修改，原来的编译规则：<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-include $(wildcard $(BUILD_DIR)<span class="comment">/*/*.d)	# 包含所有生成的依赖文件，避免重复编译、提高效率</span></span><br></pre></td></tr></table></figure>
-<code>/*/*.d</code> 为当前目录下的二级所有文件检索。</li>
-</ul>
-<br>
-
-<ul>
-<li>修改为以下编译规则：<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># 找到所有的 .d 文件</span><br><span class="line">DEP_FILES := $(shell find $(BUILD_DIR) -type f -name <span class="string">&#x27;*.d&#x27;</span>)# 包含所有生成的依赖文件，避免重复编译、提高效率</span><br><span class="line"></span><br><span class="line"># 包含所有的 .d 文件</span><br><span class="line">-include $(DEP_FILES)</span><br></pre></td></tr></table></figure>
-或者：<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">-include $(wildcard $(BUILD_DIR)<span class="comment">/**/</span>*.d)</span><br><span class="line">-include $(wildcard $(BUILD_DIR)<span class="comment">/*/*/</span>*.d)</span><br></pre></td></tr></table></figure>
-<code>/**/*.d</code> 为当前目录下的二级所有文件检索，根据具体情况修改。<br><code>/*/*/*.d</code> 为当前目录下的三级所有文件检索，根据具体情况修改。</li>
-</ul>
-<br>
-
-<h2 id="windows子系统wsl"><a href="#windows子系统wsl" class="headerlink" title="windows子系统wsl"></a>windows子系统wsl</h2><h3 id="arm-none-eabi-gcc工具链问题"><a href="#arm-none-eabi-gcc工具链问题" class="headerlink" title="arm-none-eabi-gcc工具链问题"></a>arm-none-eabi-gcc工具链问题</h3><p>arm-none-eabi-gcc工具链需加入用户变量：</p>
-<pre><code>export PATH=/home/xuan/OpenHarmony/install-software/gcc-arm-none-eabi-9-2019-q4-major/bin:$PATH
-</code></pre>
-<p>注意：需确认路径，否则找不到用户路径会搜索系统自带编译链 &#x2F;usr&#x2F;lib&#x2F;gcc&#x2F;arm-none-eabi&#x2F;10.3.1</p>
-<br>
-
-<h2 id="Linux下编写Python合并脚本"><a href="#Linux下编写Python合并脚本" class="headerlink" title="Linux下编写Python合并脚本"></a>Linux下编写Python合并脚本</h2><h3 id="合并-bootloader-app-mix"><a href="#合并-bootloader-app-mix" class="headerlink" title="合并 bootloader + app  &#x3D; mix"></a>合并 bootloader + app  &#x3D; mix</h3><p><strong>1. 安装 PyInstaller</strong></p>
-<pre><code>pip install pyinstaller
-</code></pre>
-<br>
-
-<p><strong>2. 编写Python合并程序</strong></p>
-<p><a target="_blank" rel="noopener" href="https://github.com/XUAN9527/script">代码链接</a></p>
-<br>
-
-<p><strong>3. 打包 Python 程序</strong></p>
-<p><strong>参数说明：</strong></p>
-<ul>
-<li><code>-F</code>：生成单一可执行文件。</li>
-<li><code>-D</code>：生成包含所有依赖项的目录。</li>
-<li><code>-n</code>：指定可执行文件名。</li>
-<li><code>--distpath</code>：指定可执行文件输出目录。</li>
-<li><code>--noconfirm</code>：覆盖输出文件时无需确认。</li>
-</ul>
-<p><strong>以下是一些常用的高级选项：</strong></p>
-<ul>
-<li><code>--hidden-import</code>：指定要隐藏导入的模块。</li>
-<li><code>--exclude-module</code>：指定要排除的模块。</li>
-<li><code>--onefile</code>：将所有文件打包成一个可执行文件。</li>
-<li><code>--runtime</code>：指定 Python 运行时版本。</li>
-</ul>
-<p><strong>执行规则:</strong></p>
-<pre><code>cd new_file,copy file.py and file.ico
-pyinstaller -F -w (-i icofile) 文件名.py
-</code></pre>
-<p><strong>example:</strong></p>
-<pre><code>pyinstaller -F file.py
-pyinstaller -F -w -i file.ico file.py
-</code></pre>
-<br>
-
-<p><strong>4. 运行可执行文件</strong></p>
-<pre><code>./dist/file
-</code></pre>
-<br>
-
-<p><strong>5. 例程</strong></p>
-<p><a target="_blank" rel="noopener" href="https://github.com/XUAN9527/script">代码链接</a></p>
-<br>
-
-<p><strong>6. 实际应用场景</strong></p>
-<ul>
-<li>单独使用：Linux环境下单独执行使用。</li>
-<li>集成在<code>makefile</code>中，使用<code>make</code>编译自动生成文件：<ul>
-<li>将<code>papp_up</code>和<code>mix_10K</code>打包至<code>tools</code>文件夹，放在<code>makefile</code>同一目录下。</li>
-<li>需要<code>bootloder.bin</code>在<code>../bootloader</code>目录下。</li>
-<li>修改makefile生成规则。</li>
-<li><code>$(BUILD_DIR)</code>为编译文件目录，跟进自身makefile修改。<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">.PHONY : clean all</span><br><span class="line"></span><br><span class="line">all: $(TARGET).bin $(TARGET).<span class="built_in">list</span> $(TARGET).hex</span><br><span class="line">	$(SZ) $(TARGET).elf</span><br><span class="line">	@make copy</span><br><span class="line">	@make mix</span><br><span class="line"></span><br><span class="line">.PHONY: copy</span><br><span class="line"></span><br><span class="line">copy: $(TARGET).bin</span><br><span class="line">	cp $(TARGET).bin app.bin</span><br><span class="line">	cp ../bootloader/bootloader.bin bootloader.bin</span><br><span class="line"><span class="meta">#	cp $(TARGET).hex app.hex</span></span><br><span class="line"></span><br><span class="line">mix:</span><br><span class="line">	./tools/papp_up</span><br><span class="line">	./tools/mix_10K</span><br><span class="line">	$(OC) -I binary -O ihex --change-addresses <span class="number">0x8000000</span> mix.bin mix.hex</span><br><span class="line">	rm bootloader.bin</span><br><span class="line">	rm app.bin</span><br><span class="line">	rm mix.bin</span><br><span class="line"></span><br><span class="line">clean:</span><br><span class="line">	rm -rf $(BUILD_DIR)</span><br><span class="line">	rm papp.bin</span><br><span class="line">	rm mix.hex</span><br></pre></td></tr></table></figure></li>
-</ul>
-</li>
 </ul>
 <br>
 
@@ -588,7 +506,7 @@ pyinstaller -F -w -i file.ico file.py
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Linux-%E6%89%93%E5%BC%80%E7%AB%AF%E5%8F%A3-bashrc%E4%B8%8D%E4%BC%9A%E8%87%AA%E5%8A%A8%E5%88%B7%E6%96%B0"><span class="nav-number">1.</span> <span class="nav-text">Linux 打开端口~&#x2F;.bashrc不会自动刷新</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#J-Link-J-Flash"><span class="nav-number">2.</span> <span class="nav-text">J-Link&#x2F;J-Flash</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Ubuntu-%E6%97%A0%E6%B3%95%E6%9B%B4%E6%96%B0%E9%97%AE%E9%A2%98"><span class="nav-number">3.</span> <span class="nav-text">Ubuntu 无法更新问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9B%B4%E6%94%B9%E8%BD%AF%E4%BB%B6%E6%BA%90"><span class="nav-number">3.1.</span> <span class="nav-text">更改软件源</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B8%85%E9%99%A4-apt-%E7%BC%93%E5%AD%98"><span class="nav-number">3.2.</span> <span class="nav-text">清除 apt 缓存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%9D%E8%AF%95%E6%9B%B4%E6%96%B0%E7%B3%BB%E7%BB%9F"><span class="nav-number">3.3.</span> <span class="nav-text">尝试更新系统</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Breo%E8%93%9D%E7%89%99%E5%90%AF%E5%8A%A8%E5%BC%82%E5%B8%B8"><span class="nav-number">4.</span> <span class="nav-text">Breo蓝牙启动异常</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Breo%E8%93%9D%E7%89%99%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">4.1.</span> <span class="nav-text">Breo蓝牙初始化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BF%83%E8%B7%B3%E5%8C%85%E5%9B%9E%E5%A4%8D%E8%B6%85%E6%97%B6"><span class="nav-number">4.2.</span> <span class="nav-text">心跳包回复超时</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SPI%E7%BA%A7%E8%81%94led%E7%81%AF%E8%B0%83%E8%AF%95%E5%B0%8F%E5%8A%A9%E6%89%8B"><span class="nav-number">5.</span> <span class="nav-text">SPI级联led灯调试小助手</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#SPI%E7%BA%A7%E8%81%94led%E7%81%AF%E9%97%AE%E9%A2%98%E6%B1%87%E6%80%BB"><span class="nav-number">5.1.</span> <span class="nav-text">SPI级联led灯问题汇总</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%85%E7%94%B5%E9%97%AA%E7%81%AF%E9%97%AE%E9%A2%98"><span class="nav-number">5.1.1.</span> <span class="nav-text">充电闪灯问题</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90"><span class="nav-number">5.1.1.1.</span> <span class="nav-text">问题分析</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95"><span class="nav-number">5.1.1.2.</span> <span class="nav-text">解决方法</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%91%BC%E5%90%B8%E7%81%AF%E9%97%AA%E7%83%81%E9%97%AE%E9%A2%98"><span class="nav-number">5.1.2.</span> <span class="nav-text">呼吸灯闪烁问题</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90-1"><span class="nav-number">5.1.2.1.</span> <span class="nav-text">问题分析</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95-1"><span class="nav-number">5.1.2.2.</span> <span class="nav-text">解决方法</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9F%90%E9%A1%B9%E7%9B%AE%E5%85%85%E7%94%B5%E4%BF%9D%E6%8A%A4%E4%BB%8D%E5%85%85%E7%94%B5"><span class="nav-number">6.</span> <span class="nav-text">某项目充电保护仍充电</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Git%E5%B0%8F%E8%B4%B4%E5%A3%AB"><span class="nav-number">7.</span> <span class="nav-text">Git小贴士</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%A7%E8%A1%8C-git-pull-%E4%BC%9A%E8%A6%86%E7%9B%96%E6%9C%AC%E5%9C%B0%E7%9A%84%E4%BF%AE%E6%94%B9%E5%90%97%EF%BC%9F"><span class="nav-number">7.1.</span> <span class="nav-text">执行 git pull 会覆盖本地的修改吗？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#git-fetch-%E5%92%8C-git-pull-%E7%9A%84%E5%8C%BA%E5%88%AB%E4%B8%8E%E8%81%94%E7%B3%BB"><span class="nav-number">7.2.</span> <span class="nav-text">git fetch 和 git pull 的区别与联系</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E7%A1%80%E9%9D%9E%E5%85%B8%E5%9E%8B%E6%93%8D%E4%BD%9C"><span class="nav-number">7.3.</span> <span class="nav-text">基础非典型操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%AC%E5%9C%B0git%E9%85%8D%E7%BD%AE"><span class="nav-number">7.4.</span> <span class="nav-text">本地git配置</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#makefile%E9%97%AE%E9%A2%98%E6%B1%87%E6%80%BB"><span class="nav-number">8.</span> <span class="nav-text">makefile问题汇总</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9-h%E6%96%87%E4%BB%B6%E6%B2%A1%E6%9C%89%E9%87%8D%E6%96%B0%E7%BC%96%E8%AF%91"><span class="nav-number">8.1.</span> <span class="nav-text">修改.h文件没有重新编译</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#windows%E5%AD%90%E7%B3%BB%E7%BB%9Fwsl"><span class="nav-number">9.</span> <span class="nav-text">windows子系统wsl</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#arm-none-eabi-gcc%E5%B7%A5%E5%85%B7%E9%93%BE%E9%97%AE%E9%A2%98"><span class="nav-number">9.1.</span> <span class="nav-text">arm-none-eabi-gcc工具链问题</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Linux%E4%B8%8B%E7%BC%96%E5%86%99Python%E5%90%88%E5%B9%B6%E8%84%9A%E6%9C%AC"><span class="nav-number">10.</span> <span class="nav-text">Linux下编写Python合并脚本</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%88%E5%B9%B6-bootloader-app-mix"><span class="nav-number">10.1.</span> <span class="nav-text">合并 bootloader + app  &#x3D; mix</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%AF%E5%8F%98%E5%8F%82%E6%95%B0%E5%87%BD%E6%95%B0%E8%AF%A6%E8%A7%A3"><span class="nav-number">11.</span> <span class="nav-text">可变参数函数详解</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B1%87%E7%BC%96%E5%9F%BA%E7%A1%80"><span class="nav-number">12.</span> <span class="nav-text">汇编基础</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%84%E5%AD%98%E5%99%A8"><span class="nav-number">12.1.</span> <span class="nav-text">寄存器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%84%E5%AD%98%E5%99%A8%E7%9A%84%E7%A7%8D%E7%B1%BB"><span class="nav-number">12.2.</span> <span class="nav-text">寄存器的种类</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#J-Link-J-Flash"><span class="nav-number">1.</span> <span class="nav-text">J-Link&#x2F;J-Flash</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Ubuntu-%E6%97%A0%E6%B3%95%E6%9B%B4%E6%96%B0%E9%97%AE%E9%A2%98"><span class="nav-number">2.</span> <span class="nav-text">Ubuntu 无法更新问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9B%B4%E6%94%B9%E8%BD%AF%E4%BB%B6%E6%BA%90"><span class="nav-number">2.1.</span> <span class="nav-text">更改软件源</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B8%85%E9%99%A4-apt-%E7%BC%93%E5%AD%98"><span class="nav-number">2.2.</span> <span class="nav-text">清除 apt 缓存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%9D%E8%AF%95%E6%9B%B4%E6%96%B0%E7%B3%BB%E7%BB%9F"><span class="nav-number">2.3.</span> <span class="nav-text">尝试更新系统</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Breo%E8%93%9D%E7%89%99%E5%90%AF%E5%8A%A8%E5%BC%82%E5%B8%B8"><span class="nav-number">3.</span> <span class="nav-text">Breo蓝牙启动异常</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Breo%E8%93%9D%E7%89%99%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">3.1.</span> <span class="nav-text">Breo蓝牙初始化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BF%83%E8%B7%B3%E5%8C%85%E5%9B%9E%E5%A4%8D%E8%B6%85%E6%97%B6"><span class="nav-number">3.2.</span> <span class="nav-text">心跳包回复超时</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SPI%E7%BA%A7%E8%81%94led%E7%81%AF%E8%B0%83%E8%AF%95%E5%B0%8F%E5%8A%A9%E6%89%8B"><span class="nav-number">4.</span> <span class="nav-text">SPI级联led灯调试小助手</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#SPI%E7%BA%A7%E8%81%94led%E7%81%AF%E9%97%AE%E9%A2%98%E6%B1%87%E6%80%BB"><span class="nav-number">4.1.</span> <span class="nav-text">SPI级联led灯问题汇总</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%85%E7%94%B5%E9%97%AA%E7%81%AF%E9%97%AE%E9%A2%98"><span class="nav-number">4.1.1.</span> <span class="nav-text">充电闪灯问题</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90"><span class="nav-number">4.1.1.1.</span> <span class="nav-text">问题分析</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95"><span class="nav-number">4.1.1.2.</span> <span class="nav-text">解决方法</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%91%BC%E5%90%B8%E7%81%AF%E9%97%AA%E7%83%81%E9%97%AE%E9%A2%98"><span class="nav-number">4.1.2.</span> <span class="nav-text">呼吸灯闪烁问题</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90-1"><span class="nav-number">4.1.2.1.</span> <span class="nav-text">问题分析</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95-1"><span class="nav-number">4.1.2.2.</span> <span class="nav-text">解决方法</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9F%90%E9%A1%B9%E7%9B%AE%E5%85%85%E7%94%B5%E4%BF%9D%E6%8A%A4%E4%BB%8D%E5%85%85%E7%94%B5"><span class="nav-number">5.</span> <span class="nav-text">某项目充电保护仍充电</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Git%E5%B0%8F%E8%B4%B4%E5%A3%AB"><span class="nav-number">6.</span> <span class="nav-text">Git小贴士</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%A7%E8%A1%8C-git-pull-%E4%BC%9A%E8%A6%86%E7%9B%96%E6%9C%AC%E5%9C%B0%E7%9A%84%E4%BF%AE%E6%94%B9%E5%90%97%EF%BC%9F"><span class="nav-number">6.1.</span> <span class="nav-text">执行 git pull 会覆盖本地的修改吗？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#git-fetch-%E5%92%8C-git-pull-%E7%9A%84%E5%8C%BA%E5%88%AB%E4%B8%8E%E8%81%94%E7%B3%BB"><span class="nav-number">6.2.</span> <span class="nav-text">git fetch 和 git pull 的区别与联系</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E7%A1%80%E9%9D%9E%E5%85%B8%E5%9E%8B%E6%93%8D%E4%BD%9C"><span class="nav-number">6.3.</span> <span class="nav-text">基础非典型操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%AC%E5%9C%B0git%E9%85%8D%E7%BD%AE"><span class="nav-number">6.4.</span> <span class="nav-text">本地git配置</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%AF%E5%8F%98%E5%8F%82%E6%95%B0%E5%87%BD%E6%95%B0%E8%AF%A6%E8%A7%A3"><span class="nav-number">7.</span> <span class="nav-text">可变参数函数详解</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B1%87%E7%BC%96%E5%9F%BA%E7%A1%80"><span class="nav-number">8.</span> <span class="nav-text">汇编基础</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%84%E5%AD%98%E5%99%A8"><span class="nav-number">8.1.</span> <span class="nav-text">寄存器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%84%E5%AD%98%E5%99%A8%E7%9A%84%E7%A7%8D%E7%B1%BB"><span class="nav-number">8.2.</span> <span class="nav-text">寄存器的种类</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
