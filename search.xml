@@ -457,17 +457,19 @@ if(ack)表示除最后一次数据不回复，其他每次都会回复ack/nack
 </code></pre>
 <h4 id="文本"><a href="#文本" class="headerlink" title="文本"></a>文本</h4><pre><code>普通文本
 **加粗文本**
-* 斜体文本*
+*斜体文本*
 **~删除线文本~**
 </code></pre>
 <h4 id="列表"><a href="#列表" class="headerlink" title="列表"></a>列表</h4><pre><code>* 无序列表
 1. 有序列表
     * 嵌套列表
 </code></pre>
-<h4 id="代码块"><a href="#代码块" class="headerlink" title="代码块"></a>代码块</h4><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span> &#123;</span><br><span class="line"><span class="built_in">printf</span>(<span class="string">&quot;Hello, world!\n&quot;</span>);</span><br><span class="line"><span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h4 id="链接"><a href="#链接" class="headerlink" title="链接"></a>链接</h4><pre><code>链接文本: [https://www.example.com](https://www.example.com)
+<h4 id="代码块"><a href="#代码块" class="headerlink" title="代码块"></a>代码块</h4><pre><code><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span> &#123;</span><br><span class="line"><span class="built_in">printf</span>(<span class="string">&quot;Hello, world!\n&quot;</span>);</span><br><span class="line"><span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 </code></pre>
+<h4 id="文本中代码高亮"><a href="#文本中代码高亮" class="headerlink" title="文本中代码高亮"></a>文本中代码高亮</h4><pre><code>使用`printf(&quot;Hello, world!\n&quot;);`函数进行打印
+</code></pre>
+<p>效果：使用<code>printf(&quot;Hello, world!\n&quot;);</code>函数进行打印</p>
+<h4 id="链接"><a href="#链接" class="headerlink" title="链接"></a>链接</h4><p><strong>链接文本</strong>: <a href="https://www.example.com/">https://www.example.com</a></p>
 <h4 id="图片"><a href="#图片" class="headerlink" title="图片"></a>图片</h4><pre><code>网络地址: ![这是一张示例图片](https://www.example.com/example.png)
 本地文件路径：![这是一张示例图片](../pictures/这是一张示例图片.png)
 图片链接跳转: ![这是一张示例图片](example.png) &#123;link=https://www.example.com/&#125;
@@ -516,186 +518,6 @@ README 文件
       <tags>
         <tag>Markdown</tag>
       </tags>
-  </entry>
-  <entry>
-    <title>杂项笔记</title>
-    <url>/2024/01/31/%E6%9D%82%E9%A1%B9/</url>
-    <content><![CDATA[<h2 id="J-Link-J-Flash"><a href="#J-Link-J-Flash" class="headerlink" title="J-Link&#x2F;J-Flash"></a>J-Link&#x2F;J-Flash</h2><p><strong>J-Flash批处理脚本配置烧录：</strong>当然，前提是要添加J-Link的可执行程序路径到<code>$PATH</code>环境变量中</p>
-<ul>
-<li><code>program.bat</code>脚本代码如下，参考修改即可：<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">echo start...</span><br><span class="line"></span><br><span class="line">JLink -device N32L406CB -if swd -speed 4000 -CommanderScript &quot;C:\Users\Breo\Desktop\Wireless moxibustion\Software\program.jlink&quot;</span><br></pre></td></tr></table></figure></li>
-<li><code>program.jlink</code>文件代码如下，其中目标设备、文件路径、烧录地址等根据需要配置：<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">connect</span><br><span class="line">device N32L406CB</span><br><span class="line">si SWD</span><br><span class="line">speed 4000</span><br><span class="line">h		// halt-停止</span><br><span class="line">r		// 复位，可以考虑去掉</span><br><span class="line">erase		// 或 erase 0x8002800，去掉也行，但可能会出现error fail address 0x00000000错误提示</span><br><span class="line"></span><br><span class="line">loadfile app.bin 0x8002800      // loadfile app.hex 或 loadfile app.bin 0x8000000</span><br><span class="line">verifybin app.bin 0x8002800</span><br><span class="line">r</span><br><span class="line">go		// r go表示reset and run</span><br><span class="line">q		// 退出J-Link命令行工具</span><br></pre></td></tr></table></figure></li>
-</ul>
-<h2 id="Ubuntu-无法更新问题"><a href="#Ubuntu-无法更新问题" class="headerlink" title="Ubuntu 无法更新问题"></a>Ubuntu 无法更新问题</h2><p>Ubuntu 无法使用<code>apt update</code></p>
-<h3 id="更改软件源"><a href="#更改软件源" class="headerlink" title="更改软件源"></a>更改软件源</h3><p>编辑 <code>/etc/apt/sources.list</code> 文件，将以下内容添加到文件末尾</p>
-<pre><code>deb https://mirrors.aliyun.com/ubuntu/ jammy main restricted universe multiverse
-deb-src https://mirrors.aliyun.com/ubuntu/ jammy main restricted universe multiverse
-
-deb https://mirrors.aliyun.com/ubuntu/ jammy-updates main restricted universe multiverse
-deb-src https://mirrors.aliyun.com/ubuntu/ jammy-updates main restricted universe multiverse
-
-deb https://mirrors.aliyun.com/ubuntu/ jammy-backports main restricted universe multiverse
-deb-src https://mirrors.aliyun.com/ubuntu/ jammy-backports main restricted universe multiverse
-</code></pre>
-<h3 id="清除-apt-缓存"><a href="#清除-apt-缓存" class="headerlink" title="清除 apt 缓存"></a>清除 apt 缓存</h3><pre><code>sudo apt clean
-sudo apt autoclean
-</code></pre>
-<h3 id="尝试更新系统"><a href="#尝试更新系统" class="headerlink" title="尝试更新系统"></a>尝试更新系统</h3><pre><code>sudo apt update
-</code></pre>
-<p>显示 <code>ModuleNotFoundError: No module named &#39;apt_pkg&#39;</code>，重新安装 “<code>apt_pkg</code>“ 模块：</p>
-<pre><code>sudo apt install --reinstall python3-apt
-</code></pre>
-<p>显示 ERROR：</p>
-<pre><code>E: Could not read response to hello message from hook [ ! -f /usr/bin/snap ] || /usr/bin/snap advise-snap --from-apt 2&gt;/dev/null || true: Success
-</code></pre>
-<p>如果问题仍然存在，尝试修复 Python 包：</p>
-<pre><code>sudo apt install --fix-broken
-</code></pre>
-<p>然后就更新系统了：</p>
-<pre><code>sudo apt update
-sudo apt upgrade
-</code></pre>
-<p>执行<code>sudo apt upgrade</code>后显示ERROR：</p>
-<pre><code>Errors were encountered while processing:
-/tmp/apt-dpkg-install-cQBLJW/626-linux-iot-tools-common_5.4.0-1030.31_all.deb
-E: Sub-process /usr/bin/dpkg returned an error code (1)
-</code></pre>
-<p>最后一步，修复损坏的软件包配置：</p>
-<pre><code>sudo dpkg --configure -a
-sudo apt upgrade
-</code></pre>
-<h2 id="Breo蓝牙启动异常"><a href="#Breo蓝牙启动异常" class="headerlink" title="Breo蓝牙启动异常"></a>Breo蓝牙启动异常</h2><h3 id="Breo蓝牙初始化"><a href="#Breo蓝牙初始化" class="headerlink" title="Breo蓝牙初始化"></a>Breo蓝牙初始化</h3><p>蓝牙初始化没完成，透传未开启，app就连接蓝牙了。<br>设置透传参数，开启透传的的状态中增加连接蓝牙接受指令。</p>
-<h3 id="心跳包回复超时"><a href="#心跳包回复超时" class="headerlink" title="心跳包回复超时"></a>心跳包回复超时</h3><p>现在是接收&#x2F;刷新设备数据200ms超时，延迟太长还可以缩短。</p>
-<h2 id="SPI级联led灯调试小助手"><a href="#SPI级联led灯调试小助手" class="headerlink" title="SPI级联led灯调试小助手"></a>SPI级联led灯调试小助手</h2><p>产品名称：1209RGB幻彩雾状<br>产品型号：XTQ-016B.RGB-2307125-20</p>
-<h3 id="SPI级联led灯问题汇总"><a href="#SPI级联led灯问题汇总" class="headerlink" title="SPI级联led灯问题汇总"></a>SPI级联led灯问题汇总</h3><h4 id="充电闪灯问题"><a href="#充电闪灯问题" class="headerlink" title="充电闪灯问题"></a>充电闪灯问题</h4><h5 id="问题分析"><a href="#问题分析" class="headerlink" title="问题分析"></a>问题分析</h5><p>充电中拔掉电源，立即再次插入，会闪一下灯；若等两秒再插入则不会出现，初步判断是此款芯片有锁存功能，会保存到寄存器中，未完全掉电再次插入则会继续执行上次的寄存器数据。</p>
-<h5 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h5><p>充电中拔掉电源，程序不要立即断电，持续两秒反初始化spi灯珠，即给spi寄存器写全灭数据。</p>
-<h4 id="呼吸灯闪烁问题"><a href="#呼吸灯闪烁问题" class="headerlink" title="呼吸灯闪烁问题"></a>呼吸灯闪烁问题</h4><h5 id="问题分析-1"><a href="#问题分析-1" class="headerlink" title="问题分析"></a>问题分析</h5><p>程序中呼吸灯会跑偶尔闪烁，影响显示效果。分析发现，代码中有电机的FG检测，此检测开启了输入捕获功能，会持续中断触发，虽然spi灯的驱动是dma发送，但是也是由CPU来调度的，并不能与中断并行。spi呼吸灯效果需要持续发送数据，且时序要求很高，中断会抢占spi的dma发送，打断spi传输数据，导致数据传输出错，造成闪灯效果。</p>
-<h5 id="解决方法-1"><a href="#解决方法-1" class="headerlink" title="解决方法"></a>解决方法</h5><p>1、提高芯片主频，n32l403KB最高主频为64MHz，如果主频提高效果会好一些。<br>2、spi呼吸灯效果持续发送数据，不能与中断频繁的代码一起使用。</p>
-<h2 id="某项目充电保护仍充电"><a href="#某项目充电保护仍充电" class="headerlink" title="某项目充电保护仍充电"></a>某项目充电保护仍充电</h2><p>修改代码：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&#123;-1, 1, PIN_CHARGE_CC_DETECT, PIN_MODE_INPUT&#125;,	//input/output switch</span><br><span class="line"></span><br><span class="line">static void board_charge_cc_set(bool en)</span><br><span class="line">&#123;	</span><br><span class="line">	struct pin_status_desc *pin = pin_handle(PIN_CHARGE_CC_DETECT);</span><br><span class="line">	<span class="keyword">if</span>(en)</span><br><span class="line">	&#123;</span><br><span class="line">		pin-&gt;<span class="built_in">type</span> = PIN_MODE_INPUT;</span><br><span class="line">		drv_pin_mode(pin-&gt;pin_id,pin-&gt;<span class="built_in">type</span>);</span><br><span class="line">		pin-&gt;lvl_rt = -1;			//重置lvl_rt，以防止output出问题</span><br><span class="line">	&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">		pin-&gt;<span class="built_in">type</span> = PIN_MODE_OUTPUT;</span><br><span class="line">		drv_pin_mode(pin-&gt;pin_id,pin-&gt;<span class="built_in">type</span>);</span><br><span class="line">		pin_set_func(pin, PIN_HIGH);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="Git小贴士"><a href="#Git小贴士" class="headerlink" title="Git小贴士"></a>Git小贴士</h2><h3 id="执行-git-pull-会覆盖本地的修改吗？"><a href="#执行-git-pull-会覆盖本地的修改吗？" class="headerlink" title="执行 git pull 会覆盖本地的修改吗？"></a>执行 git pull 会覆盖本地的修改吗？</h3><p>没有冲突的情况下，远端会直接更新至本地上，但不会改变本地未提交的变动；如果本地修改已提交，则会执行一个远端分支和本地分支的合并</p>
-<h3 id="git-fetch-和-git-pull-的区别与联系"><a href="#git-fetch-和-git-pull-的区别与联系" class="headerlink" title="git fetch 和 git pull 的区别与联系"></a>git fetch 和 git pull 的区别与联系</h3><p><code>git fetch</code>用于从远程仓库获取最新的提交，保存到本地的远程跟踪分支中（<code>FETCH_HEAD</code>），可以通过查看此分支了解远程仓库的更新情况</p>
-<ul>
-<li><code>git diff FETCH_HEAD</code>比较查看该分支和当前工作分支的内容</li>
-</ul>
-<br>
-
-<p><code>git pull</code>会自动获取远程仓库的更新，并且合并到当前分支上，相当于<code>git fetch</code> + <code>git merge FETCH_HEAD</code></p>
-<ul>
-<li>将远程仓库中指定分支的最新提交 ID 保存到本地的 <code>FETCH_HEAD</code> 分支中</li>
-<li>将 <code>FETCH_HEAD</code> 分支合并到当前工作分支中</li>
-</ul>
-<h3 id="基础非典型操作"><a href="#基础非典型操作" class="headerlink" title="基础非典型操作"></a>基础非典型操作</h3><h3 id="本地git配置"><a href="#本地git配置" class="headerlink" title="本地git配置"></a>本地git配置</h3><br>
-
-<p><strong>配置本地与远端的SSH密钥连接流程：</strong></p>
-<ul>
-<li>本地生成SSH公钥和私钥(如果没有的话，另，linux下公钥通常存放于<code>~/.ssh/*.pub</code>)<ul>
-<li><code>ssh-keygen -t rsa -b 4096 -C xxx@xxx.com</code></li>
-</ul>
-</li>
-<li>复制公钥，添加至远端平台的SSH设置上<br></li>
-</ul>
-<p><strong>查看本地配置：</strong></p>
-<ul>
-<li><code>git config --list</code>查看当前项目的所有配置</li>
-<li><code>git config --global --list</code>查看全局配置<br></li>
-</ul>
-<p><strong>修改用户名(全局&#x2F;当前项目)</strong></p>
-<p>此用户名即提交日志上所展示的用户名称</p>
-<ul>
-<li>修改全局用户名：<code>git config --global user.name &quot;xxx&quot;</code>，影响用户的所有仓库</li>
-<li>修改当前路径项目的用户名：<code>git config user.name &quot;xxx&quot;</code></li>
-<li>查看全局用户名：<code>git config user.name</code><br></li>
-</ul>
-<p><strong>初始化本地工程并与远端已有仓库的main分支关联：</strong></p>
-<ul>
-<li>进入工程根目录，<code>git init</code>初始化本地仓库</li>
-<li>添加远程仓库：<code>git remote add origin &lt;远程仓库地址&gt;</code></li>
-<li><code>git branch -M main</code>将当前分支重命名为<code>main</code>，M即<code>--move --force</code>的缩写。（可以分别输入<code>git add --all</code>，<code>git commit -m &quot;first commit&quot;</code>完成对本地分支的首次提交）</li>
-<li>使用<code>git pull origin main</code>，将远程仓库的main分支拉取到本地，或者<code>git push -u origin main -f</code>将本地的xxx分支强制推送到远端main分支，其中-u是<code>--set-upstream</code>的缩写，后续会保持这个跟踪关系</li>
-</ul>
-<br>
-
-<h2 id="可变参数函数详解"><a href="#可变参数函数详解" class="headerlink" title="可变参数函数详解"></a>可变参数函数详解</h2><p>C语言中的可变参数函数允许您定义函数，其参数个数是不确定的，可以根据具体需求接受可变数量的参数。这在处理不定数量参数的情况下非常有用，比如<code>printf</code>和<code>scanf</code>等函数。让我为您详细解释一下可变参数函数的原理和实现。</p>
-<p><strong>1. 原理与实现：</strong></p>
-<ul>
-<li><p>可变参数函数的参数列表是从右往左压入堆栈的。假设堆栈中有以下参数：不可变参数1、不可变参数2、…、不可变参数n、可变参数1、可变参数2、…、可变参数n。</p>
-</li>
-<li><p>为了获取可变参数，我们需要知道每个可变参数的地址。这是通过前一个不可变参数的地址和类型来实现的。</p>
-</li>
-<li><p>ANSI标准提供了三个宏来实现这个过程：</p>
-<ul>
-<li><p><code>va_start(va_list arg_ptr, prev_param)</code>: 初始化可变参数列表，将arg_ptr指向第一个可变参数。</p>
-</li>
-<li><p><code>va_arg(va_list arg_ptr, type)</code>: 获取当前参数的值，类型由前面的不可变参数传递。例如，printf中的格式化字符串或者可变参数列表的参数类型和第几个不可变参数的相同。</p>
-</li>
-<li><p><code>va_end(va_list arg_ptr)</code>: 释放资源，结束可变参数列表的访问。</p>
-</li>
-</ul>
-</li>
-<li><p>这些宏的实现细节由编译器和标准库提供，我们只需调用它们即可。</p>
-</li>
-</ul>
-<p><strong>2. 可变参数函数：</strong></p>
-<ul>
-<li>可变参数函数允许在函数定义中接受不定数量的参数。</li>
-<li>C语言提供了 <code>stdarg.h</code> 头文件来支持可变参数函数的实现。</li>
-<li>下面是一个示例代码，展示了如何实现一个可变参数函数 sum，它接受一个整数参数 count，表示接下来的可变参数的数量：</li>
-</ul>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdarg.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">sum</span><span class="params">(<span class="type">int</span> count, ...)</span> &#123;</span><br><span class="line">    <span class="type">int</span> total = <span class="number">0</span>;</span><br><span class="line">    va_list args;</span><br><span class="line">    va_start(args, count);</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; count; i++) &#123;</span><br><span class="line">        <span class="type">int</span> num = va_arg(args, <span class="type">int</span>);</span><br><span class="line">        total += num;</span><br><span class="line">    &#125;</span><br><span class="line">    va_end(args);</span><br><span class="line">    <span class="keyword">return</span> total;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="type">int</span> result = sum(<span class="number">4</span>, <span class="number">10</span>, <span class="number">20</span>, <span class="number">30</span>, <span class="number">40</span>);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;Sum: %d\n&quot;</span>, result);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>在这个示例中，我们定义了一个可变参数函数 sum，它计算传入的整数参数的总和。</li>
-</ul>
-<br>
-
-<p><strong>3. 可变参数宏：</strong></p>
-<ul>
-<li>可变参数宏允许在宏调用中接受可变数量的参数。</li>
-<li>在C语言中，可变参数宏使用 <code>__VA_ARGS__</code> 表示可变参数的部分。</li>
-<li>下面是一个示例代码，展示了如何定义一个可变参数宏 <code>PRINT_VALUES</code>，它使用 printf 函数来打印可变数量的值:</li>
-</ul>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PRINT_VALUES(...) do &#123; \</span></span><br><span class="line"><span class="meta">    printf(<span class="string">&quot;Values: &quot;</span>); \</span></span><br><span class="line"><span class="meta">    printf(__VA_ARGS__); \</span></span><br><span class="line"><span class="meta">    printf(<span class="string">&quot;\n&quot;</span>); \</span></span><br><span class="line"><span class="meta">&#125; while (0)</span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span> &#123;</span><br><span class="line">    PRINT_VALUES(<span class="string">&quot;%d %s %f&quot;</span>, <span class="number">10</span>, <span class="string">&quot;hello&quot;</span>, <span class="number">3.14</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>在这个示例中，我们定义了一个可变参数宏 <code>PRINT_VALUES</code>，它使用 <code>printf</code> 函数来打印多个值。</li>
-</ul>
-<br>
-
-<p><strong>4. 实现自己的 printf 函数：</strong></p>
-<ul>
-<li><code>printf</code> 函数接受一个格式字符串作为第一个参数，后面是可变数量的参数，用于替换格式字符串中的格式占位符。</li>
-<li>以下是一个简化版的示例代码，展示了一个实现类似于 <code>printf</code> 函数的功能的函数：</li>
-</ul>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdarg.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">my_printf</span><span class="params">(<span class="type">const</span> <span class="type">char</span>* format, ...)</span> &#123;</span><br><span class="line">    va_list args;</span><br><span class="line">    va_start(args, format);</span><br><span class="line">    <span class="keyword">while</span> (*format != <span class="string">&#x27;\0&#x27;</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (*format == <span class="string">&#x27;%&#x27;</span>) &#123;</span><br><span class="line">            format++; <span class="comment">// 移动到占位符的下一个字符</span></span><br><span class="line">            <span class="keyword">if</span> (*format == <span class="string">&#x27;d&#x27;</span>) &#123;</span><br><span class="line">                <span class="type">int</span> value = va_arg(args, <span class="type">int</span>);</span><br><span class="line">                <span class="built_in">printf</span>(<span class="string">&quot;%d&quot;</span>, value);</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (*format == <span class="string">&#x27;f&#x27;</span>) &#123;</span><br><span class="line">                <span class="type">double</span> value = va_arg(args, <span class="type">double</span>);</span><br><span class="line">                <span class="built_in">printf</span>(<span class="string">&quot;%f&quot;</span>, value);</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (*format == <span class="string">&#x27;s&#x27;</span>) &#123;</span><br><span class="line">                <span class="type">char</span>* value = va_arg(args, <span class="type">char</span>*);</span><br><span class="line">                <span class="built_in">printf</span>(<span class="string">&quot;%s&quot;</span>, value);</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (*format == <span class="string">&#x27;c&#x27;</span>) &#123;</span><br><span class="line">                <span class="type">int</span> value = va_arg(args, <span class="type">int</span>);</span><br><span class="line">                <span class="built_in">printf</span>(<span class="string">&quot;%c&quot;</span>, value);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="built_in">printf</span>(<span class="string">&quot;Unsupported format specifier: %c&quot;</span>, *format);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">&quot;%c&quot;</span>, *format);</span><br><span class="line">        &#125;</span><br><span class="line">        format++; <span class="comment">// 移动到下一个字符</span></span><br><span class="line">    &#125;</span><br><span class="line">    va_end(args);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span> &#123;</span><br><span class="line">	<span class="type">int</span> num = <span class="number">42</span>;</span><br><span class="line">	<span class="type">double</span> pi = <span class="number">3.14159</span>;</span><br><span class="line">	<span class="type">char</span> str[] = <span class="string">&quot;Hello, world!&quot;</span>;</span><br><span class="line">	<span class="type">char</span> ch = <span class="string">&#x27;A&#x27;</span>;</span><br><span class="line"></span><br><span class="line">	my_printf(<span class="string">&quot;Integer: %d\n&quot;</span>, num);</span><br><span class="line">	my_printf(<span class="string">&quot;Float: %f\n&quot;</span>, pi);</span><br><span class="line">	my_printf(<span class="string">&quot;Float: %s\n&quot;</span>, str);</span><br><span class="line">	my_printf(<span class="string">&quot;Float: %c\n&quot;</span>, ch);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<br>
-
-<h2 id="汇编基础"><a href="#汇编基础" class="headerlink" title="汇编基础"></a>汇编基础</h2><ul>
-<li><p>我们知道，CPU 只负责计算，本身不具备智能。你输入一条指令（instruction），它就运行一次，然后停下来，等待下一条指令。</p>
-</li>
-<li><p>这些指令都是二进制的，称为操作码（opcode），比如加法指令就是00000011。编译器的作用，就是将高级语言写好的程序，翻译成一条条操作码。</p>
-</li>
-<li><p>对于人类来说，二进制程序是不可读的，根本看不出来机器干了什么。为了解决可读性的问题，以及偶尔的编辑需求，就诞生了汇编语言。</p>
-</li>
-<li><p><code>汇编语言是二进制指令的文本形式</code>，与指令是一一对应的关系。比如，加法指令00000011写成汇编语言就是 ADD。只要还原成二进制，汇编语言就可以被 CPU 直接执行，所以它是最底层的低级语言。</p>
-</li>
-</ul>
-<h3 id="寄存器"><a href="#寄存器" class="headerlink" title="寄存器"></a>寄存器</h3><ul>
-<li><p>每一种 CPU 的机器指令都是不一样的，因此对应的汇编语言也不一样。本文介绍的是目前最常见的 x86 汇编语言，即 Intel 公司的 CPU 使用的那一种。</p>
-</li>
-<li><p>学习汇编语言，首先必须了解两个知识点：寄存器和内存模型。</p>
-<ul>
-<li><p>先来看寄存器。CPU 本身只负责运算，不负责储存数据。数据一般都储存在内存之中，CPU 要用的时候就去内存读写数据。但是，CPU 的运算速度远高于内存的读写速度，为了避免被拖慢，CPU 都自带一级缓存和二级缓存。基本上，CPU 缓存可以看作是读写速度较快的内存。</p>
-</li>
-<li><p>但是，CPU 缓存还是不够快，另外数据在缓存里面的地址是不固定的，CPU 每次读写都要寻址也会拖慢速度。因此，除了缓存之外，CPU 还自带了寄存器（register），用来储存最常用的数据。也就是说，那些最频繁读写的数据（比如循环变量），都会放在寄存器里面，CPU 优先读写寄存器，再由寄存器跟内存交换数据。</p>
-</li>
-<li><p>寄存器不依靠地址区分数据，而依靠名称。每一个寄存器都有自己的名称，我们告诉 CPU 去具体的哪一个寄存器拿数据，这样的速度是最快的。有人比喻寄存器是 CPU 的零级缓存。</p>
-</li>
-</ul>
-</li>
-</ul>
-<h3 id="寄存器的种类"><a href="#寄存器的种类" class="headerlink" title="寄存器的种类"></a>寄存器的种类</h3>]]></content>
   </entry>
   <entry>
     <title>CmBacktrace移植</title>
@@ -929,5 +751,185 @@ pyinstaller -F -w -i file.ico file.py
         <tag>Linux</tag>
         <tag>Wsl</tag>
       </tags>
+  </entry>
+  <entry>
+    <title>杂项笔记</title>
+    <url>/2024/01/31/%E6%9D%82%E9%A1%B9%E7%AC%94%E8%AE%B0/</url>
+    <content><![CDATA[<h2 id="J-Link-J-Flash"><a href="#J-Link-J-Flash" class="headerlink" title="J-Link&#x2F;J-Flash"></a>J-Link&#x2F;J-Flash</h2><p><strong>J-Flash批处理脚本配置烧录：</strong>当然，前提是要添加J-Link的可执行程序路径到<code>$PATH</code>环境变量中</p>
+<ul>
+<li><code>program.bat</code>脚本代码如下，参考修改即可：<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">echo start...</span><br><span class="line"></span><br><span class="line">JLink -device N32L406CB -if swd -speed 4000 -CommanderScript &quot;C:\Users\Breo\Desktop\Wireless moxibustion\Software\program.jlink&quot;</span><br></pre></td></tr></table></figure></li>
+<li><code>program.jlink</code>文件代码如下，其中目标设备、文件路径、烧录地址等根据需要配置：<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">connect</span><br><span class="line">device N32L406CB</span><br><span class="line">si SWD</span><br><span class="line">speed 4000</span><br><span class="line">h		// halt-停止</span><br><span class="line">r		// 复位，可以考虑去掉</span><br><span class="line">erase		// 或 erase 0x8002800，去掉也行，但可能会出现error fail address 0x00000000错误提示</span><br><span class="line"></span><br><span class="line">loadfile app.bin 0x8002800      // loadfile app.hex 或 loadfile app.bin 0x8000000</span><br><span class="line">verifybin app.bin 0x8002800</span><br><span class="line">r</span><br><span class="line">go		// r go表示reset and run</span><br><span class="line">q		// 退出J-Link命令行工具</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="Ubuntu-无法更新问题"><a href="#Ubuntu-无法更新问题" class="headerlink" title="Ubuntu 无法更新问题"></a>Ubuntu 无法更新问题</h2><p>Ubuntu 无法使用<code>apt update</code></p>
+<h3 id="更改软件源"><a href="#更改软件源" class="headerlink" title="更改软件源"></a>更改软件源</h3><p>编辑 <code>/etc/apt/sources.list</code> 文件，将以下内容添加到文件末尾</p>
+<pre><code>deb https://mirrors.aliyun.com/ubuntu/ jammy main restricted universe multiverse
+deb-src https://mirrors.aliyun.com/ubuntu/ jammy main restricted universe multiverse
+
+deb https://mirrors.aliyun.com/ubuntu/ jammy-updates main restricted universe multiverse
+deb-src https://mirrors.aliyun.com/ubuntu/ jammy-updates main restricted universe multiverse
+
+deb https://mirrors.aliyun.com/ubuntu/ jammy-backports main restricted universe multiverse
+deb-src https://mirrors.aliyun.com/ubuntu/ jammy-backports main restricted universe multiverse
+</code></pre>
+<h3 id="清除-apt-缓存"><a href="#清除-apt-缓存" class="headerlink" title="清除 apt 缓存"></a>清除 apt 缓存</h3><pre><code>sudo apt clean
+sudo apt autoclean
+</code></pre>
+<h3 id="尝试更新系统"><a href="#尝试更新系统" class="headerlink" title="尝试更新系统"></a>尝试更新系统</h3><pre><code>sudo apt update
+</code></pre>
+<p>显示 <code>ModuleNotFoundError: No module named &#39;apt_pkg&#39;</code>，重新安装 “<code>apt_pkg</code>“ 模块：</p>
+<pre><code>sudo apt install --reinstall python3-apt
+</code></pre>
+<p>显示 ERROR：</p>
+<pre><code>E: Could not read response to hello message from hook [ ! -f /usr/bin/snap ] || /usr/bin/snap advise-snap --from-apt 2&gt;/dev/null || true: Success
+</code></pre>
+<p>如果问题仍然存在，尝试修复 Python 包：</p>
+<pre><code>sudo apt install --fix-broken
+</code></pre>
+<p>然后就更新系统了：</p>
+<pre><code>sudo apt update
+sudo apt upgrade
+</code></pre>
+<p>执行<code>sudo apt upgrade</code>后显示ERROR：</p>
+<pre><code>Errors were encountered while processing:
+/tmp/apt-dpkg-install-cQBLJW/626-linux-iot-tools-common_5.4.0-1030.31_all.deb
+E: Sub-process /usr/bin/dpkg returned an error code (1)
+</code></pre>
+<p>最后一步，修复损坏的软件包配置：</p>
+<pre><code>sudo dpkg --configure -a
+sudo apt upgrade
+</code></pre>
+<h2 id="Breo蓝牙启动异常"><a href="#Breo蓝牙启动异常" class="headerlink" title="Breo蓝牙启动异常"></a>Breo蓝牙启动异常</h2><h3 id="Breo蓝牙初始化"><a href="#Breo蓝牙初始化" class="headerlink" title="Breo蓝牙初始化"></a>Breo蓝牙初始化</h3><p>蓝牙初始化没完成，透传未开启，app就连接蓝牙了。<br>设置透传参数，开启透传的的状态中增加连接蓝牙接受指令。</p>
+<h3 id="心跳包回复超时"><a href="#心跳包回复超时" class="headerlink" title="心跳包回复超时"></a>心跳包回复超时</h3><p>现在是接收&#x2F;刷新设备数据200ms超时，延迟太长还可以缩短。</p>
+<h2 id="SPI级联led灯调试小助手"><a href="#SPI级联led灯调试小助手" class="headerlink" title="SPI级联led灯调试小助手"></a>SPI级联led灯调试小助手</h2><p>产品名称：1209RGB幻彩雾状<br>产品型号：XTQ-016B.RGB-2307125-20</p>
+<h3 id="SPI级联led灯问题汇总"><a href="#SPI级联led灯问题汇总" class="headerlink" title="SPI级联led灯问题汇总"></a>SPI级联led灯问题汇总</h3><h4 id="充电闪灯问题"><a href="#充电闪灯问题" class="headerlink" title="充电闪灯问题"></a>充电闪灯问题</h4><h5 id="问题分析"><a href="#问题分析" class="headerlink" title="问题分析"></a>问题分析</h5><p>充电中拔掉电源，立即再次插入，会闪一下灯；若等两秒再插入则不会出现，初步判断是此款芯片有锁存功能，会保存到寄存器中，未完全掉电再次插入则会继续执行上次的寄存器数据。</p>
+<h5 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h5><p>充电中拔掉电源，程序不要立即断电，持续两秒反初始化spi灯珠，即给spi寄存器写全灭数据。</p>
+<h4 id="呼吸灯闪烁问题"><a href="#呼吸灯闪烁问题" class="headerlink" title="呼吸灯闪烁问题"></a>呼吸灯闪烁问题</h4><h5 id="问题分析-1"><a href="#问题分析-1" class="headerlink" title="问题分析"></a>问题分析</h5><p>程序中呼吸灯会跑偶尔闪烁，影响显示效果。分析发现，代码中有电机的FG检测，此检测开启了输入捕获功能，会持续中断触发，虽然spi灯的驱动是dma发送，但是也是由CPU来调度的，并不能与中断并行。spi呼吸灯效果需要持续发送数据，且时序要求很高，中断会抢占spi的dma发送，打断spi传输数据，导致数据传输出错，造成闪灯效果。</p>
+<h5 id="解决方法-1"><a href="#解决方法-1" class="headerlink" title="解决方法"></a>解决方法</h5><p>1、提高芯片主频，n32l403KB最高主频为64MHz，如果主频提高效果会好一些。<br>2、spi呼吸灯效果持续发送数据，不能与中断频繁的代码一起使用。</p>
+<h2 id="某项目充电保护仍充电"><a href="#某项目充电保护仍充电" class="headerlink" title="某项目充电保护仍充电"></a>某项目充电保护仍充电</h2><p>修改代码：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&#123;-1, 1, PIN_CHARGE_CC_DETECT, PIN_MODE_INPUT&#125;,	//input/output switch</span><br><span class="line"></span><br><span class="line">static void board_charge_cc_set(bool en)</span><br><span class="line">&#123;	</span><br><span class="line">	struct pin_status_desc *pin = pin_handle(PIN_CHARGE_CC_DETECT);</span><br><span class="line">	<span class="keyword">if</span>(en)</span><br><span class="line">	&#123;</span><br><span class="line">		pin-&gt;<span class="built_in">type</span> = PIN_MODE_INPUT;</span><br><span class="line">		drv_pin_mode(pin-&gt;pin_id,pin-&gt;<span class="built_in">type</span>);</span><br><span class="line">		pin-&gt;lvl_rt = -1;			//重置lvl_rt，以防止output出问题</span><br><span class="line">	&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">		pin-&gt;<span class="built_in">type</span> = PIN_MODE_OUTPUT;</span><br><span class="line">		drv_pin_mode(pin-&gt;pin_id,pin-&gt;<span class="built_in">type</span>);</span><br><span class="line">		pin_set_func(pin, PIN_HIGH);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Git小贴士"><a href="#Git小贴士" class="headerlink" title="Git小贴士"></a>Git小贴士</h2><h3 id="执行-git-pull-会覆盖本地的修改吗？"><a href="#执行-git-pull-会覆盖本地的修改吗？" class="headerlink" title="执行 git pull 会覆盖本地的修改吗？"></a>执行 git pull 会覆盖本地的修改吗？</h3><p>没有冲突的情况下，远端会直接更新至本地上，但不会改变本地未提交的变动；如果本地修改已提交，则会执行一个远端分支和本地分支的合并</p>
+<h3 id="git-fetch-和-git-pull-的区别与联系"><a href="#git-fetch-和-git-pull-的区别与联系" class="headerlink" title="git fetch 和 git pull 的区别与联系"></a>git fetch 和 git pull 的区别与联系</h3><p><code>git fetch</code>用于从远程仓库获取最新的提交，保存到本地的远程跟踪分支中（<code>FETCH_HEAD</code>），可以通过查看此分支了解远程仓库的更新情况</p>
+<ul>
+<li><code>git diff FETCH_HEAD</code>比较查看该分支和当前工作分支的内容</li>
+</ul>
+<br>
+
+<p><code>git pull</code>会自动获取远程仓库的更新，并且合并到当前分支上，相当于<code>git fetch</code> + <code>git merge FETCH_HEAD</code></p>
+<ul>
+<li>将远程仓库中指定分支的最新提交 ID 保存到本地的 <code>FETCH_HEAD</code> 分支中</li>
+<li>将 <code>FETCH_HEAD</code> 分支合并到当前工作分支中</li>
+</ul>
+<h3 id="基础非典型操作"><a href="#基础非典型操作" class="headerlink" title="基础非典型操作"></a>基础非典型操作</h3><h3 id="本地git配置"><a href="#本地git配置" class="headerlink" title="本地git配置"></a>本地git配置</h3><br>
+
+<p><strong>配置本地与远端的SSH密钥连接流程：</strong></p>
+<ul>
+<li>本地生成SSH公钥和私钥(如果没有的话，另，linux下公钥通常存放于<code>~/.ssh/*.pub</code>)<ul>
+<li><code>ssh-keygen -t rsa -b 4096 -C xxx@xxx.com</code></li>
+</ul>
+</li>
+<li>复制公钥，添加至远端平台的SSH设置上<br></li>
+</ul>
+<p><strong>查看本地配置：</strong></p>
+<ul>
+<li><code>git config --list</code>查看当前项目的所有配置</li>
+<li><code>git config --global --list</code>查看全局配置<br></li>
+</ul>
+<p><strong>修改用户名(全局&#x2F;当前项目)</strong></p>
+<p>此用户名即提交日志上所展示的用户名称</p>
+<ul>
+<li>修改全局用户名：<code>git config --global user.name &quot;xxx&quot;</code>，影响用户的所有仓库</li>
+<li>修改当前路径项目的用户名：<code>git config user.name &quot;xxx&quot;</code></li>
+<li>查看全局用户名：<code>git config user.name</code><br></li>
+</ul>
+<p><strong>初始化本地工程并与远端已有仓库的main分支关联：</strong></p>
+<ul>
+<li>进入工程根目录，<code>git init</code>初始化本地仓库</li>
+<li>添加远程仓库：<code>git remote add origin &lt;远程仓库地址&gt;</code></li>
+<li><code>git branch -M main</code>将当前分支重命名为<code>main</code>，M即<code>--move --force</code>的缩写。（可以分别输入<code>git add --all</code>，<code>git commit -m &quot;first commit&quot;</code>完成对本地分支的首次提交）</li>
+<li>使用<code>git pull origin main</code>，将远程仓库的main分支拉取到本地，或者<code>git push -u origin main -f</code>将本地的xxx分支强制推送到远端main分支，其中-u是<code>--set-upstream</code>的缩写，后续会保持这个跟踪关系</li>
+</ul>
+<br>
+
+<h2 id="可变参数函数详解"><a href="#可变参数函数详解" class="headerlink" title="可变参数函数详解"></a>可变参数函数详解</h2><p>C语言中的可变参数函数允许您定义函数，其参数个数是不确定的，可以根据具体需求接受可变数量的参数。这在处理不定数量参数的情况下非常有用，比如<code>printf</code>和<code>scanf</code>等函数。让我为您详细解释一下可变参数函数的原理和实现。</p>
+<p><strong>1. 原理与实现：</strong></p>
+<ul>
+<li><p>可变参数函数的参数列表是从右往左压入堆栈的。假设堆栈中有以下参数：不可变参数1、不可变参数2、…、不可变参数n、可变参数1、可变参数2、…、可变参数n。</p>
+</li>
+<li><p>为了获取可变参数，我们需要知道每个可变参数的地址。这是通过前一个不可变参数的地址和类型来实现的。</p>
+</li>
+<li><p>ANSI标准提供了三个宏来实现这个过程：</p>
+<ul>
+<li><p><code>va_start(va_list arg_ptr, prev_param)</code>: 初始化可变参数列表，将arg_ptr指向第一个可变参数。</p>
+</li>
+<li><p><code>va_arg(va_list arg_ptr, type)</code>: 获取当前参数的值，类型由前面的不可变参数传递。例如，printf中的格式化字符串或者可变参数列表的参数类型和第几个不可变参数的相同。</p>
+</li>
+<li><p><code>va_end(va_list arg_ptr)</code>: 释放资源，结束可变参数列表的访问。</p>
+</li>
+</ul>
+</li>
+<li><p>这些宏的实现细节由编译器和标准库提供，我们只需调用它们即可。</p>
+</li>
+</ul>
+<p><strong>2. 可变参数函数：</strong></p>
+<ul>
+<li>可变参数函数允许在函数定义中接受不定数量的参数。</li>
+<li>C语言提供了 <code>stdarg.h</code> 头文件来支持可变参数函数的实现。</li>
+<li>下面是一个示例代码，展示了如何实现一个可变参数函数 sum，它接受一个整数参数 count，表示接下来的可变参数的数量：</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdarg.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">sum</span><span class="params">(<span class="type">int</span> count, ...)</span> &#123;</span><br><span class="line">    <span class="type">int</span> total = <span class="number">0</span>;</span><br><span class="line">    va_list args;</span><br><span class="line">    va_start(args, count);</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; count; i++) &#123;</span><br><span class="line">        <span class="type">int</span> num = va_arg(args, <span class="type">int</span>);</span><br><span class="line">        total += num;</span><br><span class="line">    &#125;</span><br><span class="line">    va_end(args);</span><br><span class="line">    <span class="keyword">return</span> total;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="type">int</span> result = sum(<span class="number">4</span>, <span class="number">10</span>, <span class="number">20</span>, <span class="number">30</span>, <span class="number">40</span>);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;Sum: %d\n&quot;</span>, result);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>在这个示例中，我们定义了一个可变参数函数 sum，它计算传入的整数参数的总和。</li>
+</ul>
+<br>
+
+<p><strong>3. 可变参数宏：</strong></p>
+<ul>
+<li>可变参数宏允许在宏调用中接受可变数量的参数。</li>
+<li>在C语言中，可变参数宏使用 <code>__VA_ARGS__</code> 表示可变参数的部分。</li>
+<li>下面是一个示例代码，展示了如何定义一个可变参数宏 <code>PRINT_VALUES</code>，它使用 printf 函数来打印可变数量的值:</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PRINT_VALUES(...) do &#123; \</span></span><br><span class="line"><span class="meta">    printf(<span class="string">&quot;Values: &quot;</span>); \</span></span><br><span class="line"><span class="meta">    printf(__VA_ARGS__); \</span></span><br><span class="line"><span class="meta">    printf(<span class="string">&quot;\n&quot;</span>); \</span></span><br><span class="line"><span class="meta">&#125; while (0)</span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span> &#123;</span><br><span class="line">    PRINT_VALUES(<span class="string">&quot;%d %s %f&quot;</span>, <span class="number">10</span>, <span class="string">&quot;hello&quot;</span>, <span class="number">3.14</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>在这个示例中，我们定义了一个可变参数宏 <code>PRINT_VALUES</code>，它使用 <code>printf</code> 函数来打印多个值。</li>
+</ul>
+<br>
+
+<p><strong>4. 实现自己的 printf 函数：</strong></p>
+<ul>
+<li><code>printf</code> 函数接受一个格式字符串作为第一个参数，后面是可变数量的参数，用于替换格式字符串中的格式占位符。</li>
+<li>以下是一个简化版的示例代码，展示了一个实现类似于 <code>printf</code> 函数的功能的函数：</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdarg.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">my_printf</span><span class="params">(<span class="type">const</span> <span class="type">char</span>* format, ...)</span> &#123;</span><br><span class="line">    va_list args;</span><br><span class="line">    va_start(args, format);</span><br><span class="line">    <span class="keyword">while</span> (*format != <span class="string">&#x27;\0&#x27;</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (*format == <span class="string">&#x27;%&#x27;</span>) &#123;</span><br><span class="line">            format++; <span class="comment">// 移动到占位符的下一个字符</span></span><br><span class="line">            <span class="keyword">if</span> (*format == <span class="string">&#x27;d&#x27;</span>) &#123;</span><br><span class="line">                <span class="type">int</span> value = va_arg(args, <span class="type">int</span>);</span><br><span class="line">                <span class="built_in">printf</span>(<span class="string">&quot;%d&quot;</span>, value);</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (*format == <span class="string">&#x27;f&#x27;</span>) &#123;</span><br><span class="line">                <span class="type">double</span> value = va_arg(args, <span class="type">double</span>);</span><br><span class="line">                <span class="built_in">printf</span>(<span class="string">&quot;%f&quot;</span>, value);</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (*format == <span class="string">&#x27;s&#x27;</span>) &#123;</span><br><span class="line">                <span class="type">char</span>* value = va_arg(args, <span class="type">char</span>*);</span><br><span class="line">                <span class="built_in">printf</span>(<span class="string">&quot;%s&quot;</span>, value);</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (*format == <span class="string">&#x27;c&#x27;</span>) &#123;</span><br><span class="line">                <span class="type">int</span> value = va_arg(args, <span class="type">int</span>);</span><br><span class="line">                <span class="built_in">printf</span>(<span class="string">&quot;%c&quot;</span>, value);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="built_in">printf</span>(<span class="string">&quot;Unsupported format specifier: %c&quot;</span>, *format);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">&quot;%c&quot;</span>, *format);</span><br><span class="line">        &#125;</span><br><span class="line">        format++; <span class="comment">// 移动到下一个字符</span></span><br><span class="line">    &#125;</span><br><span class="line">    va_end(args);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span> &#123;</span><br><span class="line">	<span class="type">int</span> num = <span class="number">42</span>;</span><br><span class="line">	<span class="type">double</span> pi = <span class="number">3.14159</span>;</span><br><span class="line">	<span class="type">char</span> str[] = <span class="string">&quot;Hello, world!&quot;</span>;</span><br><span class="line">	<span class="type">char</span> ch = <span class="string">&#x27;A&#x27;</span>;</span><br><span class="line"></span><br><span class="line">	my_printf(<span class="string">&quot;Integer: %d\n&quot;</span>, num);</span><br><span class="line">	my_printf(<span class="string">&quot;Float: %f\n&quot;</span>, pi);</span><br><span class="line">	my_printf(<span class="string">&quot;Float: %s\n&quot;</span>, str);</span><br><span class="line">	my_printf(<span class="string">&quot;Float: %c\n&quot;</span>, ch);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<br>
+
+<h2 id="汇编基础"><a href="#汇编基础" class="headerlink" title="汇编基础"></a>汇编基础</h2><ul>
+<li><p>我们知道，CPU 只负责计算，本身不具备智能。你输入一条指令（instruction），它就运行一次，然后停下来，等待下一条指令。</p>
+</li>
+<li><p>这些指令都是二进制的，称为操作码（opcode），比如加法指令就是00000011。编译器的作用，就是将高级语言写好的程序，翻译成一条条操作码。</p>
+</li>
+<li><p>对于人类来说，二进制程序是不可读的，根本看不出来机器干了什么。为了解决可读性的问题，以及偶尔的编辑需求，就诞生了汇编语言。</p>
+</li>
+<li><p><code>汇编语言是二进制指令的文本形式</code>，与指令是一一对应的关系。比如，加法指令00000011写成汇编语言就是 ADD。只要还原成二进制，汇编语言就可以被 CPU 直接执行，所以它是最底层的低级语言。</p>
+</li>
+</ul>
+<h3 id="寄存器"><a href="#寄存器" class="headerlink" title="寄存器"></a>寄存器</h3><ul>
+<li><p>每一种 CPU 的机器指令都是不一样的，因此对应的汇编语言也不一样。本文介绍的是目前最常见的 x86 汇编语言，即 Intel 公司的 CPU 使用的那一种。</p>
+</li>
+<li><p>学习汇编语言，首先必须了解两个知识点：寄存器和内存模型。</p>
+<ul>
+<li><p>先来看寄存器。CPU 本身只负责运算，不负责储存数据。数据一般都储存在内存之中，CPU 要用的时候就去内存读写数据。但是，CPU 的运算速度远高于内存的读写速度，为了避免被拖慢，CPU 都自带一级缓存和二级缓存。基本上，CPU 缓存可以看作是读写速度较快的内存。</p>
+</li>
+<li><p>但是，CPU 缓存还是不够快，另外数据在缓存里面的地址是不固定的，CPU 每次读写都要寻址也会拖慢速度。因此，除了缓存之外，CPU 还自带了寄存器（register），用来储存最常用的数据。也就是说，那些最频繁读写的数据（比如循环变量），都会放在寄存器里面，CPU 优先读写寄存器，再由寄存器跟内存交换数据。</p>
+</li>
+<li><p>寄存器不依靠地址区分数据，而依靠名称。每一个寄存器都有自己的名称，我们告诉 CPU 去具体的哪一个寄存器拿数据，这样的速度是最快的。有人比喻寄存器是 CPU 的零级缓存。</p>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="寄存器的种类"><a href="#寄存器的种类" class="headerlink" title="寄存器的种类"></a>寄存器的种类</h3>]]></content>
   </entry>
 </search>
