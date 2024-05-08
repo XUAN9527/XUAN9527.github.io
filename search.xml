@@ -371,19 +371,9 @@ if(ack)表示除最后一次数据不回复，其他每次都会回复ack/nack
 <li><code>uint64_t</code>定义变量地址要8字节对齐。</li>
 <li><code>指针变量</code>是4字节对齐。</li>
 </ul>
-<h3 id="结构体成员对齐问题"><a href="#结构体成员对齐问题" class="headerlink" title="结构体成员对齐问题"></a>结构体成员对齐问题</h3><h4 id="自然对界"><a href="#自然对界" class="headerlink" title="自然对界"></a>自然对界</h4><ul>
-<li><p>C&#x2F;C++编译器的缺省字节对齐方式为自然对界。即在缺省情况下，编译器为每一个变量或是数据单元按其自然对界条件分配空间。</p>
-</li>
-<li><p>在结构中，编译器为结构的每个成员按其自然对界（alignment）条件分配空间。各个成员按照它们被声明的顺序在内存中顺序存储（成员之间可能有插入的空字节），第一个成员的地址和整个结构的地址相同。</p>
-</li>
-<li><p>编译器缺省的结构成员自然对界条件为“N字节对齐”，N即该成员数据类型的长度。如int型成员的自然对界条件为4字节对齐，而double类型的结构成员的自然对界条件为8字节对齐。若该成员的起始偏移不位于该成员的“默认自然对界条件”上，则在前一个节面后面添加适当个数的空字节。</p>
-</li>
-<li><p>编译器缺省的结构整体的自然对界条件为：该结构所有成员中要求的最大自然对界条件。若结构体各成员长度之和不为“结构整体自然对界条件的整数倍”，则在最后一个成员后填充空字节。</p>
-</li>
-</ul>
-<p><strong>例子1</strong>（分析结构各成员的默认字节对界条界条件和结构整体的默认字节对界条件）:</p>
+<h3 id="结构体成员对齐问题"><a href="#结构体成员对齐问题" class="headerlink" title="结构体成员对齐问题"></a>结构体成员对齐问题</h3><h4 id="自然对界"><a href="#自然对界" class="headerlink" title="自然对界"></a>自然对界</h4><p><strong>例子1</strong>（分析结构各成员的默认字节对界条界条件和结构整体的默认字节对界条件）:</p>
 <figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Test</span></span></span><br><span class="line"><span class="class">&#123;</span> </span><br><span class="line">  <span class="type">char</span> x1; <span class="comment">// 成员x1为char型(其起始地址必须1字节对界)，其偏移地址为0 </span></span><br><span class="line">  <span class="type">char</span> x2; <span class="comment">// 成员x2为char型(其起始地址必须1字节对界，其偏移地址为1 </span></span><br><span class="line">  <span class="type">float</span> x3; <span class="comment">// 成员x3为float型(其起始地址必须4字节对界)，编译器在x2和x3之间填充了两个空字节，其偏移地址为4 </span></span><br><span class="line">  <span class="type">char</span> x4; <span class="comment">// 成员x4为char型(其起始地址必须1字节对界)，其偏移地址为8 </span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<p>在Test结构体中，最大的成员为float x3，因此结构体的自然对界条件为4字节对齐。则结构体长度就为12字节，内存布局为1100 1111 1000。</p>
+<p>在Test结构体中，最大的成员为<code>float</code> x3，因此结构体的自然对界条件为4字节对齐。则结构体长度就为12字节，内存布局为<code>1100 1111 1000</code>。</p>
 <br>
 
 <h4 id="指令对齐"><a href="#指令对齐" class="headerlink" title="指令对齐"></a>指令对齐</h4><p><strong>1. 伪指令#pragma pack</strong></p>
@@ -391,7 +381,7 @@ if(ack)表示除最后一次数据不回复，其他每次都会回复ack/nack
 <ul>
 <li>使用伪指令<code>#pragma pack (n)</code>，编译器将按照n个字节对齐。</li>
 <li>使用伪指令<code>#pragma pack ()</code>，取消自定义字节对齐方式。<ul>
-<li>数据成员对齐规则：结构(struct)(或联合(union))的数据成员，第一个数据成员放在offset为0的地方，以后每个数据成员的对齐按照<code>#pragma pack</code>指定的数值和这个数据成员自身长度中，比较小的那个进行。</li>
+<li>数据成员对齐规则：结构(<code>struct</code>)(或联合(<code>union</code>))的数据成员，第一个数据成员放在offset为0的地方，以后每个数据成员的对齐按照<code>#pragma pack</code>指定的数值和这个数据成员自身长度中，比较小的那个进行。</li>
 <li>结构(或联合)的整体对齐规则：在数据成员完成各自对齐之后，结构(或联合)本身也要进行对齐，对齐将按照<code>#pragma pack</code>指定的数值和结构(或联合)最大数据成员长度中，比较小的那个进行。</li>
 </ul>
 </li>
@@ -742,7 +732,11 @@ pyinstaller -F -w -i file.ico file.py
 </ul>
 </li>
 </ul>
-<br>]]></content>
+<br>
+
+
+
+]]></content>
       <categories>
         <category>嵌入式</category>
         <category>环境搭建</category>
@@ -906,30 +900,719 @@ sudo apt upgrade
 
 <br>
 
-<h2 id="汇编基础"><a href="#汇编基础" class="headerlink" title="汇编基础"></a>汇编基础</h2><ul>
-<li><p>我们知道，CPU 只负责计算，本身不具备智能。你输入一条指令（instruction），它就运行一次，然后停下来，等待下一条指令。</p>
-</li>
-<li><p>这些指令都是二进制的，称为操作码（opcode），比如加法指令就是00000011。编译器的作用，就是将高级语言写好的程序，翻译成一条条操作码。</p>
-</li>
-<li><p>对于人类来说，二进制程序是不可读的，根本看不出来机器干了什么。为了解决可读性的问题，以及偶尔的编辑需求，就诞生了汇编语言。</p>
-</li>
-<li><p><code>汇编语言是二进制指令的文本形式</code>，与指令是一一对应的关系。比如，加法指令00000011写成汇编语言就是 ADD。只要还原成二进制，汇编语言就可以被 CPU 直接执行，所以它是最底层的低级语言。</p>
-</li>
+<h2 id="汇编基础"><a href="#汇编基础" class="headerlink" title="汇编基础"></a>汇编基础</h2><p>参考文档：<a href="https://www.ruanyifeng.com/blog/2018/01/assembly-language-primer.html">汇编语言入门教程</a></p>
+<h3 id="实例分析"><a href="#实例分析" class="headerlink" title="实例分析"></a>实例分析</h3><p>了解寄存器和内存模型以后，就可以来看汇编语言到底是什么了。下面是一个简单的程序example.c。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">add_a_and_b</span><span class="params">(<span class="type">int</span> a, <span class="type">int</span> b)</span> &#123;</span><br><span class="line">   <span class="keyword">return</span> a + b;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span> &#123;</span><br><span class="line">   <span class="keyword">return</span> add_a_and_b(<span class="number">2</span>, <span class="number">3</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>gcc 将这个程序转成汇编语言。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">$ gcc -S example.c</span><br></pre></td></tr></table></figure>
+<p>example.s经过简化以后，大概是下面的样子。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">_add_a_and_b:</span><br><span class="line">   push   %ebx</span><br><span class="line">   mov    %eax, [%esp+8] </span><br><span class="line">   mov    %ebx, [%esp+12]</span><br><span class="line">   add    %eax, %ebx </span><br><span class="line">   pop    %ebx </span><br><span class="line">   ret  </span><br><span class="line"></span><br><span class="line">_main:</span><br><span class="line">   push   3</span><br><span class="line">   push   2</span><br><span class="line">   call   _add_a_and_b </span><br><span class="line">   add    %esp, 8</span><br><span class="line">   ret</span><br></pre></td></tr></table></figure>
+<p>可以看到，原程序的两个函数add_a_and_b和main，对应两个标签_add_a_and_b和_main。每个标签里面是该函数所转成的 CPU 运行流程。</p>
+]]></content>
+  </entry>
+  <entry>
+    <title>Linux下开发单片机</title>
+    <url>/2024/05/06/Linux%E5%B0%8F%E8%B4%B4%E5%A3%AB/</url>
+    <content><![CDATA[<h2 id="tree指令小贴士"><a href="#tree指令小贴士" class="headerlink" title="tree指令小贴士"></a>tree指令小贴士</h2><p><strong>1. 基本用法：</strong><br>显示当前目录下的文件和目录结构。</p>
+<pre><code>tree
+</code></pre>
+<p><strong>2. 限制目录深度：</strong><br>使用 -L 选项后跟数字来限制目录显示的深度。</p>
+<pre><code>tree -L 2
+</code></pre>
+<p>这将显示当前目录及其下最多两级子目录。</p>
+<p><strong>3. 显示隐藏文件：</strong><br>默认情况下，隐藏文件（以点 . 开头的文件或目录）不会被显示。要显示这些隐藏文件，可以使用 -a 选项。</p>
+<pre><code>tree -a
+</code></pre>
+<p><strong>4. 递归显示所有文件：</strong><br>使用 -R 选项递归显示所有文件。</p>
+<pre><code>tree -R
+</code></pre>
+<p><strong>5. 指定目录：</strong><br>显示指定目录的树状结构。</p>
+<pre><code>tree /path/to/directory
+</code></pre>
+<p><strong>6. 使用文件系统类型：</strong><br>显示目录结构时，包括文件系统类型。</p>
+<pre><code>tree -F
+</code></pre>
+<p><code>-F</code> 选项会在每个目录名后添加一个斜杠 <code>/</code>。</p>
+<p><strong>7. 排序：</strong><br>默认情况下，tree 会按字母顺序排序。使用 -f 选项可以按照文件修改时间排序。</p>
+<pre><code>tree -f
+</code></pre>
+<p><strong>8. 显示文件大小：</strong><br>使用 -h 选项以更易读的格式显示文件大小。</p>
+<pre><code>tree -h
+</code></pre>
+<p><strong>9. 显示目录和文件的权限：</strong><br>使用 <code>-u</code> 选项显示文件所有者，<code>-g</code> 选项显示文件组。</p>
+<pre><code>tree -ug
+</code></pre>
+<p><strong>10. 使用颜色：</strong><br>tree 命令使用颜色来区分不同类型的文件和目录。使用 –no-colour 可以关闭颜色显示。</p>
+<pre><code>tree --no-colour
+</code></pre>
+<p><strong>11. 输出到文件：</strong><br>将树状结构输出到一个文件中。</p>
+<pre><code>tree &gt; tree.txt
+</code></pre>
+<p><strong>12. 执行命令：</strong><br>对每个文件或目录执行命令，例如，获取每个文件的详细信息。</p>
+<pre><code>tree -exec ls -l &#123;&#125; \;
+</code></pre>
+<p><strong>13. 帮助和手册：</strong><br>查看 tree 命令的帮助信息。</p>
+<pre><code>tree --help
+man tree
+</code></pre>
+<p><strong>14. 安装 tree 命令（如果尚未安装）通常可以通过你的Linux发行版的包管理器来完成。</strong><br>例如，在Ubuntu上，你可以使用以下命令安装：</p>
+<pre><code>sudo apt-get update
+sudo apt-get install tree
+</code></pre>
+<p>使用 tree 可以帮助你更直观地查看目录结构，特别是在处理复杂的文件系统时。</p>
+<br>
+
+]]></content>
+      <categories>
+        <category>小贴士</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+        <tag>Wsl</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>CMake学习笔记</title>
+    <url>/2024/05/08/CMake%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</url>
+    <content><![CDATA[<h2 id="CMake学习教程"><a href="#CMake学习教程" class="headerlink" title="CMake学习教程"></a>CMake学习教程</h2><ul>
+<li>[参考资料1] : <a href="https://subingwen.cn/cmake/CMake-primer">https://subingwen.cn/cmake/CMake-primer</a></li>
+<li>[参考资料2] : <a href="https://subingwen.cn/cmake/CMake-advanced/">https://subingwen.cn/cmake/CMake-advanced/</a></li>
+<li>[参考资料3] : <a href="https://zhuanlan.zhihu.com/p/534439206">https://zhuanlan.zhihu.com/p/534439206</a></li>
 </ul>
-<h3 id="寄存器"><a href="#寄存器" class="headerlink" title="寄存器"></a>寄存器</h3><ul>
-<li><p>每一种 CPU 的机器指令都是不一样的，因此对应的汇编语言也不一样。本文介绍的是目前最常见的 x86 汇编语言，即 Intel 公司的 CPU 使用的那一种。</p>
-</li>
-<li><p>学习汇编语言，首先必须了解两个知识点：寄存器和内存模型。</p>
+<br>
+
+<h3 id="编写一个简单的CMakeLists-txt文件"><a href="#编写一个简单的CMakeLists-txt文件" class="headerlink" title="编写一个简单的CMakeLists.txt文件"></a>编写一个简单的CMakeLists.txt文件</h3><h4 id="1-示例文件的目录结构如下："><a href="#1-示例文件的目录结构如下：" class="headerlink" title="1. 示例文件的目录结构如下："></a>1. 示例文件的目录结构如下：</h4><figure class="highlight c"><table><tr><td class="code"><pre><span class="line">$ tree</span><br><span class="line">.</span><br><span class="line">├── add.c</span><br><span class="line">├── div.c</span><br><span class="line">├── head.h</span><br><span class="line">├── main.c</span><br><span class="line">├── mult.c</span><br><span class="line">└── sub.c</span><br></pre></td></tr></table></figure>
+
+<br>
+
+<h4 id="2-添加-CMakeLists-txt-文件"><a href="#2-添加-CMakeLists-txt-文件" class="headerlink" title="2. 添加 CMakeLists.txt 文件"></a>2. 添加 CMakeLists.txt 文件</h4><p>在上述源文件所在目录下添加一个新文件 CMakeLists.txt，文件内容如下：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">  cmake_minimum_required(VERSION <span class="number">3.0</span>)</span><br><span class="line">project(CALC)</span><br><span class="line">add_executable(app add.c div.c main.c mult.c sub.c)</span><br></pre></td></tr></table></figure>
+
 <ul>
-<li><p>先来看寄存器。CPU 本身只负责运算，不负责储存数据。数据一般都储存在内存之中，CPU 要用的时候就去内存读写数据。但是，CPU 的运算速度远高于内存的读写速度，为了避免被拖慢，CPU 都自带一级缓存和二级缓存。基本上，CPU 缓存可以看作是读写速度较快的内存。</p>
-</li>
-<li><p>但是，CPU 缓存还是不够快，另外数据在缓存里面的地址是不固定的，CPU 每次读写都要寻址也会拖慢速度。因此，除了缓存之外，CPU 还自带了寄存器（register），用来储存最常用的数据。也就是说，那些最频繁读写的数据（比如循环变量），都会放在寄存器里面，CPU 优先读写寄存器，再由寄存器跟内存交换数据。</p>
-</li>
-<li><p>寄存器不依靠地址区分数据，而依靠名称。每一个寄存器都有自己的名称，我们告诉 CPU 去具体的哪一个寄存器拿数据，这样的速度是最快的。有人比喻寄存器是 CPU 的零级缓存。</p>
-</li>
+<li><code>cmake_minimum_required</code>：指定使用的 cmake 的最低版本。<ul>
+<li>可选，非必须，如果不加可能会有警告。</li>
 </ul>
 </li>
 </ul>
-<h3 id="寄存器的种类"><a href="#寄存器的种类" class="headerlink" title="寄存器的种类"></a>寄存器的种类</h3>]]></content>
+<br>
+
+<ul>
+<li><code>project</code>：定义工程名称，并可指定工程的版本、工程描述、web主页地址、支持的语言（默认情况支持所有语言），如果不需要这些都是可以忽略的，只需要指定出工程名字即可。</li>
+</ul>
+<br>
+
+<ul>
+<li><p><code>add_executable</code>：定义工程会生成一个可执行程序。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">add_executable(可执行程序名 源文件名称)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>这里的可执行程序名和<code>project</code>中的项目名没有任何关系</p>
+</li>
+<li><p>源文件名可以是一个也可以是多个，如有多个可用空格或<code>;</code>间隔</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"># 样式<span class="number">1</span></span><br><span class="line">add_executable(app add.c div.c main.c mult.c sub.c)</span><br><span class="line"># 样式<span class="number">2</span></span><br><span class="line">add_executable(app add.c;div.c;main.c;mult.c;sub.c)</span><br></pre></td></tr></table></figure></li>
+</ul>
+<br>
+
+<h4 id="3-执行CMake命令"><a href="#3-执行CMake命令" class="headerlink" title="3. 执行CMake命令"></a>3. 执行CMake命令</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">cmake 命令原型</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">cmake CMakeLists.txt 文件所在路径</span></span><br></pre></td></tr></table></figure>
+<p>执行示例 (当前<code>CMakeLists.txt</code>路径) ：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">cmake .</span></span><br></pre></td></tr></table></figure>
+<p>当执行<code>cmake</code>命令之后，<code>CMakeLists.txt</code> 中的命令就会被执行，所以一定要注意给<code>cmake</code>命令指定路径的时候一定不能出错。</p>
+<p>执行命令之后，看一下源文件所在目录中是否多了一些文件：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">tree -L 1</span></span><br><span class="line">.</span><br><span class="line">├── add.c</span><br><span class="line">├── CMakeCache.txt         # new add file</span><br><span class="line">├── CMakeFiles             # new add dir</span><br><span class="line">├── cmake_install.cmake    # new add file</span><br><span class="line">├── CMakeLists.txt</span><br><span class="line">├── div.c</span><br><span class="line">├── head.h</span><br><span class="line">├── main.c</span><br><span class="line">├── Makefile               # new add file</span><br><span class="line">├── mult.c</span><br><span class="line">└── sub.c</span><br></pre></td></tr></table></figure>
+
+<p>我们可以看到在对应的目录下生成了一个<code>makefile</code>文件，此时再执行<code>make</code>命令，就可以对项目进行构建得到所需的可执行程序了。</p>
+<br>
+
+<h4 id="4-头文件及指定宏"><a href="#4-头文件及指定宏" class="headerlink" title="4. 头文件及指定宏"></a>4. 头文件及指定宏</h4><ul>
+<li><code>CMakeLists.txt</code> 示例代码文件：<figure class="highlight shell"><figcaption><span>&#123;: .line-numbers&#125;</span></figcaption><table><tr><td class="code"><pre><span class="line">cmake_minimum_required(VERSION 3.0)</span><br><span class="line">project(CALC)</span><br><span class="line">set(CMAKE_CXX_STANDARD 11)</span><br><span class="line">set(HOME /home/robin/Linux/calc)</span><br><span class="line">set(EXECUTABLE_OUTPUT_PATH $&#123;HOME&#125;/bin/)</span><br><span class="line"><span class="meta prompt_">include_directories($</span><span class="language-bash">&#123;PROJECT_SOURCE_DIR&#125;/include)</span></span><br><span class="line">file(GLOB SRC_LIST $&#123;CMAKE_CURRENT_SOURCE_DIR&#125;/src/*.cpp)</span><br><span class="line">add_executable(app  $&#123;SRC_LIST&#125;)</span><br></pre></td></tr></table></figure></li>
+</ul>
+<br>
+
+<h5 id="4-1-通过参数-std-c-11指定出要使用c-11标准编译程序-对应宏DCMAKE-CXX-STANDARD"><a href="#4-1-通过参数-std-c-11指定出要使用c-11标准编译程序-对应宏DCMAKE-CXX-STANDARD" class="headerlink" title="4.1 通过参数-std=c++11指定出要使用c++11标准编译程序,对应宏DCMAKE_CXX_STANDARD:"></a>4.1 通过参数<code>-std=c++11</code>指定出要使用c++11标准编译程序,对应宏<code>DCMAKE_CXX_STANDARD</code>:</h5><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"># 增加-std=c++<span class="number">11</span></span><br><span class="line"><span class="built_in">set</span>(CMAKE_CXX_STANDARD <span class="number">11</span>)</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">增加-std=c++11</span></span><br><span class="line">cmake (CMakeLists.txt文件路径) -DCMAKE_CXX_STANDARD=11</span><br></pre></td></tr></table></figure>
+
+<br>
+
+<h5 id="4-2-指定输出的路径-EXECUTABLE-OUTPUT-PATH-："><a href="#4-2-指定输出的路径-EXECUTABLE-OUTPUT-PATH-：" class="headerlink" title="4.2 指定输出的路径(EXECUTABLE_OUTPUT_PATH)："></a>4.2 指定输出的路径(EXECUTABLE_OUTPUT_PATH)：</h5><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">set(HOME /home/robin/Linux/Sort)</span><br><span class="line">set(EXECUTABLE_OUTPUT_PATH $&#123;HOME&#125;/bin)</span><br></pre></td></tr></table></figure>
+<p>如果这个路径中的子目录不存在，会自动生成，无需自己手动创建。</p>
+<br>
+
+<h5 id="4-3-头文件的路径-include-directories"><a href="#4-3-头文件的路径-include-directories" class="headerlink" title="4.3 头文件的路径(include_directories)"></a>4.3 头文件的路径(include_directories)</h5><figure class="highlight c"><table><tr><td class="code"><pre><span class="line">include_directories(headpath)</span><br></pre></td></tr></table></figure>
+<p>其中，第六行指定就是头文件的路径，PROJECT_SOURCE_DIR宏对应的值就是我们在使用cmake命令时，后面紧跟的目录，一般是工程的根目录。</p>
+<br>
+
+<h5 id="4-4-搜索文件-aux-source-directory"><a href="#4-4-搜索文件-aux-source-directory" class="headerlink" title="4.4 搜索文件(aux_source_directory)"></a>4.4 搜索文件(aux_source_directory)</h5><ul>
+<li><p><code>aux_source_directory(&lt; dir &gt; &lt; variable &gt;)</code> 示例：</p>
+<figure class="highlight cmake"><table><tr><td class="code"><pre><span class="line"><span class="keyword">aux_source_directory</span>(<span class="variable">$&#123;CMAKE_CURRENT_SOURCE_DIR&#125;</span>/src SRC_LIST)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>file(GLOB/GLOB_RECURSE 变量名 要搜索的文件路径和文件类型)</code>示例：</p>
+<figure class="highlight cmake"><table><tr><td class="code"><pre><span class="line"><span class="keyword">file</span>(GLOB MAIN_SRC <span class="variable">$&#123;CMAKE_CURRENT_SOURCE_DIR&#125;</span>/src/*.cpp)</span><br><span class="line"><span class="keyword">file</span>(GLOB MAIN_HEAD <span class="variable">$&#123;CMAKE_CURRENT_SOURCE_DIR&#125;</span>/<span class="keyword">include</span>/*.h)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>CMAKE_CURRENT_SOURCE_DIR</code> 宏表示当前访问的 <code>CMakeLists.txt</code> 文件所在的路径</p>
+</li>
+</ul>
+<br>
+
+<h4 id="5-制作动态库或静态库"><a href="#5-制作动态库或静态库" class="headerlink" title="5. 制作动态库或静态库"></a>5. 制作动态库或静态库</h4><p>有些时候我们编写的源代码并不需要将他们编译生成可执行程序，而是生成一些静态库或动态库提供给第三方使用，下面来讲解在cmake中生成这两类库文件的方法。</p>
+<h5 id="5-1-静态库："><a href="#5-1-静态库：" class="headerlink" title="5.1 静态库："></a>5.1 静态库：</h5><h6 id="5-1-1-cmake生成规则："><a href="#5-1-1-cmake生成规则：" class="headerlink" title="5.1.1 cmake生成规则："></a>5.1.1 cmake生成规则：</h6><figure class="highlight cmake"><table><tr><td class="code"><pre><span class="line"><span class="keyword">add_library</span>(库名称 STATIC 源文件<span class="number">1</span> [源文件<span class="number">2</span>] ...) </span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>在Linux中，静态库名字分为三部分：<code>lib + 库名字 + .a</code>，示例：<figure class="highlight cmake"><table><tr><td class="code"><pre><span class="line"><span class="keyword">cmake_minimum_required</span>(VERSION <span class="number">3.0</span>)</span><br><span class="line"><span class="keyword">project</span>(CALC)</span><br><span class="line"><span class="keyword">include_directories</span>(<span class="variable">$&#123;PROJECT_SOURCE_DIR&#125;</span>/<span class="keyword">include</span>)</span><br><span class="line"><span class="keyword">file</span>(GLOB SRC_LIST <span class="string">&quot;$&#123;CMAKE_CURRENT_SOURCE_DIR&#125;/src/*.cpp&quot;</span>)</span><br><span class="line"><span class="keyword">add_library</span>(calc STATIC <span class="variable">$&#123;SRC_LIST&#125;</span>)</span><br></pre></td></tr></table></figure>
+这样最终就会生成对应的静态库文件 <code>libcalc.a</code></li>
+</ul>
+<br>
+
+<h6 id="5-1-2-gcc生成规则："><a href="#5-1-2-gcc生成规则：" class="headerlink" title="5.1.2 gcc生成规则："></a>5.1.2 gcc生成规则：</h6><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">gcc -c add.c div.c mult.c sub.c -I ./include/</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>生成 <code>.o</code> 编译文件</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">查看目录中的文件</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">tree</span></span><br><span class="line">.</span><br><span class="line">├── add.c</span><br><span class="line">├── add.o            # 目标文件</span><br><span class="line">├── div.c</span><br><span class="line">├── div.o            # 目标文件</span><br><span class="line">├── include</span><br><span class="line">│   └── head.h</span><br><span class="line">├── main.c</span><br><span class="line">├── mult.c</span><br><span class="line">├── mult.o           # 目标文件</span><br><span class="line">├── sub.c</span><br><span class="line">└── sub.o            # 目标文件</span><br></pre></td></tr></table></figure>
+<ul>
+<li>将生成的目标文件通过 ar工具打包生成静态库</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">将生成的目标文件 .o 打包成静态库</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">ar rcs libcalc.a add.o div.o mult.o sub.o    <span class="comment">#在同一个目录中可以写成 *.o</span></span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">查看目录中的文件</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">tree</span></span><br><span class="line">.</span><br><span class="line">├── add.c</span><br><span class="line">├── add.o</span><br><span class="line">├── div.c</span><br><span class="line">├── div.o</span><br><span class="line">├── include</span><br><span class="line">│   └── `head.h  ===&gt; 和静态库一并发布</span><br><span class="line">├── `libcalc.a   ===&gt; 生成的静态库</span><br><span class="line">├── main.c</span><br><span class="line">├── mult.c</span><br><span class="line">├── mult.o</span><br><span class="line">├── sub.c</span><br><span class="line">└── sub.o</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>将生成的的静态库 libcalc.a和库对应的头文件head.h一并发布给使用者就可以了。</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">3. 发布静态库</span></span><br><span class="line">	1. head.h    =&gt; 函数声明</span><br><span class="line">	2. libcalc.a =&gt; 函数定义(二进制格式)</span><br></pre></td></tr></table></figure>
+<br>
+
+<h6 id="5-1-3-gcc静态库的使用"><a href="#5-1-3-gcc静态库的使用" class="headerlink" title="5.1.3 gcc静态库的使用:"></a>5.1.3 gcc静态库的使用:</h6><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">首先拿到了发布的静态库</span></span><br><span class="line">	`head.h` 和 `libcalc.a`</span><br><span class="line"><span class="meta prompt_">	</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">将静态库, 头文件, 测试程序放到一个目录中准备进行测试</span></span><br><span class="line">.</span><br><span class="line">├── head.h          # 函数声明</span><br><span class="line">├── libcalc.a       # 函数定义（二进制格式）</span><br><span class="line">└── main.c          # 函数测试</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>编译测试程序, 得到可执行文件。</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">编译的时候指定库信息</span></span><br><span class="line"> 	-I: 指定头文件所在的目录(相对或者绝对路径)</span><br><span class="line">	-L: 指定库所在的目录(相对或者绝对路径)</span><br><span class="line">	-l: 指定库的名字, 掐头(lib)去尾(.a) ==&gt; calc</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">-L -l, 参数和参数值之间可以有空格, 也可以没有  -L./ -lcalc</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">gcc main.c -o app -I./ -L./ -lcalc</span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">查看目录信息, 发现可执行程序已经生成了</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">tree</span></span><br><span class="line">.</span><br><span class="line">├── app   		# 生成的可执行程序</span><br><span class="line">├── head.h</span><br><span class="line">├── libcalc.a</span><br><span class="line">└── main.c</span><br></pre></td></tr></table></figure>
+
+<br>
+
+<h5 id="5-2-动态库："><a href="#5-2-动态库：" class="headerlink" title="5.2 动态库："></a>5.2 动态库：</h5><h6 id="5-2-1-cmake生成规则："><a href="#5-2-1-cmake生成规则：" class="headerlink" title="5.2.1 cmake生成规则："></a>5.2.1 cmake生成规则：</h6><figure class="highlight cmake"><table><tr><td class="code"><pre><span class="line"><span class="keyword">add_library</span>(库名称 SHARED 源文件<span class="number">1</span> [源文件<span class="number">2</span>] ...)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>在Linux中，动态库名字分为三部分：<code>lib + 库名字 + .so</code> ，示例：<figure class="highlight cmake"><table><tr><td class="code"><pre><span class="line"><span class="keyword">add_library</span>(calc SHARED <span class="variable">$&#123;SRC_LIST&#125;</span>)</span><br></pre></td></tr></table></figure>
+这样最终就会生成对应的动态库文件 <code>libcalc.so</code></li>
+</ul>
+<br>
+
+<h6 id="5-1-2-gcc生成规则：-1"><a href="#5-1-2-gcc生成规则：-1" class="headerlink" title="5.1.2 gcc生成规则："></a>5.1.2 gcc生成规则：</h6><ul>
+<li>生成动态链接库是直接使用<code>gcc</code>命令并且需要添加<code>-fPIC(-fpic)</code> 以及<code>-shared</code> 参数。<ul>
+<li><code>-fPIC</code> 或 <code>-fpic</code> 参数的作用是使得 <code>gcc</code> 生成的代码是与位置无关的，也就是使用相对位置。</li>
+<li><code>-shared</code>参数的作用是告诉编译器生成一个动态链接库。</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">1. 将.c汇编得到.o, 需要额外的参数 -fpic/-fPIC</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">gcc -c -fpic add.c div.c mult.c sub.c -I ./include/</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>生成 <code>.o</code> 编译文件</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">查看目录文件信息, 检查是否生成了目标文件</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">tree</span></span><br><span class="line">.</span><br><span class="line">├── add.c</span><br><span class="line">├── add.o                # 生成的目标文件</span><br><span class="line">├── div.c</span><br><span class="line">├── div.o                # 生成的目标文件</span><br><span class="line">├── include</span><br><span class="line">│   └── head.h</span><br><span class="line">├── main.c</span><br><span class="line">├── mult.c</span><br><span class="line">├── mult.o               # 生成的目标文件</span><br><span class="line">├── sub.c</span><br><span class="line">└── sub.o                # 生成的目标文件</span><br></pre></td></tr></table></figure>
+<ul>
+<li>使用<code>gcc</code>将得到的目标文件打包生成动态库, 需要使用参数 <code>-shared</code></li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">2. 将得到 .o 打包成动态库, 使用gcc , 参数 -shared</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">gcc -shared add.o div.o mult.o sub.o -o libcalc.so</span>  </span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">检查目录中是否生成了动态库</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">tree</span></span><br><span class="line">.</span><br><span class="line">├── add.c</span><br><span class="line">├── add.o</span><br><span class="line">├── div.c</span><br><span class="line">├── div.o</span><br><span class="line">├── include</span><br><span class="line">│   └── `head.h   ===&gt; 和动态库一起发布</span><br><span class="line">├── `libcalc.so   ===&gt; 生成的动态库</span><br><span class="line">├── main.c</span><br><span class="line">├── mult.c</span><br><span class="line">├── mult.o</span><br><span class="line">├── sub.c</span><br><span class="line">└── sub.o</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>将生成的的动态库 libcalc.so和库对应的头文件head.h一并发布给使用者就可以了。</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">发布库文件和头文件</span></span><br><span class="line">	1. head.h</span><br><span class="line">	2. libcalc.so</span><br></pre></td></tr></table></figure>
+
+<h6 id="5-1-3-gcc静态库的使用-1"><a href="#5-1-3-gcc静态库的使用-1" class="headerlink" title="5.1.3 gcc静态库的使用:"></a>5.1.3 gcc静态库的使用:</h6><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">1. 拿到发布的动态库</span></span><br><span class="line">	`head.h   libcalc.so</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">2. 基于头文件编写测试程序, 测试动态库中提供的接口是否可用</span></span><br><span class="line">	`main.c`</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">示例目录:</span></span><br><span class="line">.</span><br><span class="line">├── head.h          ==&gt; 函数声明</span><br><span class="line">├── libcalc.so      ==&gt; 函数定义</span><br><span class="line">└── main.c          ==&gt; 函数测试</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>编译测试程序, 得到可执行文件。</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">在编译的时候指定动态库相关的信息: 头文件路径-I 库的路径 -L, 库的名字 -l</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">gcc main.c -o app -I./ -L./ -lcalc</span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">查看是否生成了可执行程序</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">tree</span></span><br><span class="line">.</span><br><span class="line">├── app 			# 生成的可执行程序</span><br><span class="line">├── head.h</span><br><span class="line">├── libcalc.so</span><br><span class="line">└── main.c</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">执行生成的可执行程序, 错误提示 ==&gt; 可执行程序执行的时候找不到动态库</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">./app</span> </span><br><span class="line">./app: error while loading shared libraries: libcalc.so: cannot open shared object file: No such file or directory</span><br></pre></td></tr></table></figure>
+
+<p><strong>修改解决动态库链接编译问题</strong></p>
+<p>方案 1: 将库路径添加到环境变量<code>LD_LIBRARY_PATH</code>中</p>
+<ol>
+<li>找到相关的配置文件</li>
+</ol>
+<ul>
+<li>用户级别: ~&#x2F;.bashrc —&gt; 设置对当前用户有效</li>
+<li>系统级别: &#x2F;etc&#x2F;profile —&gt; 设置对所有用户有效</li>
+</ul>
+<ol start="2">
+<li>使用 vim 打开配置文件, 在文件最后添加这样一句话</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">自己把路径写进去就行了</span></span><br><span class="line">export LD_LIBRARY_PATH =$LD_LIBRARY_PATH :动态库的绝对路径</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>让修改的配置文件生效</li>
+</ol>
+<ul>
+<li>修改了用户级别的配置文件, 关闭当前终端, 打开一个新的终端配置就生效了</li>
+<li>修改了系统级别的配置文件, 注销或关闭系统, 再开机配置就生效了</li>
+<li>不想执行上边的操作, 可以执行一个命令让配置重新被加载</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">修改的是哪一个就执行对应的那个命令</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash"><span class="built_in">source</span> 可以简写为一个 . , 作用是让文件内容被重新加载</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash"><span class="built_in">source</span> ~/.bashrc          (. ~/.bashrc)</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash"><span class="built_in">source</span> /etc/profile       (. /etc/profile)</span></span><br></pre></td></tr></table></figure>
+
+<p>方案 2: 更新 &#x2F;etc&#x2F;ld.so.cache 文件</p>
+<ol>
+<li><p>找到动态库所在的绝对路径（不包括库的名字）比如：&#x2F;home&#x2F;robin&#x2F;Library&#x2F;</p>
+</li>
+<li><p>使用vim 修改 &#x2F;etc&#x2F;ld.so.conf 这个文件, 将上边的路径添加到文件中(独自占一行)</p>
+</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">1. 打开文件</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">sudo vim /etc/ld.so.conf</span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">2. 添加动态库路径, 并保存退出</span></span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>更新 &#x2F;etc&#x2F;ld.so.conf中的数据到 &#x2F;etc&#x2F;ld.so.cache 中</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">必须使用管理员权限执行这个命令</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">sudo ldconfig</span>   </span><br></pre></td></tr></table></figure>
+
+<p>方案 3: 拷贝动态库文件到系统库目录 &#x2F;lib&#x2F; 或者 &#x2F;usr&#x2F;lib 中 (或者将库的软链接文件放进去)</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">库拷贝</span></span><br><span class="line">sudo cp /xxx/xxx/libxxx.so /usr/lib</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">创建软连接</span></span><br><span class="line">sudo ln -s /xxx/xxx/libxxx.so /usr/lib/libxxx.so</span><br></pre></td></tr></table></figure>
+
+<p>验证执行命令：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">语法:</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">ldd 可执行程序名</span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">举例:</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">ldd app</span></span><br><span class="line">	linux-vdso.so.1 =&gt;  (0x00007ffe8fbd6000)</span><br><span class="line">    libcalc.so =&gt; /home/robin/Linux/3Day/calc/test/libcalc.so (0x00007f5d85dd4000)</span><br><span class="line">    libc.so.6 =&gt; /lib/x86_64-linux-gnu/libc.so.6 (0x00007f5d85a0a000)</span><br><span class="line">    /lib64/ld-linux-x86-64.so.2 (0x00007f5d85fd6000)  ==&gt; 动态链接器, 操作系统提供</span><br></pre></td></tr></table></figure>
+
+<br>
+
+<h5 id="5-3-指定输出的路径："><a href="#5-3-指定输出的路径：" class="headerlink" title="5.3 指定输出的路径："></a>5.3 指定输出的路径：</h5><ul>
+<li><p>方式1 - 适用于动态库</p>
+<figure class="highlight cmake"><table><tr><td class="code"><pre><span class="line"><span class="keyword">set</span>(EXECUTABLE_OUTPUT_PATH <span class="variable">$&#123;PROJECT_SOURCE_DIR&#125;</span>/lib)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>方式2 - 都适用</p>
+<figure class="highlight cmake"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 设置动态库/静态库生成路径</span></span><br><span class="line"><span class="keyword">set</span>(LIBRARY_OUTPUT_PATH <span class="variable">$&#123;PROJECT_SOURCE_DIR&#125;</span>/lib)</span><br></pre></td></tr></table></figure></li>
+</ul>
+<br>
+
+<h5 id="5-4-包含库文件："><a href="#5-4-包含库文件：" class="headerlink" title="5.4 包含库文件："></a>5.4 包含库文件：</h5><h6 id="5-4-1-链接静态库："><a href="#5-4-1-链接静态库：" class="headerlink" title="5.4.1 链接静态库："></a>5.4.1 链接静态库：</h6><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">src</span><br><span class="line">├── add.cpp</span><br><span class="line">├── div.cpp</span><br><span class="line">├── main.cpp</span><br><span class="line">├── mult.cpp</span><br><span class="line">└── sub.cpp</span><br></pre></td></tr></table></figure>
+<p>现在我们把上面<code>src</code>目录中的<code>add.cpp</code>、<code>div.cpp</code>、<code>mult.cpp</code>、<code>sub.cpp</code>编译成一个静态库文件<code>libcalc.a</code>。通过命令制作并使用静态链接库。</p>
+<p>测试目录结构如下：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">tree</span> </span><br><span class="line">.</span><br><span class="line">├── build</span><br><span class="line">├── CMakeLists.txt</span><br><span class="line">├── include</span><br><span class="line">│   └── head.h</span><br><span class="line">├── lib</span><br><span class="line">│   └── libcalc.a     # 制作出的静态库的名字</span><br><span class="line">└── src</span><br><span class="line">    └── main.cpp</span><br><span class="line"></span><br><span class="line">4 directories, 4 files</span><br></pre></td></tr></table></figure>
+
+<p>在cmake中，链接静态库的命令如下：</p>
+<figure class="highlight cmake"><table><tr><td class="code"><pre><span class="line"><span class="keyword">link_libraries</span>(&lt;static lib&gt; [&lt;static lib&gt;...])</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>参数1：指定出要链接的静态库的名字<ul>
+<li>可以是全名 libxxx.a</li>
+<li>也可以是掐头（lib）去尾（.a）之后的名字 xxx</li>
+</ul>
+</li>
+<li>参数2-N：要链接的其它静态库的名字</li>
+</ul>
+<p>如果该静态库不是系统提供的（自己制作或者使用第三方提供的静态库）可能出现静态库找不到的情况，此时可以将静态库的路径也指定出来：</p>
+<figure class="highlight cmake"><table><tr><td class="code"><pre><span class="line"><span class="keyword">link_directories</span>(&lt;lib path&gt;)</span><br></pre></td></tr></table></figure>
+
+<p>这样，修改之后的CMakeLists.txt文件内容如下:</p>
+<figure class="highlight cmake"><table><tr><td class="code"><pre><span class="line"><span class="keyword">cmake_minimum_required</span>(VERSION <span class="number">3.0</span>)</span><br><span class="line"><span class="keyword">project</span>(CALC)</span><br><span class="line"><span class="comment"># 搜索指定目录下源文件</span></span><br><span class="line"><span class="keyword">file</span>(GLOB SRC_LIST <span class="variable">$&#123;CMAKE_CURRENT_SOURCE_DIR&#125;</span>/src/*.cpp)</span><br><span class="line"><span class="comment"># 包含头文件路径</span></span><br><span class="line"><span class="keyword">include_directories</span>(<span class="variable">$&#123;PROJECT_SOURCE_DIR&#125;</span>/<span class="keyword">include</span>)</span><br><span class="line"><span class="comment"># 包含静态库路径</span></span><br><span class="line"><span class="keyword">link_directories</span>(<span class="variable">$&#123;PROJECT_SOURCE_DIR&#125;</span>/lib)</span><br><span class="line"><span class="comment"># 链接静态库</span></span><br><span class="line"><span class="keyword">link_libraries</span>(calc)</span><br><span class="line"><span class="keyword">add_executable</span>(app <span class="variable">$&#123;SRC_LIST&#125;</span>)</span><br></pre></td></tr></table></figure>
+<br>
+
+<h6 id="5-4-2-链接动态库："><a href="#5-4-2-链接动态库：" class="headerlink" title="5.4.2 链接动态库："></a>5.4.2 链接动态库：</h6><p>动态库的链接和静态库是完全不同的：</p>
+<ul>
+<li>静态库会在生成可执行程序的链接阶段被打包到可执行程序中，所以可执行程序启动，静态库就被加载到内存中了。</li>
+<li>动态库在生成可执行程序的链接阶段不会被打包到可执行程序中，当可执行程序被启动并且调用了动态库中的函数的时候，动态库才会被加载到内存</li>
+</ul>
+<p>因此，在<code>cmake</code>中指定要链接的动态库的时候，<code>应该将命令写到生成了可执行文件之后</code>：</p>
+<figure class="highlight cmake"><table><tr><td class="code"><pre><span class="line"><span class="keyword">cmake_minimum_required</span>(VERSION <span class="number">3.0</span>)</span><br><span class="line"><span class="keyword">project</span>(<span class="keyword">TEST</span>)</span><br><span class="line"><span class="keyword">file</span>(GLOB SRC_LIST <span class="variable">$&#123;CMAKE_CURRENT_SOURCE_DIR&#125;</span>/*.cpp)</span><br><span class="line"><span class="comment"># 添加并指定最终生成的可执行程序名</span></span><br><span class="line"><span class="keyword">add_executable</span>(app <span class="variable">$&#123;SRC_LIST&#125;</span>)</span><br><span class="line"><span class="comment"># 指定可执行程序要链接的动态库名字</span></span><br><span class="line"><span class="keyword">target_link_libraries</span>(app pthread)</span><br></pre></td></tr></table></figure>
+
+<p>在<code>target_link_libraries(app pthread)</code>中：</p>
+<ul>
+<li><code>app</code>: 对应的是最终生成的可执行程序的名字</li>
+<li><code>pthread</code>：这是可执行程序要加载的动态库，这个库是系统提供的线程库，全名为<code>libpthread.so</code>，在指定的时候一般会掐头<code>（lib）</code>去尾<code>（.so）</code>。</li>
+</ul>
+<figure class="highlight cmake"><table><tr><td class="code"><pre><span class="line"><span class="keyword">cmake_minimum_required</span>(VERSION <span class="number">3.0</span>)</span><br><span class="line"><span class="keyword">project</span>(<span class="keyword">TEST</span>)</span><br><span class="line"><span class="keyword">file</span>(GLOB SRC_LIST <span class="variable">$&#123;CMAKE_CURRENT_SOURCE_DIR&#125;</span>/*.cpp)</span><br><span class="line"><span class="keyword">include_directories</span>(<span class="variable">$&#123;PROJECT_SOURCE_DIR&#125;</span>/<span class="keyword">include</span>)</span><br><span class="line"><span class="keyword">add_executable</span>(app <span class="variable">$&#123;SRC_LIST&#125;</span>)</span><br><span class="line"><span class="keyword">target_link_libraries</span>(app pthread calc)</span><br></pre></td></tr></table></figure>
+
+<p>在第六行中，pthread、calc都是可执行程序app要链接的动态库的名字。当可执行程序app生成之后并执行该文件，会提示有如下错误信息：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">./app</span> </span><br><span class="line">./app: error while loading shared libraries: libcalc.so: cannot open shared object file: No such file or directory</span><br></pre></td></tr></table></figure>
+
+<p>在 <code>CMake</code> 中可以在生成可执行程序之前，通过命令指定出要链接的动态库的位置，指定静态库位置使用的也是这个命令：</p>
+<figure class="highlight cmake"><table><tr><td class="code"><pre><span class="line"><span class="keyword">link_directories</span>(path)</span><br></pre></td></tr></table></figure>
+
+<p>所以修改之后的CMakeLists.txt文件应该是这样的：</p>
+<figure class="highlight cmake"><table><tr><td class="code"><pre><span class="line"><span class="keyword">cmake_minimum_required</span>(VERSION <span class="number">3.0</span>)</span><br><span class="line"><span class="keyword">project</span>(<span class="keyword">TEST</span>)</span><br><span class="line"><span class="keyword">file</span>(GLOB SRC_LIST <span class="variable">$&#123;CMAKE_CURRENT_SOURCE_DIR&#125;</span>/*.cpp)</span><br><span class="line"><span class="comment"># 指定源文件或者动态库对应的头文件路径</span></span><br><span class="line"><span class="keyword">include_directories</span>(<span class="variable">$&#123;PROJECT_SOURCE_DIR&#125;</span>/<span class="keyword">include</span>)</span><br><span class="line"><span class="comment"># 指定要链接的动态库的路径</span></span><br><span class="line"><span class="keyword">link_directories</span>(<span class="variable">$&#123;PROJECT_SOURCE_DIR&#125;</span>/lib)</span><br><span class="line"><span class="comment"># 添加并生成一个可执行程序</span></span><br><span class="line"><span class="keyword">add_executable</span>(app <span class="variable">$&#123;SRC_LIST&#125;</span>)</span><br><span class="line"><span class="comment"># 指定要链接的动态库</span></span><br><span class="line"><span class="keyword">target_link_libraries</span>(app pthread calc)</span><br></pre></td></tr></table></figure>
+
+<p>通过link_directories指定了动态库的路径之后，在执行生成的可执行程序的时候，就不会出现找不到动态库的问题了。</p>
+<p><strong>温馨提示：使用 target_link_libraries 命令就可以链接动态库，也可以链接静态库文件。</strong></p>
+<br>
+
+<h4 id="6-日志"><a href="#6-日志" class="headerlink" title="6. 日志"></a>6. 日志</h4><p>在<code>CMake</code>中可以用用户显示一条消息，该命令的名字为<code>message</code>：</p>
+<figure class="highlight cmake"><table><tr><td class="code"><pre><span class="line"><span class="keyword">message</span>([STATUS|WARNING|AUTHOR_WARNING|FATAL_ERROR|SEND_ERROR] <span class="string">&quot;message to display&quot;</span> ...)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>(无)</code> ：重要消息</li>
+<li><code>STATUS</code> ：非重要消息</li>
+<li><code>WARNING</code>：CMake 警告, 会继续执行</li>
+<li><code>AUTHOR_WARNING</code>：CMake 警告 (dev), 会继续执行</li>
+<li><code>SEND_ERROR</code>：CMake 错误, 继续执行，但是会跳过生成的步骤</li>
+<li><code>FATAL_ERROR</code>：CMake 错误, 终止所有处理过程</li>
+</ul>
+<p><code>CMake</code>的命令行工具会在<code>stdout</code>上显示S<code>TATUS</code>消息，在<code>stderr</code>上显示其他所有消息。<code>CMake</code>的<code>GUI</code>会在它的<code>log</code>区域显示所有消息。</p>
+<p><code>CMake</code>警告和错误消息的文本显示使用的是一种简单的标记语言。文本没有缩进，超过长度的行会回卷，段落之间以新行做为分隔符。</p>
+<figure class="highlight cmake"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 输出一般日志信息</span></span><br><span class="line"><span class="keyword">message</span>(STATUS <span class="string">&quot;source path: $&#123;PROJECT_SOURCE_DIR&#125;&quot;</span>)</span><br><span class="line"><span class="comment"># 输出警告信息</span></span><br><span class="line"><span class="keyword">message</span>(WARNING <span class="string">&quot;source path: $&#123;PROJECT_SOURCE_DIR&#125;&quot;</span>)</span><br><span class="line"><span class="comment"># 输出错误信息</span></span><br><span class="line"><span class="keyword">message</span>(FATAL_ERROR <span class="string">&quot;source path: $&#123;PROJECT_SOURCE_DIR&#125;&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<br>
+
+<h4 id="7-变量操作"><a href="#7-变量操作" class="headerlink" title="7. 变量操作"></a>7. 变量操作</h4><h5 id="7-1-追加"><a href="#7-1-追加" class="headerlink" title="7.1 追加"></a>7.1 追加</h5><p>有时候项目中的源文件并不一定都在同一个目录中，但是这些源文件最终却需要一起进行编译来生成最终的可执行文件或者库文件。如果我们通过<code>file</code>命令对各个目录下的源文件进行搜索，最后还需要做一个字符串拼接的操作，关于字符串拼接可以使用<code>set</code>命令也可以使用<code>list</code>命令。</p>
+<br>
+
+<h6 id="7-1-1-使用set拼接"><a href="#7-1-1-使用set拼接" class="headerlink" title="7.1.1 使用set拼接"></a>7.1.1 使用set拼接</h6><p>如果使用<code>set</code>进行字符串拼接，对应的命令格式如下：</p>
+<figure class="highlight cmake"><table><tr><td class="code"><pre><span class="line"><span class="keyword">set</span>(变量名<span class="number">1</span> <span class="variable">$&#123;变量名1&#125;</span> <span class="variable">$&#123;变量名2&#125;</span> ...)</span><br></pre></td></tr></table></figure>
+
+<p>关于上面的命令其实就是将从第二个参数开始往后所有的字符串进行拼接，最后将结果存储到第一个参数中，如果第一个参数中原来有数据会对原数据就行覆盖。</p>
+<figure class="highlight cmake"><table><tr><td class="code"><pre><span class="line"><span class="keyword">cmake_minimum_required</span>(VERSION <span class="number">3.0</span>)</span><br><span class="line"><span class="keyword">project</span>(<span class="keyword">TEST</span>)</span><br><span class="line"><span class="keyword">set</span>(TEMP <span class="string">&quot;hello,world&quot;</span>)</span><br><span class="line"><span class="keyword">file</span>(GLOB SRC_1 <span class="variable">$&#123;PROJECT_SOURCE_DIR&#125;</span>/src1/*.cpp)</span><br><span class="line"><span class="keyword">file</span>(GLOB SRC_2 <span class="variable">$&#123;PROJECT_SOURCE_DIR&#125;</span>/src2/*.cpp)</span><br><span class="line"><span class="comment"># 追加(拼接)</span></span><br><span class="line"><span class="keyword">set</span>(SRC_1 <span class="variable">$&#123;SRC_1&#125;</span> <span class="variable">$&#123;SRC_2&#125;</span> <span class="variable">$&#123;TEMP&#125;</span>)</span><br><span class="line"><span class="keyword">message</span>(STATUS <span class="string">&quot;message: $&#123;SRC_1&#125;&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<br>
+
+<h6 id="7-1-2-使用list拼接"><a href="#7-1-2-使用list拼接" class="headerlink" title="7.1.2 使用list拼接"></a>7.1.2 使用list拼接</h6><p><code>list</code>命令的功能比<code>set</code>要强大，字符串拼接只是它的其中一个功能，所以需要在它第一个参数的位置指定出我们要做的操作，<code>APPEND</code>表示进行数据追加，后边的参数和<code>set</code>就一样了。</p>
+<figure class="highlight cmake"><table><tr><td class="code"><pre><span class="line"><span class="keyword">list</span>(APPEND &lt;<span class="keyword">list</span>&gt; [&lt;element&gt; ...])</span><br></pre></td></tr></table></figure>
+
+<br>
+
+<h5 id="7-2-字符串移除"><a href="#7-2-字符串移除" class="headerlink" title="7.2 字符串移除"></a>7.2 字符串移除</h5><p>使用<code>list</code>命令，<code>REMOVE_ITEM</code>表示对数据进行移除</p>
+<figure class="highlight cmake"><table><tr><td class="code"><pre><span class="line"><span class="keyword">list</span>(REMOVE_ITEM &lt;<span class="keyword">list</span>&gt; &lt;value&gt; [&lt;value&gt; ...])</span><br></pre></td></tr></table></figure>
+
+<p>例子：</p>
+<figure class="highlight cmake"><table><tr><td class="code"><pre><span class="line"><span class="keyword">cmake_minimum_required</span>(VERSION <span class="number">3.0</span>)</span><br><span class="line"><span class="keyword">project</span>(<span class="keyword">TEST</span>)</span><br><span class="line"><span class="keyword">set</span>(TEMP <span class="string">&quot;hello,world&quot;</span>)</span><br><span class="line"><span class="keyword">file</span>(GLOB SRC_1 <span class="variable">$&#123;PROJECT_SOURCE_DIR&#125;</span>/*.cpp)</span><br><span class="line"><span class="comment"># 移除前日志</span></span><br><span class="line"><span class="keyword">message</span>(STATUS <span class="string">&quot;message: $&#123;SRC_1&#125;&quot;</span>)</span><br><span class="line"><span class="comment"># 移除 main.cpp</span></span><br><span class="line"><span class="keyword">list</span>(REMOVE_ITEM SRC_1 <span class="variable">$&#123;PROJECT_SOURCE_DIR&#125;</span>/main.cpp)</span><br><span class="line"><span class="comment"># 移除后日志</span></span><br><span class="line"><span class="keyword">message</span>(STATUS <span class="string">&quot;message: $&#123;SRC_1&#125;&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<br>
+
+<h4 id="8-宏定义"><a href="#8-宏定义" class="headerlink" title="8. 宏定义"></a>8. 宏定义</h4><p>在<code>CMake</code>中，对应的命令叫做<code>add_definitions</code>:</p>
+<figure class="highlight cmake"><table><tr><td class="code"><pre><span class="line"><span class="keyword">add_definitions</span>(-D宏名称)</span><br></pre></td></tr></table></figure>
+
+<p>例子：</p>
+<figure class="highlight cmake"><table><tr><td class="code"><pre><span class="line"><span class="keyword">cmake_minimum_required</span>(VERSION <span class="number">3.0</span>)</span><br><span class="line"><span class="keyword">project</span>(<span class="keyword">TEST</span>)</span><br><span class="line"><span class="comment"># 自定义 DEBUG 宏</span></span><br><span class="line"><span class="keyword">add_definitions</span>(-DDEBUG)</span><br><span class="line"><span class="keyword">add_executable</span>(app ./<span class="keyword">test</span>.c)</span><br></pre></td></tr></table></figure>
+
+<br>
+
+<h4 id="9-预定义宏"><a href="#9-预定义宏" class="headerlink" title="9. 预定义宏"></a>9. 预定义宏</h4><p>下面的列表中为大家整理了一些<code>CMake</code>中常用的宏：</p>
+<table>
+<thead>
+<tr>
+<th>宏</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>PROJECT_SOURCE_DIR</td>
+<td>使用<code>cmake</code>命令后紧跟的目录，一般是工程的根目录</td>
+</tr>
+<tr>
+<td>PROJECT_BINARY_DIR</td>
+<td>执行<code>cmake</code>命令的目录</td>
+</tr>
+<tr>
+<td>CMAKE_CURRENT_SOURCE_DIR</td>
+<td>当前处理的<code>CMakeLists.txt</code>所在的路径</td>
+</tr>
+<tr>
+<td>CMAKE_CURRENT_BINARY_DIR</td>
+<td><code>target</code> 编译目录</td>
+</tr>
+<tr>
+<td>EXECUTABLE_OUTPUT_PATH</td>
+<td>重新定义目标二进制可执行文件的存放位置</td>
+</tr>
+<tr>
+<td>LIBRARY_OUTPUT_PATH</td>
+<td>重新定义目标链接库文件的存放位置</td>
+</tr>
+<tr>
+<td>PROJECT_NAME</td>
+<td>返回通过<code>PROJECT</code>指令定义的项目名称</td>
+</tr>
+<tr>
+<td>CMAKE_BINARY_DIR</td>
+<td>项目实际构建路径，假设在<code>build</code>目录进行的构建，那么得到的就是这个目录的路径</td>
+</tr>
+</tbody></table>
+<br>
+
+<h4 id="10-嵌套的CMake"><a href="#10-嵌套的CMake" class="headerlink" title="10. 嵌套的CMake"></a>10. 嵌套的CMake</h4><p>如果项目很大，或者项目中有很多的源码目录，在通过CMake管理项目的时候如果只使用一个CMakeLists.txt，那么这个文件相对会比较复杂，有一种化繁为简的方式就是给每个源码目录都添加一个CMakeLists.txt文件（头文件目录不需要），这样每个文件都不会太复杂，而且更灵活，更容易维护。</p>
+<p>先来看一下下面的这个的目录结构：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">tree</span></span><br><span class="line">.</span><br><span class="line">├── build</span><br><span class="line">├── calc</span><br><span class="line">│   ├── add.c</span><br><span class="line">│   ├── CMakeLists.txt</span><br><span class="line">│   ├── div.c</span><br><span class="line">│   ├── mult.c</span><br><span class="line">│   └── sub.c</span><br><span class="line">├── CMakeLists.txt</span><br><span class="line">├── include</span><br><span class="line">│   ├── calc.h</span><br><span class="line">│   └── sort.h</span><br><span class="line">├── sort</span><br><span class="line">│   ├── CMakeLists.txt</span><br><span class="line">│   ├── insert.c</span><br><span class="line">│   └── select.c</span><br><span class="line">├── test1</span><br><span class="line">│   ├── calc.cpp</span><br><span class="line">│   └── CMakeLists.txt</span><br><span class="line">└── test2</span><br><span class="line">    ├── CMakeLists.txt</span><br><span class="line">    └── sort.c</span><br><span class="line"></span><br><span class="line">6 directories, 15 files</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>include 目录</code>：头文件目录</li>
+<li><code>calc 目录</code>：目录中的四个源文件对应的加、减、乘、除算法<ul>
+<li>对应的头文件是<code>include</code>中的<code>calc.h</code></li>
+</ul>
+</li>
+<li><code>sort 目录</code> ：目录中的两个源文件对应的是插入排序和选择排序算法<ul>
+<li>对应的头文件是i<code>nclude</code>中的<code>sort.h</code></li>
+</ul>
+</li>
+<li><code>test1 目录</code>：测试目录，对加、减、乘、除算法进行测试</li>
+<li><code>test2 目录</code>：测试目录，对排序算法进行测试</li>
+</ul>
+<p>可以看到各个源文件目录所需要的<code>CMakeLists.txt</code>文件现在已经添加完毕了。接下来庖丁解牛，我们依次分析一下各个文件中需要添加的内容。</p>
+<br>
+
+<h4 id="10-1-节点关系"><a href="#10-1-节点关系" class="headerlink" title="10.1 节点关系"></a>10.1 节点关系</h4><p>众所周知，<code>Linux</code>的目录是树状结构，所以<code>嵌套的 CMake 也是一个树状结构，最顶层的 CMakeLists.txt 是根节点，其次都是子节点。</code>因此，我们需要了解一些关于 <code>CMakeLists.txt</code> 文件变量作用域的一些信息：</p>
+<ul>
+<li>根节点<code>CMakeLists.txt</code>中的变量全局有效</li>
+<li>父节点<code>CMakeLists.txt</code>中的变量可以在子节点中使用</li>
+<li>子节点<code>CMakeLists.txt</code>中的变量只能在当前节点中使用</li>
+</ul>
+<br>
+
+<h4 id="10-2-添加子目录"><a href="#10-2-添加子目录" class="headerlink" title="10.2 添加子目录"></a>10.2 添加子目录</h4><figure class="highlight cmake"><table><tr><td class="code"><pre><span class="line"><span class="keyword">add_subdirectory</span>(source_dir [binary_dir] [EXCLUDE_FROM_ALL])</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>source_dir</code>：指定了<code>CMakeLists.txt</code>源文件和代码文件的位置，其实就是指定子目录</li>
+<li><code>binary_dir</code>：指定了输出文件的路径，一般不需要指定，忽略即可。</li>
+<li><code>EXCLUDE_FROM_ALL</code>：在子路径下的目标默认不会被包含到父路径的<code>ALL</code>目标里，并且也会被排除在IDE工程文件之外。用户必须显式构建在子路径下的目标。</li>
+</ul>
+<p>通过这种方式<code>CMakeLists.txt</code>文件之间的父子关系就被构建出来了。</p>
+<h4 id="10-3-编写CMakeLists-txt文件"><a href="#10-3-编写CMakeLists-txt文件" class="headerlink" title="10.3 编写CMakeLists.txt文件"></a>10.3 编写CMakeLists.txt文件</h4><h5 id="10-3-1-根目录"><a href="#10-3-1-根目录" class="headerlink" title="10.3.1 根目录"></a>10.3.1 根目录</h5><p>根目录中的 <code>CMakeLists.txt</code>文件内容如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cmake_minimum_required(VERSION 3.0)</span><br><span class="line">project(test)</span><br><span class="line"># 定义变量</span><br><span class="line"># 静态库生成的路径</span><br><span class="line">set(LIB_PATH $&#123;CMAKE_CURRENT_SOURCE_DIR&#125;/lib)</span><br><span class="line"># 测试程序生成的路径</span><br><span class="line">set(EXEC_PATH $&#123;CMAKE_CURRENT_SOURCE_DIR&#125;/bin)</span><br><span class="line"># 头文件目录</span><br><span class="line">set(HEAD_PATH $&#123;CMAKE_CURRENT_SOURCE_DIR&#125;/include)</span><br><span class="line"># 静态库的名字</span><br><span class="line">set(CALC_LIB calc)</span><br><span class="line">set(SORT_LIB sort)</span><br><span class="line"># 可执行程序的名字</span><br><span class="line">set(APP_NAME_1 test1)</span><br><span class="line">set(APP_NAME_2 test2)</span><br><span class="line"># 添加子目录</span><br><span class="line">add_subdirectory(calc)</span><br><span class="line">add_subdirectory(sort)</span><br><span class="line">add_subdirectory(test1)</span><br><span class="line">add_subdirectory(test2)</span><br></pre></td></tr></table></figure>
+
+<p>在根节点对应的文件中主要做了两件事情：定义全局变量和添加子目录。</p>
+<ul>
+<li>定义的全局变量主要是给子节点使用，目的是为了提高子节点中的<code>CMakeLists.txt</code>文件的可读性和可维护性，避免冗余并降低出差的概率。</li>
+<li>一共添加了四个子目录，每个子目录中都有一个<code>CMakeLists.txt</code>文件，这样它们的父子关系就被确定下来了。</li>
+</ul>
+<h5 id="10-3-2-calc-目录"><a href="#10-3-2-calc-目录" class="headerlink" title="10.3.2 calc 目录"></a>10.3.2 calc 目录</h5><p><code>calc</code> 目录中的 <code>CMakeLists.txt</code>文件内容如下：</p>
+<figure class="highlight cmake"><figcaption><span>&#123;: .line-numbers&#125;</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="keyword">cmake_minimum_required</span>(VERSION <span class="number">3.0</span>)</span><br><span class="line"><span class="keyword">project</span>(CALCLIB)</span><br><span class="line"><span class="keyword">aux_source_directory</span>(./ SRC)</span><br><span class="line"><span class="keyword">include_directories</span>(<span class="variable">$&#123;HEAD_PATH&#125;</span>)</span><br><span class="line"><span class="keyword">set</span>(LIBRARY_OUTPUT_PATH <span class="variable">$&#123;LIB_PATH&#125;</span>)</span><br><span class="line"><span class="keyword">add_library</span>(<span class="variable">$&#123;CALC_LIB&#125;</span> STATIC <span class="variable">$&#123;SRC&#125;</span>)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>第3行<code>aux_source_directory</code>：搜索当前目录（calc目录）下的所有源文件</li>
+<li>第4行<code>include_directories</code>：包含头文件路径，HEAD_PATH是在根节点文件中定义的</li>
+<li>第5行<code>set</code>：设置库的生成的路径，LIB_PATH是在根节点文件中定义的</li>
+<li>第6行<code>add_library</code>：生成静态库，静态库名字CALC_LIB是在根节点文件中定义的</li>
+</ul>
+<h5 id="10-3-2-sort-目录"><a href="#10-3-2-sort-目录" class="headerlink" title="10.3.2 sort 目录"></a>10.3.2 sort 目录</h5><p>sort 目录中的 CMakeLists.txt文件内容如下：</p>
+<figure class="highlight cmake"><figcaption><span>&#123;: .line-numbers&#125;</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="keyword">cmake_minimum_required</span>(VERSION <span class="number">3.0</span>)</span><br><span class="line"><span class="keyword">project</span>(CALCLIB)</span><br><span class="line"><span class="keyword">aux_source_directory</span>(./ SRC)</span><br><span class="line"><span class="keyword">include_directories</span>(<span class="variable">$&#123;HEAD_PATH&#125;</span>)</span><br><span class="line"><span class="keyword">set</span>(LIBRARY_OUTPUT_PATH <span class="variable">$&#123;LIB_PATH&#125;</span>)</span><br><span class="line"><span class="keyword">add_library</span>(<span class="variable">$&#123;CALC_LIB&#125;</span> SHARED <span class="variable">$&#123;SRC&#125;</span>)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>第6行<code>add_library</code>：生成动态库，动态库名字SORT_LIB是在根节点文件中定义的</li>
+</ul>
+<p>这个文件中的内容和<code>calc</code>节点文件中的内容类似，只不过这次生成的是动态库。</p>
+<h5 id="10-3-3-test1-目录"><a href="#10-3-3-test1-目录" class="headerlink" title="10.3.3 test1 目录"></a>10.3.3 test1 目录</h5><p>test1 目录中的 CMakeLists.txt文件内容如下：</p>
+<figure class="highlight cmake"><figcaption><span>&#123;: .line-numbers&#125;</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="keyword">cmake_minimum_required</span>(VERSION <span class="number">3.0</span>)</span><br><span class="line"><span class="keyword">project</span>(CALCTEST)</span><br><span class="line"><span class="keyword">aux_source_directory</span>(./ SRC)</span><br><span class="line"><span class="keyword">include_directories</span>(<span class="variable">$&#123;HEAD_PATH&#125;</span>)</span><br><span class="line"><span class="keyword">link_directories</span>(<span class="variable">$&#123;LIB_PATH&#125;</span>)</span><br><span class="line"><span class="keyword">link_libraries</span>(<span class="variable">$&#123;CALC_LIB&#125;</span>)</span><br><span class="line"><span class="keyword">set</span>(EXECUTABLE_OUTPUT_PATH <span class="variable">$&#123;EXEC_PATH&#125;</span>)</span><br><span class="line"><span class="keyword">add_executable</span>(<span class="variable">$&#123;APP_NAME_1&#125;</span> <span class="variable">$&#123;SRC&#125;</span>)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>第4行include_directories：指定头文件路径，HEAD_PATH变量是在根节点文件中定义的</li>
+<li>第6行link_libraries：指定可执行程序要链接的静态库，CALC_LIB变量是在根节点文件中定义的</li>
+<li>第7行set：指定可执行程序生成的路径，EXEC_PATH变量是在根节点文件中定义的</li>
+<li>第8行add_executable：生成可执行程序，APP_NAME_1变量是在根节点文件中定义的</li>
+</ul>
+<p>此处的可执行程序链接的是静态库，最终静态库会被打包到可执行程序中，可执行程序启动之后，静态库也就随之被加载到内存中了。</p>
+<h5 id="10-3-4-test2-目录"><a href="#10-3-4-test2-目录" class="headerlink" title="10.3.4 test2 目录"></a>10.3.4 test2 目录</h5><p>test2 目录中的 CMakeLists.txt文件内容如下：</p>
+<figure class="highlight cmake"><figcaption><span>&#123;: .line-numbers&#125;</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="keyword">cmake_minimum_required</span>(VERSION <span class="number">3.0</span>)</span><br><span class="line"><span class="keyword">project</span>(SORTTEST)</span><br><span class="line"><span class="keyword">aux_source_directory</span>(./ SRC)</span><br><span class="line"><span class="keyword">include_directories</span>(<span class="variable">$&#123;HEAD_PATH&#125;</span>)</span><br><span class="line"><span class="keyword">set</span>(EXECUTABLE_OUTPUT_PATH <span class="variable">$&#123;EXEC_PATH&#125;</span>)</span><br><span class="line"><span class="keyword">link_directories</span>(<span class="variable">$&#123;LIB_PATH&#125;</span>)</span><br><span class="line"><span class="keyword">add_executable</span>(<span class="variable">$&#123;APP_NAME_2&#125;</span> <span class="variable">$&#123;SRC&#125;</span>)</span><br><span class="line"><span class="keyword">target_link_libraries</span>(<span class="variable">$&#123;APP_NAME_2&#125;</span> <span class="variable">$&#123;SORT_LIB&#125;</span>)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>第四行<code>include_directories</code>：包含头文件路径，HEAD_PATH变量是在根节点文件中定义的</li>
+<li>第五行<code>set</code>：指定可执行程序生成的路径，EXEC_PATH变量是在根节点文件中定义的</li>
+<li>第六行<code>link_directories</code>：指定可执行程序要链接的动态库的路径，LIB_PATH变量是在根节点文件中定义的</li>
+<li>第七行<code>add_executable</code>：生成可执行程序，APP_NAME_2变量是在根节点文件中定义的</li>
+<li>第八行<code>target_link_libraries</code>：指定可执行程序要链接的动态库的名字</li>
+</ul>
+<p>在生成可执行程序的时候，动态库不会被打包到可执行程序内部。当可执行程序启动之后动态库也不会被加载到内存，只有可执行程序调用了动态库中的函数的时候，动态库才会被加载到内存中，且多个进程可以共用内存中的同一个动态库，所以动态库又叫共享库。</p>
+<p><strong>注意：引用变量要使用{},不要用成()</strong></p>
+<ul>
+<li>set(EXECUTABLE_OUTPUT_PATH <code>$&#123;EXEC_PATH&#125;</code>) 写成如下就会出错：</li>
+<li>set(EXECUTABLE_OUTPUT_PATH <code>$(EXEC_PATH)</code>) 就会出错</li>
+</ul>
+<br>
+
+<h5 id="10-3-4-构建项目"><a href="#10-3-4-构建项目" class="headerlink" title="10.3.4 构建项目"></a>10.3.4 构建项目</h5><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">xuan@DESKTOP-A52B6V9:~/linux/demos/cpro$ cd build/</span><br><span class="line">xuan@DESKTOP-A52B6V9:~/linux/demos/cpro/build$ cmake ..</span><br><span class="line">-- The C compiler identification is GNU 11.4.0</span><br><span class="line">-- The CXX compiler identification is GNU 11.4.0</span><br><span class="line">-- Detecting C compiler ABI info</span><br><span class="line">-- Detecting C compiler ABI info - done</span><br><span class="line">-- Check for working C compiler: /usr/bin/cc - skipped</span><br><span class="line">-- Detecting C compile features</span><br><span class="line">-- Detecting C compile features - done</span><br><span class="line">-- Detecting CXX compiler ABI info</span><br><span class="line">-- Detecting CXX compiler ABI info - done</span><br><span class="line">-- Check for working CXX compiler: /usr/bin/c++ - skipped</span><br><span class="line">-- Detecting CXX compile features</span><br><span class="line">-- Detecting CXX compile features - done</span><br><span class="line">-- Configuring done</span><br><span class="line">-- Generating done</span><br><span class="line">-- Build files have been written to: /home/xuan/linux/demos/cpro/build</span><br><span class="line"></span><br><span class="line">xuan@DESKTOP-A52B6V9:~/linux/demos/cpro/build$ make</span><br><span class="line">[  8%] Building C object calc/CMakeFiles/calc.dir/add.c.o</span><br><span class="line">[ 16%] Building C object calc/CMakeFiles/calc.dir/div.c.o</span><br><span class="line">[ 25%] Building C object calc/CMakeFiles/calc.dir/mult.c.o</span><br><span class="line">[ 33%] Building C object calc/CMakeFiles/calc.dir/sub.c.o</span><br><span class="line">[ 41%] Linking C static library ../../lib/libcalc.a</span><br><span class="line">[ 41%] Built target calc</span><br><span class="line">[ 50%] Building C object sort/CMakeFiles/sort.dir/insert.c.o</span><br><span class="line">[ 58%] Building C object sort/CMakeFiles/sort.dir/select.c.o</span><br><span class="line">[ 66%] Linking C shared library ../../lib/libsort.so</span><br><span class="line">[ 66%] Built target sort</span><br><span class="line">[ 75%] Building C object test2/CMakeFiles/test2.dir/sort.c.o</span><br><span class="line">[ 83%] Linking C executable ../../bin/test2</span><br><span class="line">[ 83%] Built target test2</span><br><span class="line">[ 91%] Building C object test1/CMakeFiles/test1.dir/calc.c.o</span><br><span class="line"><span class="meta prompt_">[100%</span><span class="language-bash">] Linking C executable ../../bin/test1</span></span><br><span class="line"><span class="meta prompt_">[100%</span><span class="language-bash">] Built target test1</span></span><br></pre></td></tr></table></figure>
+
+<p>通过上述<code>log</code>可以得到如下信息：</p>
+<ul>
+<li>在项目根目录的<code>lib目录</code>中生成了静态库<code>libcalc.a</code></li>
+<li>在项目根目录的<code>lib目录</code>中生成了动态库<code>libsort.so</code></li>
+<li>在项目根目录的<code>bin目录</code>中生成了可执行程序<code>test1</code></li>
+<li>在项目根目录的<code>bin目录</code>中生成了可执行程序<code>test2</code></li>
+</ul>
+<p>以下是生成的树状图：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">tree bin/ lib/</span></span><br><span class="line">bin/</span><br><span class="line">├── test1</span><br><span class="line">└── test2</span><br><span class="line">lib/</span><br><span class="line">├── libcalc.a</span><br><span class="line">└── libsort.so</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>在项目中，如果将程序中的某个模块制作成了动态库或者静态库并且在<code>CMakeLists.txt</code> 中指定了库的输出目录，而后其它模块又需要加载这个生成的库文件，此时直接使用就可以了。</li>
+<li>如果没有指定库的输出路径或者需要直接加载外部提供的库文件，此时就需要使用<code>link_directories($&#123;LIB_PATH&#125;)</code>将库文件路径指定出来,然后链接库的名字<code>link_libraries($&#123;CALC_LIB&#125;)</code>。</li>
+</ul>
+<br>
+
+<h3 id="11-流程控制"><a href="#11-流程控制" class="headerlink" title="11. 流程控制"></a>11. 流程控制</h3><h4 id="11-1-条件判断"><a href="#11-1-条件判断" class="headerlink" title="11.1 条件判断"></a>11.1 条件判断</h4><figure class="highlight cmake"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(&lt;condition&gt;)</span><br><span class="line">  &lt;commands&gt;</span><br><span class="line"><span class="keyword">elseif</span>(&lt;condition&gt;) <span class="comment"># 可选快, 可以重复</span></span><br><span class="line">  &lt;commands&gt;</span><br><span class="line"><span class="keyword">else</span>()              <span class="comment"># 可选快</span></span><br><span class="line">  &lt;commands&gt;</span><br><span class="line"><span class="keyword">endif</span>()</span><br></pre></td></tr></table></figure>
+
+<h5 id="11-1-1-基本表达式"><a href="#11-1-1-基本表达式" class="headerlink" title="11.1.1 基本表达式"></a>11.1.1 基本表达式</h5><ul>
+<li><p><code>if(&lt;expression&gt;)</code>: <code>expression</code> 有以下三种情况：常量、变量、字符串。</p>
+<ul>
+<li>如果是<code>1</code>, <code>ON</code>, <code>YES</code>, <code>TRUE</code>, <code>Y</code>, <code>非零值</code>，<code>非空字符串</code>时，条件判断返回<code>True</code></li>
+<li>如果是 <code>0</code>, <code>OFF</code>, <code>NO</code>, <code>FALSE</code>, <code>N</code>, <code>IGNORE</code>, <code>NOTFOUND</code>，<code>空字符串</code>时，条件判断返回<code>False</code></li>
+</ul>
+</li>
+</ul>
+<br>
+
+<h5 id="11-1-2-逻辑判断"><a href="#11-1-2-逻辑判断" class="headerlink" title="11.1.2 逻辑判断"></a>11.1.2 逻辑判断</h5><ul>
+<li>if(NOT <condition>)</li>
+<li>if(<cond1> AND <cond2>)</li>
+<li>if(<cond1> OR <cond2>)</li>
+</ul>
+<br>
+
+<h5 id="11-1-3-比较"><a href="#11-1-3-比较" class="headerlink" title="11.1.3 比较"></a>11.1.3 比较</h5><ul>
+<li><code>if(&lt;variable|string&gt; &lt;COMMAND&gt; &lt;variable|string&gt;)</code></li>
+<li>&lt;<code>COMMAND</code>&gt;为如下值的解释：<ul>
+<li><code>LESS</code>：如果左侧数值&#x2F;字符串<code>小于</code>右侧，返回<code>True</code></li>
+<li><code>GREATER</code>：如果左侧数值&#x2F;字符串<code>大于</code>右侧，返回<code>True</code></li>
+<li><code>EQUAL</code>：如果左侧数值&#x2F;字符串<code>等于</code>右侧，返回<code>True</code></li>
+<li><code>LESS_EQUAL</code>：如果左侧数值&#x2F;字符串<code>小于等于</code>右侧，返回<code>True</code></li>
+<li><code>GREATER_EQUAL</code>：如果左侧数值&#x2F;字符串<code>大于等于</code>右侧，返回<code>True</code></li>
+</ul>
+</li>
+</ul>
+<br>
+
+<h5 id="11-1-4-文件操作"><a href="#11-1-4-文件操作" class="headerlink" title="11.1.4 文件操作"></a>11.1.4 文件操作</h5><p><strong>存在&#x2F;是</strong>返回<code>True</code>，<strong>不存在&#x2F;否</strong>返回<code>False</code></p>
+<ul>
+<li>判断文件或者目录是否存在：<code>if(EXISTS path-to-file-or-directory)</code></li>
+<li>判断是不是目录：<code>if(IS_DIRECTORY path)</code><ul>
+<li>此处目录的 <code>path</code> 必须是绝对路径</li>
+</ul>
+</li>
+<li>判断是不是软连接：<code>if(IS_SYMLINK file-name)</code><ul>
+<li>此处的 <code>file-name</code> 对应的路径必须是绝对路径</li>
+<li>软链接相当于 <code>Windows</code> 里的快捷方式</li>
+</ul>
+</li>
+<li>判断是不是绝对路径：<code>if(IS_ABSOLUTE path)</code><ul>
+<li>如果绝对路径是Linux，该路径需要从根目录开始描述</li>
+<li>如果绝对路径是Windows，该路径需要从盘符开始描述</li>
+</ul>
+</li>
+</ul>
+<br>
+
+<h5 id="11-1-5-其他"><a href="#11-1-5-其他" class="headerlink" title="11.1.5 其他"></a>11.1.5 其他</h5><ul>
+<li>判断某个元素是否在列表中：<code>if(&lt;variable|string&gt; IN_LIST &lt;variable&gt;)</code></li>
+<li>比较两个路径是否相等：<code>if(&lt;variable|string&gt; PATH_EQUAL &lt;variable|string&gt;)</code></li>
+</ul>
+<br>
+
+<h4 id="11-2-循环"><a href="#11-2-循环" class="headerlink" title="11.2 循环"></a>11.2 循环</h4><p>在 <code>CMake</code> 中循环有两种方式，分别是：<code>foreach</code>和<code>while</code>。</p>
+<h5 id="11-2-1-foreach"><a href="#11-2-1-foreach" class="headerlink" title="11.2.1 foreach"></a>11.2.1 foreach</h5><p>使用 foreach 进行循环，语法格式如下：</p>
+<figure class="highlight cmake"><table><tr><td class="code"><pre><span class="line"><span class="keyword">foreach</span>(&lt;loop_var&gt; &lt;items&gt;)</span><br><span class="line">    &lt;commands&gt;</span><br><span class="line"><span class="keyword">endforeach</span>()</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>foreach(&lt;loop_var&gt; RANGE &lt;stop&gt;)</code><ul>
+<li><code>RANGE</code>：关键字，表示要遍历范围</li>
+<li><code>stop</code>：这是一个正整数，表示范围的结束值，在遍历的时候从 0 开始，最大值为 <code>stop</code>。</li>
+<li><code>loop_var</code>：存储每次循环取出的值</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight cmake"><table><tr><td class="code"><pre><span class="line"><span class="keyword">cmake_minimum_required</span>(VERSION <span class="number">3.2</span>)</span><br><span class="line"><span class="keyword">project</span>(<span class="keyword">test</span>)</span><br><span class="line"><span class="comment"># 循环</span></span><br><span class="line"><span class="keyword">foreach</span>(item RANGE <span class="number">10</span>)</span><br><span class="line">    <span class="keyword">message</span>(STATUS <span class="string">&quot;当前遍历的值为: $&#123;item&#125;&quot;</span> )</span><br><span class="line"><span class="keyword">endforeach</span>()</span><br></pre></td></tr></table></figure>
+<p>上面例子输出<code>0~10</code></p>
+<br>
+
+<ul>
+<li><code>foreach(&lt;loop_var&gt; RANGE &lt;start&gt; &lt;stop&gt; [&lt;step&gt;])</code><ul>
+<li><code>RANGE</code>：关键字，表示要遍历范围</li>
+<li><code>start</code>：这是一个正整数，表示范围的起始值，也就是说最小值为 <code>start</code></li>
+<li><code>stop</code>：这是一个正整数，表示范围的结束值，也就是说最大值为 <code>stop</code></li>
+<li><code>step</code>：控制每次遍历的时候以怎样的步长增长，默认为<code>1</code>，可以不设置<br>  -<code>loop_var</code>：存储每次循环取出的值</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight cmake"><table><tr><td class="code"><pre><span class="line"><span class="keyword">cmake_minimum_required</span>(VERSION <span class="number">3.2</span>)</span><br><span class="line"><span class="keyword">project</span>(<span class="keyword">test</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">foreach</span>(item RANGE <span class="number">10</span> <span class="number">30</span> <span class="number">2</span>)</span><br><span class="line">    <span class="keyword">message</span>(STATUS <span class="string">&quot;当前遍历的值为: $&#123;item&#125;&quot;</span> )</span><br><span class="line"><span class="keyword">endforeach</span>()</span><br></pre></td></tr></table></figure>
+<p>上面例子输出<code>10~30</code>,从<code>10</code>开始,每次增长<code>2</code>。</p>
+<br>
+
+<ul>
+<li><code>foreach(&lt;loop_var&gt; IN [LISTS [&lt;lists&gt;]] [ITEMS [&lt;items&gt;]])</code><ul>
+<li><code>IN</code>：关键字，表示在 <code>xxx</code> 里边</li>
+<li><code>LISTS</code>：关键字，对应的是列表<code>list</code>，通过<code>set</code>、<code>list</code>可以获得</li>
+<li><code>ITEMS</code>：关键字，对应的也是列表</li>
+<li><code>loop_var</code>：存储每次循环取出的值</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight cmake"><table><tr><td class="code"><pre><span class="line"><span class="keyword">cmake_minimum_required</span>(VERSION <span class="number">3.2</span>)</span><br><span class="line"><span class="keyword">project</span>(<span class="keyword">test</span>)</span><br><span class="line"><span class="comment"># 创建 list</span></span><br><span class="line"><span class="keyword">set</span>(WORD a b c d)</span><br><span class="line"><span class="keyword">set</span>(NAME ace sabo luffy)</span><br><span class="line"><span class="comment"># 遍历 list</span></span><br><span class="line"><span class="keyword">foreach</span>(item IN LISTS WORD NAME)</span><br><span class="line">    <span class="keyword">message</span>(STATUS <span class="string">&quot;当前遍历的值为: $&#123;item&#125;&quot;</span> )</span><br><span class="line"><span class="keyword">endforeach</span>()</span><br></pre></td></tr></table></figure>
+<p>在上面的例子中，创建了两个 <code>list</code> 列表，在遍历的时候对它们两个都进行了遍历（可以根据实际需求选择同时遍历多个或者只遍历一个）</p>
+<figure class="highlight cmake"><table><tr><td class="code"><pre><span class="line"><span class="keyword">cmake_minimum_required</span>(VERSION <span class="number">3.2</span>)</span><br><span class="line"><span class="keyword">project</span>(<span class="keyword">test</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">set</span>(WORD a b c <span class="string">&quot;d e f&quot;</span>)</span><br><span class="line"><span class="keyword">set</span>(NAME ace sabo luffy)</span><br><span class="line"><span class="keyword">foreach</span>(item IN ITEMS <span class="variable">$&#123;WORD&#125;</span> <span class="variable">$&#123;NAME&#125;</span>)</span><br><span class="line">    <span class="keyword">message</span>(STATUS <span class="string">&quot;当前遍历的值为: $&#123;item&#125;&quot;</span> )</span><br><span class="line"><span class="keyword">endforeach</span>()</span><br></pre></td></tr></table></figure>
+<p>在上面的例子中，遍历过程中将关键字<code>LISTS</code>改成了<code>ITEMS</code>，后边跟的还是一个或者多个列表，只不过此时需要通过<code>$&#123;&#125;</code>将列表中的值取出。其输出的信息和上一个例子是一样的：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash"><span class="built_in">cd</span> build/</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">cmake ..</span></span><br><span class="line">-- 当前遍历的值为: a</span><br><span class="line">-- 当前遍历的值为: b</span><br><span class="line">-- 当前遍历的值为: c</span><br><span class="line">-- 当前遍历的值为: d e f</span><br><span class="line">-- 当前遍历的值为: ace</span><br><span class="line">-- 当前遍历的值为: sabo</span><br><span class="line">-- 当前遍历的值为: luffy</span><br><span class="line">-- Configuring done</span><br><span class="line">-- Generating done</span><br><span class="line">-- Build files have been written to: /home/robin/abc/a/build</span><br></pre></td></tr></table></figure>
+
+<p>小细节：在通过 set 组织列表的时候，如果某个字符串中有空格，可以通过双引号将其包裹起来，具体的操作方法可以参考上面的例子。</p>
+<br>
+
+<ul>
+<li><code>foreach(&lt;loop_var&gt;... IN ZIP_LISTS &lt;lists&gt;)</code><ul>
+<li><code>loop_var</code>：存储每次循环取出的值，可以根据要遍历的列表的数量指定多个变量，用于存储对应的列表当前取出的那个值。<ul>
+<li>如果指定了多个变量名，它们的数量应该和列表的数量相等</li>
+<li>如果只给出了一个 <code>loop_var</code>，那么它将一系列的 <code>loop_var_N</code> 变量来存储对应列表中的当前项，也就是说 <code>loop_var_0</code> 对应第一个列表，<code>loop_var_1</code> 对应第二个列表，以此类推……</li>
+<li>如果遍历的多个列表中一个列表较短，当它遍历完成之后将不会再参与后续的遍历（因为其它列表还没有遍历完）。</li>
+</ul>
+</li>
+<li><code>IN</code>：关键字，表示在 <code>xxx</code> 里边</li>
+<li><code>ZIP_LISTS</code>：关键字，对应的是列表<code>list</code>，通过<code>set</code> 、<code>list</code>可以获得</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight cmake"><table><tr><td class="code"><pre><span class="line"><span class="keyword">cmake_minimum_required</span>(VERSION <span class="number">3.17</span>)</span><br><span class="line"><span class="keyword">project</span>(<span class="keyword">test</span>)</span><br><span class="line"><span class="comment"># 通过list给列表添加数据</span></span><br><span class="line"><span class="keyword">list</span>(APPEND WORD hello world <span class="string">&quot;hello world&quot;</span>)</span><br><span class="line"><span class="keyword">list</span>(APPEND NAME ace sabo luffy zoro sanji)</span><br><span class="line"><span class="comment"># 遍历列表</span></span><br><span class="line"><span class="keyword">foreach</span>(item1 item2 IN ZIP_LISTS WORD NAME)</span><br><span class="line">    <span class="keyword">message</span>(STATUS <span class="string">&quot;当前遍历的值为: item1 = $&#123;item1&#125;, item2=$&#123;item2&#125;&quot;</span> )</span><br><span class="line"><span class="keyword">endforeach</span>()</span><br><span class="line"></span><br><span class="line"><span class="keyword">message</span>(<span class="string">&quot;=============================&quot;</span>)</span><br><span class="line"><span class="comment"># 遍历列表</span></span><br><span class="line"><span class="keyword">foreach</span>(item  IN ZIP_LISTS WORD NAME)</span><br><span class="line">    <span class="keyword">message</span>(STATUS <span class="string">&quot;当前遍历的值为: item1 = $&#123;item_0&#125;, item2=$&#123;item_1&#125;&quot;</span> )</span><br><span class="line"><span class="keyword">endforeach</span>()</span><br></pre></td></tr></table></figure>
+<p>在这个例子中关于列表数据的添加是通过<code>list</code>来实现的。在遍历列表的时候一共使用了两种方式，一种提供了多个变量来存储当前列表中的值，另一种只有一个变量，但是实际取值的时候需要通过<code>变量名_0、变量名_1、变量名_N</code> 的方式来操作，<code>注意事项：第一个列表对应的编号是0，第一个列表对应的编号是0，第一个列表对应的编号是0。</code></p>
+<p>上面的例子输出的结果如下：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash"><span class="built_in">cd</span> build/</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">cmake ..</span></span><br><span class="line">-- 当前遍历的值为: item1 = hello, item2=ace</span><br><span class="line">-- 当前遍历的值为: item1 = world, item2=sabo</span><br><span class="line">-- 当前遍历的值为: item1 = hello world, item2=luffy</span><br><span class="line">-- 当前遍历的值为: item1 = , item2=zoro</span><br><span class="line">-- 当前遍历的值为: item1 = , item2=sanji</span><br><span class="line">=============================</span><br><span class="line">-- 当前遍历的值为: item1 = hello, item2=ace</span><br><span class="line">-- 当前遍历的值为: item1 = world, item2=sabo</span><br><span class="line">-- 当前遍历的值为: item1 = hello world, item2=luffy</span><br><span class="line">-- 当前遍历的值为: item1 = , item2=zoro</span><br><span class="line">-- 当前遍历的值为: item1 = , item2=sanji</span><br><span class="line">-- Configuring done (0.0s)</span><br><span class="line">-- Generating done (0.0s)</span><br><span class="line">-- Build files have been written to: /home/robin/abc/a/build</span><br></pre></td></tr></table></figure>
+
+<br>
+
+<h5 id="11-2-2-while"><a href="#11-2-2-while" class="headerlink" title="11.2.2 while"></a>11.2.2 while</h5><figure class="highlight cmake"><table><tr><td class="code"><pre><span class="line"><span class="keyword">while</span>(&lt;condition&gt;)</span><br><span class="line">    &lt;commands&gt;</span><br><span class="line"><span class="keyword">endwhile</span>()</span><br></pre></td></tr></table></figure>
+<p><code>while</code> 比较简单就不做描述了。</p>
+<br>
+
+<h3 id="12-cmake设置编译器"><a href="#12-cmake设置编译器" class="headerlink" title="12. cmake设置编译器"></a>12. cmake设置编译器</h3><h4 id="12-1-命令行"><a href="#12-1-命令行" class="headerlink" title="12.1 命令行"></a>12.1 命令行</h4><p>在命令行中指定编译器，你可以在调用 <code>cmake</code> 命令时使用 <code>-DCMAKE_C_COMPILER</code> 和 <code>-DCMAKE_CXX_COMPILER</code> 选项来分别为<code>C</code>和<code>C++</code>设置编译器。例如：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">cmake -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ /path/to/source</span><br></pre></td></tr></table></figure>
+
+<br>
+
+<h4 id="12-2-CMakeLists-txt"><a href="#12-2-CMakeLists-txt" class="headerlink" title="12.2 CMakeLists.txt"></a>12.2 CMakeLists.txt</h4><p>在项目的 <code>CMakeLists.txt</code> 文件中，你可以使用 <code>set</code> 命令来指定编译器：</p>
+<figure class="highlight cmake"><table><tr><td class="code"><pre><span class="line"><span class="keyword">set</span>(CMAKE_C_COMPILER /user/bin/gcc)</span><br><span class="line"><span class="keyword">set</span>(CMAKE_CXX_COMPILER /user/bin/g++)</span><br></pre></td></tr></table></figure>
+
+<br>
+
+<h4 id="12-3-工具链文件"><a href="#12-3-工具链文件" class="headerlink" title="12.3 工具链文件"></a>12.3 工具链文件</h4><p><code>CMake</code>允许使用所谓的“工具链文件”（toolchain file）来指定编译器和工具链设置。这在跨平台构建时非常有用。工具链文件是一个普通的<code>CMake</code>脚本，它设置了构建系统所需的编译器和工具链选项。例如，创建一个名为 <code>toolchain.cmake</code> 的文件，并在其中设置编译器：</p>
+<pre><code>set(CMAKE_C_COMPILER gcc)
+set(CMAKE_CXX_COMPILER g++)
+</code></pre>
+<p>然后在调用 <code>cmake</code> 命令时指定工具链文件：</p>
+<pre><code>cmake -DCMAKE_TOOLCHAIN_FILE=path/to/toolchain.cmake /path/to/source
+</code></pre>
+<p>请记住，一旦<code>CMake</code>缓存生成，更改编译器的设置就需要清理<code>CMake</code>缓存并重新运行<code>CMake</code>配置。这是因为<code>CMake</code>在第一次运行时会将编译器和工具链的信息缓存起来，以便后续构建使用。</p>
+]]></content>
+      <categories>
+        <category>自动编译工具工具</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+        <tag>CMake</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Qt5学习笔记</title>
+    <url>/2024/04/30/Qt5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</url>
+    <content><![CDATA[<h2 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h2><ul>
+<li><strong>Qt官方下载地址</strong>: <a href="https://download.qt.io/archive/qt/">https://download.qt.io/archive/qt/</a></li>
+<li><strong>参考教程文档</strong>: <a href="https://subingwen.cn/qt/qt-primer/">https://subingwen.cn/qt/qt-primer/</a></li>
+</ul>
+<br>
+
+<h2 id="问题汇总"><a href="#问题汇总" class="headerlink" title="问题汇总"></a>问题汇总</h2><h3 id="打印问题"><a href="#打印问题" class="headerlink" title="打印问题"></a>打印问题</h3><p><strong>问题现象：</strong></p>
+<ul>
+<li>在Qt Creater中，使用<code>qDebug()</code>打印信息时，在调试界面中，<code>qDebug()</code>的输出信息会显示在调试终端，当直接运行<code>.exe</code>文件时，<code>qDebug()</code>的输出信息会丢失。</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line">MainWindow::<span class="built_in">MainWindow</span>(QWidget *parent)</span><br><span class="line">    : <span class="built_in">QMainWindow</span>(parent)</span><br><span class="line">    , <span class="built_in">ui</span>(<span class="keyword">new</span> Ui::MainWindow)</span><br><span class="line">&#123;</span><br><span class="line">    ui-&gt;<span class="built_in">setupUi</span>(<span class="keyword">this</span>);</span><br><span class="line">    <span class="built_in">qDebug</span>() &lt;&lt; <span class="string">&quot;这是测试打印程序&quot;</span> &lt;&lt; <span class="string">&quot; * &quot;</span> &lt;&lt; <span class="number">10000</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>解决方法：</strong></p>
+<ul>
+<li>在<code>qt.pro</code>工程文件中中，添加如下代码：<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line">CONFIG += c++<span class="number">17</span> console			<span class="comment">//添加console</span></span><br></pre></td></tr></table></figure></li>
+<li>勾选以下选项：</li>
+</ul>
+<p><img src="/../pictures/qt_terminal%E9%85%8D%E7%BD%AE.png" alt="qt_terminal配置"></p>
+<p><strong>总结：</strong></p>
+<ul>
+<li>需要重新编译代码，<code>.exe</code>文件更新后生效。</li>
+<li>再次编译运行时,会弹出<code>terminal</code>。</li>
+</ul>
+]]></content>
+      <categories>
+        <category>图形界面</category>
+      </categories>
+      <tags>
+        <tag>Qt</tag>
+      </tags>
   </entry>
 </search>
