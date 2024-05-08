@@ -59,9 +59,13 @@ int drv_adc_deinit(EADC_DEVICE adc_dev,EDMA_CHANNEL dma_ch)
 ### n32g452rc内核复位问题
 
 #### bootloader跳转到app
+
+- 栈大小改变后跳转成功：将ram空间数据uint16_t改为uint32_t。
+- 堆大小改变后跳转成功：将队列申请长度20改为30。
 - 代码大小变化后跳转失败：
-	- 代码段变长，能跑进`system_init`,跑飞待查
-	- 代码段变短，不能跑进`system_init`,跑飞待查
+	- 代码段变长，能跑进`system_init`,跑飞待查。
+	- 代码段变短，不能跑进`system_init`,跑飞待查。
+
 
 <br>
 
@@ -374,3 +378,190 @@ void LCD_WR_DATA(u16 dat)
 	LCD_Writ_Bus(dat);
 }
 ```
+
+<br>
+
+## Cortex-M系列内核字节对齐汇总
+
+- 4字节对齐的含义就是变量地址对4求余数为0；8字节对齐就是地址对8求余等于0，依次类推，比如：如果让p去访问0x20000001， 0x20000002，0x20000003这都是不对齐访问。
+
+- 对于`M3和M4`而言，可以直接访问非对齐地址（注意芯片要在这个地址有对应的内存空间), 因为`M3和M4`是支持的，而`M0/M0+/M1`是不支持的，不支持的内核芯片，只要非对齐访问就会触发硬件异常。
+
+**综上所述，我们只讨论Cortex-M3/M4内核情况。**
+
+### 全局变量对齐问题
+
+- `uint8_t`定义变量地址要1字节对齐。
+- `uint16_t`定义变量地址要2字节对齐。
+- `uint32_t`定义变量地址要4字节对齐。
+- `uint64_t`定义变量地址要8字节对齐。
+- `指针变量`是4字节对齐。
+
+### 结构体成员对齐问题
+
+#### 自然对界
+
+**例子1**（分析结构各成员的默认字节对界条界条件和结构整体的默认字节对界条件）:
+
+```c
+struct Test
+{ 
+  char x1; // 成员x1为char型(其起始地址必须1字节对界)，其偏移地址为0 
+  char x2; // 成员x2为char型(其起始地址必须1字节对界，其偏移地址为1 
+  float x3; // 成员x3为float型(其起始地址必须4字节对界)，编译器在x2和x3之间填充了两个空字节，其偏移地址为4 
+  char x4; // 成员x4为char型(其起始地址必须1字节对界)，其偏移地址为8 
+};
+```
+在Test结构体中，最大的成员为`float` x3，因此结构体的自然对界条件为4字节对齐。则结构体长度就为12字节，内存布局为`1100 1111 1000`。
+
+<br>
+
+#### 指令对齐
+
+**1. 伪指令#pragma pack**
+
+改变缺省的对界条件(指定对界)
+- 使用伪指令`#pragma pack (n)`，编译器将按照n个字节对齐。
+- 使用伪指令`#pragma pack ()`，取消自定义字节对齐方式。
+	- 数据成员对齐规则：结构(`struct`)(或联合(`union`))的数据成员，第一个数据成员放在offset为0的地方，以后每个数据成员的对齐按照`#pragma pack`指定的数值和这个数据成员自身长度中，比较小的那个进行。
+	- 结构(或联合)的整体对齐规则：在数据成员完成各自对齐之后，结构(或联合)本身也要进行对齐，对齐将按照`#pragma pack`指定的数值和结构(或联合)最大数据成员长度中，比较小的那个进行。
+
+结合推断：当`#pragma pack`的n值等于或超过所有数据成员长度的时候，这个n值的大小将不产生任何效果。因此，当使用伪指令`#pragma pack (2)`时，Test结构体的大小为8，内存布局为`1111 1110`。
+
+- 需要注意一点，当结构体中包含一个子结构体时，子结构中的成员按照#pragma pack指定的数值和子结构最大数据成员长度中，比较小的那个进行进行对齐。例子如下：
+
+```c
+#pragma pack(8)
+struct s1
+{
+  short a;
+  long b;
+};
+ 
+struct s2
+{
+  char c;
+  s1 d;
+  long long e;
+};
+#pragma pack()
+```
+`sizeof(s2)`的结果为24。S1的内存布局为`1100 1111`，S2的内存布局为`1000 1100 1111 0000 1111 1111`。
+
+**例子2**(按照2个字节对齐时)：
+``` c
+#include <stdio.h>
+#pragma pack(2)
+typedef struct
+{
+  int aa1; //2个字节对齐 1111
+  char bb1;//1个字节对齐 1
+  short cc1;//2个字节对齐 011
+  char dd1; //1个字节对齐 1
+} testlength1;
+int length1 = sizeof(testlength1); //2个字节对齐，占用字节11 11 10 11 10,length = 10
+ 
+typedef struct
+{
+  char bb2;//1个字节对齐 1
+  int aa2; //2个字节对齐 01111
+  short cc2;//2个字节对齐 11
+  char dd2; //1个字节对齐 1
+} testlength2;
+int length2 = sizeof(testlength2); //2个字节对齐，占用字节10 11 11 11 10,length = 10
+ 
+typedef struct
+{
+  char bb3; //1个字节对齐 1
+  char dd3; //1个字节对齐 1
+  int aa3; //2个字节对齐 11 11
+  short cc23//2个字节对齐 11
+ 
+} testlength3;
+int length3 = sizeof(testlength3); //2个字节对齐，占用字节11 11 11 11,length = 8
+ 
+typedef struct
+{
+  char bb4; //1个字节对齐 1
+  char dd4; //1个字节对齐 1
+  short cc4;//2个字节对齐 11
+  int aa4; //2个字节对齐 11 11
+} testlength4;
+int length4 = sizeof(testlength4); //2个字节对齐，占用字节11 11 11 11,length = 8
+#pragma pack()
+int main(void)
+{
+  printf("length1 = %d.\n",length1);
+  printf("length2 = %d.\n",length2);
+  printf("length3 = %d.\n",length3);
+  printf("length4 = %d.\n",length4);
+  return 0;
+}
+```
+
+**2. __attribute__((__aligned__(n)))**
+
+`__attribute__`是GCC里的编译参数，用法有很多种，感兴趣可以阅读一下gcc的相关文档。这里说一下`__attribute__`对变量和结构体对齐的影响。这里的影响大概分为两个方面，对齐和本身占用的字节数的大小，即sizeof（变量）的值。
+
+- `int a attribute((aligned(64))) = 10;`
+
+这个修饰的影响主要是对齐，所谓对齐是存储为值的起始地址。变量a的地址&a,本来是4字节对齐，变成了64字节对齐（有的环境对最大对齐数值有限制）。64字节对齐就是`&a`的最后6位为0。
+``` c
+sizeof(a) = 4; 		//a 占用的字节数还是4个字节
+```
+
+- `typedef int myint attribute((aligned(64))) ;`
+
+这样说明myint 声明的变量按照64字节对齐，大小是4字节，这样就会有一个问题，这个变量不能定义数组：
+``` c
+myint myarray[2]; 	//这样定义编译器会报err
+```
+报错的原因是数组的存储在内存中是连续的，而myint只有4字节确要64字节对齐，这样对齐和连续就不能同时保证，就会报错。
+
+**例子1**：
+
+``` c
+typedef struct st_tag {
+	int a;
+	char b;
+} ST1;
+ST1 myst；
+```
+
+在没有对齐的情况下：`sizeof(ST1) = sizeof(myst) = 8;`
+结构体对齐的原则可以总结为：
+
+- 结构体起始地址(&myst)按最大变量字节数(sizeof(int))对齐；
+- 结构体内每个变量按照自身字节数对齐；
+- 结构体的大小`(sizeof(myst))`是最大变量字节数的整数倍（8/4=2）；
+
+``` c
+typedef struct st_tag {
+	int a;
+	char b;
+}  __attribute__((__aligned__(64))) ST1;
+ST1 myst；
+sizeof(ST1) = sizeof(myst) = 64; 
+```
+对比：
+``` c
+typedef struct st_tag {
+	int a;
+	char b;
+}  ST1 __attribute__((__aligned__(64)));
+ST1 myst；
+sizeof(ST1) = sizeof(myst) = 8 ;
+```
+
+这第二种情况可以理解为`__attribute__((aligned(64)))`作用于变量ST1 ，只影响对齐，不影响结构的大小。
+
+**例子2**：
+``` c
+typedef struct __attribute__((packed))
+{
+    uint8_t comm_version;
+    uint8_t comm_lenth;
+    uint8_t device_fw_verion[];
+}ble_resp_device_info_desc;
+```
+`__attribute__((packed))`是GCC编译器提供的一个属性,`__attribute__((packed))`其中的成员变量不会进行对齐。

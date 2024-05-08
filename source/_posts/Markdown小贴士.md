@@ -22,7 +22,7 @@ Markdown 的语法非常简单，常用的标记符号不超过十个，用于�
 #### 文本
 	普通文本
 	**加粗文本**
-	* 斜体文本*
+	*斜体文本*
 	**~删除线文本~**
 
 #### 列表
@@ -31,17 +31,23 @@ Markdown 的语法非常简单，常用的标记符号不超过十个，用于�
 		* 嵌套列表
 
 #### 代码块
-```c
-#include <stdio.h>
+	```c
+	#include <stdio.h>
 
-int main() {
-printf("Hello, world!\n");
-return 0;
-}
-```
+	int main() {
+	printf("Hello, world!\n");
+	return 0;
+	}
+	```
 
+#### 文本中代码高亮
+
+	使用`printf("Hello, world!\n");`函数进行打印
+
+效果：使用`printf("Hello, world!\n");`函数进行打印
 #### 链接
-	链接文本: [https://www.example.com](https://www.example.com)
+
+**链接文本**: [https://www.example.com](https://www.example.com)
 
 #### 图片
 	网络地址: ![这是一张示例图片](https://www.example.com/example.png)
