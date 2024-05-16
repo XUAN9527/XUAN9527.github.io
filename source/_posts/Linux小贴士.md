@@ -1,5 +1,5 @@
 ---
-title: Linux下开发单片机
+title: Linux小贴士
 date: 2024-5-6 12:00:00
 #updated: 2023-12-04
 tags:

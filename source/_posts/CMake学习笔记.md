@@ -6,7 +6,7 @@ tags:
 - [CMake]
 - [Linux]
 categories: 
-- [自动编译工具工具]
+- [自动编译工具]
 description: CMake 是一个项目构建工具，并且是跨平台的。可以自动生成本地化的Makefile和工程文件，最后用户只需make编译即可，所以可以把CMake看成一款自动生成 Makefile的工具。
 ---
 
@@ -18,9 +18,9 @@ description: CMake 是一个项目构建工具，并且是跨平台的。可以�
 
 <br>
 
-### 编写一个简单的CMakeLists.txt文件
+## 编写一个简单的CMakeLists.txt文件
 
-#### 1. 示例文件的目录结构如下：
+### 1. 示例文件的目录结构如下：
 ``` c
 $ tree
 .
@@ -34,11 +34,11 @@ $ tree
 
 <br>
 
-#### 2. 添加 CMakeLists.txt 文件
+### 2. 添加 CMakeLists.txt 文件
 在上述源文件所在目录下添加一个新文件 CMakeLists.txt，文件内容如下：
 
 ```c
-  cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.0)
 project(CALC)
 add_executable(app add.c div.c main.c mult.c sub.c)
 ```
@@ -46,11 +46,7 @@ add_executable(app add.c div.c main.c mult.c sub.c)
 - `cmake_minimum_required`：指定使用的 cmake 的最低版本。
 	- 可选，非必须，如果不加可能会有警告。
 
-<br>
-
 - `project`：定义工程名称，并可指定工程的版本、工程描述、web主页地址、支持的语言（默认情况支持所有语言），如果不需要这些都是可以忽略的，只需要指定出工程名字即可。
-
-<br>
 
 - `add_executable`：定义工程会生成一个可执行程序。
 ```c
@@ -68,7 +64,7 @@ add_executable(app add.c;div.c;main.c;mult.c;sub.c)
 
 <br>
 
-#### 3. 执行CMake命令
+### 3. 执行CMake命令
 ``` shell
 # cmake 命令原型
 $ cmake CMakeLists.txt 文件所在路径
@@ -101,10 +97,10 @@ $ tree -L 1
 
 <br>
 
-#### 4. 头文件及指定宏
+### 4. 头文件及指定宏
 
 - `CMakeLists.txt` 示例代码文件：
-``` shell {: .line-numbers}
+``` shell
 cmake_minimum_required(VERSION 3.0)
 project(CALC)
 set(CMAKE_CXX_STANDARD 11)
@@ -117,7 +113,7 @@ add_executable(app  ${SRC_LIST})
 
 <br>
 
-##### 4.1 通过参数`-std=c++11`指定出要使用c++11标准编译程序,对应宏`DCMAKE_CXX_STANDARD`: 
+#### 4.1 通过参数`-std=c++11`指定出要使用c++11标准编译程序,对应宏`DCMAKE_CXX_STANDARD`: 
 ``` c++ 
 # 增加-std=c++11
 set(CMAKE_CXX_STANDARD 11)
@@ -129,7 +125,7 @@ cmake (CMakeLists.txt文件路径) -DCMAKE_CXX_STANDARD=11
 
 <br>
 
-##### 4.2 指定输出的路径(EXECUTABLE_OUTPUT_PATH)：
+#### 4.2 指定输出的路径(EXECUTABLE_OUTPUT_PATH)：
 ``` shell
 set(HOME /home/robin/Linux/Sort)
 set(EXECUTABLE_OUTPUT_PATH ${HOME}/bin)
@@ -138,7 +134,7 @@ set(EXECUTABLE_OUTPUT_PATH ${HOME}/bin)
 
 <br>
 
-##### 4.3 头文件的路径(include_directories)
+#### 4.3 头文件的路径(include_directories)
 ``` c
 include_directories(headpath)
 ```
@@ -146,7 +142,7 @@ include_directories(headpath)
 
 <br>
 
-##### 4.4 搜索文件(aux_source_directory)
+#### 4.4 搜索文件(aux_source_directory)
 - `aux_source_directory(< dir > < variable >)` 示例：
 ``` cmake
 aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR}/src SRC_LIST)
@@ -162,13 +158,13 @@ file(GLOB MAIN_HEAD ${CMAKE_CURRENT_SOURCE_DIR}/include/*.h)
 
 <br>
 
-#### 5. 制作动态库或静态库
+### 5. 制作动态库或静态库
 
 有些时候我们编写的源代码并不需要将他们编译生成可执行程序，而是生成一些静态库或动态库提供给第三方使用，下面来讲解在cmake中生成这两类库文件的方法。
 
-##### 5.1 静态库：
+#### 5.1 静态库：
 
-###### 5.1.1 cmake生成规则：
+##### 5.1.1 cmake生成规则：
 
 ``` cmake
 add_library(库名称 STATIC 源文件1 [源文件2] ...) 
@@ -186,7 +182,7 @@ add_library(calc STATIC ${SRC_LIST})
 
 <br>
 
-###### 5.1.2 gcc生成规则：
+##### 5.1.2 gcc生成规则：
 
 ``` shell
 gcc -c add.c div.c mult.c sub.c -I ./include/
@@ -242,7 +238,7 @@ $ tree
 ```
 <br>
 
-###### 5.1.3 gcc静态库的使用:
+##### 5.1.3 gcc静态库的使用:
 
 ``` shell
 # 首先拿到了发布的静态库
@@ -276,9 +272,9 @@ $ tree
 
 <br>
 
-##### 5.2 动态库：
+#### 5.2 动态库：
 
-###### 5.2.1 cmake生成规则：
+##### 5.2.1 cmake生成规则：
 
 ``` cmake
 add_library(库名称 SHARED 源文件1 [源文件2] ...)
@@ -292,7 +288,7 @@ add_library(calc SHARED ${SRC_LIST})
 
 <br>
 
-###### 5.1.2 gcc生成规则：
+##### 5.1.2 gcc生成规则：
 
 - 生成动态链接库是直接使用`gcc`命令并且需要添加`-fPIC(-fpic)` 以及`-shared` 参数。
 	- `-fPIC` 或 `-fpic` 参数的作用是使得 `gcc` 生成的代码是与位置无关的，也就是使用相对位置。
@@ -352,7 +348,7 @@ $ tree
 	2. libcalc.so
 ```
 
-###### 5.1.3 gcc静态库的使用:
+##### 5.1.3 gcc静态库的使用:
 
 ``` shell
 # 1. 拿到发布的动态库
@@ -460,7 +456,7 @@ $ ldd app
 
 <br>
 
-##### 5.3 指定输出的路径：
+#### 5.3 指定输出的路径：
 
 - 方式1 - 适用于动态库
 ``` cmake
@@ -475,9 +471,9 @@ set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 
 <br>
 
-##### 5.4 包含库文件：
+#### 5.4 包含库文件：
 
-###### 5.4.1 链接静态库：
+##### 5.4.1 链接静态库：
 
 ``` shell
 src
@@ -539,7 +535,7 @@ add_executable(app ${SRC_LIST})
 ``` 
 <br>
 
-###### 5.4.2 链接动态库：
+##### 5.4.2 链接动态库：
 
 动态库的链接和静态库是完全不同的：
 
@@ -607,7 +603,7 @@ target_link_libraries(app pthread calc)
 
 <br>
 
-#### 6. 日志
+### 6. 日志
 
 在`CMake`中可以用用户显示一条消息，该命令的名字为`message`：
 
@@ -637,15 +633,15 @@ message(FATAL_ERROR "source path: ${PROJECT_SOURCE_DIR}")
 
 <br>
 
-#### 7. 变量操作
+### 7. 变量操作
 
-##### 7.1 追加
+#### 7.1 追加
 
 有时候项目中的源文件并不一定都在同一个目录中，但是这些源文件最终却需要一起进行编译来生成最终的可执行文件或者库文件。如果我们通过`file`命令对各个目录下的源文件进行搜索，最后还需要做一个字符串拼接的操作，关于字符串拼接可以使用`set`命令也可以使用`list`命令。
 
 <br>
 
-###### 7.1.1 使用set拼接
+##### 7.1.1 使用set拼接
 
 如果使用`set`进行字符串拼接，对应的命令格式如下：
 
@@ -669,7 +665,7 @@ message(STATUS "message: ${SRC_1}")
 
 <br>
 
-###### 7.1.2 使用list拼接
+##### 7.1.2 使用list拼接
 `list`命令的功能比`set`要强大，字符串拼接只是它的其中一个功能，所以需要在它第一个参数的位置指定出我们要做的操作，`APPEND`表示进行数据追加，后边的参数和`set`就一样了。
 
 ``` cmake
@@ -678,7 +674,7 @@ list(APPEND <list> [<element> ...])
 
 <br>
 
-##### 7.2 字符串移除
+#### 7.2 字符串移除
 
 使用`list`命令，`REMOVE_ITEM`表示对数据进行移除
 ``` cmake
@@ -701,7 +697,7 @@ message(STATUS "message: ${SRC_1}")
 
 <br>
 
-#### 8. 宏定义
+### 8. 宏定义
 
 在`CMake`中，对应的命令叫做`add_definitions`:
 ``` cmake
@@ -719,7 +715,7 @@ add_executable(app ./test.c)
 
 <br>
 
-#### 9. 预定义宏
+### 9. 预定义宏
 
 下面的列表中为大家整理了一些`CMake`中常用的宏：
 
@@ -736,7 +732,7 @@ add_executable(app ./test.c)
 
 <br>
 
-#### 10. 嵌套的CMake
+### 10. 嵌套的CMake
 
 如果项目很大，或者项目中有很多的源码目录，在通过CMake管理项目的时候如果只使用一个CMakeLists.txt，那么这个文件相对会比较复杂，有一种化繁为简的方式就是给每个源码目录都添加一个CMakeLists.txt文件（头文件目录不需要），这样每个文件都不会太复杂，而且更灵活，更容易维护。
 
@@ -782,7 +778,7 @@ $ tree
 
 <br>
 
-#### 10.1 节点关系
+### 10.1 节点关系
 
 众所周知，`Linux`的目录是树状结构，所以`嵌套的 CMake 也是一个树状结构，最顶层的 CMakeLists.txt 是根节点，其次都是子节点。`因此，我们需要了解一些关于 `CMakeLists.txt` 文件变量作用域的一些信息：
 
@@ -792,7 +788,7 @@ $ tree
 
 <br>
 
-#### 10.2 添加子目录
+### 10.2 添加子目录
 
 ``` cmake
 add_subdirectory(source_dir [binary_dir] [EXCLUDE_FROM_ALL])
@@ -804,9 +800,9 @@ add_subdirectory(source_dir [binary_dir] [EXCLUDE_FROM_ALL])
 
 通过这种方式`CMakeLists.txt`文件之间的父子关系就被构建出来了。
 
-#### 10.3 编写CMakeLists.txt文件
+### 10.3 编写CMakeLists.txt文件
 
-##### 10.3.1 根目录
+#### 10.3.1 根目录
 
 根目录中的 `CMakeLists.txt`文件内容如下：
 ```
@@ -838,11 +834,11 @@ add_subdirectory(test2)
 - 一共添加了四个子目录，每个子目录中都有一个`CMakeLists.txt`文件，这样它们的父子关系就被确定下来了。
 
 
-##### 10.3.2 calc 目录
+#### 10.3.2 calc 目录
 
 `calc` 目录中的 `CMakeLists.txt`文件内容如下：
 
-``` cmake {: .line-numbers}
+``` cmake
 cmake_minimum_required(VERSION 3.0)
 project(CALCLIB)
 aux_source_directory(./ SRC)
@@ -855,11 +851,11 @@ add_library(${CALC_LIB} STATIC ${SRC})
 - 第5行`set`：设置库的生成的路径，LIB_PATH是在根节点文件中定义的
 - 第6行`add_library`：生成静态库，静态库名字CALC_LIB是在根节点文件中定义的
 
-##### 10.3.2 sort 目录
+#### 10.3.2 sort 目录
 
 sort 目录中的 CMakeLists.txt文件内容如下：
 
-``` cmake {: .line-numbers}
+``` cmake
 cmake_minimum_required(VERSION 3.0)
 project(CALCLIB)
 aux_source_directory(./ SRC)
@@ -871,11 +867,11 @@ add_library(${CALC_LIB} SHARED ${SRC})
 
 这个文件中的内容和`calc`节点文件中的内容类似，只不过这次生成的是动态库。
 
-##### 10.3.3 test1 目录
+#### 10.3.3 test1 目录
 
 test1 目录中的 CMakeLists.txt文件内容如下：
 
-``` cmake {: .line-numbers}
+``` cmake
 cmake_minimum_required(VERSION 3.0)
 project(CALCTEST)
 aux_source_directory(./ SRC)
@@ -892,11 +888,11 @@ add_executable(${APP_NAME_1} ${SRC})
 
 此处的可执行程序链接的是静态库，最终静态库会被打包到可执行程序中，可执行程序启动之后，静态库也就随之被加载到内存中了。
 
-##### 10.3.4 test2 目录
+#### 10.3.4 test2 目录
 
 test2 目录中的 CMakeLists.txt文件内容如下：
 
-``` cmake {: .line-numbers}
+``` cmake
 cmake_minimum_required(VERSION 3.0)
 project(SORTTEST)
 aux_source_directory(./ SRC)
@@ -920,7 +916,7 @@ target_link_libraries(${APP_NAME_2} ${SORT_LIB})
 
 <br>
 
-##### 10.3.4 构建项目
+#### 10.3.4 构建项目
 
 ``` shell
 xuan@DESKTOP-A52B6V9:~/linux/demos/cpro$ cd build/

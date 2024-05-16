@@ -90,39 +90,9 @@ dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux
 
 <br>
 
-## makefile问题汇总
+## 环境配置及工具链
 
-### 修改.h文件没有重新编译
-
-- `$(BUILD_DIR)`为编译文件目录，跟进自身makefile修改，原来的编译规则：
-``` c
--include $(wildcard $(BUILD_DIR)/*/*.d)	# 包含所有生成的依赖文件，避免重复编译、提高效率
-```
-`/*/*.d` 为当前目录下的二级所有文件检索。
-
-<br>
-
-- 修改为以下编译规则：
-``` c
-# 找到所有的 .d 文件
-DEP_FILES := $(shell find $(BUILD_DIR) -type f -name '*.d')# 包含所有生成的依赖文件，避免重复编译、提高效率
-
-# 包含所有的 .d 文件
--include $(DEP_FILES)
-```
-或者：
-``` c
--include $(wildcard $(BUILD_DIR)/**/*.d)
--include $(wildcard $(BUILD_DIR)/*/*/*.d)
-```
-`/**/*.d` 为当前目录下的二级所有文件检索，根据具体情况修改。
-`/*/*/*.d` 为当前目录下的三级所有文件检索，根据具体情况修改。
-
-<br>
-
-## windows子系统wsl
-
-###打开新终端 ~/.bashrc不会自动刷新
+### 打开新终端 ~/.bashrc不会自动刷新
 
 解决linux每次打开新终端都要重新`source ~/.bashrc`问题
 执行以下代码：
