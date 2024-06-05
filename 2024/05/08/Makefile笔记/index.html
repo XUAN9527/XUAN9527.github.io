@@ -27,12 +27,15 @@
 <meta property="og:site_name" content="xuan9527">
 <meta property="og:description" content="如何编写单片机的Makefile，以及选项、参数的详细解释，部分会有说明，不限于单片机开发。">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/pictures/menuconfig.png">
+<meta property="og:image" content="http://example.com/pictures/menusubconfig.png">
 <meta property="article:published_time" content="2024-05-08T06:56:40.000Z">
-<meta property="article:modified_time" content="2024-05-15T09:27:20.064Z">
+<meta property="article:modified_time" content="2024-06-05T04:13:45.476Z">
 <meta property="article:author" content="boollight">
 <meta property="article:tag" content="Linux">
 <meta property="article:tag" content="Makefile">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/pictures/menuconfig.png">
 
 <link rel="canonical" href="http://example.com/2024/05/08/Makefile%E7%AC%94%E8%AE%B0/">
 
@@ -226,7 +229,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2024-05-15 17:27:20" itemprop="dateModified" datetime="2024-05-15T17:27:20+08:00">2024-05-15</time>
+                <time title="Modified: 2024-06-05 12:13:45" itemprop="dateModified" datetime="2024-06-05T12:13:45+08:00">2024-06-05</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -244,14 +247,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">Symbols count in article: </span>
-              <span>8.7k</span>
+              <span>9.5k</span>
             </span>
             <span class="post-meta-item" title="Reading time">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">Reading time &asymp;</span>
-              <span>29 mins.</span>
+              <span>32 mins.</span>
             </span>
             <div class="post-description">如何编写单片机的Makefile，以及选项、参数的详细解释，部分会有说明，不限于单片机开发。</div>
 
@@ -277,6 +280,35 @@
 或者：<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">-include $(wildcard $(BUILD_DIR)<span class="comment">/**/</span>*.d)</span><br><span class="line">-include $(wildcard $(BUILD_DIR)<span class="comment">/*/*/</span>*.d)</span><br></pre></td></tr></table></figure>
 <code>/**/*.d</code> 它允许你搜索和匹配嵌套在任意深度的目录中的文件。<br><code>/*/*/*.d</code> 为当前目录下的三级所有文件检索，根据具体情况修改。</li>
 </ul>
+<br>
+
+<h3 id=""><a href="#" class="headerlink" title="$&lt; 和 $^ 的区别"></a><code>$&lt;</code> 和 <code>$^</code> 的区别</h3><p>在<code>Makefile</code>中，<code>$&lt;</code> 和 <code>$^</code> 是两个自动变量，它们在规则中用来引用规则的依赖文件，但它们的用途和行为有所不同：</p>
+<ul>
+<li><p><code>$&lt;</code> - 代表规则的第一个依赖文件。</p>
+<ul>
+<li>当规则有多个依赖文件时，<code>$&lt;</code> 只引用第一个依赖文件。</li>
+<li>它通常用于指定要编译的源文件，特别是在编译单个目标文件时。</li>
+</ul>
+</li>
+<li><p><code>$^</code> - 代表规则的所有依赖文件。</p>
+<ul>
+<li>无论规则有多少个依赖文件，<code>$^</code> 都会将它们全部列出。</li>
+<li>它常用于链接阶段，当你需要将多个目标文件链接成最终的可执行文件时。</li>
+</ul>
+</li>
+</ul>
+<p>举个例子来说明它们的不同：</p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 假设有一个目标文件 main.o 需要两个源文件 main.c 和 utils.c 来生成</span></span><br><span class="line"><span class="section">main.o: main.c utils.c</span></span><br><span class="line">    <span class="variable">$(CC)</span> <span class="variable">$(CFLAGS)</span> -c main.c -o <span class="variable">$@</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 在这个例子中，$&lt; 就是 main.c，而 $^ 就是 main.c utils.c</span></span><br></pre></td></tr></table></figure>
+
+<p>再看一个示例：</p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$(BUILD_DIR)</span>/%.o: %.c</span><br><span class="line">	@mkdir -p <span class="variable">$(<span class="built_in">dir</span> <span class="variable">$@</span>)</span></span><br><span class="line">	<span class="variable">$(CC)</span> <span class="variable">$(CFLAGS)</span> <span class="variable">$(INCLUDE)</span> <span class="variable">$&lt;</span> -o <span class="variable">$@</span></span><br></pre></td></tr></table></figure>
+<p>这个规则的意思是，对于<code>$(BUILD_DIR)</code>目录下的每个<code>.o</code>文件，都有一个对应的<code>.c</code>文件。在<code>Makefile</code>中，<code>$&lt;</code> 是一个自动变量，它代表当前规则的第一个依赖文件。然而，<code>$&lt;</code> 并不会直接依赖所有的 <code>.c</code> 文件，而是依赖于当前规则的 <strong>第一个依赖文件</strong>。</p>
+<p>总结一下：</p>
+<ul>
+<li>使用 <code>$&lt;</code> 时，只有第一个依赖文件会被考虑。</li>
+<li>使用 <code>$^</code> 时，所有依赖文件都会被考虑。</li>
+</ul>
+<p>在实际编写Makefile时，根据你的需要选择合适的变量。</p>
 <br>
 
 <h3 id="makefile伪指令"><a href="#makefile伪指令" class="headerlink" title="makefile伪指令"></a>makefile伪指令</h3><p>在 <code>Makefile</code> 中，<code>.PHONY</code> 是一个特殊的声明，用来指出一些目标并不是实际的文件，而是一些需要执行的命令序列。这样做可以让 <code>Make</code> 工具在遇到同名文件时，不会误认为这些目标是要操作的文件，而是要执行的命令。</p>
@@ -864,9 +896,32 @@ $&#123;&lt;function&gt; &lt;arguments&gt;&#125;
 <h5 id="混合总结"><a href="#混合总结" class="headerlink" title="混合总结"></a>混合总结</h5><pre><code>override CFLAGS += $(patsubst %,-I%,$(subst :, ,$(VPATH)))
 </code></pre>
 <p>如果我们的 <code>$(VPATH)</code> 值是 <code>src:../headers </code>，那么 <code>$(patsubst %,-I%,$(subst :, ,$(VPATH)))</code> 将返回 <code>-Isrc -I../headers</code> ，这正是<code>cc</code>或<code>gcc</code>搜索头文件路径的参数。</p>
-<p><strong>注</strong>：函数太多，不做概述。详见：<a target="_blank" rel="noopener" href="https://seisman.github.io/how-to-write-makefile/functions.html">https://seisman.github.io/how-to-write-makefile/functions.html</a></p>
+<p><strong>注</strong>：函数太多，不做概述。详见：<a target="_blank" rel="noopener" href="https://seisman.github.io/how-to-write-makefile/functions.html">https://seisman.github.io/how-to-write-makefile/functions.html</a><br><strong>例程</strong>：<a target="_blank" rel="noopener" href="https://github.com/XUAN9527/linux_test/tree/main/make_demo">https://github.com/XUAN9527/linux_test/tree/main/make_demo</a></p>
 <br>
 
+<h2 id="Makefile搭配Kconfig使用"><a href="#Makefile搭配Kconfig使用" class="headerlink" title="Makefile搭配Kconfig使用"></a>Makefile搭配Kconfig使用</h2><p>话不多说，我们一般使用<code>menuconfig</code>+<code>Kconfig</code>的方式进行版本配置，这里简单的笔记一个<code>Python</code>解析器版本的实现<code>Kconfiglib</code>。<br>[参考链接1]： <a target="_blank" rel="noopener" href="https://cstriker1407.info/blog/kconfiglib-simple-note/">https://cstriker1407.info/blog/kconfiglib-simple-note/</a><br>[参考链接2]： <a target="_blank" rel="noopener" href="https://juejin.cn/post/7101836149915648030">https://juejin.cn/post/7101836149915648030</a></p>
+<h3 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h3><ul>
+<li>安装必须组件：<code>Python3</code> + <code>kconfiglib</code></li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sudo apt update</span><br><span class="line">sudo apt install python3</span><br><span class="line">sudo apt install python3-pip</span><br><span class="line">pip3 install kconfiglib</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>验证安装:<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">python3 --version</span></span><br><span class="line">Python 3.10.14</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">pip3 show kconfiglib</span></span><br><span class="line">Name: kconfiglib</span><br><span class="line">Version: 14.1.0</span><br><span class="line">...</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="实现示例"><a href="#实现示例" class="headerlink" title="实现示例"></a>实现示例</h3><ul>
+<li><p>在跟目录下创建<code>Kconfig</code>文件：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line">mainmenu &quot;N32l40x 128K MCU, Flash Configuration&quot;</span><br><span class="line">config SPI_FLASH_ENABLE</span><br><span class="line">  bool &quot;spi flash enable&quot;</span><br><span class="line">  default n</span><br><span class="line">  help </span><br><span class="line">  config spi flash enable/disable</span><br><span class="line"></span><br><span class="line">menu &quot;Internal Flash Configuration&quot;</span><br><span class="line">depends on !SPI_FLASH_ENABLE</span><br><span class="line">config INTER_BOOTLOAD_FIRMWARE_SIZE</span><br><span class="line">    int &quot;bootloader fireware size (K)&quot;</span><br><span class="line">    range 10 32</span><br><span class="line">    default 10</span><br><span class="line">    help</span><br><span class="line">    config bootloader fireware size</span><br><span class="line"></span><br><span class="line">config INTER_FACTORY_FIRMWARE_SIZE</span><br><span class="line">    int &quot;factory fireware size (K)&quot;</span><br><span class="line">    range 56 96</span><br><span class="line">    default 56</span><br><span class="line">    help</span><br><span class="line">    config factory fireware size 56K/96K</span><br><span class="line"></span><br><span class="line">config INTER_APPLICATION_FIRMWARE_SIZE</span><br><span class="line">    int &quot;application fireware size (K)&quot;</span><br><span class="line">    range 56 96</span><br><span class="line">    default 56</span><br><span class="line">    help</span><br><span class="line">    config application fireware size 56K/96K</span><br><span class="line"></span><br><span class="line">config INTER_DOWNLOAD_AREA_SIZE</span><br><span class="line">    int &quot;download fireware size (K)&quot;</span><br><span class="line">    range 56 96</span><br><span class="line">    default 56</span><br><span class="line">    help</span><br><span class="line">    config download area size 56K/96K</span><br><span class="line"></span><br><span class="line">config INTER_UPGRADE_DATA_SIZE</span><br><span class="line">    int &quot;upgrade data size (K)&quot;</span><br><span class="line">    range 2 4</span><br><span class="line">    default 2</span><br><span class="line">    help</span><br><span class="line">    config upgrade data size 2K/4K</span><br><span class="line"></span><br><span class="line">config INTER_DCD_DATA_SIZE</span><br><span class="line">    int &quot;dcd data size (K)&quot;</span><br><span class="line">    range 2 4</span><br><span class="line">    default 2</span><br><span class="line">    help</span><br><span class="line">    config dcd data size 2K/4K</span><br><span class="line"></span><br><span class="line">config INTER_USER_DATA_SIZE</span><br><span class="line">    int &quot;user data size (K)&quot;</span><br><span class="line">    range 2 408</span><br><span class="line">    default 2</span><br><span class="line">    help</span><br><span class="line">    config user data size 2K/408K; 2k - inter flash; 408K - outerflash</span><br><span class="line">endmenu</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>shell</code>执行<code>menuconfig</code>指令：</p>
+</li>
+</ul>
+<p><img src="/../pictures/menuconfig.png" alt="menuconfig"><br><img src="/../pictures/menusubconfig.png" alt="menusubconfig"></p>
+<ul>
+<li>选择好需要的参数后，保存退出，生成<code>.config</code>配置文件。</li>
+<li><code>shell</code>执行<code>genconfig</code>指令，将<code>.config</code>文件生成<code>config.h</code>文件，可供程序调用。</li>
+<li>如需搭配<code>makefile</code>使用，则需要将<code>config.h</code>文件添加到<code>Makefile</code>中,添加以下依赖规则。<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">all: genconfig ...</span></span><br><span class="line">	...</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line"></span><br><span class="line"><span class="section">menuconfig:</span></span><br><span class="line">	menuconfig</span><br><span class="line">	@echo <span class="string">&quot;menuconfig running!&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="section">genconfig:</span></span><br><span class="line">	genconfig</span><br><span class="line">	@echo <span class="string">&quot;genconfig .config &gt; config.h complete!&quot;</span></span><br></pre></td></tr></table></figure>
+执行<code>make menuconfig</code>进行配置，<code>make</code>编译生成即可。</li>
+</ul>
 
     </div>
 
@@ -951,7 +1006,7 @@ $&#123;&lt;function&gt; &lt;arguments&gt;&#125;
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#makefile%E9%97%AE%E9%A2%98%E6%B1%87%E6%80%BB"><span class="nav-number">1.</span> <span class="nav-text">makefile问题汇总</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9-h%E6%96%87%E4%BB%B6%E6%B2%A1%E6%9C%89%E9%87%8D%E6%96%B0%E7%BC%96%E8%AF%91"><span class="nav-number">1.1.</span> <span class="nav-text">修改.h文件没有重新编译</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#makefile%E4%BC%AA%E6%8C%87%E4%BB%A4"><span class="nav-number">1.2.</span> <span class="nav-text">makefile伪指令</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#n32g452rc%E7%9A%84makefile%E8%A7%A3%E6%9E%90"><span class="nav-number">2.</span> <span class="nav-text">n32g452rc的makefile解析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%87%E5%87%86makefile%E5%9F%BA%E6%9C%AC%E8%AF%AD%E6%B3%95"><span class="nav-number">3.</span> <span class="nav-text">标准makefile基本语法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B9%A6%E5%86%99%E8%A7%84%E5%88%99"><span class="nav-number">3.1.</span> <span class="nav-text">书写规则</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A7%84%E5%88%99%E7%9A%84%E8%AF%AD%E6%B3%95"><span class="nav-number">3.1.1.</span> <span class="nav-text">规则的语法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9C%A8%E8%A7%84%E5%88%99%E4%B8%AD%E4%BD%BF%E7%94%A8%E9%80%9A%E9%85%8D%E7%AC%A6"><span class="nav-number">3.1.2.</span> <span class="nav-text">在规则中使用通配符</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E6%90%9C%E7%B4%A2"><span class="nav-number">3.1.3.</span> <span class="nav-text">文件搜索</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BC%AA%E7%9B%AE%E6%A0%87"><span class="nav-number">3.1.4.</span> <span class="nav-text">伪目标</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%9A%E7%9B%AE%E6%A0%87"><span class="nav-number">3.1.5.</span> <span class="nav-text">多目标</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9D%99%E6%80%81%E6%A8%A1%E5%BC%8F"><span class="nav-number">3.1.6.</span> <span class="nav-text">静态模式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%87%AA%E5%8A%A8%E7%94%9F%E6%88%90%E4%BE%9D%E8%B5%96%E6%80%A7"><span class="nav-number">3.1.7.</span> <span class="nav-text">自动生成依赖性</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B9%A6%E5%86%99%E5%91%BD%E4%BB%A4"><span class="nav-number">3.2.</span> <span class="nav-text">书写命令</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%98%BE%E7%A4%BA%E5%91%BD%E4%BB%A4"><span class="nav-number">3.2.1.</span> <span class="nav-text">显示命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C"><span class="nav-number">3.2.2.</span> <span class="nav-text">命令执行</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%91%BD%E4%BB%A4%E5%87%BA%E9%94%99"><span class="nav-number">3.2.3.</span> <span class="nav-text">命令出错</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B5%8C%E5%A5%97%E6%89%A7%E8%A1%8Cmake"><span class="nav-number">3.2.4.</span> <span class="nav-text">嵌套执行make</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%9A%E4%B9%89%E5%91%BD%E4%BB%A4%E5%8C%85"><span class="nav-number">3.2.5.</span> <span class="nav-text">定义命令包</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E5%87%BD%E6%95%B0"><span class="nav-number">3.3.</span> <span class="nav-text">使用函数</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%87%BD%E6%95%B0%E7%9A%84%E8%B0%83%E7%94%A8%E8%AF%AD%E6%B3%95"><span class="nav-number">3.3.1.</span> <span class="nav-text">函数的调用语法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%A4%84%E7%90%86%E5%87%BD%E6%95%B0"><span class="nav-number">3.3.2.</span> <span class="nav-text">字符串处理函数</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#subst"><span class="nav-number">3.3.2.1.</span> <span class="nav-text">subst</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#patsubst"><span class="nav-number">3.3.2.2.</span> <span class="nav-text">patsubst</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#strip"><span class="nav-number">3.3.2.3.</span> <span class="nav-text">strip</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#findstring"><span class="nav-number">3.3.2.4.</span> <span class="nav-text">findstring</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%B7%B7%E5%90%88%E6%80%BB%E7%BB%93"><span class="nav-number">3.3.2.5.</span> <span class="nav-text">混合总结</span></a></li></ol></li></ol></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#makefile%E9%97%AE%E9%A2%98%E6%B1%87%E6%80%BB"><span class="nav-number">1.</span> <span class="nav-text">makefile问题汇总</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9-h%E6%96%87%E4%BB%B6%E6%B2%A1%E6%9C%89%E9%87%8D%E6%96%B0%E7%BC%96%E8%AF%91"><span class="nav-number">1.1.</span> <span class="nav-text">修改.h文件没有重新编译</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-number">1.2.</span> <span class="nav-text">$&lt; 和 $^ 的区别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#makefile%E4%BC%AA%E6%8C%87%E4%BB%A4"><span class="nav-number">1.3.</span> <span class="nav-text">makefile伪指令</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#n32g452rc%E7%9A%84makefile%E8%A7%A3%E6%9E%90"><span class="nav-number">2.</span> <span class="nav-text">n32g452rc的makefile解析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%87%E5%87%86makefile%E5%9F%BA%E6%9C%AC%E8%AF%AD%E6%B3%95"><span class="nav-number">3.</span> <span class="nav-text">标准makefile基本语法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B9%A6%E5%86%99%E8%A7%84%E5%88%99"><span class="nav-number">3.1.</span> <span class="nav-text">书写规则</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A7%84%E5%88%99%E7%9A%84%E8%AF%AD%E6%B3%95"><span class="nav-number">3.1.1.</span> <span class="nav-text">规则的语法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9C%A8%E8%A7%84%E5%88%99%E4%B8%AD%E4%BD%BF%E7%94%A8%E9%80%9A%E9%85%8D%E7%AC%A6"><span class="nav-number">3.1.2.</span> <span class="nav-text">在规则中使用通配符</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E6%90%9C%E7%B4%A2"><span class="nav-number">3.1.3.</span> <span class="nav-text">文件搜索</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BC%AA%E7%9B%AE%E6%A0%87"><span class="nav-number">3.1.4.</span> <span class="nav-text">伪目标</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%9A%E7%9B%AE%E6%A0%87"><span class="nav-number">3.1.5.</span> <span class="nav-text">多目标</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9D%99%E6%80%81%E6%A8%A1%E5%BC%8F"><span class="nav-number">3.1.6.</span> <span class="nav-text">静态模式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%87%AA%E5%8A%A8%E7%94%9F%E6%88%90%E4%BE%9D%E8%B5%96%E6%80%A7"><span class="nav-number">3.1.7.</span> <span class="nav-text">自动生成依赖性</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B9%A6%E5%86%99%E5%91%BD%E4%BB%A4"><span class="nav-number">3.2.</span> <span class="nav-text">书写命令</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%98%BE%E7%A4%BA%E5%91%BD%E4%BB%A4"><span class="nav-number">3.2.1.</span> <span class="nav-text">显示命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C"><span class="nav-number">3.2.2.</span> <span class="nav-text">命令执行</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%91%BD%E4%BB%A4%E5%87%BA%E9%94%99"><span class="nav-number">3.2.3.</span> <span class="nav-text">命令出错</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B5%8C%E5%A5%97%E6%89%A7%E8%A1%8Cmake"><span class="nav-number">3.2.4.</span> <span class="nav-text">嵌套执行make</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%9A%E4%B9%89%E5%91%BD%E4%BB%A4%E5%8C%85"><span class="nav-number">3.2.5.</span> <span class="nav-text">定义命令包</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E5%87%BD%E6%95%B0"><span class="nav-number">3.3.</span> <span class="nav-text">使用函数</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%87%BD%E6%95%B0%E7%9A%84%E8%B0%83%E7%94%A8%E8%AF%AD%E6%B3%95"><span class="nav-number">3.3.1.</span> <span class="nav-text">函数的调用语法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%A4%84%E7%90%86%E5%87%BD%E6%95%B0"><span class="nav-number">3.3.2.</span> <span class="nav-text">字符串处理函数</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#subst"><span class="nav-number">3.3.2.1.</span> <span class="nav-text">subst</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#patsubst"><span class="nav-number">3.3.2.2.</span> <span class="nav-text">patsubst</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#strip"><span class="nav-number">3.3.2.3.</span> <span class="nav-text">strip</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#findstring"><span class="nav-number">3.3.2.4.</span> <span class="nav-text">findstring</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%B7%B7%E5%90%88%E6%80%BB%E7%BB%93"><span class="nav-number">3.3.2.5.</span> <span class="nav-text">混合总结</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Makefile%E6%90%AD%E9%85%8DKconfig%E4%BD%BF%E7%94%A8"><span class="nav-number">4.</span> <span class="nav-text">Makefile搭配Kconfig使用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="nav-number">4.1.</span> <span class="nav-text">环境搭建</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0%E7%A4%BA%E4%BE%8B"><span class="nav-number">4.2.</span> <span class="nav-text">实现示例</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -965,14 +1020,14 @@ $&#123;&lt;function&gt; &lt;arguments&gt;&#125;
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">12</span>
+          <span class="site-state-item-count">13</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-count">13</span>
         <span class="site-state-item-name">categories</span></a>
       </div>
       <div class="site-state-item site-state-tags">
@@ -1014,12 +1069,12 @@ $&#123;&lt;function&gt; &lt;arguments&gt;&#125;
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="Symbols count total">29k</span>
+    <span title="Symbols count total">33k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="Reading time total">1:37</span>
+    <span title="Reading time total">1:49</span>
 </div>
   <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
   </div>

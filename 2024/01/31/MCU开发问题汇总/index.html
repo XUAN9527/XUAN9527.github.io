@@ -29,7 +29,7 @@
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="http://example.com/pictures/mcu%E5%90%AF%E5%8A%A8%E9%80%89%E9%A1%B9%E8%A1%A8.png">
 <meta property="article:published_time" content="2024-01-31T00:30:02.000Z">
-<meta property="article:modified_time" content="2024-04-26T05:52:25.009Z">
+<meta property="article:modified_time" content="2024-05-28T03:01:43.479Z">
 <meta property="article:author" content="boollight">
 <meta property="article:tag" content="MCU">
 <meta name="twitter:card" content="summary">
@@ -227,7 +227,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2024-04-26 13:52:25" itemprop="dateModified" datetime="2024-04-26T13:52:25+08:00">2024-04-26</time>
+                <time title="Modified: 2024-05-28 11:01:43" itemprop="dateModified" datetime="2024-05-28T11:01:43+08:00">2024-05-28</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -245,14 +245,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">Symbols count in article: </span>
-              <span>3.3k</span>
+              <span>4.3k</span>
             </span>
             <span class="post-meta-item" title="Reading time">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">Reading time &asymp;</span>
-              <span>11 mins.</span>
+              <span>14 mins.</span>
             </span>
             <div class="post-description">记录日常开发单片机过程中遇到的一些小问题，以及解决方法。</div>
 
@@ -453,6 +453,55 @@
 <p><strong>例子2</strong>：</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> __<span class="title">attribute__</span>((<span class="title">packed</span>))</span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="type">uint8_t</span> comm_version;</span><br><span class="line">    <span class="type">uint8_t</span> comm_lenth;</span><br><span class="line">    <span class="type">uint8_t</span> device_fw_verion[];</span><br><span class="line">&#125;ble_resp_device_info_desc;</span><br></pre></td></tr></table></figure>
 <p><code>__attribute__((packed))</code>是GCC编译器提供的一个属性,<code>__attribute__((packed))</code>其中的成员变量不会进行对齐。</p>
+<br>
+
+<h2 id="HSV-模型"><a href="#HSV-模型" class="headerlink" title="HSV 模型"></a>HSV 模型</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;math.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">* 将HSV颜色转换为RGB颜色</span></span><br><span class="line"><span class="comment">* hue,色调:0-360; saturation,纯度:0-1; value,明度:0-1</span></span><br><span class="line"><span class="comment">* r,g,b,RGB颜色，此值范围为0-255，但外界传入时的变量须是int类型</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="type">void</span> <span class="title function_">hsv_to_rgb</span><span class="params">(<span class="type">float</span> h, <span class="type">float</span> s, <span class="type">float</span> v, <span class="type">int</span> *r, <span class="type">int</span> *g, <span class="type">int</span> *b)</span></span><br><span class="line">&#123;</span><br><span class="line">   <span class="type">float</span> f, x, y, z;</span><br><span class="line">   <span class="type">int</span> i;</span><br><span class="line">   v *= <span class="number">255.0</span>;</span><br><span class="line">   <span class="keyword">if</span> (s == <span class="number">0.0</span>) &#123;</span><br><span class="line">      *r = *g = *b = (<span class="type">int</span>)v;</span><br><span class="line">   &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="keyword">while</span> (h &lt; <span class="number">0</span>)</span><br><span class="line">      h += <span class="number">360</span>;</span><br><span class="line">      h = <span class="built_in">fmod</span>(h, <span class="number">360</span>) / <span class="number">60.0</span>;</span><br><span class="line">      i = (<span class="type">int</span>)h;</span><br><span class="line">      f = h - i;</span><br><span class="line">      x = v * (<span class="number">1.0</span> - s);</span><br><span class="line">      y = v * (<span class="number">1.0</span> - (s * f));</span><br><span class="line">      z = v * (<span class="number">1.0</span> - (s * (<span class="number">1.0</span> - f)));</span><br><span class="line">      <span class="keyword">switch</span> (i) &#123;</span><br><span class="line">         <span class="keyword">case</span> <span class="number">0</span>: *r = v; *g = z; *b = x; <span class="keyword">break</span>;</span><br><span class="line">         <span class="keyword">case</span> <span class="number">1</span>: *r = y; *g = v; *b = x; <span class="keyword">break</span>;</span><br><span class="line">         <span class="keyword">case</span> <span class="number">2</span>: *r = x; *g = v; *b = z; <span class="keyword">break</span>;</span><br><span class="line">         <span class="keyword">case</span> <span class="number">3</span>: *r = x; *g = y; *b = v; <span class="keyword">break</span>;</span><br><span class="line">         <span class="keyword">case</span> <span class="number">4</span>: *r = z; *g = x; *b = v; <span class="keyword">break</span>;</span><br><span class="line">         <span class="keyword">case</span> <span class="number">5</span>: *r = v; *g = x; *b = y; <span class="keyword">break</span>;</span><br><span class="line">      &#125;</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>使用Demo如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">led_set_poll</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;    </span><br><span class="line">    <span class="type">int</span> red,green,blue;</span><br><span class="line">    </span><br><span class="line">    <span class="type">static</span> <span class="type">float</span> hue = <span class="number">0</span>;</span><br><span class="line">    hue = fmodf(hue + <span class="number">1.0</span>, <span class="number">360.0</span>);  <span class="comment">// 0-360 色调循环</span></span><br><span class="line">    hsv_to_rgb(hue, <span class="number">1.0</span>, <span class="number">1.0</span>, &amp;red, &amp;green, &amp;blue);</span><br><span class="line">    display_board_rgb_color_set(red, green, blue);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<br>
+
+<h2 id="内存管理"><a href="#内存管理" class="headerlink" title="内存管理"></a>内存管理</h2><p><code>RT-Thread</code>和<code>FreeRTOS</code>都是流行的嵌入式实时操作系统（<code>RTOS</code>），它们提供了内存管理机制来处理任务、队列、信号量等对象的创建和删除。尽管两者在内存管理的某些方面有相似之处，但它们在实现和配置上存在一些关键的区别：</p>
+<ul>
+<li><p>内存管理策略：</p>
+<ul>
+<li><strong>RT-Thread</strong>：提供了动态内存堆管理和静态内存池管理两种方式。动态内存堆管理允许在运行时动态分配和释放内存，而内存池管理则分配固定大小的内存块，适用于分配大量大小相同的小内存块的场景。</li>
+<li><strong>FreeRTOS</strong>：提供了多种内存管理方案，包括简单的静态内存分配（<code>heap_1</code>）和更复杂的动态内存分配策略（如<code>heap_2</code>、<code>heap_3</code>、<code>heap_4</code>和<code>heap_5</code>）。<code>FreeRTOS</code>的动态内存分配策略允许内存的分配和释放，同时也提供了内存碎片管理的方法。</li>
+</ul>
+</li>
+<li><p>内存分配函数：</p>
+<ul>
+<li><strong>RT-Thread</strong>：使用自己的内存分配函数，如<code>rt_malloc</code>、<code>rt_free</code>、<code>rt_realloc</code>和<code>rt_calloc</code>，这些函数与<code>C</code>标准库中的<code>malloc</code>和<code>free</code>类似，但是专为<code>RT-Thread</code>设计。</li>
+<li><strong>FreeRTOS</strong>：使用<code>pvPortMalloc</code>和<code>vPortFree</code>函数进行内存分配和释放。<code>FreeRTOS</code>还提供了<code>xPortGetFreeHeapSize</code>等函数来获取内存堆的状态。</li>
+</ul>
+</li>
+<li><p>内存堆的实现：</p>
+<ul>
+<li><strong>RT-Thread</strong>：内存堆管理根据内存设备的不同，分为小内存块分配管理、大内存块的<code>slab</code>分配管理和多内存堆分配情况的管理。</li>
+<li><strong>FreeRTOS</strong>：提供了多种内存堆实现，例如<code>heap_1</code>不允许释放内存，<code>heap_2</code>允许释放但不合并相邻空闲块，<code>heap_3</code>包装了标准库的<code>malloc</code>和<code>free</code>，<code>heap_4</code>合并相邻空闲块以减少碎片，<code>heap_5</code>则支持跨多个不相邻内存区域的堆。</li>
+</ul>
+</li>
+<li><p>内存碎片管理：</p>
+<ul>
+<li><strong>RT-Thread</strong>：通过内存池管理来减少内存碎片，内存池预先分配一块内存，并在其中管理固定大小的内存块。</li>
+<li><strong>FreeRTOS</strong>：<code>heap_4</code>和<code>heap_5</code>实现了内存碎片管理，通过合并相邻的空闲内存块来减少碎片。</li>
+</ul>
+</li>
+<li><p>内存管理的配置：</p>
+<ul>
+<li><strong>RT-Thread</strong>：内存管理的配置通常在<code>rtconfig.h</code>中进行，可以选择使用不同的内存管理算法。</li>
+<li><strong>FreeRTOS</strong>：内存管理的配置也在配置文件中进行，需要选择一个合适的堆管理实现文件，并在<code>FreeRTOSConfig.h</code>中进行相应的配置。</li>
+</ul>
+</li>
+<li><p>内存管理的适用性：</p>
+<ul>
+<li><strong>RT-Thread</strong>：内存管理机制适用于各种大小的内存块，特别是通过内存池管理来优化小内存块的分配效率。</li>
+<li><strong>FreeRTOS</strong>：提供了多种内存管理策略，适用于不同的应用场景和内存需求，从简单的静态分配到复杂的动态分配。</li>
+</ul>
+</li>
+</ul>
+<p>总的来说，<code>RT-Thread</code>和<code>FreeRTOS</code>都提供了灵活的内存管理机制来满足不同嵌入式应用的需求。选择哪种内存管理策略取决于具体的应用场景、内存需求和开发偏好。</p>
 
     </div>
 
@@ -536,7 +585,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E6%A0%B8%E5%A4%8D%E4%BD%8D%EF%BC%88kernel-reset%EF%BC%89"><span class="nav-number">1.</span> <span class="nav-text">内核复位（kernel reset）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E9%80%9A%E7%94%A8%E9%97%AE%E9%A2%98"><span class="nav-number">1.1.</span> <span class="nav-text">常见通用问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#n32g452rc%E5%86%85%E6%A0%B8%E5%A4%8D%E4%BD%8D%E9%97%AE%E9%A2%98"><span class="nav-number">1.2.</span> <span class="nav-text">n32g452rc内核复位问题</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#bootloader%E8%B7%B3%E8%BD%AC%E5%88%B0app"><span class="nav-number">1.2.1.</span> <span class="nav-text">bootloader跳转到app</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MCU%E5%A4%8D%E4%BD%8D%E5%90%8E%E7%8A%B6%E6%80%81"><span class="nav-number">2.</span> <span class="nav-text">MCU复位后状态</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#printf%E9%87%8D%E5%AE%9A%E5%90%91"><span class="nav-number">3.</span> <span class="nav-text">printf重定向</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RT-THREAD%E8%B0%83%E8%AF%95%E9%97%AE%E9%A2%98"><span class="nav-number">4.</span> <span class="nav-text">RT-THREAD调试问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%B2%E5%8F%A3%E9%80%9A%E4%BF%A1%E5%BC%82%E5%B8%B8"><span class="nav-number">4.1.</span> <span class="nav-text">串口通信异常</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8C%87%E9%92%88%E5%8F%96%E5%9D%80%E7%AC%A6-%E4%B8%8E%E5%8F%96%E5%80%BC-%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">4.1.1.</span> <span class="nav-text">指针取址符&amp;与取值*的区别</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E8%83%BD%E5%AF%B9%E6%8C%87%E9%92%88%E5%8F%98%E9%87%8F%E8%BF%9B%E8%A1%8C%E5%8F%96%E5%9D%80"><span class="nav-number">4.1.2.</span> <span class="nav-text">为什么不能对指针变量进行取址</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#TFT%E5%B1%8FST7735S%E8%B0%83%E8%AF%95%E9%97%AE%E9%A2%98"><span class="nav-number">5.</span> <span class="nav-text">TFT屏ST7735S调试问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A1%AC%E4%BB%B6-%E8%BD%AF%E4%BB%B6spi%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">5.1.</span> <span class="nav-text">硬件&#x2F;软件spi初始化</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Cortex-M%E7%B3%BB%E5%88%97%E5%86%85%E6%A0%B8%E5%AD%97%E8%8A%82%E5%AF%B9%E9%BD%90%E6%B1%87%E6%80%BB"><span class="nav-number">6.</span> <span class="nav-text">Cortex-M系列内核字节对齐汇总</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%A8%E5%B1%80%E5%8F%98%E9%87%8F%E5%AF%B9%E9%BD%90%E9%97%AE%E9%A2%98"><span class="nav-number">6.1.</span> <span class="nav-text">全局变量对齐问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%93%E6%9E%84%E4%BD%93%E6%88%90%E5%91%98%E5%AF%B9%E9%BD%90%E9%97%AE%E9%A2%98"><span class="nav-number">6.2.</span> <span class="nav-text">结构体成员对齐问题</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%87%AA%E7%84%B6%E5%AF%B9%E7%95%8C"><span class="nav-number">6.2.1.</span> <span class="nav-text">自然对界</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8C%87%E4%BB%A4%E5%AF%B9%E9%BD%90"><span class="nav-number">6.2.2.</span> <span class="nav-text">指令对齐</span></a></li></ol></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E6%A0%B8%E5%A4%8D%E4%BD%8D%EF%BC%88kernel-reset%EF%BC%89"><span class="nav-number">1.</span> <span class="nav-text">内核复位（kernel reset）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E9%80%9A%E7%94%A8%E9%97%AE%E9%A2%98"><span class="nav-number">1.1.</span> <span class="nav-text">常见通用问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#n32g452rc%E5%86%85%E6%A0%B8%E5%A4%8D%E4%BD%8D%E9%97%AE%E9%A2%98"><span class="nav-number">1.2.</span> <span class="nav-text">n32g452rc内核复位问题</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#bootloader%E8%B7%B3%E8%BD%AC%E5%88%B0app"><span class="nav-number">1.2.1.</span> <span class="nav-text">bootloader跳转到app</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MCU%E5%A4%8D%E4%BD%8D%E5%90%8E%E7%8A%B6%E6%80%81"><span class="nav-number">2.</span> <span class="nav-text">MCU复位后状态</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#printf%E9%87%8D%E5%AE%9A%E5%90%91"><span class="nav-number">3.</span> <span class="nav-text">printf重定向</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RT-THREAD%E8%B0%83%E8%AF%95%E9%97%AE%E9%A2%98"><span class="nav-number">4.</span> <span class="nav-text">RT-THREAD调试问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%B2%E5%8F%A3%E9%80%9A%E4%BF%A1%E5%BC%82%E5%B8%B8"><span class="nav-number">4.1.</span> <span class="nav-text">串口通信异常</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8C%87%E9%92%88%E5%8F%96%E5%9D%80%E7%AC%A6-%E4%B8%8E%E5%8F%96%E5%80%BC-%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">4.1.1.</span> <span class="nav-text">指针取址符&amp;与取值*的区别</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E8%83%BD%E5%AF%B9%E6%8C%87%E9%92%88%E5%8F%98%E9%87%8F%E8%BF%9B%E8%A1%8C%E5%8F%96%E5%9D%80"><span class="nav-number">4.1.2.</span> <span class="nav-text">为什么不能对指针变量进行取址</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#TFT%E5%B1%8FST7735S%E8%B0%83%E8%AF%95%E9%97%AE%E9%A2%98"><span class="nav-number">5.</span> <span class="nav-text">TFT屏ST7735S调试问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A1%AC%E4%BB%B6-%E8%BD%AF%E4%BB%B6spi%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">5.1.</span> <span class="nav-text">硬件&#x2F;软件spi初始化</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Cortex-M%E7%B3%BB%E5%88%97%E5%86%85%E6%A0%B8%E5%AD%97%E8%8A%82%E5%AF%B9%E9%BD%90%E6%B1%87%E6%80%BB"><span class="nav-number">6.</span> <span class="nav-text">Cortex-M系列内核字节对齐汇总</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%A8%E5%B1%80%E5%8F%98%E9%87%8F%E5%AF%B9%E9%BD%90%E9%97%AE%E9%A2%98"><span class="nav-number">6.1.</span> <span class="nav-text">全局变量对齐问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%93%E6%9E%84%E4%BD%93%E6%88%90%E5%91%98%E5%AF%B9%E9%BD%90%E9%97%AE%E9%A2%98"><span class="nav-number">6.2.</span> <span class="nav-text">结构体成员对齐问题</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%87%AA%E7%84%B6%E5%AF%B9%E7%95%8C"><span class="nav-number">6.2.1.</span> <span class="nav-text">自然对界</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8C%87%E4%BB%A4%E5%AF%B9%E9%BD%90"><span class="nav-number">6.2.2.</span> <span class="nav-text">指令对齐</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HSV-%E6%A8%A1%E5%9E%8B"><span class="nav-number">7.</span> <span class="nav-text">HSV 模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86"><span class="nav-number">8.</span> <span class="nav-text">内存管理</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -550,14 +599,14 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">12</span>
+          <span class="site-state-item-count">13</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-count">13</span>
         <span class="site-state-item-name">categories</span></a>
       </div>
       <div class="site-state-item site-state-tags">
@@ -599,12 +648,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="Symbols count total">29k</span>
+    <span title="Symbols count total">33k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="Reading time total">1:37</span>
+    <span title="Reading time total">1:49</span>
 </div>
   <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
   </div>
