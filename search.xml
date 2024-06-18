@@ -489,7 +489,7 @@ if(ack)表示除最后一次数据不回复，其他每次都会回复ack/nack
 <ul>
 <li>思路是进入<code>IAP</code>升级后提高当前优先级，避免其他任务打断，传输数据接收异常，导致升级失败。</li>
 <li>后面测试发现如果升级途中被外部字符输入打断，会一直在<code>YMODEM</code>里面出不来，开了看门口也没用（<code>YMODEM</code>接收程序里有看门狗）。</li>
-<li>解决方法：（待实验）</li>
+<li>解决方法：<br>目前添加<code>rt_schedule();</code>暂时解决问题，测试中会偶发，最近测试没有发现，待进一步测试。<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">rt_thread_t</span> th = rt_thread_find(<span class="string">&quot;tidle&quot;</span>);					<span class="comment">//fix it（2022.8.30）</span></span><br><span class="line">    <span class="type">int</span> original_priority = th-&gt;current_priority;</span><br><span class="line">    <span class="type">int</span> new_priority = RT_THREAD_COMM_TASK_PRIORITY - <span class="number">1</span>;</span><br><span class="line">	<span class="type">rt_err_t</span> ret = rt_thread_control(th,RT_THREAD_CTRL_CHANGE_PRIORITY,&amp;new_priority);</span><br><span class="line">    <span class="comment">// rt_schedule();</span></span><br><span class="line"></span><br><span class="line">	SerialDownload();</span><br><span class="line"></span><br><span class="line">	ret = rt_thread_control(th,RT_THREAD_CTRL_CHANGE_PRIORITY,&amp;original_priority);</span><br><span class="line">    rt_schedule();</span><br></pre></td></tr></table></figure></li>
 </ul>
 ]]></content>
       <categories>
