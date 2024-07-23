@@ -42,6 +42,45 @@ DEP_FILES := $(shell find $(BUILD_DIR) -type f -name '*.d')# 包含所有生成�
 
 <br>
 
+### `$<` 和 `$^` 的区别
+
+在`Makefile`中，`$<` 和 `$^` 是两个自动变量，它们在规则中用来引用规则的依赖文件，但它们的用途和行为有所不同：
+
+- `$<` - 代表规则的第一个依赖文件。
+	- 当规则有多个依赖文件时，`$<` 只引用第一个依赖文件。
+	- 它通常用于指定要编译的源文件，特别是在编译单个目标文件时。
+
+- `$^` - 代表规则的所有依赖文件。
+	- 无论规则有多少个依赖文件，`$^` 都会将它们全部列出。
+	- 它常用于链接阶段，当你需要将多个目标文件链接成最终的可执行文件时。
+
+举个例子来说明它们的不同：
+
+``` makefile
+# 假设有一个目标文件 main.o 需要两个源文件 main.c 和 utils.c 来生成
+main.o: main.c utils.c
+    $(CC) $(CFLAGS) -c main.c -o $@
+
+# 在这个例子中，$< 就是 main.c，而 $^ 就是 main.c utils.c
+```
+
+再看一个示例：
+``` makefile
+$(BUILD_DIR)/%.o: %.c
+	@mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) $(INCLUDE) $< -o $@
+```
+这个规则的意思是，对于`$(BUILD_DIR)`目录下的每个`.o`文件，都有一个对应的`.c`文件。在`Makefile`中，`$<` 是一个自动变量，它代表当前规则的第一个依赖文件。然而，`$<` 并不会直接依赖所有的 `.c` 文件，而是依赖于当前规则的 **第一个依赖文件**。
+
+总结一下：
+
+- 使用 `$<` 时，只有第一个依赖文件会被考虑。
+- 使用 `$^` 时，所有依赖文件都会被考虑。
+
+在实际编写Makefile时，根据你的需要选择合适的变量。
+
+<br>
+
 ### makefile伪指令
 在 `Makefile` 中，`.PHONY` 是一个特殊的声明，用来指出一些目标并不是实际的文件，而是一些需要执行的命令序列。这样做可以让 `Make` 工具在遇到同名文件时，不会误认为这些目标是要操作的文件，而是要执行的命令。
 
@@ -858,6 +897,122 @@ $(findstring a,b c)
 如果我们的 `$(VPATH)` 值是 `src:../headers `，那么 `$(patsubst %,-I%,$(subst :, ,$(VPATH)))` 将返回 `-Isrc -I../headers` ，这正是`cc`或`gcc`搜索头文件路径的参数。
 
 **注**：函数太多，不做概述。详见：https://seisman.github.io/how-to-write-makefile/functions.html
+**例程**：https://github.com/XUAN9527/linux_test/tree/main/make_demo
 
 <br>
 
+## Makefile搭配Kconfig使用
+
+话不多说，我们一般使用`menuconfig`+`Kconfig`的方式进行版本配置，这里简单的笔记一个`Python`解析器版本的实现`Kconfiglib`。
+[参考链接1]：https://cstriker1407.info/blog/kconfiglib-simple-note/
+[参考链接2]：https://juejin.cn/post/7101836149915648030
+
+### 环境搭建
+
+- 安装必须组件：`Python3` + `kconfiglib`
+
+``` shell
+sudo apt update
+sudo apt install python3
+sudo apt install python3-pip
+pip3 install kconfiglib
+```
+
+- 验证安装:
+``` shell
+$ python3 --version
+Python 3.10.14
+
+$ pip3 show kconfiglib
+Name: kconfiglib
+Version: 14.1.0
+...
+```
+
+### 实现示例
+- 在跟目录下创建`Kconfig`文件：
+``` Kconfig
+mainmenu "N32l40x 128K MCU, Flash Configuration"
+config SPI_FLASH_ENABLE
+  bool "spi flash enable"
+  default n
+  help 
+  config spi flash enable/disable
+
+menu "Internal Flash Configuration"
+depends on !SPI_FLASH_ENABLE
+config INTER_BOOTLOAD_FIRMWARE_SIZE
+    int "bootloader fireware size (K)"
+    range 10 32
+    default 10
+    help
+    config bootloader fireware size
+
+config INTER_FACTORY_FIRMWARE_SIZE
+    int "factory fireware size (K)"
+    range 56 96
+    default 56
+    help
+    config factory fireware size 56K/96K
+
+config INTER_APPLICATION_FIRMWARE_SIZE
+    int "application fireware size (K)"
+    range 56 96
+    default 56
+    help
+    config application fireware size 56K/96K
+
+config INTER_DOWNLOAD_AREA_SIZE
+    int "download fireware size (K)"
+    range 56 96
+    default 56
+    help
+    config download area size 56K/96K
+
+config INTER_UPGRADE_DATA_SIZE
+    int "upgrade data size (K)"
+    range 2 4
+    default 2
+    help
+    config upgrade data size 2K/4K
+
+config INTER_DCD_DATA_SIZE
+    int "dcd data size (K)"
+    range 2 4
+    default 2
+    help
+    config dcd data size 2K/4K
+
+config INTER_USER_DATA_SIZE
+    int "user data size (K)"
+    range 2 408
+    default 2
+    help
+    config user data size 2K/408K; 2k - inter flash; 408K - outerflash
+endmenu
+...
+```
+
+- `shell`执行`menuconfig`指令：
+
+![menuconfig](../pictures/menuconfig.png)
+![menusubconfig](../pictures/menusubconfig.png)
+
+- 选择好需要的参数后，保存退出，生成`.config`配置文件。
+- `shell`执行`genconfig`指令，将`.config`文件生成`config.h`文件，可供程序调用。
+- 如需搭配`makefile`使用，则需要将`config.h`文件添加到`Makefile`中,添加以下依赖规则。
+``` makefile
+all: genconfig ...
+	...
+
+...
+
+menuconfig:
+	menuconfig
+	@echo "menuconfig running!"
+
+genconfig:
+	genconfig
+	@echo "genconfig .config > config.h complete!"
+```
+执行`make menuconfig`进行配置，`make`编译生成即可。

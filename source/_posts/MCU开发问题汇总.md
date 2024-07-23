@@ -565,3 +565,283 @@ typedef struct __attribute__((packed))
 }ble_resp_device_info_desc;
 ```
 `__attribute__((packed))`是GCC编译器提供的一个属性,`__attribute__((packed))`其中的成员变量不会进行对齐。
+
+<br>
+
+## HSV 模型
+
+```c
+#include <math.h>
+
+/*
+* 将HSV颜色转换为RGB颜色
+* hue,色调:0-360; saturation,纯度:0-1; value,明度:0-1
+* r,g,b,RGB颜色，此值范围为0-255，但外界传入时的变量须是int类型
+*/
+void hsv_to_rgb(float h, float s, float v, int *r, int *g, int *b)
+{
+   float f, x, y, z;
+   int i;
+   v *= 255.0;
+   if (s == 0.0) {
+      *r = *g = *b = (int)v;
+   } else {
+      while (h < 0)
+      h += 360;
+      h = fmod(h, 360) / 60.0;
+      i = (int)h;
+      f = h - i;
+      x = v * (1.0 - s);
+      y = v * (1.0 - (s * f));
+      z = v * (1.0 - (s * (1.0 - f)));
+      switch (i) {
+         case 0: *r = v; *g = z; *b = x; break;
+         case 1: *r = y; *g = v; *b = x; break;
+         case 2: *r = x; *g = v; *b = z; break;
+         case 3: *r = x; *g = y; *b = v; break;
+         case 4: *r = z; *g = x; *b = v; break;
+         case 5: *r = v; *g = x; *b = y; break;
+      }
+   }
+}
+```
+
+使用Demo如下：
+```c
+void led_set_poll(void)
+{    
+    int red,green,blue;
+    
+    static float hue = 0;
+    hue = fmodf(hue + 1.0, 360.0);  // 0-360 色调循环
+    hsv_to_rgb(hue, 1.0, 1.0, &red, &green, &blue);
+    display_board_rgb_color_set(red, green, blue);
+}
+```
+
+<br>
+
+## 内存管理
+
+`RT-Thread`和`FreeRTOS`都是流行的嵌入式实时操作系统（`RTOS`），它们提供了内存管理机制来处理任务、队列、信号量等对象的创建和删除。尽管两者在内存管理的某些方面有相似之处，但它们在实现和配置上存在一些关键的区别：
+
+- 内存管理策略：
+    - **RT-Thread**：提供了动态内存堆管理和静态内存池管理两种方式。动态内存堆管理允许在运行时动态分配和释放内存，而内存池管理则分配固定大小的内存块，适用于分配大量大小相同的小内存块的场景。
+    - **FreeRTOS**：提供了多种内存管理方案，包括简单的静态内存分配（`heap_1`）和更复杂的动态内存分配策略（如`heap_2`、`heap_3`、`heap_4`和`heap_5`）。`FreeRTOS`的动态内存分配策略允许内存的分配和释放，同时也提供了内存碎片管理的方法。
+
+- 内存分配函数：
+  - **RT-Thread**：使用自己的内存分配函数，如`rt_malloc`、`rt_free`、`rt_realloc`和`rt_calloc`，这些函数与`C`标准库中的`malloc`和`free`类似，但是专为`RT-Thread`设计。
+  - **FreeRTOS**：使用`pvPortMalloc`和`vPortFree`函数进行内存分配和释放。`FreeRTOS`还提供了`xPortGetFreeHeapSize`等函数来获取内存堆的状态。
+
+- 内存堆的实现：
+    - **RT-Thread**：内存堆管理根据内存设备的不同，分为小内存块分配管理、大内存块的`slab`分配管理和多内存堆分配情况的管理。
+    - **FreeRTOS**：提供了多种内存堆实现，例如`heap_1`不允许释放内存，`heap_2`允许释放但不合并相邻空闲块，`heap_3`包装了标准库的`malloc`和`free`，`heap_4`合并相邻空闲块以减少碎片，`heap_5`则支持跨多个不相邻内存区域的堆。
+
+- 内存碎片管理：
+
+    - **RT-Thread**：通过内存池管理来减少内存碎片，内存池预先分配一块内存，并在其中管理固定大小的内存块。
+    - **FreeRTOS**：`heap_4`和`heap_5`实现了内存碎片管理，通过合并相邻的空闲内存块来减少碎片。
+
+- 内存管理的配置：
+    - **RT-Thread**：内存管理的配置通常在`rtconfig.h`中进行，可以选择使用不同的内存管理算法。
+    - **FreeRTOS**：内存管理的配置也在配置文件中进行，需要选择一个合适的堆管理实现文件，并在`FreeRTOSConfig.h`中进行相应的配置。
+
+- 内存管理的适用性：
+    - **RT-Thread**：内存管理机制适用于各种大小的内存块，特别是通过内存池管理来优化小内存块的分配效率。
+    - **FreeRTOS**：提供了多种内存管理策略，适用于不同的应用场景和内存需求，从简单的静态分配到复杂的动态分配。
+
+总的来说，`RT-Thread`和`FreeRTOS`都提供了灵活的内存管理机制来满足不同嵌入式应用的需求。选择哪种内存管理策略取决于具体的应用场景、内存需求和开发偏好。
+
+## 国民UART+DMA+TX问题
+改之前：
+``` c
+static void ec32_uart_dma_tx_config(struct ec_serial_device *serial, uint8_t *buffer, uint16_t length)
+{
+    if(serial->Txbuffer->tail + length > serial->dma.setting_tx_len) 
+    {
+        while(DMA_GetFlagStatus(serial->dma.tx_gl_flag, serial->dma.tx_dma_type) == RESET){}
+        DMA_ClearFlag(serial->dma.tx_gl_flag, serial->dma.tx_dma_type);
+    }
+	
+    DMA_EnableChannel(serial->dma.tx_ch, DISABLE);
+    DMA_InitType DMA_InitStructure;
+	
+    uint16_t dma_get_counts = DMA_GetCurrDataCounter(serial->dma.tx_ch);
+    /* if no data waiting send*/
+    if(dma_get_counts == 0)
+    {
+	serial->Txbuffer->lenth = length > serial->dma.setting_tx_len ? serial->dma.setting_tx_len : length;
+	memcpy(serial->Txbuffer->data, buffer, serial->Txbuffer->lenth);
+        DMA_InitStructure.MemAddr = (uint32_t)serial->Txbuffer->data;
+        DMA_InitStructure.BufSize = serial->Txbuffer->lenth;
+        serial->Txbuffer->tail = serial->Txbuffer->lenth;
+    }else{	
+        memcpy(serial->Txbuffer->data + serial->Txbuffer->tail, buffer, length);
+        DMA_InitStructure.MemAddr = (uint32_t)(serial->Txbuffer->data + serial->Txbuffer->tail - dma_get_counts);
+        DMA_InitStructure.BufSize = length + dma_get_counts;
+        serial->Txbuffer->tail = serial->Txbuffer->tail + length;
+    }
+    
+    DMA_InitStructure.PeriphAddr = (uint32_t) &(serial->uart_device->DAT);
+    DMA_InitStructure.Direction = DMA_DIR_PERIPH_DST;
+    DMA_InitStructure.PeriphInc = DMA_PERIPH_INC_DISABLE;
+    DMA_InitStructure.DMA_MemoryInc = DMA_MEM_INC_ENABLE;
+    DMA_InitStructure.PeriphDataSize = DMA_PERIPH_DATA_SIZE_BYTE;
+    DMA_InitStructure.MemDataSize = DMA_MemoryDataSize_Byte;
+    DMA_InitStructure.CircularMode = DMA_MODE_NORMAL;
+    DMA_InitStructure.Priority = DMA_PRIORITY_MEDIUM;
+    DMA_InitStructure.Mem2Mem = DMA_M2M_DISABLE;
+    DMA_Init(serial->dma.tx_ch, &DMA_InitStructure);
+	
+    DMA_ClearFlag(serial->dma.tx_gl_flag, serial->dma.tx_dma_type);
+    DMA_EnableChannel(serial->dma.tx_ch, ENABLE);
+    // while(DMA_GetFlagStatus(serial->dma.tx_gl_flag, serial->dma.tx_dma_type) == RESET){}
+}
+```
+问题解决来自`jindu-chen`，修改后：
+``` c
+static void ec32_uart_dma_tx_config(struct ec_serial_device *serial, uint8_t *buffer, uint16_t length)
+{
+    DMA_EnableChannel(serial->dma.tx_ch, DISABLE);
+    DMA_InitType DMA_InitStructure;
+	
+    uint16_t dma_get_counts = DMA_GetCurrDataCounter(serial->dma.tx_ch);
+    /* if no data waiting send*/
+    if(dma_get_counts == 0)
+    {
+        serial->Txbuffer->lenth = length > serial->dma.setting_tx_len ? serial->dma.setting_tx_len : length;
+        memcpy(serial->Txbuffer->data, buffer, serial->Txbuffer->lenth);
+        DMA_InitStructure.MemAddr = (uint32_t)serial->Txbuffer->data;
+        DMA_InitStructure.BufSize = serial->Txbuffer->lenth;
+        serial->Txbuffer->tail = serial->Txbuffer->lenth;
+    }else{	
+        if(serial->Txbuffer->tail + length > serial->dma.setting_tx_len)
+        {
+            DMA_EnableChannel(serial->dma.tx_ch, ENABLE);
+            while(DMA_GetFlagStatus(serial->dma.tx_gl_flag, serial->dma.tx_dma_type) == RESET){}
+
+            DMA_EnableChannel(serial->dma.tx_ch, DISABLE);
+            memcpy(serial->Txbuffer->data, buffer, serial->Txbuffer->lenth);
+            DMA_InitStructure.MemAddr = (uint32_t)serial->Txbuffer->data;
+            DMA_InitStructure.BufSize = length;
+            serial->Txbuffer->tail = serial->Txbuffer->lenth;
+        }else{
+            memcpy(serial->Txbuffer->data + serial->Txbuffer->tail, buffer, length);
+            DMA_InitStructure.MemAddr = (uint32_t)(serial->Txbuffer->data + serial->Txbuffer->tail - dma_get_counts);
+            DMA_InitStructure.BufSize = length + dma_get_counts;
+            serial->Txbuffer->tail = serial->Txbuffer->tail + length;
+        }
+    }
+	
+    DMA_InitStructure.PeriphAddr = (uint32_t) &(serial->uart_device->DAT);
+    DMA_InitStructure.Direction = DMA_DIR_PERIPH_DST;
+    DMA_InitStructure.PeriphInc = DMA_PERIPH_INC_DISABLE;
+    DMA_InitStructure.DMA_MemoryInc = DMA_MEM_INC_ENABLE;
+    DMA_InitStructure.PeriphDataSize = DMA_PERIPH_DATA_SIZE_BYTE;
+    DMA_InitStructure.MemDataSize = DMA_MemoryDataSize_Byte;
+    DMA_InitStructure.CircularMode = DMA_MODE_NORMAL;
+    DMA_InitStructure.Priority = DMA_PRIORITY_MEDIUM;
+    DMA_InitStructure.Mem2Mem = DMA_M2M_DISABLE;
+    DMA_Init(serial->dma.tx_ch, &DMA_InitStructure);
+	
+    DMA_ClearFlag(serial->dma.tx_gl_flag, serial->dma.tx_dma_type);
+    DMA_EnableChannel(serial->dma.tx_ch, ENABLE);
+}
+```
+总结：修改前`tail`指针接近缓存区最大边界时，剩余空间不足时会进入以下函数, 一直卡在`while`中出不来, 需改到后面去：
+``` c
+if(serial->Txbuffer->tail + length > serial->dma.setting_tx_len) 
+{
+    while(DMA_GetFlagStatus(serial->dma.tx_gl_flag, serial->dma.tx_dma_type) == RESET){}
+    DMA_ClearFlag(serial->dma.tx_gl_flag, serial->dma.tx_dma_type);
+}
+
+DMA_GetCurrDataCounter(serial->dma.tx_ch) 需要实时获取
+```
+即以下代码：
+``` c
+static void ec32_uart_dma_tx_config(struct ec_serial_device *serial, uint8_t *buffer, uint16_t length)
+{
+    DMA_EnableChannel(serial->dma.tx_ch, DISABLE);
+    DMA_InitType DMA_InitStructure;
+	
+    /* if no data waiting send*/
+    if(DMA_GetCurrDataCounter(serial->dma.tx_ch) == 0)
+    {
+		serial->Txbuffer->lenth = length > serial->dma.setting_tx_len ? serial->dma.setting_tx_len : length;
+		memcpy(serial->Txbuffer->data, buffer, serial->Txbuffer->lenth);
+        DMA_InitStructure.MemAddr = (uint32_t)serial->Txbuffer->data;
+        DMA_InitStructure.BufSize = serial->Txbuffer->lenth;
+        serial->Txbuffer->tail = serial->Txbuffer->lenth;
+    }else{	
+        if(serial->Txbuffer->tail + length > serial->dma.setting_tx_len)
+        {
+            DMA_EnableChannel(serial->dma.tx_ch, ENABLE);
+            while(DMA_GetFlagStatus(serial->dma.tx_gl_flag, serial->dma.tx_dma_type) == RESET){}
+            
+            //需在serial->Txbuffer->lenth赋值之前，否则DMA_InitStructure.BufSize会刷新，会继续发送未知数据。
+            DMA_EnableChannel(serial->dma.tx_ch, DISABLE);
+
+            //需在DMA_EnableChannel(serial->dma.tx_ch, DISABLE)之后
+            serial->Txbuffer->lenth = length > serial->dma.setting_tx_len ? serial->dma.setting_tx_len : length;
+
+            memcpy(serial->Txbuffer->data, buffer, serial->Txbuffer->lenth);
+			DMA_InitStructure.MemAddr = (uint32_t)serial->Txbuffer->data;
+			DMA_InitStructure.BufSize = serial->Txbuffer->lenth;
+			serial->Txbuffer->tail = serial->Txbuffer->lenth;
+        }else{
+			memcpy(serial->Txbuffer->data + serial->Txbuffer->tail, buffer, length);
+			DMA_InitStructure.MemAddr = (uint32_t)(serial->Txbuffer->data + serial->Txbuffer->tail - DMA_GetCurrDataCounter(serial->dma.tx_ch));
+			DMA_InitStructure.BufSize = length + DMA_GetCurrDataCounter(serial->dma.tx_ch);
+			serial->Txbuffer->tail = serial->Txbuffer->tail + length;
+		}
+    }
+	
+    DMA_InitStructure.PeriphAddr = (uint32_t) &(serial->uart_device->DAT);
+    DMA_InitStructure.Direction = DMA_DIR_PERIPH_DST;
+    DMA_InitStructure.PeriphInc = DMA_PERIPH_INC_DISABLE;
+    DMA_InitStructure.DMA_MemoryInc = DMA_MEM_INC_ENABLE;
+    DMA_InitStructure.PeriphDataSize = DMA_PERIPH_DATA_SIZE_BYTE;
+    DMA_InitStructure.MemDataSize = DMA_MemoryDataSize_Byte;
+    DMA_InitStructure.CircularMode = DMA_MODE_NORMAL;
+    DMA_InitStructure.Priority = DMA_PRIORITY_MEDIUM;
+    DMA_InitStructure.Mem2Mem = DMA_M2M_DISABLE;
+    DMA_Init(serial->dma.tx_ch, &DMA_InitStructure);
+	
+    DMA_ClearFlag(serial->dma.tx_gl_flag, serial->dma.tx_dma_type);
+    DMA_EnableChannel(serial->dma.tx_ch, ENABLE);
+}
+```
+<br>
+
+## RT-THREAD下IAP升级问题
+当前代码：
+``` c
+#define RT_THREAD_PRIORITY_MAX          32 
+#define RT_THREAD_COMM_TASK_PRIORITY    10
+static void iap(void)
+{
+	uint8_t proi = RT_THREAD_COMM_TASK_PRIORITY - 1;
+	rt_thread_t th = rt_thread_find("tidle");					//fix it（2022.8.30）
+	rt_thread_control(th,RT_THREAD_CTRL_CHANGE_PRIORITY,&proi);
+	SerialDownload();
+	proi = RT_THREAD_PRIORITY_MAX - 1;
+	rt_thread_control(th,RT_THREAD_CTRL_CHANGE_PRIORITY,&proi);
+}
+```
+- 思路是进入`IAP`升级后提高当前优先级，避免其他任务打断，传输数据接收异常，导致升级失败。
+- 后面测试发现如果升级途中被外部字符输入打断，会一直在`YMODEM`里面出不来，开了看门口也没用（`YMODEM`接收程序里有看门狗）。
+- 解决方法：
+目前添加`rt_schedule();`暂时解决问题，测试中会偶发，最近测试没有发现，待进一步测试。
+``` c
+rt_thread_t th = rt_thread_find("tidle");					//fix it（2022.8.30）
+    int original_priority = th->current_priority;
+    int new_priority = RT_THREAD_COMM_TASK_PRIORITY - 1;
+	rt_err_t ret = rt_thread_control(th,RT_THREAD_CTRL_CHANGE_PRIORITY,&new_priority);
+    // rt_schedule();
+
+	SerialDownload();
+
+	ret = rt_thread_control(th,RT_THREAD_CTRL_CHANGE_PRIORITY,&original_priority);
+    rt_schedule();
+```
