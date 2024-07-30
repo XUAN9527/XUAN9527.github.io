@@ -95,3 +95,7 @@ tree 命令使用颜色来区分不同类型的文件和目录。使用 --no-col
 ## git小贴士
 
 ![git指令](../pictures/git指令.jpg)
+
+<br>
+
+![vim指令](../pictures/vim指令.jpg)
