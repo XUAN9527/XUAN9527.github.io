@@ -2467,18 +2467,23 @@ bx  lr
 </li>
 </ul>
 <p><strong>注意</strong>：输入第一条命令后，等待安装，遇到选择<code>Y/N</code>，选择<code>Y</code>；第一条安装完成后，输入第二条命令，同样遇到选择<code>Y/N</code>，选择<code>Y</code>。<br>安装完毕后，切记：一定要<strong>重新启动Linux系统</strong>才可以双向复制粘贴。</p>
-<h3 id="虚拟机安装配置遇到的问题"><a href="#虚拟机安装配置遇到的问题" class="headerlink" title="虚拟机安装配置遇到的问题"></a>虚拟机安装配置遇到的问题</h3><ul>
-<li>无法使用桥接上网<ul>
+<h3 id="虚拟机安装配置遇到的问题"><a href="#虚拟机安装配置遇到的问题" class="headerlink" title="虚拟机安装配置遇到的问题"></a>虚拟机安装配置遇到的问题</h3><p><a href="https://segmentfault.com/a/1190000039918994">桥接模式资料(仅供参考)</a></p>
+<ul>
+<li>尝试解决无法使用桥接使用与PC机相同IP上网<ul>
 <li>虚拟网络编辑器-还原默认设置（该过程会卸载虚拟网卡，重新安装适配器）</li>
+<li>桥接模式启动</li>
+<li>笔试还不能关闭网络服务，<code>ubuntu</code>内部配置<code>IPv4</code>（先打开<code>PC主机</code>以太网，按下图所示手动填写<code>地址</code>和<code>DNS</code>）,重新启动网络服务。</li>
 </ul>
 </li>
 </ul>
-<p><a href="https://segmentfault.com/a/1190000039918994">参考资料1</a><br><a href="https://blog.csdn.net/baidu_41666198/article/details/97619962?ops_request_misc=%257B%2522request%255Fid%2522%253A%2522172120535416800227445869%2522%252C%2522scm%2522%253A%252220140713.130102334..%2522%257D&request_id=172120535416800227445869&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~blog~sobaiduend~default-1-97619962-null-null.nonecase&utm_term=NAT%E6%A8%A1%E5%BC%8F%E4%B8%8A%E4%B8%8D%E4%BA%86%E7%BD%91&spm=1018.2226.3001.4450">参考资料2</a></p>
+<p><img src="/../pictures/%E8%99%9A%E6%8B%9F%E7%BD%91%E7%BB%9C%E7%BC%96%E8%BE%91%E5%99%A8.png" alt="虚拟网络"><br><img src="/../pictures/PC%E6%9C%BAIPv4%E9%85%8D%E7%BD%AE.png" alt="PC以太网配置"><br><img src="/../pictures/ubuntu%E7%BD%91%E7%BB%9C%E9%85%8D%E7%BD%AE.png" alt="ubuntu网络配置"></p>
 <ul>
 <li>虚拟机右下角的USB是灰的，不能链接&#x2F;断开。</li>
 </ul>
-<p><a href="https://blog.csdn.net/weixin_44259058/article/details/127639566">参考资料</a></p>
-<h3 id="Uboot移植"><a href="#Uboot移植" class="headerlink" title="Uboot移植"></a>Uboot移植</h3><ul>
+<p><a href="https://blog.csdn.net/weixin_44259058/article/details/127639566">参考资料</a><br><br></p>
+<h2 id="Uboot移植"><a href="#Uboot移植" class="headerlink" title="Uboot移植"></a>Uboot移植</h2><p><a href="https://www.eet-china.com/mp/a68264.html">参考资料</a></p>
+<h3 id="I-MX6ULL启动模式"><a href="#I-MX6ULL启动模式" class="headerlink" title="I.MX6ULL启动模式"></a>I.MX6ULL启动模式</h3><p><img src="/../pictures/IMX6ULL%E5%90%AF%E5%8A%A8%E6%8B%A8%E7%A0%81%E5%9B%BE.png" alt="IMX6ULL启动拨码图"></p>
+<h3 id="Uboot编译烧录"><a href="#Uboot编译烧录" class="headerlink" title="Uboot编译烧录"></a>Uboot编译烧录</h3><ul>
 <li><p>将<code>uboot</code>压缩文件<code>uboot-imx-rel_imx_4.1.15_2.1.1_ga_alientek_v2.4.tar.bz2</code>放到<code>/home/xuan/linux/</code>目录下。</p>
 </li>
 <li><p>将<code>uboot</code>文件<code>tar -xjvf uboot-imx-rel_imx_4.1.15_2.1.1_ga_alientek_v2.4.tar.bz2</code> 解压到该目录下。</p>
@@ -2489,26 +2494,101 @@ bx  lr
 <figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">!/bin/bash</span></span><br><span class="line">make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- distclean</span><br><span class="line">make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- mx6ull_alientek_emmc_defconfig</span><br><span class="line">make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- V=1 -j12</span><br></pre></td></tr></table></figure></li>
 <li><p>执行脚本：<code>./mx6ull_14x14_evk_emmc.sh</code></p>
 </li>
-<li><p>插上<code>SD卡</code>，启动<code>uboot</code>, <code>SD</code>卡和<code>EMMC</code>驱动检查:</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">mmc dev 0</span><br><span class="line">mmc info</span><br><span class="line"></span><br><span class="line">mmc dev 1</span><br><span class="line">mmc info</span><br></pre></td></tr></table></figure></li>
-<li><p>烧写验证与驱动测试</p>
-<ul>
+</ul>
+<h4 id="Uboot烧录到SD卡"><a href="#Uboot烧录到SD卡" class="headerlink" title="Uboot烧录到SD卡"></a>Uboot烧录到SD卡</h4><ul>
+<li>插上<code>SD卡</code>，启动<code>uboot</code>, <code>SD</code>卡和<code>EMMC</code>驱动检查:<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">mmc dev 0</span><br><span class="line">mmc info</span><br><span class="line"></span><br><span class="line">mmc dev 1</span><br><span class="line">mmc info</span><br></pre></td></tr></table></figure></li>
+<li>烧写验证与驱动测试<ul>
 <li>挂载<code>SD卡</code>，不做描述，挂载上之后<code>ls /dev/sd*</code>显示。</li>
 <li>执行以下<code>shell</code>指令。<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">chmod 777 imxdownload 				//给予 imxdownload 可执行权限</span><br><span class="line">./imxdownload u-boot.bin /dev/sdd 	//烧写到 SD 卡中，不能烧写到/dev/sda 或 sda1 里面</span><br></pre></td></tr></table></figure></li>
 </ul>
 </li>
-<li><p><code>U-Boot</code> 图形化配置</p>
-</li>
+</ul>
+<br>
+
+<ul>
+<li><code>U-Boot</code> 图形化配置</li>
 </ul>
 <figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo apt-get install build-essential</span><br><span class="line">sudo apt-get install libncurses5-dev</span><br><span class="line"></span><br><span class="line">make mx6ull_alientek_emmc_defconfig</span><br><span class="line">make menuconfig</span><br></pre></td></tr></table></figure>
 
+<ul>
+<li>配置网口的环境变量，开发板上的<code>ENET2</code>,上电进入<code>uboot</code>,打开的<code>USB_TTL</code>对应的串口控制台。<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">setenv ipaddr 192.168.104.130		//开发板 ip 地址</span><br><span class="line">setenv ethaddr b8:ae:1d:01:00:00	//开发板的MAC地址，一定要设置, 如有多块开发板，MAC需不一致</span><br><span class="line">setenv gatewayip 192.168.104.129	//网关地址</span><br><span class="line">setenv netmask 255.255.240.0		//子网掩码</span><br><span class="line">setenv serverip 192.168.104.29		//服务器 IP 地址，也就是 Ubuntu 主机 IP 地址，用于调试代码。</span><br><span class="line">saveenv</span><br></pre></td></tr></table></figure></li>
+</ul>
+<br>
 
-<h3 id="Linux内核移植"><a href="#Linux内核移植" class="headerlink" title="Linux内核移植"></a>Linux内核移植</h3><ul>
+<h2 id="Linux内核移植"><a href="#Linux内核移植" class="headerlink" title="Linux内核移植"></a>Linux内核移植</h2><h3 id="移植步骤"><a href="#移植步骤" class="headerlink" title="移植步骤"></a>移植步骤</h3><p><strong>1. Ubuntu下搭建网络传输环境</strong></p>
+<p><strong>1.1 搭建网络tftp服务</strong></p>
+<ul>
+<li><p>执行以下指令，安装<code>xinetd</code>: </p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo apt-get install xinetd</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查询<code>/etc/</code>下是否存在 <code>xinetd.conf</code> 文件，没有的话则自己新建一个。</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">ls /etc/xinetd.conf</span><br><span class="line">sudo vi /etc/xinetd.conf</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>创建出来的文件是空白的， 修改 <code>xinetd.conf</code> 文件内容如下：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Simple configuration file <span class="keyword">for</span> xinetd</span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash"></span></span><br><span class="line"><span class="language-bash"><span class="comment"># Some defaults, and include /etc/xinetd.d/</span></span></span><br><span class="line">defaults</span><br><span class="line">&#123;</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Please note that you need a log_type line to be able to use log_on_success</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">and log_on_failure. The default is the following :</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">log_type = SYSLOG daemon info</span></span><br><span class="line">&#125;</span><br><span class="line">includedir /etc/xinetd.d</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>新建 <code>TFTP</code> 目录，这里建立在&#x2F;home&#x2F;xuan&#x2F;linux 目录下，目录名为 tftp。将 tftp 目录赋予可读可写可执行权限。</p>
+</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">mkdir -p /home/xuan/linux/tftp</span><br><span class="line">sudo chmod 777 /home/xuan/linux/tftp/</span><br><span class="line">cd /home/xuan/linux/</span><br><span class="line">ls</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>执行以下程序安装 <code>tftp-hpa</code> 和 <code>tftpd-hpa</code> 服务程序</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo apt-get install tftp-hpa tftpd-hpa</span><br><span class="line">sudo vi /etc/default/tftpd-hpa</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>执行以下指令创建<code>/etc/xinetd.d/tftp</code>配置文件。（如果没有 <code>xinetd.d</code> 这个目录，可以先自己手动创建）,注意 <code>server_args = -s</code> 后面要添加自己的 <code>tftp</code> 工作路径。</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">server tftp</span><br><span class="line">&#123;</span><br><span class="line">socket_type = dgram</span><br><span class="line">wait = yes</span><br><span class="line">disable = no</span><br><span class="line">user = root</span><br><span class="line">protocol = udp</span><br><span class="line">server = /usr/sbin/in.tftpd</span><br><span class="line">server_args = -s /home/xuan/linux/tftp -c</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">log_on_success += PID HOST DURATION</span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">log_on_failure += HOST</span></span><br><span class="line">per_source = 11</span><br><span class="line">cps =100 2</span><br><span class="line">flags =IPv4</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>修改&#x2F;添加 <code>tftp</code> 文件后， 执行以下指令重启 <code>tftpd-hpa</code>, 重启 <code>xinetd</code> 服务。</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo service tftpd-hpa restart</span><br><span class="line">sudo service xinetd restart</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>确保网络环境正常，<code>Ubuntu</code>、<code>Windows</code>和<code>开发板</code>能相互 <code>ping</code> 通。</p>
+<ul>
+<li>开发板 IP： 192.168.104.130</li>
+<li>虚拟机 IP： 192.168.104.129</li>
+<li>电脑网口的 IP： 192.168.104.29</li>
+</ul>
+</li>
+</ul>
+<br>
+
+<p><strong>1.2 搭建网络nfs服务</strong></p>
+<ul>
+<li><p>在 <code>Ubuntu</code> 终端执行以下指令安装 <code>NFS</code></p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo apt-get install nfs-kernel-server</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>新建 <code>NFS</code> 共享目录，并给予 <code>NFS</code> 目录可读可写可执行权限。</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo mkdir /home/xuan/linux/nfs</span><br><span class="line">sudo chmod 777 /home/xuan/linux/nfs/</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>执行以下指令打开 <code>etc/exports</code> 文件</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo vi /etc/exports</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>进入 <code>etc/exports</code> 文件，在最后添加如下内容</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">/home/alientek/linux/nfs *(rw,sync,no_root_squash)</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p><code>/home/alientek/linux/nfs</code> 表示 <code>NFS</code> 共享的目录<br><code>*</code>表示允许所有的网络段访问<br><code>rw</code> 表示访问者具有可读写权限<br><code>sync</code> 表示将缓存写入设备中，可以说是同步缓存的意思<br><code>no_root_squash</code> 表示访问者具有 <code>root</code> 权限。</p>
+<ul>
+<li><p>执行以下指令重启 <code>NFS</code> 服务器, 查看 <code>NFS</code> 共享目录。</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo /etc/init.d/nfs-kernel-server restart</span><br><span class="line">showmount -e</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>测试 <code>NFS</code> 服务，执行以下指令设置开发板 <code>IP</code>，创建一个 <code>get</code> 目录，将虚拟机（<code>192.168.104.129</code>） <code>NFS</code> 共享目<br>录挂载到到开发板的 <code>get</code> 目录中。</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">mkdir get</span><br><span class="line">mount -t nfs -o nolock,nfsvers=3 192.168.104.129:/home/xuan/linux/nfs get/</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查看挂载的 <code>NFS</code> 目录：<code>df</code>, 显示如下：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">192.168.104.129:/home/xuan/linux/nfs 204795392 14416896 179902464   8% /home/root/get</span><br></pre></td></tr></table></figure></li>
+<li><p>卸载 <code>NFS</code> 目录：<code>umount get</code></p>
+</li>
+</ul>
+<br>
+
+<p><strong>2. 拷贝内核文件</strong></p>
+<ul>
 <li><p>将内核压缩文件<code>linux-imx-rel_imx_4.1.15_2.1.1_ga_alientek_v2.4.tar.bz2</code>放到<code>/home/xuan/linux/linux-imx-rel_imx_4.1.15_2.1.1_ga_alientek_v2.4</code>目录下。</p>
 </li>
 <li><p>将内核文件<code>tar -xjvf linux-imx-rel_imx_4.1.15_2.1.1_ga_alientek_v2.4.tar.bz2</code> 解压到该目录下。</p>
 </li>
 </ul>
+<p><strong>3. 编译内核文件</strong></p>
 <p>按以下步骤进行编译：</p>
 <figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">make clean 					//第一次编译 Linux 内核之前先清理一下</span><br><span class="line">make imx_v7_mfg_defconfig 	//配置 Linux 内核</span><br><span class="line">make -j16					//编译 Linux 内核</span><br></pre></td></tr></table></figure>
 <p>发现编译报错：</p>
@@ -2530,7 +2610,46 @@ bx  lr
 <ul>
 <li>执行 <code>make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- menuconfig</code> 后报错 <code>fatal error:curses.h:</code>没有那个文件或目录，这个是少了某个库，执行如下指令安装库：<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo apt-get install libncurses*</span><br></pre></td></tr></table></figure></li>
 </ul>
-]]></content>
+<br>
+
+<p><strong>4. 整理编译后的镜像文件</strong></p>
+<p><code>Linux</code> 内核编译完成以后会在 <code>arch/arm/boot</code> 目录下生成 <code>zImage</code> 镜像文件，如果使用设备树<br>的话还会在 <code>arch/arm/boot/dts</code> 目录下开发板对应的.dtb(设备树)文件，比如 <code>imx6ull-alientek-emmc.dtb</code><br>就是 <code>NXP</code> 官方的 <code>I.MX6ULL EVK开发板</code>对应的设备树文件。至此我们得到两个文件：</p>
+<ul>
+<li><code>Linux</code> 内核镜像文件： <code>zImage。</code></li>
+<li><code>NXP</code>官方<code>I.MX6ULL EVK开发板</code>对应的设备树文件： imx6ull-alientek-emmc.dtb。</li>
+</ul>
+<br>
+
+<p><strong>5. 内核启动测试</strong></p>
+<ul>
+<li><p>修改<code>uboot</code> 中的环境变量 <code>bootargs</code></p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">console=ttymxc0,115200 root=/dev/mmcblk1p2 rootwait rw</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>将上一小节编译出来的 <code>zImage</code> 和 <code>imx6ull-alientek-emmc.dtb</code> 复制到 <code>Ubuntu</code> 中的 <code>tftp</code> 目录下，<br>因为我们要在 <code>uboot</code> 中使用 <code>tftp</code> 命令将其下载到开发板中，拷贝命令如下：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">cp arch/arm/boot/zImage /home/xuan/linux/tftpboot/ -f</span><br><span class="line">cp arch/arm/boot/dts/imx6ull-alientek-emmc.dtb /home/xuan/linux/tftpboot/ -f</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>拷贝完成以后就可以测试了，启动开发板，进入 <code>uboot</code> 命令行模式，然后输入如下命令将<br><code>zImage</code> 和 <code>imx6ull-alientek-emmc.dtb</code> 下载到开发板中：</p>
+</li>
+</ul>
+<p><strong>从网络启动：</strong></p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">tftp 80800000 zImage</span><br><span class="line">tftp 83000000 imx6ull-alientek-emmc.dtb</span><br><span class="line">bootz 80800000 - 83000000</span><br></pre></td></tr></table></figure>
+
+<p><strong>从EMMC启动：</strong></p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">fatload mmc 1:1 80800000 zImage</span><br><span class="line">fatload mmc 1:1 83000000 imx6ull-alientek-emmc.dtb</span><br><span class="line">bootz 80800000 - 83000000</span><br></pre></td></tr></table></figure>
+
+<br>
+
+<h3 id="从网络启动Linux系统"><a href="#从网络启动Linux系统" class="headerlink" title="从网络启动Linux系统"></a>从网络启动Linux系统</h3><ul>
+<li>这里使用<code>tftpboot</code>启动传输。</li>
+<li>拨码到从<code>SD</code>卡启动，开发板上电&#x2F;<code>RESET</code>，进入<code>uboot</code>。</li>
+<li>在<code>uboot</code>配置<code>bootargs</code>和<code>bootcmd</code>参数并保存。</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">setenv bootargs &#x27;console=ttymxc0,115200 root=/dev/mmcblk1p2 rootwait rw&#x27;</span><br><span class="line">=&gt; setenv bootcmd &#x27;tftp 80800000 zImage; tftp 83000000 imx6ull-alientek-emmc.dtb; bootz 80800000 - 83000000&#x27;</span><br><span class="line">=&gt; saveenv</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>输入<code>boot</code>启动</li>
+</ul>
+<br>]]></content>
       <categories>
         <category>嵌入式</category>
         <category>环境搭建</category>
