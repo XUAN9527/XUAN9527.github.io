@@ -36,7 +36,7 @@
 <meta property="og:image" content="http://example.com/pictures/ubuntu%E7%BD%91%E7%BB%9C%E9%85%8D%E7%BD%AE.png">
 <meta property="og:image" content="http://example.com/pictures/IMX6ULL%E5%90%AF%E5%8A%A8%E6%8B%A8%E7%A0%81%E5%9B%BE.png">
 <meta property="article:published_time" content="2024-07-13T03:07:00.000Z">
-<meta property="article:modified_time" content="2024-08-02T12:25:08.299Z">
+<meta property="article:modified_time" content="2024-08-14T07:26:42.287Z">
 <meta property="article:author" content="boollight">
 <meta property="article:tag" content="Linux">
 <meta property="article:tag" content="I.MX6ULL">
@@ -236,7 +236,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2024-08-02 20:25:08" itemprop="dateModified" datetime="2024-08-02T20:25:08+08:00">2024-08-02</time>
+                <time title="Modified: 2024-08-14 15:26:42" itemprop="dateModified" datetime="2024-08-14T15:26:42+08:00">2024-08-14</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -258,14 +258,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">Symbols count in article: </span>
-              <span>2.9k</span>
+              <span>3.8k</span>
             </span>
             <span class="post-meta-item" title="Reading time">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">Reading time &asymp;</span>
-              <span>10 mins.</span>
+              <span>13 mins.</span>
             </span>
             <div class="post-description">I.MX6ULL开发环境搭建，uboot移植，基于Linux版本为Ubuntu 20.04虚拟机开发，记录关键步骤，遇到的问题及解决方法。</div>
 
@@ -546,7 +546,81 @@
 </ul>
 <br>
 
-<h3 id="Linux-设备树"><a href="#Linux-设备树" class="headerlink" title="Linux 设备树"></a>Linux 设备树</h3>
+<h3 id="Linux-设备树"><a href="#Linux-设备树" class="headerlink" title="Linux 设备树"></a>Linux 设备树</h3><p>以LED点灯驱动为例主要步骤：</p>
+<ul>
+<li>修改设备树(.dts文件),跟根节点下添加设备子节点，子节点添加属性，举例：<figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="title class_">alphaled</span> <span class="punctuation">&#123;</span></span><br><span class="line">	<span class="meta">#address-cells = &lt;1&gt;;</span></span><br><span class="line">	<span class="meta">#size-cells = &lt;1&gt;;</span></span><br><span class="line">	<span class="attr">compatible</span> <span class="operator">=</span> <span class="string">&quot;atkalpha-led&quot;</span><span class="punctuation">;</span></span><br><span class="line">	<span class="attr">status</span> <span class="operator">=</span> <span class="string">&quot;okay&quot;</span><span class="punctuation">;</span></span><br><span class="line">	<span class="attr">reg</span> <span class="operator">=</span> <span class="params">&lt; <span class="number">0X020C406C</span> <span class="number">0X04</span> /* CCM_CCGR1_BASE */</span></span><br><span class="line"><span class="params">	<span class="number">0X020E0068</span> <span class="number">0X04</span> /* SW_MUX_GPIO1_IO03_BASE */</span></span><br><span class="line"><span class="params">	<span class="number">0X020E02F4</span> <span class="number">0X04</span> /* SW_PAD_GPIO1_IO03_BASE */</span></span><br><span class="line"><span class="params">	<span class="number">0X0209C000</span> <span class="number">0X04</span> /* GPIO1_DR_BASE */</span></span><br><span class="line"><span class="params">	<span class="number">0X0209C004</span> <span class="number">0X04</span> &gt;</span><span class="punctuation">;</span> <span class="comment">/* GPIO1_GDIR_BASE */</span></span><br><span class="line"><span class="punctuation">&#125;;</span></span><br></pre></td></tr></table></figure></li>
+<li>在<code>linux</code>目录下重新编译设备树：<code>make dtbs</code></li>
+<li>编译完成以后得到<code>imx6ull-alientek-emmc.dtb</code>，使用新的 <code>imx6ull-alientek-emmc.dtb</code>启动<code>Linux</code>内核</li>
+<li><code>Linux</code>启动成功以后进入到<code>/proc/device-tree/</code>目录中查看是否有<code>alphaled</code>这个节点,若没有则修改失败</li>
+<li>编写<code>dtsled.c</code>文件和文件<code>ledApp.c</code>,修改<code>Makefile</code>中的<code>KERNELDIR</code>参数为<code>/home/xuan/linux/linux-ga</code><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">make -j32</span><br><span class="line">arm-linux-gnueabihf-gcc ledApp.c -o ledApp</span><br></pre></td></tr></table></figure></li>
+<li>编译出来的<code>dtsled.ko</code>和<code>ledApp</code>这两个文件拷贝到<code>rootfs/lib/modules/4.1.15</code>目录中，<strong>重启开发板</strong>，进入到目录<code>lib/modules/4.1.15</code>中，输入如下命令加载<code>dtsled.ko</code>驱动模块：<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">depmod 				//第一次加载驱动的时候需要运行此命令</span><br><span class="line">modprobe dtsled.ko 		//加载驱动</span><br><span class="line">./ledApp /dev/dtsled 1 		//打开 LED 灯</span><br><span class="line">./ledApp /dev/dtsled 0 		//关闭 LED 灯</span><br><span class="line">rmmod dtsled.ko</span><br></pre></td></tr></table></figure></li>
+</ul>
+<br>
+
+<h3 id="pinctrl-和-gpio-子系统实验"><a href="#pinctrl-和-gpio-子系统实验" class="headerlink" title="pinctrl 和 gpio 子系统实验"></a>pinctrl 和 gpio 子系统实验</h3><h4 id="pinctrl-子系统介绍"><a href="#pinctrl-子系统介绍" class="headerlink" title="pinctrl 子系统介绍"></a>pinctrl 子系统介绍</h4><p><code>pinctrl</code> 子系统主要工作内容如下：</p>
+<ul>
+<li>获取设备树中 <code>pin</code> 信息。</li>
+<li>根据获取到的 <code>pin</code> 信息来设置 <code>pin</code> 的复用功能</li>
+<li>根据获取到的 <code>pin</code> 信息来设置 <code>pin</code> 的电气特性，比如上&#x2F;下拉、速度、驱动能力等。</li>
+</ul>
+<p>对于我们使用者来讲，只需要在设备树里面设置好某个 <code>pin</code> 的相关属性即可，其他的初始化工作均由 <code>pinctrl</code> 子系统来完成， <code>pinctrl</code> 子系统源码目录为 <code>drivers/pinctrl</code>。</p>
+<br>
+
+<h4 id="设备树中添加-pinctrl-节点模板"><a href="#设备树中添加-pinctrl-节点模板" class="headerlink" title="设备树中添加 pinctrl 节点模板"></a>设备树中添加 pinctrl 节点模板</h4><ul>
+<li>创建对应的节点，打开 <code>imx6ull-alientek-emmc.dts</code>，在 <code>iomuxc</code> 节点中的 <code>imx6ul-evk</code> 子节点下添加 “<code>pinctrl_test</code>” 节点</li>
+<li>添加 “<code>fsl,pins</code>” 属性，名字一定要为“<code>fsl,pins</code>”，因为对于 <code>I.MX</code> 系列 <code>SOC</code> 而言， <code>pinctrl</code> 驱动程序是通过读取“<code>fsl,pins</code>”属性值来获取 <code>PIN</code> 的配置信息</li>
+</ul>
+<figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">pinctrl_test:</span> <span class="title class_">testgrp</span> <span class="punctuation">&#123;</span></span><br><span class="line">	<span class="comment">/* 具体的 PIN 信息 */</span></span><br><span class="line">		<span class="attr">fsl,pins</span> <span class="operator">=</span> <span class="params">&lt;</span></span><br><span class="line"><span class="params">			MX6UL_PAD_GPIO1_IO00__GPIO1_IO00 config 	/*config 是具体设置值*/</span></span><br><span class="line"><span class="params">		&gt;</span><span class="punctuation">;</span></span><br><span class="line">	<span class="punctuation">&#125;;</span></span><br><span class="line"><span class="punctuation">&#125;;</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>至此，我们已经在 <code>imx6ull-alientek-emmc.dts</code> 文件中添加好了 <code>test</code> 设备所使用的 <code>PIN</code> 配置信息。</li>
+</ul>
+<br>
+
+<h4 id="gpio子系统"><a href="#gpio子系统" class="headerlink" title="gpio子系统"></a>gpio子系统</h4><br>
+
+<h4 id="gpio实验"><a href="#gpio实验" class="headerlink" title="gpio实验"></a>gpio实验</h4><ul>
+<li><p>添加 <code>pinctrl</code> 节点, ，打开 <code>imx6ull-alientekemmc.dts</code>，在 <code>iomuxc</code> 节点的 <code>imx6ul-evk</code> 子节点下创建一个名为“<code>pinctrl_led</code>”的子节点</p>
+<figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">pinctrl_led:</span> <span class="title class_">ledgrp</span> <span class="punctuation">&#123;</span></span><br><span class="line">	<span class="attr">fsl,pins</span> <span class="operator">=</span> <span class="params">&lt;</span></span><br><span class="line"><span class="params">		MX6UL_PAD_GPIO1_IO03__GPIO1_IO03 <span class="number">0x10B0</span> /* LED0 */</span></span><br><span class="line"><span class="params">	&gt;</span><span class="punctuation">;</span></span><br><span class="line"><span class="punctuation">&#125;;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>添加 <code>LED</code> 设备节点, 在根节点“<code>/</code>”下创建 <code>LED</code> 灯节点，节点名为“<code>gpioled</code>”</p>
+<figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="title class_">gpioled</span> <span class="punctuation">&#123;</span></span><br><span class="line">	<span class="meta">#address-cells = &lt;1&gt;;</span></span><br><span class="line">	<span class="meta">#size-cells = &lt;1&gt;;</span></span><br><span class="line">	<span class="attr">compatible</span> <span class="operator">=</span> <span class="string">&quot;atkalpha-gpioled&quot;</span><span class="punctuation">;</span></span><br><span class="line">	<span class="attr">pinctrl-names</span> <span class="operator">=</span> <span class="string">&quot;default&quot;</span><span class="punctuation">;</span></span><br><span class="line">	pinctrl<span class="number">-0</span> = <span class="params">&lt;<span class="variable">&amp;pinctrl_led</span>&gt;</span><span class="punctuation">;</span></span><br><span class="line">	<span class="attr">led-gpio</span> <span class="operator">=</span> <span class="params">&lt;<span class="variable">&amp;gpio1</span> <span class="number">3</span> GPIO_ACTIVE_LOW&gt;</span><span class="punctuation">;</span></span><br><span class="line">	<span class="attr">status</span> <span class="operator">=</span> <span class="string">&quot;okay&quot;</span><span class="punctuation">;</span></span><br><span class="line"><span class="punctuation">&#125;;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>检查 <code>PIN</code> 是否被其他外设使用</p>
+<ul>
+<li>检查 <code>pinctrl</code> 设置。</li>
+<li>如果这个 <code>PIN</code> 配置为 <code>GPIO</code> 的话，检查这个 <code>GPIO</code> 有没有被别的外设使用。</li>
+</ul>
+</li>
+<li><p>在本章实验中 <code>LED</code> 灯使用的 <code>PIN</code> 为 <code>GPIO1_IO03</code>，在 <code>imx6ull-alientek-emmc.dts</code> 中，先检查 <code>GPIO_IO03</code> 这个 <code>PIN</code> 有没有被其他的 <code>pinctrl</code> 节点使用。</p>
+</li>
+<li><p>如别的模块有使用到<code>GPIO_IO03</code>，需要注释掉。</p>
+</li>
+</ul>
+<br>
+
+<h3 id="Linux-蜂鸣器实验"><a href="#Linux-蜂鸣器实验" class="headerlink" title="Linux 蜂鸣器实验"></a>Linux 蜂鸣器实验</h3><ul>
+<li><p>打开<code>imx6ull-alientekemmc.dts</code>，在 <code>iomuxc</code> 节点的 <code>imx6ul-evk</code> 子节点下创建一个名为“<code>pinctrl_beep</code>”的子节点</p>
+<figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">pinctrl_beep:</span> <span class="title class_">beepgrp</span> <span class="punctuation">&#123;</span></span><br><span class="line">	<span class="attr">fsl,pins</span> <span class="operator">=</span> <span class="params">&lt;</span></span><br><span class="line"><span class="params">		MX6ULL_PAD_SNVS_TAMPER1__GPIO5_IO01 <span class="number">0x10B0</span> /* beep */</span></span><br><span class="line"><span class="params">	&gt;</span><span class="punctuation">;</span></span><br><span class="line"><span class="punctuation">&#125;;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在根节点“<code>/</code>”下创建 <code>BEEP</code> 节点，节点名为“<code>beep</code>”</p>
+<figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="title class_">beep</span> <span class="punctuation">&#123;</span></span><br><span class="line">	<span class="meta">#address-cells = &lt;1&gt;;</span></span><br><span class="line">	<span class="meta">#size-cells = &lt;1&gt;;</span></span><br><span class="line">	<span class="attr">compatible</span> <span class="operator">=</span> <span class="string">&quot;atkalpha-beep&quot;</span><span class="punctuation">;</span></span><br><span class="line">	<span class="attr">pinctrl-names</span> <span class="operator">=</span> <span class="string">&quot;default&quot;</span><span class="punctuation">;</span></span><br><span class="line">	pinctrl<span class="number">-0</span> = <span class="params">&lt;<span class="variable">&amp;pinctrl_beep</span>&gt;</span><span class="punctuation">;</span></span><br><span class="line">	<span class="attr">beep-gpio</span> <span class="operator">=</span> <span class="params">&lt;<span class="variable">&amp;gpio5</span> <span class="number">1</span> GPIO_ACTIVE_HIGH&gt;</span><span class="punctuation">;</span></span><br><span class="line">	<span class="attr">status</span> <span class="operator">=</span> <span class="string">&quot;okay&quot;</span><span class="punctuation">;</span></span><br><span class="line"><span class="punctuation">&#125;;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>检查 <code>PIN</code> 是否被其他外设使用</p>
+</li>
+<li><p>蜂鸣器驱动程序编写</p>
+</li>
+<li><p>编写测试 <code>APP</code></p>
+</li>
+<li><p>编译驱动程序: <code>make -j32</code></p>
+</li>
+<li><p>编译测试 <code>APP</code>: <code>arm-linux-gnueabihf-gcc beepApp.c -o beepApp</code></p>
+</li>
+<li><p>开发板运行测试</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">depmod 			//第一次加载驱动的时候需要运行此命令</span><br><span class="line">modprobe beep.ko 	//加载驱动</span><br><span class="line">./beepApp /dev/beep 1 	//打开蜂鸣器</span><br><span class="line">./beepApp /dev/beep 0 	//关闭蜂鸣器</span><br><span class="line">rmmod beep.ko</span><br></pre></td></tr></table></figure></li>
+</ul>
+<br>
+
+
     </div>
 
     
@@ -628,7 +702,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="nav-number">1.</span> <span class="nav-text">开发环境搭建</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%AE%89%E8%A3%85"><span class="nav-number">1.1.</span> <span class="nav-text">虚拟机安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE%E9%81%87%E5%88%B0%E7%9A%84%E9%97%AE%E9%A2%98"><span class="nav-number">1.2.</span> <span class="nav-text">虚拟机安装配置遇到的问题</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Uboot%E7%A7%BB%E6%A4%8D"><span class="nav-number">2.</span> <span class="nav-text">Uboot移植</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#I-MX6ULL%E5%90%AF%E5%8A%A8%E6%A8%A1%E5%BC%8F"><span class="nav-number">2.1.</span> <span class="nav-text">I.MX6ULL启动模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Uboot%E7%BC%96%E8%AF%91%E7%83%A7%E5%BD%95"><span class="nav-number">2.2.</span> <span class="nav-text">Uboot编译烧录</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Uboot%E7%83%A7%E5%BD%95%E5%88%B0SD%E5%8D%A1"><span class="nav-number">2.2.1.</span> <span class="nav-text">Uboot烧录到SD卡</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Linux%E5%86%85%E6%A0%B8%E7%A7%BB%E6%A4%8D"><span class="nav-number">3.</span> <span class="nav-text">Linux内核移植</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A7%BB%E6%A4%8D%E6%AD%A5%E9%AA%A4"><span class="nav-number">3.1.</span> <span class="nav-text">移植步骤</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%8E%E7%BD%91%E7%BB%9C%E5%90%AF%E5%8A%A8Linux%E7%B3%BB%E7%BB%9F"><span class="nav-number">3.2.</span> <span class="nav-text">从网络启动Linux系统</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8tftpboot%E5%90%AF%E5%8A%A8%E4%BC%A0%E8%BE%93%E3%80%82"><span class="nav-number">3.2.1.</span> <span class="nav-text">使用tftpboot启动传输。</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8nfs%E6%8C%82%E8%BD%BDrootfs%E3%80%82"><span class="nav-number">3.2.2.</span> <span class="nav-text">使用nfs挂载rootfs。</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Linux%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91"><span class="nav-number">4.</span> <span class="nav-text">Linux驱动开发</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%80%81%E5%AD%97%E7%AC%A6%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%EF%BC%88%E6%89%8B%E5%8A%A8%E5%88%9B%E5%BB%BA%E8%8A%82%E7%82%B9%EF%BC%89"><span class="nav-number">4.1.</span> <span class="nav-text">老字符驱动开发（手动创建节点）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%80%81%E5%AD%97%E7%AC%A6%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%EF%BC%88%E8%87%AA%E5%8A%A8%E5%88%9B%E5%BB%BA%E8%8A%82%E7%82%B9%EF%BC%89"><span class="nav-number">4.2.</span> <span class="nav-text">老字符驱动开发（自动创建节点）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Linux-%E8%AE%BE%E5%A4%87%E6%A0%91"><span class="nav-number">4.3.</span> <span class="nav-text">Linux 设备树</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="nav-number">1.</span> <span class="nav-text">开发环境搭建</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%AE%89%E8%A3%85"><span class="nav-number">1.1.</span> <span class="nav-text">虚拟机安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE%E9%81%87%E5%88%B0%E7%9A%84%E9%97%AE%E9%A2%98"><span class="nav-number">1.2.</span> <span class="nav-text">虚拟机安装配置遇到的问题</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Uboot%E7%A7%BB%E6%A4%8D"><span class="nav-number">2.</span> <span class="nav-text">Uboot移植</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#I-MX6ULL%E5%90%AF%E5%8A%A8%E6%A8%A1%E5%BC%8F"><span class="nav-number">2.1.</span> <span class="nav-text">I.MX6ULL启动模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Uboot%E7%BC%96%E8%AF%91%E7%83%A7%E5%BD%95"><span class="nav-number">2.2.</span> <span class="nav-text">Uboot编译烧录</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Uboot%E7%83%A7%E5%BD%95%E5%88%B0SD%E5%8D%A1"><span class="nav-number">2.2.1.</span> <span class="nav-text">Uboot烧录到SD卡</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Linux%E5%86%85%E6%A0%B8%E7%A7%BB%E6%A4%8D"><span class="nav-number">3.</span> <span class="nav-text">Linux内核移植</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A7%BB%E6%A4%8D%E6%AD%A5%E9%AA%A4"><span class="nav-number">3.1.</span> <span class="nav-text">移植步骤</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%8E%E7%BD%91%E7%BB%9C%E5%90%AF%E5%8A%A8Linux%E7%B3%BB%E7%BB%9F"><span class="nav-number">3.2.</span> <span class="nav-text">从网络启动Linux系统</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8tftpboot%E5%90%AF%E5%8A%A8%E4%BC%A0%E8%BE%93%E3%80%82"><span class="nav-number">3.2.1.</span> <span class="nav-text">使用tftpboot启动传输。</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8nfs%E6%8C%82%E8%BD%BDrootfs%E3%80%82"><span class="nav-number">3.2.2.</span> <span class="nav-text">使用nfs挂载rootfs。</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Linux%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91"><span class="nav-number">4.</span> <span class="nav-text">Linux驱动开发</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%80%81%E5%AD%97%E7%AC%A6%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%EF%BC%88%E6%89%8B%E5%8A%A8%E5%88%9B%E5%BB%BA%E8%8A%82%E7%82%B9%EF%BC%89"><span class="nav-number">4.1.</span> <span class="nav-text">老字符驱动开发（手动创建节点）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%80%81%E5%AD%97%E7%AC%A6%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%EF%BC%88%E8%87%AA%E5%8A%A8%E5%88%9B%E5%BB%BA%E8%8A%82%E7%82%B9%EF%BC%89"><span class="nav-number">4.2.</span> <span class="nav-text">老字符驱动开发（自动创建节点）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Linux-%E8%AE%BE%E5%A4%87%E6%A0%91"><span class="nav-number">4.3.</span> <span class="nav-text">Linux 设备树</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#pinctrl-%E5%92%8C-gpio-%E5%AD%90%E7%B3%BB%E7%BB%9F%E5%AE%9E%E9%AA%8C"><span class="nav-number">4.4.</span> <span class="nav-text">pinctrl 和 gpio 子系统实验</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#pinctrl-%E5%AD%90%E7%B3%BB%E7%BB%9F%E4%BB%8B%E7%BB%8D"><span class="nav-number">4.4.1.</span> <span class="nav-text">pinctrl 子系统介绍</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%BE%E5%A4%87%E6%A0%91%E4%B8%AD%E6%B7%BB%E5%8A%A0-pinctrl-%E8%8A%82%E7%82%B9%E6%A8%A1%E6%9D%BF"><span class="nav-number">4.4.2.</span> <span class="nav-text">设备树中添加 pinctrl 节点模板</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#gpio%E5%AD%90%E7%B3%BB%E7%BB%9F"><span class="nav-number">4.4.3.</span> <span class="nav-text">gpio子系统</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#gpio%E5%AE%9E%E9%AA%8C"><span class="nav-number">4.4.4.</span> <span class="nav-text">gpio实验</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Linux-%E8%9C%82%E9%B8%A3%E5%99%A8%E5%AE%9E%E9%AA%8C"><span class="nav-number">4.5.</span> <span class="nav-text">Linux 蜂鸣器实验</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -691,12 +765,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="Symbols count total">36k</span>
+    <span title="Symbols count total">37k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="Reading time total">2:01</span>
+    <span title="Reading time total">2:05</span>
 </div>
   <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
   </div>
