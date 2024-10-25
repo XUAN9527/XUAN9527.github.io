@@ -681,23 +681,10 @@ static void ec32_uart_dma_tx_config(struct ec_serial_device *serial, uint8_t *bu
         DMA_InitStructure.BufSize = length + dma_get_counts;
         serial->Txbuffer->tail = serial->Txbuffer->tail + length;
     }
-    
-    DMA_InitStructure.PeriphAddr = (uint32_t) &(serial->uart_device->DAT);
-    DMA_InitStructure.Direction = DMA_DIR_PERIPH_DST;
-    DMA_InitStructure.PeriphInc = DMA_PERIPH_INC_DISABLE;
-    DMA_InitStructure.DMA_MemoryInc = DMA_MEM_INC_ENABLE;
-    DMA_InitStructure.PeriphDataSize = DMA_PERIPH_DATA_SIZE_BYTE;
-    DMA_InitStructure.MemDataSize = DMA_MemoryDataSize_Byte;
-    DMA_InitStructure.CircularMode = DMA_MODE_NORMAL;
-    DMA_InitStructure.Priority = DMA_PRIORITY_MEDIUM;
-    DMA_InitStructure.Mem2Mem = DMA_M2M_DISABLE;
-    DMA_Init(serial->dma.tx_ch, &DMA_InitStructure);
-	
-    DMA_ClearFlag(serial->dma.tx_gl_flag, serial->dma.tx_dma_type);
-    DMA_EnableChannel(serial->dma.tx_ch, ENABLE);
-    // while(DMA_GetFlagStatus(serial->dma.tx_gl_flag, serial->dma.tx_dma_type) == RESET){}
+... ...
 }
 ```
+
 问题解决来自`jindu-chen`，修改后：
 ``` c
 static void ec32_uart_dma_tx_config(struct ec_serial_device *serial, uint8_t *buffer, uint16_t length)
@@ -732,23 +719,10 @@ static void ec32_uart_dma_tx_config(struct ec_serial_device *serial, uint8_t *bu
             serial->Txbuffer->tail = serial->Txbuffer->tail + length;
         }
     }
-	
-    DMA_InitStructure.PeriphAddr = (uint32_t) &(serial->uart_device->DAT);
-    DMA_InitStructure.Direction = DMA_DIR_PERIPH_DST;
-    DMA_InitStructure.PeriphInc = DMA_PERIPH_INC_DISABLE;
-    DMA_InitStructure.DMA_MemoryInc = DMA_MEM_INC_ENABLE;
-    DMA_InitStructure.PeriphDataSize = DMA_PERIPH_DATA_SIZE_BYTE;
-    DMA_InitStructure.MemDataSize = DMA_MemoryDataSize_Byte;
-    DMA_InitStructure.CircularMode = DMA_MODE_NORMAL;
-    DMA_InitStructure.Priority = DMA_PRIORITY_MEDIUM;
-    DMA_InitStructure.Mem2Mem = DMA_M2M_DISABLE;
-    DMA_Init(serial->dma.tx_ch, &DMA_InitStructure);
-	
-    DMA_ClearFlag(serial->dma.tx_gl_flag, serial->dma.tx_dma_type);
-    DMA_EnableChannel(serial->dma.tx_ch, ENABLE);
+... ...
 }
 ```
-总结：修改前`tail`指针接近缓存区最大边界时，剩余空间不足时会进入以下函数, 一直卡在`while`中出不来, 需改到后面去：
+修改前`tail`指针接近缓存区最大边界时，剩余空间不足时会进入以下函数, 一直卡在`while`中出不来, 需改到后面去：
 ``` c
 if(serial->Txbuffer->tail + length > serial->dma.setting_tx_len) 
 {
@@ -796,22 +770,55 @@ static void ec32_uart_dma_tx_config(struct ec_serial_device *serial, uint8_t *bu
 			serial->Txbuffer->tail = serial->Txbuffer->tail + length;
 		}
     }
-	
-    DMA_InitStructure.PeriphAddr = (uint32_t) &(serial->uart_device->DAT);
-    DMA_InitStructure.Direction = DMA_DIR_PERIPH_DST;
-    DMA_InitStructure.PeriphInc = DMA_PERIPH_INC_DISABLE;
-    DMA_InitStructure.DMA_MemoryInc = DMA_MEM_INC_ENABLE;
-    DMA_InitStructure.PeriphDataSize = DMA_PERIPH_DATA_SIZE_BYTE;
-    DMA_InitStructure.MemDataSize = DMA_MemoryDataSize_Byte;
-    DMA_InitStructure.CircularMode = DMA_MODE_NORMAL;
-    DMA_InitStructure.Priority = DMA_PRIORITY_MEDIUM;
-    DMA_InitStructure.Mem2Mem = DMA_M2M_DISABLE;
-    DMA_Init(serial->dma.tx_ch, &DMA_InitStructure);
-	
-    DMA_ClearFlag(serial->dma.tx_gl_flag, serial->dma.tx_dma_type);
-    DMA_EnableChannel(serial->dma.tx_ch, ENABLE);
+... ...
 }
 ```
+
+修改后还是会在DMA发送数据满的时候，多出不知名的符号，再次修改：
+``` c
+static void ec32_uart_dma_tx_config(struct ec_serial_device *serial, uint8_t *buffer, uint16_t length)
+{
+    DMA_EnableChannel(serial->dma.tx_ch, DISABLE);          //去掉这一项，在需要关闭时再关闭DMA，否则会影响数组满时的数据。
+... ...
+```
+
+修改后代码：
+```
+static void ec32_uart_dma_tx_config(struct ec_serial_device *serial, uint8_t *buffer, uint16_t length)
+{
+    DMA_InitType DMA_InitStructure;
+	
+    /* if no data waiting send*/
+    if(DMA_GetCurrDataCounter(serial->dma.tx_ch) == 0)
+    {
+        DMA_EnableChannel(serial->dma.tx_ch, DISABLE);
+		serial->Txbuffer->lenth = length > serial->dma.setting_tx_len ? serial->dma.setting_tx_len : length;
+		memcpy(serial->Txbuffer->data, buffer, serial->Txbuffer->lenth);
+        DMA_InitStructure.MemAddr = (uint32_t)serial->Txbuffer->data;
+        DMA_InitStructure.BufSize = serial->Txbuffer->lenth;
+        serial->Txbuffer->tail = serial->Txbuffer->lenth;
+    }else{
+        if(serial->Txbuffer->tail + length > serial->dma.setting_tx_len)
+        {
+            while(DMA_GetFlagStatus(serial->dma.tx_gl_flag, serial->dma.tx_dma_type) == RESET){}
+            DMA_EnableChannel(serial->dma.tx_ch, DISABLE);
+            
+            serial->Txbuffer->lenth = length > serial->dma.setting_tx_len ? serial->dma.setting_tx_len : length;
+            memcpy(serial->Txbuffer->data, buffer, serial->Txbuffer->lenth);
+			DMA_InitStructure.MemAddr = (uint32_t)serial->Txbuffer->data;
+			DMA_InitStructure.BufSize = serial->Txbuffer->lenth;
+			serial->Txbuffer->tail = serial->Txbuffer->lenth;
+        }else{
+            DMA_EnableChannel(serial->dma.tx_ch, DISABLE);
+			memcpy(serial->Txbuffer->data + serial->Txbuffer->tail, buffer, length);
+			DMA_InitStructure.MemAddr = (uint32_t)(serial->Txbuffer->data + serial->Txbuffer->tail - DMA_GetCurrDataCounter(serial->dma.tx_ch));
+			DMA_InitStructure.BufSize = length + DMA_GetCurrDataCounter(serial->dma.tx_ch);
+			serial->Txbuffer->tail = serial->Txbuffer->tail + length;
+		}
+    }
+... ...
+```
+
 <br>
 
 ## RT-THREAD下IAP升级问题
@@ -845,3 +852,16 @@ rt_thread_t th = rt_thread_find("tidle");					//fix it（2022.8.30）
 	ret = rt_thread_control(th,RT_THREAD_CTRL_CHANGE_PRIORITY,&original_priority);
     rt_schedule();
 ```
+
+## J-LINK添加芯片
+`J-LINK`时常会添加没用过的芯片，有以下步骤可以适配J-LINK的UI界面版和指令板，以`GD`的`GD32E235CBT6`举例：
+
+- 添加`GD32E23x.FLM`文件到`JLink\Devices\GigaDevice`
+- 在最后面, `</DataBase>`之前追加`JLinkDevices.xml`文件的内容：
+``` xml
+<Device>
+    <ChipInfo Vendor="GigaDevice" Name="GD32E235CB" Core="JLINK_CORE_CORTEX_M23"  WorkRAMAddr="0x20000000" WorkRAMSize="0x00004000" />
+    <FlashBankInfo Name="Flash Bank1" BaseAddr="0x08000000" MaxSize="0x00020000" Loader="Devices\GigaDevice\GD32E23x.FLM" LoaderType="FLASH_ALGO_TYPE_OPEN" AlwaysPresent="1"/>
+  </Device>
+```
+- 注意, `Name="GD32E235CB"` 中的`GD32E235CB` 需要跟脚本指令 `JLink -device N32G452RC`保持一致。

@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>BLDC介绍.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+          ? 'dark'
+          : 'default'
+    });
+  </script>
+<h2 id="%E7%9B%B4%E6%B5%81%E6%97%A0%E5%88%B7%E7%94%B5%E6%9C%BAbldc%E6%A6%82%E8%BF%B0">直流无刷电机（BLDC）概述</h2>
+<p>无刷直流电机（Brushless Direct Current Motor, BLDCM）克服了有刷直流电机的先天性缺陷，以电子换向器取代了机械换向器，所以无刷直流电机既具有直流电机良好的调速性能等特点，又具有交流电机结构简单、无换向火花、运行可靠和易于维护等优点。无刷直流电机的实质是直流电源输入，采用电子逆变器将直流电转换为交流电，有转子位置反馈的三相交流永磁同步电机。</p>
+<p>描述中几个关键性词解释：</p>
+<ul>
+<li>有刷直流电机的先天性缺陷：有刷电机的结构复杂，可靠性差，故障多，维护工作量大，寿命短，换向火花易产生电磁干扰等。</li>
+<li>电子换向器：即电子逆变器。直流电通过逆变电路生成三相交流电驱动电机运转。</li>
+</ul>
+<br>
+<h2 id="bldc%E5%9C%A8%E9%A1%B9%E7%9B%AE%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8%E5%9C%BA%E5%90%88">BLDC在项目中的应用场合</h2>
+<h3 id="%E5%8E%9F%E7%90%86%E5%9B%BE">原理图</h3>
+<p><img src="../pictures/电机接口原理图.png" alt="电机接口原理图"></p>
+<br>
+<h3 id="%E9%A9%B1%E5%8A%A8%E4%BB%A3%E7%A0%81">驱动代码</h3>
+<p>驱动示例链接：https://git.breo.cn/804590/n5-mini-pro/-/tree/main/code/main_board/app/driver?ref_type=heads</p>
+<ul>
+<li><code>drv_pwm_input.c</code>	<code>drv_pwm_gpio.c</code></li>
+<li><code>drv_pwm_input.h</code>	<code>drv_pwm_gpio.h</code></li>
+</ul>
+<pre class="hljs"><code><div><span class="hljs-comment">// drv_pwm_gpio.h 接口文件</span>
+
+<span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">timer_gpio_init</span><span class="hljs-params">(ETIMER_SOURSE tim,ETIMER_REMAP remap,ETIMER_CH channel,ETIMER_MODE mode)</span></span>;
+</div></code></pre>
+<pre class="hljs"><code><div><span class="hljs-comment">// drv_pwm_input.h 接口文件</span>
+
+<span class="hljs-keyword">typedef</span> <span class="hljs-keyword">enum</span>{
+	ETIMER_1 = <span class="hljs-number">1</span>,
+	ETIMER_2,
+	ETIMER_3,
+	ETIMER_4,
+	ETIMER_5,
+	ETIMER_6,
+	ETIMER_7,
+	ETIMER_8
+}ETIMER_SOURSE;
+
+<span class="hljs-keyword">typedef</span> <span class="hljs-keyword">enum</span>{		<span class="hljs-comment">//bit[11:10]</span>
+	ETR_REMAP_0 = <span class="hljs-number">0</span>,	
+	ETR_REMAP_1,
+	ETR_REMAP_2,
+	ETR_REMAP_3
+}ETIMER_REMAP;
+
+<span class="hljs-keyword">typedef</span> <span class="hljs-keyword">enum</span>{		
+	ETIMER_CH_1 = <span class="hljs-number">1</span>,	
+	ETIMER_CH_2,
+	ETIMER_CH_3,
+	ETIMER_CH_4
+}ETIMER_CH;
+	
+<span class="hljs-keyword">typedef</span> <span class="hljs-keyword">enum</span>{		
+	ETIMER_MODE_NONE = <span class="hljs-number">0X00</span>,
+	ETIMER_MODE_PWM = <span class="hljs-number">0x01</span>,
+	ETIMER_MODE_INPUT = <span class="hljs-number">0x10</span>
+}ETIMER_MODE;
+
+<span class="hljs-keyword">typedef</span> <span class="hljs-keyword">enum</span>{	 
+	EC_CMD_SET = <span class="hljs-number">1</span>,			
+	EC_CMD_GET			
+}ECONTROL_CMD;
+
+<span class="hljs-keyword">typedef</span> <span class="hljs-keyword">enum</span>{	 
+	EINPUT_NONE = <span class="hljs-number">0</span>,
+	EINPUT_DONE = <span class="hljs-number">1</span>,
+	EINPUT_TIMEOUT = <span class="hljs-number">2</span>
+}EINPUTEVENT;
+
+<span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">ec_pi_config</span>
+{</span>
+	<span class="hljs-keyword">uint32_t</span> psc;				<span class="hljs-comment">/* 预分频 0~0xFFFF */</span>
+    <span class="hljs-keyword">uint32_t</span> period; 			<span class="hljs-comment">/* 计数值  0~0xFFFF */</span>
+    ETIMER_MODE channel[<span class="hljs-number">4</span>]; 	<span class="hljs-comment">/* channel 1~4；参考ETIMER_MODE选择模式 */</span>
+    <span class="hljs-keyword">uint32_t</span> value[<span class="hljs-number">4</span>];   		<span class="hljs-comment">/* pwm模式下pluse，input模式下FREQ */</span>
+};
+
+<span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">ec_pwm_input_config</span>
+{</span>
+    <span class="hljs-keyword">uint8_t</span> channel; 	<span class="hljs-comment">/* channel 1~4 */</span>
+	<span class="hljs-keyword">uint32_t</span> psc;		<span class="hljs-comment">/* 预分频 1~65536 */</span>
+    <span class="hljs-keyword">uint32_t</span> period; 	<span class="hljs-comment">/* 计数值    0~0xFFFF */</span>
+    <span class="hljs-keyword">uint32_t</span> value;   	<span class="hljs-comment">/* pwm模式下pluse：在period范围内，input模式下FREQ */</span>
+};
+
+<span class="hljs-class"><span class="hljs-keyword">struct</span>  <span class="hljs-title">ec_tim_device</span>
+{</span>
+    TIM_Module* tim_handle;
+	<span class="hljs-keyword">uint32_t</span> int_clock;
+	<span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">ec_pi_config</span> <span class="hljs-title">pwm_input</span>;</span>
+};
+
+<span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">capture_list</span>
+{</span>
+    <span class="hljs-keyword">uint16_t</span> ic_readvalue1;
+	<span class="hljs-keyword">uint16_t</span> ic_readvalue2;
+	<span class="hljs-keyword">uint32_t</span> captureflag;
+	<span class="hljs-keyword">uint32_t</span> capture;
+	<span class="hljs-keyword">uint32_t</span> timfreq;
+	<span class="hljs-keyword">uint32_t</span> timenterirqcnt;
+	<span class="hljs-keyword">uint8_t</span> first_input;
+	<span class="hljs-keyword">uint8_t</span> input_done;
+	<span class="hljs-keyword">uint8_t</span> timeout_flag;
+	<span class="hljs-keyword">uint8_t</span> timeout_status;
+	<span class="hljs-keyword">uint32_t</span> timeout;
+};
+
+<span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">drv_hw_pwm_input_init</span><span class="hljs-params">(ETIMER_SOURSE tim,ETIMER_REMAP remap,ETIMER_CH channel,ETIMER_MODE mode)</span></span>;			<span class="hljs-comment">//初始化</span>
+<span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">drv_pwm_input_control</span><span class="hljs-params">(ETIMER_SOURSE tim, ETIMER_MODE mode, ECONTROL_CMD cmd,struct ec_pwm_input_config *pi)</span></span>;	<span class="hljs-comment">//参数配置</span>
+<span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">drv_pwm_input_enabled</span><span class="hljs-params">(ETIMER_SOURSE timx, ETIMER_CH channel,ETIMER_MODE mode,<span class="hljs-keyword">bool</span> enable)</span></span>;				<span class="hljs-comment">//pwm/inputcap使能</span>
+<span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">drv_set_pwm_pulse_percent</span><span class="hljs-params">(ETIMER_SOURSE timx, ETIMER_CH channel,<span class="hljs-keyword">uint8_t</span> percent)</span></span>;					<span class="hljs-comment">//设置百分占空比</span>
+<span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">drv_set_pwm_pulse_Thousandths</span><span class="hljs-params">(ETIMER_SOURSE timx, ETIMER_CH channel,<span class="hljs-keyword">uint16_t</span> Thousandths)</span></span>;				<span class="hljs-comment">//设置千分占空比</span>
+<span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">tim_user_get_callback</span><span class="hljs-params">(ETIMER_SOURSE tim,ETIMER_CH channel,EINPUTEVENT event,<span class="hljs-keyword">uint32_t</span> timfreq)</span></span>;			<span class="hljs-comment">//inputcap开启后触发的回调函数</span>
+</div></code></pre>
+<br>
+<h3 id="%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8%E7%A4%BA%E4%BE%8B%E5%A6%82%E4%B8%8B">如何使用（示例如下）</h3>
+<p>驱动示例链接:https://git.breo.cn/804590/n5-mini-pro/-/blob/main/code/main_board/app/user/user_board.c?ref_type=heads</p>
+<ul>
+<li><code>PWM</code>/<code>INPUTCAP</code>初始化</li>
+</ul>
+<pre class="hljs"><code><div><span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> PWM_DEV_MOTOR1_HANDLE           ETIMER_4</span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> PWM_DEV_MOTOR1_CH  				ETIMER_CH_1</span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> PWM_DEV_MOTOR1_REMAP			ETR_REMAP_0</span>
+										
+<span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> INPUT_DEV_MOTOR1_HANDLE         ETIMER_4</span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> INPUT_DEV_MOTOR1_CH				ETIMER_CH_2</span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> INPUT_DEV_MOTOR1_REMAP			ETR_REMAP_0</span>
+
+<span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">ec_pwm_input_config</span> <span class="hljs-title">info1</span> = {</span>PWM_DEV_MOTOR1_CH,<span class="hljs-number">2</span>,<span class="hljs-number">1799</span>,<span class="hljs-number">1800</span>};		<span class="hljs-comment">//20K,input和pwm一个通道需调整input超时时间</span>
+drv_hw_pwm_input_init(PWM_DEV_MOTOR1_HANDLEPWM_DEV_MOTOR1_REMAP,PWM_DEV_MOTOR1_CH,ETIMER_MODE_PWM);
+drv_pwm_input_control(PWM_DEV_MOTOR1_HANDLEETIMER_MODE_PWM,EC_CMD_SET,&amp;info1);
+drv_pwm_input_enabled(PWM_DEV_MOTOR1_HANDLEPWM_DEV_MOTOR1_CH,ETIMER_MODE_PWM,ENABLE);
+info1.channel = INPUT_DEV_MOTOR1_CH;
+drv_hw_pwm_input_init(INPUT_DEV_MOTOR1_HANDLEINPUT_DEV_MOTOR1_REMAP,INPUT_DEV_MOTOR1_CHETIMER_MODE_INPUT);
+drv_pwm_input_control(INPUT_DEV_MOTOR1_HANDLEETIMER_MODE_INPUT,EC_CMD_SET,&amp;info1);
+drv_pwm_input_enabled(INPUT_DEV_MOTOR1_HANDLEINPUT_DEV_MOTOR1_CH,ETIMER_MODE_INPUT,DISABLE);
+
+</div></code></pre>
+<ul>
+<li>应用接口代码封装</li>
+</ul>
+<pre class="hljs"><code><div><span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> PIN_MOTOR1_FR              	53</span>
+
+<span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">board_motor_dir_set</span><span class="hljs-params">(<span class="hljs-keyword">int8_t</span> ch,<span class="hljs-keyword">bool</span> en)</span>		<span class="hljs-comment">//设置电机方向，IO口初始化略</span>
+</span>{
+	<span class="hljs-keyword">if</span>(ch == <span class="hljs-number">0</span>)
+	{
+	    pin_set_func(pin_handle(PIN_MOTOR1_FR), en);
+	}
+}
+
+<span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">board_motor_ch_set_en</span><span class="hljs-params">(<span class="hljs-keyword">int8_t</span> ch, <span class="hljs-keyword">bool</span> en)</span>		<span class="hljs-comment">//使能</span>
+</span>{
+    <span class="hljs-keyword">if</span>(ch == <span class="hljs-number">0</span>)
+	{
+<span class="hljs-comment">//      drv_pwm_input_enabled(PWM_DEV_MOTOR_HANDLE,PWM_DEV_MOTOR_CH,ETIMER_MODE_PWM,(MCENABLE)en);</span>
+		drv_pwm_input_enabled(INPUT_DEV_MOTOR1_HANDLE,INPUT_DEV_MOTOR1_CH,ETIMER_MODE_INPUT,en);
+	}
+}
+
+<span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> MOTOR_PWM_REVERCE	1	<span class="hljs-comment">//PWM值与转速正比：0，反之：1</span></span>
+<span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">board_motor_ch_set_duty_cycle</span><span class="hljs-params">(<span class="hljs-keyword">int8_t</span> ch, <span class="hljs-keyword">int8_t</span> value)</span> <span class="hljs-comment">//设置电机占空比</span>
+</span>{
+    <span class="hljs-keyword">if</span> (value &lt; <span class="hljs-number">0</span>){
+        value = <span class="hljs-number">0</span>;
+	}
+    <span class="hljs-keyword">if</span> (value &gt; <span class="hljs-number">100</span>){
+        value = <span class="hljs-number">100</span>;
+	}
+	<span class="hljs-keyword">uint8_t</span> real_percent;
+<span class="hljs-meta">#<span class="hljs-meta-keyword">if</span> MOTOR_PWM_REVERCE</span>
+	real_percent = <span class="hljs-number">100</span> - value;
+<span class="hljs-meta">#<span class="hljs-meta-keyword">else</span></span>
+	real_percent = value;
+<span class="hljs-meta">#<span class="hljs-meta-keyword">endif</span></span>
+	
+	<span class="hljs-keyword">if</span>(ch == <span class="hljs-number">0</span>)
+	{
+<span class="hljs-comment">//		logVerbose("ch0,value=[%d]",value);</span>
+		drv_set_pwm_pulse_percent(PWM_DEV_MOTOR1_HANDLE,PWM_DEV_MOTOR1_CH,real_percent);	
+	}
+}
+
+<span class="hljs-keyword">static</span> <span class="hljs-keyword">uint32_t</span> timfreq_value[<span class="hljs-number">1</span>];
+<span class="hljs-keyword">static</span> <span class="hljs-keyword">uint32_t</span> tim_getcnts[<span class="hljs-number">1</span>];
+<span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">tim_user_get_callback</span><span class="hljs-params">(ETIMER_SOURSE tim,ETIMER_CH channel,EINPUTEVENT event,<span class="hljs-keyword">uint32_t</span> timfreq)</span>	<span class="hljs-comment">//编写输入捕获回调函数</span>
+</span>{
+	<span class="hljs-keyword">if</span>(tim == ETIMER_4)
+	{
+		<span class="hljs-keyword">if</span>(event == EINPUT_DONE)
+		{
+			tim_getcnts[<span class="hljs-number">0</span>]++;
+			timfreq_value[<span class="hljs-number">0</span>] = timfreq;
+<span class="hljs-comment">//			logDebug("T5 channel=%d,timfreq=%d",channel,timfreq);</span>
+		}<span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>(event == EINPUT_TIMEOUT)
+		{
+			timfreq_value[<span class="hljs-number">0</span>] = <span class="hljs-number">0</span>;
+<span class="hljs-comment">//			logDebug("T5  failed!");</span>
+		}
+	}
+	<span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}
+
+<span class="hljs-function"><span class="hljs-keyword">uint32_t</span> <span class="hljs-title">board_motor_ch_get_input_capture</span><span class="hljs-params">(<span class="hljs-keyword">int8_t</span> ch)</span>	<span class="hljs-comment">//获取电机输入捕获频率</span>
+</span>{
+	<span class="hljs-keyword">uint32_t</span> motor_input_freq = <span class="hljs-number">0</span>;
+	<span class="hljs-keyword">if</span>(ch == <span class="hljs-number">0</span>)
+	{
+		motor_input_freq = timfreq_value[<span class="hljs-number">0</span>];
+	}
+	<span class="hljs-keyword">return</span> motor_input_freq;
+}
+
+<span class="hljs-function"><span class="hljs-keyword">uint32_t</span> <span class="hljs-title">board_motor_inputap_cnts_get</span><span class="hljs-params">(<span class="hljs-keyword">int8_t</span> ch)</span>	<span class="hljs-comment">//获取电机输入捕获次数</span>
+</span>{
+	<span class="hljs-keyword">uint32_t</span> motor_cnts = <span class="hljs-number">0</span>;
+	<span class="hljs-keyword">if</span>(ch == <span class="hljs-number">0</span>)
+	{
+		motor_cnts = tim_getcnts[<span class="hljs-number">0</span>];
+	}
+	<span class="hljs-keyword">return</span> motor_cnts;
+}
+</div></code></pre>
+<ul>
+<li>应用于电机等模块</li>
+</ul>
+
+</body>
+</html>

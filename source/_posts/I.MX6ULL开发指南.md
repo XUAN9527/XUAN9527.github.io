@@ -519,3 +519,145 @@ rmmod newchrled.ko
 
 ### Linux 设备树
 
+以LED点灯驱动为例主要步骤：
+
+- 修改设备树(.dts文件),跟根节点下添加设备子节点，子节点添加属性，举例：
+``` dts
+alphaled {
+	#address-cells = <1>;
+	#size-cells = <1>;
+	compatible = "atkalpha-led";
+	status = "okay";
+	reg = < 0X020C406C 0X04 /* CCM_CCGR1_BASE */
+	0X020E0068 0X04 /* SW_MUX_GPIO1_IO03_BASE */
+	0X020E02F4 0X04 /* SW_PAD_GPIO1_IO03_BASE */
+	0X0209C000 0X04 /* GPIO1_DR_BASE */
+	0X0209C004 0X04 >; /* GPIO1_GDIR_BASE */
+};
+```
+- 在`linux`目录下重新编译设备树：`make dtbs`
+- 编译完成以后得到`imx6ull-alientek-emmc.dtb`，使用新的 `imx6ull-alientek-emmc.dtb`启动`Linux`内核
+- `Linux`启动成功以后进入到`/proc/device-tree/`目录中查看是否有`alphaled`这个节点,若没有则修改失败
+- 编写`dtsled.c`文件和文件`ledApp.c`,修改`Makefile`中的`KERNELDIR`参数为`/home/xuan/linux/linux-ga`
+``` shell
+make -j32
+arm-linux-gnueabihf-gcc ledApp.c -o ledApp
+```
+- 编译出来的`dtsled.ko`和`ledApp`这两个文件拷贝到`rootfs/lib/modules/4.1.15`目录中，**重启开发板**，进入到目录`lib/modules/4.1.15`中，输入如下命令加载`dtsled.ko`驱动模块：
+``` shell
+depmod 				//第一次加载驱动的时候需要运行此命令
+modprobe dtsled.ko 		//加载驱动
+./ledApp /dev/dtsled 1 		//打开 LED 灯
+./ledApp /dev/dtsled 0 		//关闭 LED 灯
+rmmod dtsled.ko
+```
+
+<br>
+
+### pinctrl 和 gpio 子系统实验
+
+#### pinctrl 子系统介绍
+
+`pinctrl` 子系统主要工作内容如下：
+- 获取设备树中 `pin` 信息。
+- 根据获取到的 `pin` 信息来设置 `pin` 的复用功能
+- 根据获取到的 `pin` 信息来设置 `pin` 的电气特性，比如上/下拉、速度、驱动能力等。
+
+对于我们使用者来讲，只需要在设备树里面设置好某个 `pin` 的相关属性即可，其他的初始化工作均由 `pinctrl` 子系统来完成， `pinctrl` 子系统源码目录为 `drivers/pinctrl`。
+
+<br>
+
+#### 设备树中添加 pinctrl 节点模板
+
+- 创建对应的节点，打开 `imx6ull-alientek-emmc.dts`，在 `iomuxc` 节点中的 `imx6ul-evk` 子节点下添加 “`pinctrl_test`” 节点
+- 添加 “`fsl,pins`” 属性，名字一定要为“`fsl,pins`”，因为对于 `I.MX` 系列 `SOC` 而言， `pinctrl` 驱动程序是通过读取“`fsl,pins`”属性值来获取 `PIN` 的配置信息
+
+``` dts
+pinctrl_test: testgrp {
+	/* 具体的 PIN 信息 */
+		fsl,pins = <
+			MX6UL_PAD_GPIO1_IO00__GPIO1_IO00 config 	/*config 是具体设置值*/
+		>;
+	};
+};
+```
+- 至此，我们已经在 `imx6ull-alientek-emmc.dts` 文件中添加好了 `test` 设备所使用的 `PIN` 配置信息。
+
+<br>
+
+#### gpio子系统
+
+<br>
+
+#### gpio实验
+
+- 添加 `pinctrl` 节点, ，打开 `imx6ull-alientekemmc.dts`，在 `iomuxc` 节点的 `imx6ul-evk` 子节点下创建一个名为“`pinctrl_led`”的子节点
+``` dts
+pinctrl_led: ledgrp {
+	fsl,pins = <
+		MX6UL_PAD_GPIO1_IO03__GPIO1_IO03 0x10B0 /* LED0 */
+	>;
+};
+```
+
+- 添加 `LED` 设备节点, 在根节点“`/`”下创建 `LED` 灯节点，节点名为“`gpioled`”
+``` dts
+gpioled {
+	#address-cells = <1>;
+	#size-cells = <1>;
+	compatible = "atkalpha-gpioled";
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_led>;
+	led-gpio = <&gpio1 3 GPIO_ACTIVE_LOW>;
+	status = "okay";
+};
+```
+
+- 检查 `PIN` 是否被其他外设使用
+	- 检查 `pinctrl` 设置。
+	- 如果这个 `PIN` 配置为 `GPIO` 的话，检查这个 `GPIO` 有没有被别的外设使用。
+- 在本章实验中 `LED` 灯使用的 `PIN` 为 `GPIO1_IO03`，在 `imx6ull-alientek-emmc.dts` 中，先检查 `GPIO_IO03` 这个 `PIN` 有没有被其他的 `pinctrl` 节点使用。
+- 如别的模块有使用到`GPIO_IO03`，需要注释掉。
+
+<br>
+
+### Linux 蜂鸣器实验
+
+- 打开`imx6ull-alientekemmc.dts`，在 `iomuxc` 节点的 `imx6ul-evk` 子节点下创建一个名为“`pinctrl_beep`”的子节点
+``` dts
+pinctrl_beep: beepgrp {
+	fsl,pins = <
+		MX6ULL_PAD_SNVS_TAMPER1__GPIO5_IO01 0x10B0 /* beep */
+	>;
+};
+```
+
+- 在根节点“`/`”下创建 `BEEP` 节点，节点名为“`beep`”
+``` dts
+beep {
+	#address-cells = <1>;
+	#size-cells = <1>;
+	compatible = "atkalpha-beep";
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_beep>;
+	beep-gpio = <&gpio5 1 GPIO_ACTIVE_HIGH>;
+	status = "okay";
+};
+```
+
+- 检查 `PIN` 是否被其他外设使用
+- 蜂鸣器驱动程序编写
+- 编写测试 `APP`
+- 编译驱动程序: `make -j32`
+- 编译测试 `APP`: `arm-linux-gnueabihf-gcc beepApp.c -o beepApp`
+- 开发板运行测试
+``` shell
+depmod 			//第一次加载驱动的时候需要运行此命令
+modprobe beep.ko 	//加载驱动
+./beepApp /dev/beep 1 	//打开蜂鸣器
+./beepApp /dev/beep 0 	//关闭蜂鸣器
+rmmod beep.ko
+```
+
+<br>
+
