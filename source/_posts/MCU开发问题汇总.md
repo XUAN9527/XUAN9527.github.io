@@ -89,13 +89,28 @@ int drv_adc_deinit(EADC_DEVICE adc_dev,EDMA_CHANNEL dma_ch)
 	- PD0 和 PD1 在 80 以下引脚封装复用到 OSC_IN/OUT
 - PC13、 PC14、 PC15：
 	- PC13～15 为备电域下的三个 IO， 备份域初次上电默认为模拟模式；
+
 <br>
+
 - PB2/BOOT1：
 	- PB2/BOOT1 默认处于下拉输入状态；
+
 <br>
+
 - BOOT0 默认输入下拉，参照下表， 若 BOOT 的引脚未连接，则默认选择 Flash 主存储区。
 
 ![mcu启动选项表](../pictures/mcu启动选项表.png)
+
+<br>
+
+注意：n32g452串口2无法发送数据问题
+
+- 打印测试进入了usart2的串口发送函数，示波器测量，有尖峰异常波形。
+
+``` c
+// 使用jlink引脚复用成GPIO时需要关闭jlink引脚功能，否则无法正常输出。
+GPIO_ConfigPinRemap(GPIO_RMP_SW_JTAG_SW_ENABLE, ENABLE);
+```
 <br>
 
 ## printf重定向
@@ -841,7 +856,7 @@ static void iap(void)
 - 解决方法：
 目前添加`rt_schedule();`暂时解决问题，测试中会偶发，最近测试没有发现，待进一步测试。
 ``` c
-rt_thread_t th = rt_thread_find("tidle");					//fix it（2022.8.30）
+    rt_thread_t th = rt_thread_find("tidle");					//fix it（2022.8.30）
     int original_priority = th->current_priority;
     int new_priority = RT_THREAD_COMM_TASK_PRIORITY - 1;
 	rt_err_t ret = rt_thread_control(th,RT_THREAD_CTRL_CHANGE_PRIORITY,&new_priority);
@@ -865,3 +880,57 @@ rt_thread_t th = rt_thread_find("tidle");					//fix it（2022.8.30）
   </Device>
 ```
 - 注意, `Name="GD32E235CB"` 中的`GD32E235CB` 需要跟脚本指令 `JLink -device N32G452RC`保持一致。
+
+## 利用正弦曲线模拟呼吸灯
+
+- 直接上示例：
+``` c
+// 宏定义
+#include <math.h>
+
+#define RLED_WHITE_NUM_MAX 		11
+#define RLED_RGB_TYPE 			3
+#define RLED_LIGHT_PERCENT 		0.3f								//light percent
+#define RLED_VALUE_MAX 			(uint8_t)(255 * RLED_LIGHT_PERCENT)	//max 255
+#define CHARGE_BREATH_TICKS		3000.0								//3s
+
+#ifndef M_PI
+	#define M_PI 3.14159265358979323846
+#endif
+const float twoPi = 2.0f * M_PI; // 2 * π
+
+// 具体实现
+static void led_rgb_breath_function(uint8_t *rgb, float tick)		//tick->(0~1) 为一个周期
+{
+	uint8_t temp[RLED_RGB_TYPE] = {0};
+	for(int i=0; i<RLED_RGB_TYPE; i++)
+	{
+		temp[i] = (rgb[i] * (1.0f + cos(M_PI + twoPi * tick)) / 2.0f);
+		board_led_rgb_set(i, temp[i]);          //具体输出RGB的PWM函数
+	}
+}
+
+RLED_RUN_MODE rled_ring_charge_function(event_param_t ep)
+{
+	RLED_RUN_MODE ret = RLED_NONE;
+		
+	static float ticks = 0;
+	uint8_t rgb_temp[] = RGB_LED_COLOR_WHITE;
+	for(int i=0; i<RLED_RGB_TYPE; i++)
+		rgb_temp[i] = (uint8_t)(rgb_temp[i] * RLED_LIGHT_PERCENT);
+
+	if(ep.first_in){
+		led_white_all_play(0);
+		ticks = 0;
+	}else{
+		ticks = ticks + LED_MAIN_UPGRATE_TIMES * LED_SINGLE_CHR_IN_CNTS / CHARGE_BREATH_TICKS;  // ticks递增
+		led_rgb_breath_function(rgb_temp, ticks);
+	}
+	
+	ret = ep.mode;
+	if(ep.ret_priv)
+		ret = ep.mode;
+	return ret;
+}
+```
+

@@ -1016,3 +1016,120 @@ genconfig:
 	@echo "genconfig .config > config.h complete!"
 ```
 执行`make menuconfig`进行配置，`make`编译生成即可。
+
+## makefile隐藏打印输出
+
+- 以下是`makefile`使用`make`编译的`shell`输出信息：
+``` shell
+xuan@DESKTOP-A52B6V9:~/work/wireless-charging/app$ make
+mkdir -p build/application/
+arm-none-eabi-gcc -ICMSIS/core -ICMSIS/device -Istd_periph_lib/inc -Iuser -Imsp -Idriver -Iapplication/inc -Icomponents/letter_shell -Icomponents/iap -Icomponents/ntc -Icomponents/soft_timer -Icomponents/comp_misc_lib -Icomponents/flexibleButton -Icomponents/aw9523b -c -fno-common --specs=rdimon.specs -std=gnu99 -mabi=aapcs -Wall -mcpu=cortex-m4 -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=hard -ffunction-sections -fdata-sections -lm --specs=nosys.specs --specs=nano.specs -Os -ggdb -DN32L40X -DUSE_STDPERIPH_DRIVER -D__FPU_PRESENT=1 -MMD -c application/main.c -o build/application/main.o
+arm-none-eabi-gcc build/CMSIS/device/startup/startup_n32l40x_gcc.o build/CMSIS/device/system_n32l40x.o build/std_periph_lib/src/n32l40x_rcc.o build/std_periph_lib/src/n32l40x_tim.o build/std_periph_lib/src/n32l40x_adc.o build/std_periph_lib/src/n32l40x_dma.o build/std_periph_lib/src/n32l40x_usart.o build/std_periph_lib/src/n32l40x_iwdg.o build/std_periph_lib/src/n32l40x_flash.o build/std_periph_lib/src/n32l40x_gpio.o build/std_periph_lib/src/n32l40x_spi.o build/std_periph_lib/src/misc.o build/application/main.o build/application/n32l40x_it.o build/application/system_work.o build/user/module_battery.o build/user/module_botton.o build/user/module_led.o build/user/module_power.o build/user/module_storage.o build/user/shell_debug.o build/user/user_board.o build/msp/board.o build/msp/drv_msp.o build/driver/drv_adc.o build/driver/drv_flash.o build/driver/drv_gpio.o build/driver/drv_iwdg.o build/driver/drv_pwm_gpio.o build/driver/drv_pwm_input.o build/driver/drv_usart.o build/driver/drv_spi_led.o build/driver/drv_i2c.o build/driver/drv_i2c_bit_ops.o build/components/comp_misc_lib/comp_misc_lib.o build/components/flexibleButton/flexible_button.o build/components/iap/af_utils.o build/components/iap/dcd_port.o build/components/iap/dcd_user.o build/components/iap/iap.o build/components/iap/ymodem.o build/components/letter_shell/log.o build/components/letter_shell/shell.o build/components/letter_shell/shell_cmd_list.o build/components/letter_shell/shell_companion.o build/components/letter_shell/shell_ext.o build/components/letter_shell/shell_port.o build/components/ntc/ntc.o build/components/soft_timer/soft_timer.o build/components/aw9523b/aw9523b.o -Wl,--gc-sections --data-sections -mabi=aapcs -mcpu=cortex-m4 -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=hard -ffunction-sections -fdata-sections -lm --specs=nosys.specs --specs=nano.specs -Os -ggdb -Tn32l40x_flash.ld -x assembler-with-cpp -Wa,-mimplicit-it=thumb -Wl,-Map=build/app.map -o build/app.elf
+arm-none-eabi-objcopy -Obinary build/app.elf build/app.bin
+arm-none-eabi-objdump -S build/app.elf > build/app.lst
+arm-none-eabi-objcopy -O ihex build/app.elf build/app.hex
+arm-none-eabi-size build/app.elf
+   text    data     bss     dec     hex filename
+  29280     292   11888   41460    a1f4 build/app.elf
+make[1]: Entering directory '/home/xuan/work/wireless-charging/app'
+cp build/app.bin app.bin
+cp ../bootloader/bootloader.bin bootloader.bin
+make[1]: Leaving directory '/home/xuan/work/wireless-charging/app'
+make[1]: Entering directory '/home/xuan/work/wireless-charging/app'
+./tools/papp_up
+./tools/mix_10K
+arm-none-eabi-objcopy -I binary -O ihex --change-addresses 0x8000000 mix.bin mix.hex
+rm bootloader.bin
+rm app.bin
+rm mix.bin
+make[1]: Leaving directory '/home/xuan/work/wireless-charging/app'
+```
+
+- 以下是`makefile`的代码：
+``` makefile
+.PHONY : clean all
+
+all: $(TARGET).bin $(TARGET).list $(TARGET).hex
+	$(SZ) $(TARGET).elf
+	@make copy
+	@make mix
+
+.PHONY: copy download
+
+copy: $(TARGET).bin
+	cp $(TARGET).bin app.bin
+	cp ../bootloader/bootloader.bin bootloader.bin
+
+mix:
+	./tools/papp_up
+	./tools/mix_10K
+	$(OC) -I binary -O ihex --change-addresses 0x8000000 mix.bin mix.hex
+	rm bootloader.bin
+	rm app.bin
+	rm mix.bin
+
+clean:
+	rm -rf $(OUTPUT_DIR)
+	rm papp.bin
+	rm mix.hex
+
+SYS := $(shell uname -a)
+
+ifeq ($(findstring Microsoft,$(SYS)),Microsoft)
+COPY_CMD:
+	cp $(OUTPUT_DIR)/app.hex "/mnt/c/Users/Breo/Desktop/iap-tools/linux_download/"
+	wsl.exe -d Ubuntu-20.04 cmd.exe /c "C:\\\Users\\\BREO\\\Desktop\\\iap-tools\\\linux_download\\\program.bat"
+else
+COPY_CMD:
+	echo "当前系统不是 WSL，跳过拷贝文件指令"
+endif
+
+download:
+	@make all
+	@$(MAKE) COPY_CMD
+```
+- 使用`@`和`--no-print`来隐藏打印信息，改进后：
+``` makefile
+.PHONY : clean all
+
+all: $(TARGET).bin $(TARGET).list $(TARGET).hex
+	$(SZ) $(TARGET).elf
+	@make --no-print copy
+	@make --no-print mix
+	
+.PHONY: copy
+
+copy: $(TARGET).bin
+	@cp $(TARGET).bin app.bin
+	@cp ../bootloader/bootloader.bin bootloader.bin
+
+mix:
+	@./tools/papp_up
+	@./tools/mix_10K
+	@$(OC) -I binary -O ihex --change-addresses 0x8000000 mix.bin mix.hex
+	@rm bootloader.bin
+	@rm app.bin
+	@rm mix.bin
+
+clean:
+	-rm -rf $(OUTPUT_DIR)
+	-rm papp.bin
+	-rm mix.hex
+
+SYS := $(shell uname -a)
+
+ifeq ($(findstring Microsoft,$(SYS)),Microsoft)
+COPY_CMD:
+	cp $(TARGET).hex "/mnt/c/Users/Breo/Desktop/iap-tools/linux_download/"
+	wsl.exe -d Ubuntu-20.04 cmd.exe /c "C:\\\Users\\\BREO\\\Desktop\\\iap-tools\\\linux_download\\\program.bat"
+else
+COPY_CMD:
+	echo "当前系统不是 WSL，跳过拷贝文件指令"
+endif
+
+download:
+	@make all
+	@$(MAKE) COPY_CMD
+
+
+```
