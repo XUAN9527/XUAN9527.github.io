@@ -200,7 +200,7 @@ Fault on interrupt or bare metal(no OS) environment
   R12: 0000000a  LR : 0800a3b3  PC : 080154c2  PSR: 61000000
 ==============================================================
 Usage fault is caused by attempts to execute an undefined instruction
-Show more call stack info by run: addr2line -e CmBacktrace.elf -a -f 080154c2 0800a3b2 08009092
+Show more call stack info by run: addr2line -e CmBacktrace.elf -a -f 080154c2 0800a3b3 08009092
 ```
 
 **转换为定位代码工具：**

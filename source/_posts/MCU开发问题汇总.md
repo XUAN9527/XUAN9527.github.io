@@ -66,6 +66,10 @@ int drv_adc_deinit(EADC_DEVICE adc_dev,EDMA_CHANNEL dma_ch)
 	- 代码段变长，能跑进`system_init`,跑飞待查。
 	- 代码段变短，不能跑进`system_init`,跑飞待查。
 
+**总结：**
+
+- `n32g45x`系列栈大小和堆大小影响不大，只要代码段大小不变，跳转成功；若代码段长度变化，跳转失败。（芯片原因？）
+- `n32l40x`系列不存在此类问题。
 
 <br>
 
@@ -160,6 +164,71 @@ int _write(int fd, char* pBuffer, int size)
 <br>
 
 ## RT-THREAD调试问题
+
+### LETTER SHELL问题
+
+``` c
+// SHELL_USING_LOCK设为 1，则需要初始化互斥锁，否则shell会死机。
+// LOG_USING_LOCK设为 0，否则log会死机，问题不详。
+#define SHELL_USING_LOCK    1       
+#define LOG_USING_LOCK      0
+
+#if SHELL_USING_LOCK
+static struct rt_mutex shellMutex;
+int userShellLock(Shell *sh)
+{
+    rt_mutex_take(&shellMutex,RT_WAITING_FOREVER);		// rt_tick_from_millisecond(100),RT_WAITING_FOREVER
+    return 0;
+}
+
+/**
+ * @brief 用户shell解锁
+ * @param shell shell
+ * @return int 0
+ */
+int userShellUnlock(Shell *sh)
+{
+    rt_mutex_release(&shellMutex);
+    return 0;
+}
+#endif
+
+#if LOG_USING_LOCK
+static struct rt_mutex logMutex;
+int userLogLock(Log *log)
+{
+    rt_mutex_take(&logMutex, RT_WAITING_FOREVER);		//rt_tick_from_millisecond(10)
+    return 0;
+}
+
+int userLogUnlock(Log *log)
+{
+    rt_mutex_release(&logMutex);
+    return 0;
+}
+#endif
+
+void User_Shell_Init(void)
+{
+    struct serial_configure config = EC_SERIAL_CONFIG_DEFAULT;
+    config.baud_rate = BAUD_RATE_921600;
+    drv_usart_init(ESERIAL_1, ESERIAL_MODE_DMA_RX | ESERIAL_MODE_DMA_TX, &config);
+#if SHELL_USING_LOCK
+	rt_mutex_init(&shellMutex,"shellMutex",RT_IPC_FLAG_FIFO);
+	shell.unlock = userShellUnlock;
+	shell.lock = userShellLock;
+#endif
+#if LOG_USING_LOCK
+	rt_mutex_init(&logMutex,"logMutex",RT_IPC_FLAG_FIFO);
+	uartLog.unlock = userLogUnlock;
+	uartLog.lock = userLogLock;
+#endif
+    shell.write = User_Shell_Write;
+	shell.read = User_Shell_Read;
+    shellInit(&shell, shell_buffer, sizeof(shell_buffer));
+	logRegister(&uartLog, &shell);
+}
+```
 
 ### 串口通信异常
 
@@ -934,3 +1003,249 @@ RLED_RUN_MODE rled_ring_charge_function(event_param_t ep)
 }
 ```
 
+<br>
+
+## RTC低功耗唤醒问题
+
+### RTC设置日期时间问题
+
+- 遇到问题
+``` c
+void drv_low_power_rtc_init(void)
+{
+	rtc_date_time_default_value();
+	rtc_alarm_default_value();
+    rtc_system_clk_config();
+	if(USER_WRITE_BKP_DAT1_DATA != BKP_ReadBkpData(BKP_DAT1))
+    {
+		logDebug("RTC not yet configured.... ");
+		rtc_clk_source_config(RTC_CLK_SRC_TYPE_LSI, true, true);
+		rtc_date_params_set(&RTC_DateDefault);
+		rtc_time_params_set(&RTC_TimeDefault);
+		BKP_WriteBkpData(BKP_DAT1, USER_WRITE_BKP_DAT1_DATA);
+	}else{
+		logDebug("RTC is haven configured.... ");
+	}
+	wakeup_exti_trigger_init();
+    wakeup_exti_config_it(true);
+}
+```
+
+- `rtc_clk_source_config(...)`执行完后，设置日期`rtc_date_params_set(...)`，设置会失败显示`The current date (WeekDay-Date-Month-Year) is < 00-01-01-00 >`：
+``` c
+D [00:00:00,000] (driver/drv_lp_rtc.c) drv_low_power_rtc_init [380]: RTC not yet configured.... 
+D [00:00:00,000] (driver/drv_lp_rtc.c) rtc_clk_source_config [331]: RTC_ClkSrc Is Set LSI!
+D [00:00:00,001] (driver/drv_lp_rtc.c) rtc_date_params_set [166]: >> RTC Set Date success. <<
+D [00:00:00,001] (driver/drv_lp_rtc.c) rtc_date_param_show [125]: The current date (WeekDay-Date-Month-Year) is < 00-01-01-00 >
+D [00:00:00,001] (driver/drv_lp_rtc.c) rtc_time_params_set [186]: >> RTC Set Time success. <<
+D [00:00:00,001] (driver/drv_lp_rtc.c) rtc_time_param_show [137]: The current time (Hour-Minute-Second) is < 12:00:01 >
+```
+
+- 原因分析，在函数`ErrorStatus RTC_Init(RTC_InitType* RTC_InitStruct){...}`中有以下代码：
+``` c
+/* Delay for the RTC prescale effect */
+for(i=0;i<0x2FF;i++);
+```
+- 当跑原厂`demo`的时候不会出现设置失败，经排查发现`demo`是的优化等级是`O0`，而本代码是`Os`，优化等级`Os`会将空循环`for(i=0;i<0x2FF;i++);`导致RTC初始化后，等待寄存器同步过程被优化掉不去执行，导致下一步设置`RTC`参数失败。
+
+- 解决方案：
+    - 1、将函数`for(i=0;i<0x2FF;i++);`中`i`的变量类型改为`volatile`，将会直接读取寄存器，不会被内存优化。
+    - 2、将函数`for(i=0;i<0x2FF;i++);`替换为`for(i=0;i<0x2FF;i++){__asm("nop");}`，将会直接执行指令，不会被内存优化。
+
+### RTC唤醒偶尔失败（rt-thread操作系统）
+
+调试发现`按键唤醒`和`闹钟唤醒`均可, `RTC自动唤醒`有问题。
+
+#### 唤醒例程
+
+- 代码如下：
+``` c
+#define RTC_WAKEUP_EN  			0
+#define IWDG_MAX_TIMEOUT_SECS	25
+#define IWDG_MAX_USER_SECS	21
+
+static void board_rtc_alarm_second_set(uint32_t secs)
+{
+	uint32_t second = IWDG_MAX_USER_SECS;
+	if(secs < IWDG_MAX_USER_SECS)
+		second = secs;
+	rtc_alarm_second_set(second);
+}
+
+// 挂起所有线程的函数
+void suspend_all_threads(void)
+{
+    struct rt_thread *thread;
+    struct rt_object_information *information;
+    struct rt_list_node *node;
+
+    /* 获取线程对象信息 */
+    information = rt_object_get_information(RT_Object_Class_Thread);
+    RT_ASSERT(information != RT_NULL);
+
+    /* 进入临界区 */
+    rt_enter_critical();
+
+	//清空tick值，关闭systick中断
+	SysTick->VAL = 0x00;
+	SysTick->CTRL = 0x00;	
+
+    /* 遍历线程对象列表 */
+    for (node = information->object_list.next; node != &(information->object_list); node = node->next)
+    {
+        thread = rt_list_entry(node, struct rt_thread, list);
+        /* 确保不是挂起当前正在运行的线程 */
+        if (thread != rt_thread_self())
+        {
+            /* 挂起线程 */
+            rt_thread_suspend(thread);
+        }
+    }
+
+    /* 退出临界区 */
+    rt_exit_critical();
+}
+
+void board_pwr_enter_stop2(void)
+{
+	suspend_all_threads();
+#if RTC_WAKEUP_EN
+	rtc_auto_wakeup_init(5);
+#endif
+	while(1)
+	{
+		serial_only_print_string("Start low power mode!\r\n\r\n");
+#if !RTC_WAKEUP_EN
+		board_rtc_alarm_second_set(20);
+#endif
+		PWR_EnterSTOP2Mode(PWR_STOPENTRY_WFI);
+		system_clock_config_stop2();
+		system_print_config_stop2();
+		serial_only_print_string("Exit low power mode!\r\n");
+
+		bool botton_sw = GPIO_ReadInputDataBit(GPIOA, GPIO_PIN_0);
+		bool dc_ch = !GPIO_ReadInputDataBit(GPIOA, GPIO_PIN_5);
+		if(botton_sw) 		//  || dc_ch
+		{
+			serial_only_print_string("botton press!\r\n");
+			reboot();
+		}
+	}
+}
+```
+
+- `RTC auto wakeup`成功, 需注意唤醒时钟问题:
+``` c
+void drv_low_power_rtc_init(void)
+{
+	rtc_date_time_default_value();
+	rtc_alarm_default_value();
+    rtc_system_clk_config();
+    rtc_auto_wakeup_init();
+	if(USER_WRITE_BKP_DAT1_DATA != BKP_ReadBkpData(BKP_DAT1))
+    {
+		logDebug("RTC not yet configured.... ");
+		rtc_clk_source_config(RTC_CLK_SRC_TYPE_LSI, true, true);
+        RTC_ConfigWakeUpClock(RTC_WKUPCLK_CK_SPRE_16BITS);          // 注意：只能设置一次，否则会有异常，不能自动唤醒导致卡死
+		rtc_date_params_set(&RTC_DateDefault);
+		rtc_time_params_set(&RTC_TimeDefault);
+		BKP_WriteBkpData(BKP_DAT1, USER_WRITE_BKP_DAT1_DATA);
+	}else{
+		logDebug("RTC is haven configured.... ");
+	}
+	wakeup_exti_trigger_init();
+}
+
+void rtc_auto_wakeup_set(uint8_t seconds)
+{
+    RTC_SetWakeUpCounter(seconds);
+    EXTI20_RTCWKUP_Configuration(true);
+    RTC_ConfigInt(RTC_INT_WUT, ENABLE);
+    RTC_EnableWakeUp(ENABLE);
+    exti20_alarm_config_it(true);
+    rtc_wakeup_all_config_it(true);
+}
+```
+
+## 自写printf函数
+
+``` c
+static int lp_printf(const char *format, ...) {
+    va_list args;
+    char buffer[256];  			// 定义一个足够大的缓冲区
+    int len, size;
+
+    va_start(args, format);  	// 初始化args
+    len = vsnprintf(buffer, sizeof(buffer), format, args);  // 格式化字符串到buffer
+    va_end(args);  				// 清理args
+	
+	uint8_t *p_buff = (uint8_t *)buffer;
+	size = len;
+	
+    // 硬件适配层
+	USART_ClrFlag(USART1, USART_FLAG_TXC);
+	while(len --)
+	{
+		USART_SendData(USART1, *p_buff);
+        while (USART_GetFlagStatus(USART1, USART_FLAG_TXC) == RESET);
+		p_buff ++;
+	}
+    return size;  // 返回发送的字符数
+}
+```
+
+## rt-thread 互斥量问题
+
+**问题点：**
+- 低优先级任务在打印时，高优先级任务也有打印，导致打印函数重入互斥量自锁。
+
+**解决方法：**
+- **使用递归互斥量**：在`FreeRTOS`中，可以使用`xSemaphoreCreateRecursiveMutex`来创建递归互斥量，并使用`xSemaphoreTakeRecursive`和`xSemaphoreGiveRecursive`来获取和释放互斥量, `rtthread`系统待验证。
+- **优先级继承**：当低优先级任务持有互斥量时，如果高优先级任务试图获取同一个互斥量，可以通过优先级继承机制来避免死锁。这样，低优先级任务的优先级会临时提升，以减少高优先级任务的等待时间。
+- **设计合理的资源访问顺序**：确保系统中的所有任务以相同的顺序获取互斥量，这可以避免循环等待，从而减少死锁的可能性。
+
+<br>
+
+**项目中的解决方案及代码**：
+- `shell`是空闲任务，线程优先级最低。
+- `brains_electric_data_send(&send_data, sizeof(send_data));`函数会传递队列，接收队列任务优先级要比`shell`线程优先级高。
+- 在这里进入打印时`不设上锁等待时间`，会直接重入。
+- **影响**：有部分打印会被覆盖，不显示。
+``` c
+#if LOG_USING_LOCK
+static struct rt_mutex logMutex;
+int userLogLock(Log *log)
+{
+    //互斥量在低优先级使用的时候，切到高优先级任务会导致死锁，不能用RT_WAITING_FOREVER
+    rt_mutex_take(&logMutex, rt_tick_from_millisecond(0));
+    return 0;
+}
+
+int userLogUnlock(Log *log)
+{
+    rt_mutex_release(&logMutex);
+    return 0;
+}
+#endif
+
+// 在shell中
+void brains_electric_transmit_en(bool en)
+{
+	uint8_t send_data = 0;
+	if(en)
+	{
+		brains_electric_onoff = true;
+		send_data = 'b';
+		brains_electric_data_send(&send_data, sizeof(send_data));
+		// logVerbose("brains_electric_serial_tx -> [%c]", send_data);
+	}else{
+		rt_timer_stop(&brains_timer_stimer);
+		rt_timer_stop(&brains_wait_stimer);
+		send_data = 's';
+		brains_electric_data_send(&send_data, sizeof(send_data));
+		// logVerbose("brains_electric_serial_tx -> [%c]", send_data);
+	}
+}
+SHELL_EXPORT_CMD(SHELL_CMD_PERMISSION(0)|SHELL_CMD_TYPE(SHELL_TYPE_CMD_FUNC)|SHELL_CMD_DISABLE_RETURN, brains_electric_transmit_en, brains_electric_transmit_en,brains_electric_transmit_en);
+
+```
