@@ -33,15 +33,35 @@ description: CmBacktrace是一款针对 ARM Cortex-M 系列 MCU 的错误代码�
 - 添加头文件`cm_backtrace.h` `cmb_cfg.h` `cmb_def.h`
 - 添加源文件`cm_backtrace.c`
 - 添加demos文件 `demos/non_os/stm32f10x/app/src/fault_test.c`
-- 修改添加`fault_handler/gcc/cmb_fault.S`为`fault_handler/gcc/cmb_fault.s`
 
 **2.1 添加修改makefile：**
+
+**方法一**、修改添加`fault_handler/gcc/cmb_fault.S`为`fault_handler/gcc/cmb_fault.s`
 
 ``` c
 ASM_SOURCES =  \
 CMSIS/device/startup/startup_n32l40x_gcc.s \
-components/cm_backtrace/fault_handler/gcc/cmb_fault.s #添加这一行
+components/cm_backtrace/fault_handler/gcc/cmb_fault.s # 添加这一行,或者
 ```
+
+**方法二**、将`cmb_fault.S`将入`makefile`编译选项
+
+``` c
+ASM_SOURCES = CMSIS/device/startup/startup_n32l40x_gcc.s
+ASM_SOURCES2 = components/cm_backtrace/fault_handler/gcc/cmb_fault.S	# 此行为新增
+
+# C源文件、汇编源文件的目标文件路径
+C_OBJECTS = $(addprefix $(OUTPUT_DIR)/, $(C_SOURCES:.c=.o))
+ASM_OBJECTS = $(addprefix $(OUTPUT_DIR)/, $(ASM_SOURCES:.s=.o)) \
+	      $(addprefix $(OUTPUT_DIR)/, $(ASM_SOURCES2:.S=.o))	# 此行为新增
+
+$(OUTPUT_DIR)/%.o: %.s %.S						# 新增 %.S 
+	mkdir -p $(dir $@)
+	$(CC) $(INCLUDE) $(CFLAGS) -c $< -o $@
+
+```
+
+<br>
 
 **2.2 添加printf重定向：**
 
@@ -78,8 +98,8 @@ int _write(int fd, char* pBuffer, int size)
 #endif /* _CMB_CFG_H_ */
 ``` 
 
-- 修改n32l40x_flash.ld链接文件
-	- text段开始之前添加 `_stext = .;` 下面为例程：
+- 修改`n32l40x_flash.ld`链接文件
+	- `text`段开始之前添加 `_stext = .;` 下面为例程：
 
 ``` c
 /* Define output sections */
@@ -109,7 +129,7 @@ SECTIONS
     KEEP (*(.fini))
 ```
 
-- text段开始之前添加 `_sstack = .;` 下面为例程：
+- `bss`段开始之前添加 `_sstack = .;` 下面为例程：
 
 ``` c
   .bss :
@@ -153,15 +173,15 @@ extern void fault_test_by_div0(void);
 
 int main(void)
 {
-    main_system_init();
-	cm_backtrace_init("CmBacktrace", HARDWARE_VERSION, SOFTWARE_VERSION);
+	main_system_init();
+	cm_backtrace_init("CmBacktrace", HARDWARE_VERSION, SOFTWARE_VERSION);     // 在开启时钟，打印和看门狗之后就需要初始化
 	
 	fault_test_by_unalign();
-    fault_test_by_div0();
+	fault_test_by_div0();
 
-    while(1)
-    {
-    }
+	while(1)
+	{
+	}
 }
 ```
 

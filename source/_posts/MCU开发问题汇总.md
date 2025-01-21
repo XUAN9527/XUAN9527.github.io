@@ -34,7 +34,7 @@ DMA_DeInit(dma_chx);		//DMA开启循环接收后会持续接收字节
 ADC_DeInit(adc_handler);
 ```
 
-- ADC驱动初始化/反初始化:
+- `ADC`驱动初始化/反初始化:
 ``` c
 int drv_adc_init(EADC_DEVICE adc_dev,EDMA_CHANNEL dma_ch)
 {
@@ -60,8 +60,8 @@ int drv_adc_deinit(EADC_DEVICE adc_dev,EDMA_CHANNEL dma_ch)
 
 #### bootloader跳转到app
 
-- 栈大小改变后跳转成功：将ram空间数据uint16_t改为uint32_t。
-- 堆大小改变后跳转成功：将队列申请长度20改为30。
+- 栈大小改变后跳转成功：将`ram`空间数据`uint16_t`改为`uint32_t`。
+- 堆大小改变后跳转成功：将队列申请长度`20`改为`30`。
 - 代码大小变化后跳转失败：
 	- 代码段变长，能跑进`system_init`,跑飞待查。
 	- 代码段变短，不能跑进`system_init`,跑飞待查。
@@ -75,45 +75,60 @@ int drv_adc_deinit(EADC_DEVICE adc_dev,EDMA_CHANNEL dma_ch)
 
 ## MCU复位后状态
 
-- 复位期间和刚复位后,复用功能未开启,I/O端口被配置成模拟功能模式(PCFGy[1:0]=00b, PMODEy[1:0]=00b)。
-<br>
-- 但有以下几个例外的信号：BOOT0、 NRST、 OSC_IN、 OSC_OUT 默认无 GPIO 功能：
-	- BOOT0 引脚默认输入下拉
-	- NRST 上拉输入输出
-<br>
-- 复位后，调试系统相关的引脚默认状态为启动 SWD-JTAG， JTAG 引脚被置于输入上拉或下拉模式：
-	- PA15:JTDI 置于输入上拉模式 
-	- PA14:JTCK 置于输入下拉模式 
-	- PA13:JTMS 置于输入上拉模式
-	- PB4:NJTRST 置于输入上拉模式
-	- PB3:JTD0 置于推挽输出无上下拉
-<br>
-- PD0 和 PD1
-	- PD0 和 PD1 在 80 及以上引脚封装默认为模拟模式
-	- PD0 和 PD1 在 80 以下引脚封装复用到 OSC_IN/OUT
-- PC13、 PC14、 PC15：
-	- PC13～15 为备电域下的三个 IO， 备份域初次上电默认为模拟模式；
+- 复位期间和刚复位后，复用功能未开启,`I/O`端口被配置成模拟功能模式(`PCFGy[1:0] = 00b`, `PMODEy[1:0] = 00b`)。
+
+- 但有以下几个例外的信号：`BOOT0`、 `NRST`、 `OSC_IN`、 `OSC_OUT` 默认无 `GPIO` 功能：
+	- `BOOT0` 引脚默认输入下拉
+	- `NRST` 上拉输入输出
+- 复位后，调试系统相关的引脚默认状态为启动 `SWD-JTAG`， `JTAG` 引脚被置于输入上拉或下拉模式：
+	- `PA15`：`JTDI` 置于输入上拉模式 
+	- `PA14`：`JTCK` 置于输入下拉模式 
+	- `PA13`：`JTMS` 置于输入上拉模式
+	- `PB4`：`NJTRST` 置于输入上拉模式
+	- `PB3`：`JTD0` 置于推挽输出无上下拉
+- `PD0` 和 `PD1`
+	- `PD0` 和 `PD1` 在 `80` 及以上引脚封装默认为模拟模式
+	- `PD0` 和 `PD1` 在 `80` 以下引脚封装复用到 OSC_IN/OUT
+- `PC13`、 `PC14`、 `PC15`：
+	- `PC13～15` 为备电域下的三个` IO`， 备份域初次上电默认为模拟模式；
 
 <br>
 
-- PB2/BOOT1：
-	- PB2/BOOT1 默认处于下拉输入状态；
+- `PB2`/`BOOT1`：
+	- `PB2`/`BOOT1` 默认处于下拉输入状态；
 
 <br>
 
-- BOOT0 默认输入下拉，参照下表， 若 BOOT 的引脚未连接，则默认选择 Flash 主存储区。
+- `BOOT0` 默认输入下拉，参照下表， 若 `BOOT` 的引脚未连接，则默认选择 `Flash` 主存储区。
 
 ![mcu启动选项表](../pictures/mcu启动选项表.png)
 
 <br>
 
-注意：n32g452串口2无法发送数据问题
+**问题**：`n32g452`系列芯片， `串口2`无法发送数据问题
+- 打印测试进入了`usart2`的串口发送函数，示波器测量，有尖峰异常波形。
 
-- 打印测试进入了usart2的串口发送函数，示波器测量，有尖峰异常波形。
+**解决**：`串口2`引脚为`PB4`,默认为`JTAG`引脚，复用时应关闭`JTAG`功能。
 
 ``` c
 // 使用jlink引脚复用成GPIO时需要关闭jlink引脚功能，否则无法正常输出。
 GPIO_ConfigPinRemap(GPIO_RMP_SW_JTAG_SW_ENABLE, ENABLE);
+```
+
+- 时钟引脚使用问题(`n32l406`为例)，可能不需要复用，以实际为准。
+``` c
+	/*开启复用的外设时钟使能*/
+	if(pin == 5)
+	{
+		RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_AFIO,ENABLE);
+		GPIO_ConfigPinRemap(GPIOD_PORT_SOURCE,GPIO_PIN_SOURCE14,GPIO_NO_AF);	/*映射的使能*/
+	}
+	
+	if(pin == 6)
+	{
+		RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_AFIO,ENABLE);
+		GPIO_ConfigPinRemap(GPIOD_PORT_SOURCE,GPIO_PIN_SOURCE15,GPIO_NO_AF);	/*映射的使能*/
+	}
 ```
 <br>
 
@@ -290,6 +305,87 @@ static int usart_key_rx_indicate(ESERIAL_DEV serial_dev, uint16_t size)
 }
 ```
 
+### FlashDB问题（碰巧对上述问题未遇到问题的解决）
+- 上述问题`LETTER SHELL`问题中`SHELL_USING_LOCK`设为`1`，`LOG_USING_LOCK`需设为`0`,否则会卡死，经调试后下面会做出解释。
+- 在初始化的时候，不管是`KVDB`还是`TSDB`，必须在烧完程序后，`reboot`一下才能初始化扇区成功，原因待查。
+- 会出现以下打印后卡住：
+``` c
+admin:/$ tsdb_test
+[D/FAL] (fal_flash_init:47) Flash device |               n32_onchip | addr: 0x08000000 | len: 0x00080000 | blk_size: 0x00000800 |initialized finish.
+[I/FAL] ==================== FAL partition table ====================
+[I/FAL] | name      | flash_dev  |   offset   |    length  |
+[I/FAL] -------------------------------------------------------------
+[I/FAL] | bl        | n32_onchip | 0x00000000 | 0x00002800 |
+[I/FAL] | app       | n32_onchip | 0x00002800 | 0x00032000 |
+[I/FAL] | download  | n32_onchip | 0x00034800 | 0x00032000 |
+[I/FAL] | upflag    | n32_onchip | 0x00066800 | 0x00000800 |
+[I/FAL] | dcd       | n32_onchip | 0x00067000 | 0x00000800 |
+[I/FAL] | mcuinfo   | n32_onchip | 0x00067800 | 0x00000800 |
+[I/FAL] | fdb_kvdb1 | n32_onchip | 0x00068000 | 0x00001000 |
+[I/FAL] | fdb_tsdb1 | n32_onchip | 0x00069000 | 0x00016800 |
+[I/FAL] =============================================================
+[I/FAL] RT-Thread Flash Abstraction Layer (V1.0.0) initialize success.
+[FlashDB][tsl][log][fdb_tsdb1] Sector (0x00000000) header info is incorrect.
+
+// 跑飞卡死
+```
+
+- 烧录完`reboot`后，正常的打印：
+``` c
+admin:/$ tsdb_test
+[D/FAL] (fal_flash_init:47) Flash device |               n32_onchip | addr: 0x08000000 | len: 0x00080000 | blk_size: 0x00000800 |initialized finish.
+[I/FAL] ==================== FAL partition table ====================
+[I/FAL] | name      | flash_dev  |   offset   |    length  |
+[I/FAL] -------------------------------------------------------------
+[I/FAL] | bl        | n32_onchip | 0x00000000 | 0x00002800 |
+[I/FAL] | app       | n32_onchip | 0x00002800 | 0x00032000 |
+[I/FAL] | download  | n32_onchip | 0x00034800 | 0x00032000 |
+[I/FAL] | upflag    | n32_onchip | 0x00066800 | 0x00000800 |
+[I/FAL] | dcd       | n32_onchip | 0x00067000 | 0x00000800 |
+[I/FAL] | mcuinfo   | n32_onchip | 0x00067800 | 0x00000800 |
+[I/FAL] | fdb_kvdb1 | n32_onchip | 0x00068000 | 0x00001000 |
+[I/FAL] | fdb_tsdb1 | n32_onchip | 0x00069000 | 0x00016800 |
+[I/FAL] =============================================================
+[I/FAL] RT-Thread Flash Abstraction Layer (V1.0.0) initialize success.
+[FlashDB][tsl][log][fdb_tsdb1] Sector (0x00000000) header info is incorrect.
+[FlashDB][tsl][log][fdb_tsdb1] All sector format finished.
+[FlashDB][tsl][log][fdb_tsdb1] (components/flashdb/fdb_tsdb.c:980) TSDB (log) oldest sectors is 0x00000000, current using sector is 0x00000000.
+[FlashDB] FlashDB V2.1.1 is initialize success.
+[FlashDB] You can get the latest version on https://github.com/armink/FlashDB .
+[FlashDB][sample][tsdb] ==================== tsdb_sample ====================
+[FlashDB][sample][tsdb] append the new status.temp (36) and status.humi (85)
+[FlashDB][sample][tsdb] append the new status.temp (38) and status.humi (90)
+[FlashDB][sample][tsdb] [query_cb] queried a TSL: time: 1, temp: 36, humi: 85
+[FlashDB][sample][tsdb] [query_cb] queried a TSL: time: 2, temp: 38, humi: 90
+[FlashDB][sample][tsdb] [query_by_time_cb] queried a TSL: time: 1, temp: 36, humi: 85
+[FlashDB][sample][tsdb] [query_by_time_cb] queried a TSL: time: 2, temp: 38, humi: 90
+[FlashDB][sample][tsdb] query count is: 2
+[FlashDB][sample][tsdb] set the TSL (time 1) status from 2 to 3
+[FlashDB][sample][tsdb] set the TSL (time 2) status from 2 to 3
+[FlashDB][sample][tsdb] ===========================================================
+```
+
+- 原因：由于flash解锁是给互斥量加锁，之前写成一致了，写反了，导致进去一次之后卡死。
+``` c
+static struct rt_mutex flashMutex;
+void af_flash_init(void)
+{
+ 	rt_mutex_init(&flashMutex, "flashMutex", RT_IPC_FLAG_FIFO);
+}
+
+void af_flash_unlock(void)
+{
+	rt_mutex_take(&flashMutex, RT_WAITING_FOREVER);	   // 错误用例：rt_mutex_release(&flashMutex);
+	FLASH_Unlock();
+}
+
+void af_flash_lock(void)
+{
+	FLASH_Lock();
+	rt_mutex_release(&flashMutex);                      // 错误用例：rt_mutex_take(&flashMutex, RT_WAITING_FOREVER);	
+}
+```
+
 #### 指针取址符&与取值*的区别
 
 **1. 指针取址符(&)**
@@ -349,7 +445,32 @@ int value = *p;		// 访问 num 的值
 **4. 可能导致程序崩溃**
 
 在大多数情况下，对指针变量进行取址会导致程序崩溃。这是因为程序会试图访问一个不存在的内存地址。
+
 <br>
+
+### 结构体偏移操作
+
+- `offsetof(TYPE, MEMBER)` 函数用法：
+``` c
+/* Offset of member MEMBER in a struct of type TYPE. */
+#define offsetof(TYPE, MEMBER) __builtin_offsetof (TYPE, MEMBER)
+
+typedef struct __attribute__((packed))
+{
+    uint8_t device;
+    uint8_t version;
+    uint16_t packet_sum;        // 大端模式
+    uint16_t packet_index;      // 大端模式
+    uint8_t len;
+    uint8_t cmd;
+    uint8_t *data;
+    uint16_t check_sum;         // 大端模式
+}ble_comm_protocol;
+
+int send_len = offsetof(ble_comm_protocol, data);       // send_len 长度为 8 bytes
+```
+<br>
+
 ## TFT屏ST7735S调试问题
 
 ### 硬件/软件spi初始化
@@ -360,19 +481,14 @@ int value = *p;		// 访问 num 的值
 
 #define LCD_SCLK_Clr() GPIO_ResetBits(GPIOA, GPIO_PIN_5)	//SCL=SCLK
 #define LCD_SCLK_Set() GPIO_SetBits(GPIOA, GPIO_PIN_5)
-
 #define LCD_MOSI_Clr() GPIO_ResetBits(GPIOA, GPIO_PIN_7)		//SDA=MOSI
 #define LCD_MOSI_Set() GPIO_SetBits(GPIOA, GPIO_PIN_7)
-
 #define LCD_RES_Clr()  GPIO_ResetBits(GPIOB, GPIO_PIN_0)		//RES
 #define LCD_RES_Set()  GPIO_SetBits(GPIOB, GPIO_PIN_0)
-
 #define LCD_DC_Clr()   GPIO_ResetBits(GPIOB, GPIO_PIN_1)		//DC
-#define LCD_DC_Set()   GPIO_SetBits(GPIOB, GPIO_PIN_1)
- 		     
+#define LCD_DC_Set()   GPIO_SetBits(GPIOB, GPIO_PIN_1)	     
 #define LCD_CS_Clr()   GPIO_ResetBits(GPIOA, GPIO_PIN_4)		//CS
 #define LCD_CS_Set()   GPIO_SetBits(GPIOA, GPIO_PIN_4)
-
 #define LCD_BLK_Clr()											//BLK
 #define LCD_BLK_Set()
 
@@ -382,8 +498,9 @@ void LCD_GPIO_Init(void)
 	RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOA | RCC_APB2_PERIPH_GPIOB , ENABLE);
 
 #if HARDWARE_SPI_MODE
-	SPI_InitType SPI_InitStructure;
-	RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_SPI1 | RCC_APB2_PERIPH_AFIO, ENABLE);
+
+    SPI_InitType SPI_InitStructure;
+    RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_SPI1 | RCC_APB2_PERIPH_AFIO, ENABLE);
 
     GPIO_InitStruct(&GPIO_InitStructure);
     GPIO_InitStructure.Pin        = GPIO_PIN_4 | GPIO_PIN_5 | GPIO_PIN_7;
@@ -403,24 +520,24 @@ void LCD_GPIO_Init(void)
     SPI_InitStructure.CRCPoly       = 7;
     SPI_Init(SPI1, &SPI_InitStructure);
 
-	SPI_SSOutputEnable(SPI1, ENABLE);
-	SPI_EnableCalculateCrc(SPI1, DISABLE);
+    SPI_SSOutputEnable(SPI1, ENABLE);
+    SPI_EnableCalculateCrc(SPI1, DISABLE);
     /* Enable SPIy */
     SPI_Enable(SPI1, ENABLE);
 #else
-	GPIO_InitStruct(&GPIO_InitStructure);
-	GPIO_InitStructure.Pin = GPIO_PIN_4 | GPIO_PIN_5 | GPIO_PIN_7;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-	GPIO_InitPeripheral(GPIOA, &GPIO_InitStructure);
-	
-	GPIO_SetBits(GPIOA, GPIO_PIN_4 | GPIO_PIN_5 | GPIO_PIN_7);
+    GPIO_InitStruct(&GPIO_InitStructure);
+    GPIO_InitStructure.Pin = GPIO_PIN_4 | GPIO_PIN_5 | GPIO_PIN_7;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+    GPIO_InitPeripheral(GPIOA, &GPIO_InitStructure);
+
+    GPIO_SetBits(GPIOA, GPIO_PIN_4 | GPIO_PIN_5 | GPIO_PIN_7);
 #endif
-	GPIO_InitStruct(&GPIO_InitStructure);
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-	GPIO_InitStructure.Pin = GPIO_PIN_0 | GPIO_PIN_1;
-	GPIO_InitPeripheral(GPIOB, &GPIO_InitStructure);
-	
-	GPIO_SetBits(GPIOB, GPIO_PIN_0 | GPIO_PIN_1);
+    GPIO_InitStruct(&GPIO_InitStructure);
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+    GPIO_InitStructure.Pin = GPIO_PIN_0 | GPIO_PIN_1;
+    GPIO_InitPeripheral(GPIOB, &GPIO_InitStructure);
+
+    GPIO_SetBits(GPIOB, GPIO_PIN_0 | GPIO_PIN_1);
 }
 
 void LCD_Writ_Bus(u8 dat) 
@@ -1167,6 +1284,13 @@ void rtc_auto_wakeup_set(uint8_t seconds)
 }
 ```
 
+### gcc优化等级和标准库问题
+
+- `O0`级优化低功耗会跑飞，`Os`级优化低功耗就是正常的，原因待查，下一步**先查打印函数**, **不是打印函数原因**，已验证。
+- `arm-none-eabi-gcc`的`nano`系统：添加`--specs=nano.specs` 打印不了`float`和`64位`整数，但是程序缩小`20K`左右; 但是标准库跑不了低功耗，原因为**串口打印函数问题**, 待分析。
+
+<br>
+
 ## 自写printf函数
 
 ``` c
@@ -1193,6 +1317,17 @@ static int lp_printf(const char *format, ...) {
     return size;  // 返回发送的字符数
 }
 ```
+
+- 问题点：使用`arm-none-eabi-gcc`环境在`makefile`中使用`--specs=nano.specs`选项，使用的是`newlib-nano`库，`lp_printf`进入低功耗后初始化打印正常；使用的是标准库`newlib`库，`lp_printf`进入低功耗后初始化打印异常。调试发现在使用`vsnprintf`函数时会跑飞。
+- 改进方法：将`vsnprintf`函数替换成`rt_vsnprintf`函数。
+- 分析原因：
+    - 可能问题点：在进入低功耗模式时，系统会关闭一些外设和资源以节省能量。当退出低功耗模式时，需要正确地恢复这些资源。如果 `newlib` 中的某些功能在资源恢复过程中存在问题，可能会导致程序异常。
+    - `newlib-nano` 由于实现简单，可能在资源恢复方面更加稳定，不会受到低功耗模式的影响。
+- 解决方法：（感觉无用）
+    - 检查资源管理：确保在进入和退出低功耗模式时，所有资源都被正确管理。特别是对于标准库中使用的资源，如内存分配器等，确保它们在低功耗模式下能够正常工作。
+    - 使用线程安全的实现：如果在多线程环境中使用标准库，确保所有函数都是线程安全的，以避免在低功耗模式下出现并发问题。
+
+<br>
 
 ## rt-thread 互斥量问题
 
@@ -1249,3 +1384,265 @@ void brains_electric_transmit_en(bool en)
 SHELL_EXPORT_CMD(SHELL_CMD_PERMISSION(0)|SHELL_CMD_TYPE(SHELL_TYPE_CMD_FUNC)|SHELL_CMD_DISABLE_RETURN, brains_electric_transmit_en, brains_electric_transmit_en,brains_electric_transmit_en);
 
 ```
+
+## arm-none-eabi-gcc打印不了浮点和64位数据问题分析
+
+**问题点**：
+- `arm-none-eabi-gcc`环境打印不了浮点和64位数据，测试发现在`makefile`中使用`--specs=nano.specs`选项，使用的是`nano`库而非标准库。
+
+**解决方法**：
+- 尝试添加`LDFLAGS += -lc -lrdimon -u _printf_float`，程序会跑飞。
+- 将`--specs=nano.specs`去掉，默认使用标准库就可以打印浮点和64位数据了。
+
+## letter shell调试问题
+
+- 使用`letter shell`调试时间戳转换函数时遇到问题，设置时间对不上，代码如下：
+``` c
+// 将UTC的Unix时间戳转换为RTC时间和日期
+static void rtc_utc_timestamp_set(time_t timestamp)
+{
+    struct tm *tm = gmtime(&timestamp);
+    RTC_DateType RTC_Date;
+    RTC_TimeType RTC_Time;
+
+    RTC_Date.Year = tm->tm_year - 100;    // 年份从1900开始计算
+    RTC_Date.Month = tm->tm_mon + 1;      // 月份从0开始计算
+    RTC_Date.Date = tm->tm_mday;
+    RTC_Date.WeekDay = (tm->tm_wday == 0) ? 7 : tm->tm_wday;   // 星期几，tm结构体是0-6，0是星期天; stm32的RTC返回的是1-7
+    RTC_Time.Hours = tm->tm_hour;
+    RTC_Time.Minutes = tm->tm_min;
+    RTC_Time.Seconds = tm->tm_sec;
+    RTC_Time.H12 = RTC_AM_H12;
+
+    rtc_date_params_set(&RTC_Date);
+    rtc_time_params_set(&RTC_Time);
+}
+SHELL_EXPORT_CMD(SHELL_CMD_PERMISSION(0)|SHELL_CMD_TYPE(SHELL_TYPE_CMD_FUNC)|SHELL_CMD_DISABLE_RETURN, utc_timestamp_set, rtc_utc_timestamp_set, rtc_utc_timestamp_set);
+
+// 将UTC的Unix时间戳转换为本地RTC时间和日期
+void rtc_local_timestamp_set(time_t timestamp)
+{
+    time_t utc_timestamp = timestamp + 8 * 3600;    // 本地时间比UTC时间快8小时，UTC时间要加上8小时
+    rtc_utc_timestamp_set(utc_timestamp);
+}
+SHELL_EXPORT_CMD(SHELL_CMD_PERMISSION(0)|SHELL_CMD_TYPE(SHELL_TYPE_CMD_FUNC)|SHELL_CMD_DISABLE_RETURN, local_timestamp_set, rtc_local_timestamp_set, rtc_local_timestamp_set);
+```
+
+<br>
+
+- 查阅`letter shell`相关资料发现，参数只支持`char(字符)`，`char(数字)`，`short(数字)`，`int(数字)`，`char *(字符串)`，`pointer`这几个数据类型，并不支持`time_t`，所以敲`shell`指令入参的时候，会把数据强制转为`int`类型，而在使用`gmtime(&timestamp)`转换的时候，`timestamp`是需要为`time_t`类型的，所以做出如下修改：
+``` c
+// 将UTC的Unix时间戳转换为RTC时间和日期
+static void rtc_utc_timestamp_set(int timestamp)       // 改为int类型
+{
+    time_t utc_timestamp = (time_t)timestamp;          // 强制转换为time_t类型
+    struct tm *tm = gmtime(&utc_timestamp);
+    RTC_DateType RTC_Date;
+    RTC_TimeType RTC_Time;
+
+    RTC_Date.Year = tm->tm_year - 100;    // 年份从1900开始计算
+    RTC_Date.Month = tm->tm_mon + 1;      // 月份从0开始计算
+    RTC_Date.Date = tm->tm_mday;
+    RTC_Date.WeekDay = (tm->tm_wday == 0) ? 7 : tm->tm_wday;   // 星期几，tm结构体是0-6，0是星期天; stm32的RTC返回的是1-7
+    RTC_Time.Hours = tm->tm_hour;
+    RTC_Time.Minutes = tm->tm_min;
+    RTC_Time.Seconds = tm->tm_sec;
+    RTC_Time.H12 = RTC_AM_H12;
+
+    rtc_date_params_set(&RTC_Date);
+    rtc_time_params_set(&RTC_Time);
+}
+SHELL_EXPORT_CMD(SHELL_CMD_PERMISSION(0)|SHELL_CMD_TYPE(SHELL_TYPE_CMD_FUNC)|SHELL_CMD_DISABLE_RETURN, utc_timestamp_set, rtc_utc_timestamp_set, rtc_utc_timestamp_set);
+
+
+// 将UTC的Unix时间戳转换为本地RTC时间和日期
+void rtc_local_timestamp_set(time_t timestamp)      // 无需改为int类型能通过?
+{
+    time_t utc_timestamp = timestamp + 8 * 3600;    // 本地时间比UTC时间快8小时，UTC时间要加上8小时
+    rtc_utc_timestamp_set(utc_timestamp);           // 调用UTC时间戳转换为RTC时间和日期的函数
+}
+SHELL_EXPORT_CMD(SHELL_CMD_PERMISSION(0)|SHELL_CMD_TYPE(SHELL_TYPE_CMD_FUNC)|SHELL_CMD_DISABLE_RETURN, local_timestamp_set, rtc_local_timestamp_set, rtc_local_timestamp_set);
+```
+
+<br>
+
+## 串口相关问题
+
+### 不带数据线USB的D+和D-短接
+
+- 添加`shell.c`文件中的判断，可能会出现恢复后`shell`交互键入数据延后：
+``` c
+#define SHELL_SHUTDOWN_CNTS		50
+static unsigned char shell_shutdown = 0;			//TX RX短接处理
+static int shell_shutdown_cnts = 0;					//TX RX短接处理cnts次数
+
+void shellInsertByte(Shell *shell, char data)
+{
+    /* 判断输入数据是否过长 */
+    if (shell->parser.length >= shell->parser.bufferSize - 1)
+    {
+		shell_shutdown_cnts ++;											//超长次数过多触发shell不接受标志
+		if(shell_shutdown_cnts > SHELL_SHUTDOWN_CNTS)
+			shell_shutdown = 1;
+		
+        shellWriteString(shell, shellText[SHELL_TEXT_CMD_TOO_LONG]);
+        shellWritePrompt(shell, 1);
+        shellWriteString(shell, shell->parser.buffer);
+        return;
+    }
+...
+}
+
+/**
+ * @brief shell 任务
+ * 
+ * @param param 参数(shell对象)
+ * 
+ */
+void shellTask(void *param)
+{
+    Shell *shell = (Shell *)param;
+    char data;
+#if SHELL_TASK_WHILE == 1
+    while(1)
+    {
+#endif
+		if(shell_shutdown)									//shell_shutdown true 退出, 可外部调用shell_shutdown置为false重新启用
+			return;
+	
+        if (shell->read && shell->read(&data, 1) == 1)
+        {
+            shellHandler(shell, data);
+        }
+#if SHELL_TASK_WHILE == 1
+    }
+#endif
+}
+
+```
+
+<br>
+
+### 串口回环后shell交互键入数据延后解决
+
+- 使用`letter shell`的解决方法：
+
+- 修改`shell.c`文件中的部分函数，清空缓存区长度：
+``` c
+// shell.c 文件 
+void shellInsertByte(Shell *shell, char data)
+{
+    /* 判断输入数据是否过长 */
+    if (shell->parser.length >= shell->parser.bufferSize - 1)
+    {
+        shellWriteString(shell, shellText[SHELL_TEXT_CMD_TOO_LONG]);    //可以注释掉，也以免一直打印？
+        shellWritePrompt(shell, 1);
+        shell->parser.buffer[shell->parser.length] = 0;                 // + 增加清空缓存区长度
+        // shellWriteString(shell, shell->parser.buffer);               //不打印显示超长数据
+        return;
+    }
+...
+}
+
+void shellExec(Shell *shell)
+{
+    ...
+    if (shell->status.isChecked)
+    {
+        ...
+        if (command != NULL)
+        {
+            shellRunCommand(shell, command);
+        }
+        else
+        {
+            shellWriteString(shell, shellText[SHELL_TEXT_CMD_NOT_FOUND]);
+            shell->parser.buffer[shell->parser.length] = 0;                 // + 缓存字符串清零
+        }
+    }
+    else
+    {
+        shellCheckPassword(shell);
+    }
+}
+
+static void shellWriteCommandHelp(Shell *shell, char *cmd)
+{
+    ShellCommand *command = shellSeekCommand(shell,
+                                             cmd,
+                                             shell->commandList.base,
+                                             0);
+    if (command)
+    {
+        shellWriteString(shell, shellText[SHELL_TEXT_HELP_HEADER]);
+        shellWriteString(shell, shellGetCommandName(command));
+        shellWriteString(shell, "\r\n");
+        shellWriteString(shell, shellGetCommandDesc(command));
+        shellWriteString(shell, "\r\n");
+    }
+    else
+    {
+        shellWriteString(shell, shellText[SHELL_TEXT_CMD_NOT_FOUND]);
+        shell->parser.buffer[shell->parser.length] = 0;                 // + 缓存字符串清零
+    }
+}
+```
+
+### letter shell初始化优化
+
+- `letter shell`新增初始化设置打印等级参数
+
+``` c
+void User_Shell_Init(uint8_t level)
+{
+    struct serial_configure config = EC_SERIAL_CONFIG_DEFAULT;
+    config.baud_rate = BAUD_RATE_921600;
+    drv_usart_init(ESERIAL_1, ESERIAL_MODE_DMA_RX | ESERIAL_MODE_DMA_TX, &config);
+
+    shell.write = User_Shell_Write;
+	shell.read = User_Shell_Read;
+    shellInit(&shell, shell_buffer, sizeof(shell_buffer));
+    
+    if(level > LOG_ALL)
+    {
+        uartLog.level = LOG_ALL;
+    }
+	logRegister(&uartLog, &shell);
+}
+```
+
+<br>
+
+### 串口升级后清屏指令问题
+
+- 串口升级后清屏指令打不全导致字符重叠，`letter shell`优化代码如下：
+``` c
+static const char *shellText[] =
+{
+    ...
+    [SHELL_TEXT_CLEAR_CONSOLE] = 
+        "\033[2J\033[1H",
+    ...
+}
+
+改为：
+static const char *shellText[] =
+{
+    ...
+    [SHELL_TEXT_CLEAR_CONSOLE] = 
+        "\r\n\033[2J\033[1H",                   // 添加\r\n字符保证终端不会粘连识别
+    ...
+}
+```
+
+<br>
+
+## secure CRT问题
+
+- 在线升级后打印出不完整清屏指令，显示残留`2J`，不会清屏。
+- 测试两块板，一块有这个问题，另一块没有问题
+
+## n32l406的ADC跑飞
+
+- 问题：`n32l406`的`ADC`跑飞，代码复用以前可以跑的。
+- 解决：低级错误，`ADC`的`IO`口初始化`PORT`和`PIN`写反，`CmBacktrace`排查出问题。

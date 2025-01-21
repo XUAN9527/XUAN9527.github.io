@@ -198,7 +198,7 @@ void app_main(void)
 
 #### 源代码例程
 
-[ESP32移植letter_shell组件例程](git@github.com:XUAN9527/components_demo.git)
+[ESP32移植letter_shell组件例程](https://github.com/XUAN9527/components_demo)
 
 
 

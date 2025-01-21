@@ -19,10 +19,10 @@ description: I2C 是一种简单、双向、二线制同步串行总线，由 Ph
 ![i2c时序图2](../pictures/i2c时序图2.png)
 
 ### 代码实现详解
-I2C协议实现有硬件I2C和软件I2C之分，这里只讲解软件I2C实现的版本。一下列出主要结构体和初始化函数。
+`I2C`协议实现有硬件`I2C`和软件`I2C`之分，这里只讲解软件`I2C`实现的版本。一下列出主要结构体和初始化函数。
 
 #### I2C协议初始化
-I2C协议的scl和sda配置为开漏输出,需要外部上拉（一般为10K电阻）
+`I2C`协议的`scl`和`sda`配置为开漏输出,需要外部上拉（一般为`10K`电阻）
 ``` bash
 #define i2c_pin_mode(pin,mode)		drv_pin_mode(pin,mode)
 #define i2c_pin_write(pin,level) 	drv_pin_write(pin,level)
@@ -135,10 +135,10 @@ int drv_i2c_recv_data(EI2C_DEVICE dev_e,uint16_t addr,uint8_t reg_addr,uint8_t *
 ```
 
 ## 实战开发问题分析
-实际开发过程中，同样的I2C驱动程序，在不同厂家芯片的使用上出现一些问题，导致部分厂家通信异常，导致数据接收不正确，以下进行分析对比，作证并解决问题。
+实际开发过程中，同样的`I2C`驱动程序，在不同厂家芯片的使用上出现一些问题，导致部分厂家通信异常，导致数据接收不正确，以下进行分析对比，作证并解决问题。
 
 ### Vishay 和 亿光 接近传感器模块对比
-Vishay 使用VCNL3682S型号芯片，亿光 使用APM-16D24-U6E型号芯片，I2C协议对比。
+`Vishay`使用`VCNL3682S`型号芯片，亿光使用`APM-16D24-U6E`型号芯片，`I2C`协议对比。
 
 ##### Vishay ：
 ![Vishay写i2c协议](../pictures/Vishay写i2c协议.png)
@@ -148,9 +148,9 @@ Vishay 使用VCNL3682S型号芯片，亿光 使用APM-16D24-U6E型号芯片，I2
 ![亿光i2c协议](../pictures/亿光i2c协议.png)
 
 ###### 对比波形
-对比协议来看基本上是一致的，用JI2C工具测的i2c波形也基本上一致，但是我自己写的软件i2c驱动，Vishay可以正常使用，亿光读取的数据就有问题，用逻辑分析仪抓一波波形分析一下。
+对比协议来看基本上是一致的，用`JI2C`工具测的`i2c`波形也基本上一致，但是我自己写的软件`i2c`驱动，`Vishay`可以正常使用，亿光读取的数据就有问题，用逻辑分析仪抓一波波形分析一下。
 
-发现每次读完都会多恢复一个ack，而协议上读完最后一个字节需要恢复nack。
+发现每次读完都会多恢复一个`ack`，而协议上读完最后一个字节需要恢复`nack`。
 
 ###### 修改了以下代码
 ``` bash
@@ -158,7 +158,7 @@ static int i2c_send_ack_or_nack(struct drv_i2c_bit_ops *bus, int ack)
 {
     struct drv_i2c_bit_ops *ops = bus;
 
-    if (ack)				//if(ack >= 0) 改成 if(ack)
+    if (ack)				// if(ack >= 0) 改成 if(ack)
         SET_SDA(ops, 0);
     i2c_delay(ops);
     if (SCL_H(ops) < 0)
@@ -176,3 +176,5 @@ static int i2c_send_ack_or_nack(struct drv_i2c_bit_ops *bus, int ack)
 
 	if(ack >= 0)表示每次都会回复ack/nack
 	if(ack)表示除最后一次数据不回复，其他每次都会回复ack/nack
+
+<br>
