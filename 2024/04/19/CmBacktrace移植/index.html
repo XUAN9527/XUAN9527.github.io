@@ -29,7 +29,7 @@
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="http://example.com/pictures/cmbacktrace%E7%9B%AE%E5%BD%95.png">
 <meta property="article:published_time" content="2024-04-19T06:27:00.000Z">
-<meta property="article:modified_time" content="2025-01-21T06:06:36.591Z">
+<meta property="article:modified_time" content="2025-02-08T09:33:02.595Z">
 <meta property="article:author" content="boollight">
 <meta property="article:tag" content="Linux">
 <meta property="article:tag" content="Cortex-M">
@@ -228,7 +228,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2025-01-21 14:06:36" itemprop="dateModified" datetime="2025-01-21T14:06:36+08:00">2025-01-21</time>
+                <time title="Modified: 2025-02-08 17:33:02" itemprop="dateModified" datetime="2025-02-08T17:33:02+08:00">2025-02-08</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -250,7 +250,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">Symbols count in article: </span>
-              <span>876</span>
+              <span>886</span>
             </span>
             <span class="post-meta-item" title="Reading time">
               <span class="post-meta-item-icon">
@@ -291,7 +291,7 @@
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ASM_SOURCES =  \</span><br><span class="line">CMSIS/device/startup/startup_n32l40x_gcc.s \</span><br><span class="line">components/cm_backtrace/fault_handler/gcc/cmb_fault.s # 添加这一行,或者</span><br></pre></td></tr></table></figure>
 
 <p><strong>方法二</strong>、将<code>cmb_fault.S</code>将入<code>makefile</code>编译选项</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">ASM_SOURCES = CMSIS/device/startup/startup_n32l40x_gcc.s</span><br><span class="line">ASM_SOURCES2 = components/cm_backtrace/fault_handler/gcc/cmb_fault.S	# 此行为新增</span><br><span class="line"></span><br><span class="line"># C源文件、汇编源文件的目标文件路径</span><br><span class="line">C_OBJECTS = $(addprefix $(OUTPUT_DIR)/, $(C_SOURCES:.c=.o))</span><br><span class="line">ASM_OBJECTS = $(addprefix $(OUTPUT_DIR)/, $(ASM_SOURCES:.s=.o)) \</span><br><span class="line">	      $(addprefix $(OUTPUT_DIR)/, $(ASM_SOURCES2:.S=.o))	# 此行为新增</span><br><span class="line"></span><br><span class="line">$(OUTPUT_DIR)/%.o: %.s %.S						# 新增 %.S </span><br><span class="line">	mkdir -p $(dir $@)</span><br><span class="line">	$(CC) $(INCLUDE) $(CFLAGS) -c $&lt; -o $@</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">ASM_SOURCES = CMSIS/device/startup/startup_n32l40x_gcc.s</span><br><span class="line">ASM_SOURCES2 = components/cm_backtrace/fault_handler/gcc/cmb_fault.S	# 此行为新增</span><br><span class="line"></span><br><span class="line"># C源文件、汇编源文件的目标文件路径</span><br><span class="line">C_OBJECTS = $(addprefix $(OUTPUT_DIR)/, $(C_SOURCES:.c=.o))</span><br><span class="line">ASM_OBJECTS = $(addprefix $(OUTPUT_DIR)/, $(ASM_SOURCES:.s=.o)) \</span><br><span class="line">	      $(addprefix $(OUTPUT_DIR)/, $(ASM_SOURCES2:.S=.o))	# 此行为新增</span><br><span class="line"></span><br><span class="line">$(OUTPUT_DIR)/%.o: %.s					</span><br><span class="line">	mkdir -p $(dir $@)</span><br><span class="line">	$(CC) $(INCLUDE) $(CFLAGS) -c $&lt; -o $@</span><br><span class="line"></span><br><span class="line">$(OUTPUT_DIR)/%.o: %.S         # 新增 %.S </span><br><span class="line">	mkdir -p $(dir $@)</span><br><span class="line">	$(CC) $(INCLUDE) $(CFLAGS) -c $&lt; -o $@</span><br></pre></td></tr></table></figure>
 
 <br>
 
@@ -478,12 +478,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="Symbols count total">42k</span>
+    <span title="Symbols count total">43k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="Reading time total">2:22</span>
+    <span title="Reading time total">2:23</span>
 </div>
   <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
   </div>
