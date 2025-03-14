@@ -55,10 +55,13 @@ C_OBJECTS = $(addprefix $(OUTPUT_DIR)/, $(C_SOURCES:.c=.o))
 ASM_OBJECTS = $(addprefix $(OUTPUT_DIR)/, $(ASM_SOURCES:.s=.o)) \
 	      $(addprefix $(OUTPUT_DIR)/, $(ASM_SOURCES2:.S=.o))	# 此行为新增
 
-$(OUTPUT_DIR)/%.o: %.s %.S						# 新增 %.S 
+$(OUTPUT_DIR)/%.o: %.s					
 	mkdir -p $(dir $@)
 	$(CC) $(INCLUDE) $(CFLAGS) -c $< -o $@
 
+$(OUTPUT_DIR)/%.o: %.S         # 新增 %.S 
+	mkdir -p $(dir $@)
+	$(CC) $(INCLUDE) $(CFLAGS) -c $< -o $@
 ```
 
 <br>

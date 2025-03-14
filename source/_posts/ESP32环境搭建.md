@@ -47,13 +47,19 @@ Arch:
 若子模块拉取失败，尝试手动逐个拉取子模块：
 
 	cd ~/esp/esp-adf/components
-	git clone git@github.com:espressif/esp-adf-libs.git
+	git clone git@github.com:espressif/esp-adf-libs.git 
+	或者
+	git clone https://github.com/espressif/esp-adf-libs.git
 
 	cd ~/esp/esp-adf/components
 	git clone git@github.com:espressif/esp-sr.git
+	或者
+	git clone https://github.com/espressif/esp-sr.git
 
 	cd ~/esp/esp-adf
 	git clone git@github.com:espressif/esp-idf.git
+	或者
+	git clone https://github.com/espressif/esp-idf.git
 
 ### 设置环境变量
 按自己实际路径，可按自己喜好设置，也可不配置，手动敲指令也可。
@@ -95,6 +101,8 @@ export ADF_PATH=/home/qx_song/esp/esp-adf
 
 	get-idf
 
+<br>
+
 ## ESP32工程示例
 
 ### 开始创建工程
@@ -104,6 +112,8 @@ export ADF_PATH=/home/qx_song/esp/esp-adf
 	cd ~/esp
 	get-idf
 	cp -r $IDF_PATH/examples/get-started/hello_world .
+
+<br>
 
 ### 配置工程
 	cd ~/esp/hello_world
@@ -127,6 +137,7 @@ export ADF_PATH=/home/qx_song/esp/esp-adf
 ### 合并执行构建、烧录和监视过程：
 
 	idf.py -p PORT [-b BAUD] flash monitor
+	退出 monitor: Ctrl + ]
 
 注：[-b BAUD] 和 monitor 配合使用，BAUD为程序中UART0的波特率	
 
@@ -177,3 +188,156 @@ export ADF_PATH=/home/qx_song/esp/esp-adf
 	idf.py menuconfig
 	idf.py build
 	esp-download
+
+<br>
+
+## 通过SSH远程访问本地的USB设备
+
+### 开发环境配置
+
+#### 本地机器配置（以Windows为例）
+
+1. 安装USB/IP工具
+
+- 下载并安装 `usbipd-win`（`Windows`的`USB/IP`服务端）：
+``` powershell
+winget install --interactive dorssel.usbipd-win
+```
+
+- 插入`ESP32`开发板，确认设备管理器中出现对应的串口（如 `COM3` 或 `/dev/ttyUSB0`）。
+
+2. 绑定并共享`USB`设备
+
+- 管理员权限打开`PowerShell`，查看`ESP32`的总线`ID`：
+``` powershell
+usbipd list
+```
+
+- 输出示例：
+``` powershell
+BUSID  VID:PID   DEVICE 							STATE
+3-1    10c4:ea60  Silicon Labs CP210x USB to UART Bridge (COM17)                Not Shared
+```
+
+- 绑定并共享设备：
+``` powershell
+usbipd bind --busid 3-1  # 替换为实际总线ID
+```
+
+3. 配置`Windows`防火墙
+
+``` powershell
+New-NetFirewallRule -DisplayName "USB/IP" -Direction Inbound -Action Allow -Protocol TCP -LocalPort 3240 # 关闭防火墙
+或者：
+Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled False # 临时关闭防火墙测试
+```
+
+4. 确保`USB/IP`服务已启动
+
+- 如果服务未启动，手动启动：
+``` powershell
+usbipd server	# 需要保持powershell
+``` 
+- 验证服务是否启动:
+``` powershell
+usbipd list
+``` 
+- 如果输出设备列表（如`ESP32`），说明服务已成功启动。
+
+5. 检查端口监听
+
+``` powershell
+netstat -ano | findstr :3240
+``` 
+
+- 正常应输出类似以下内容：
+``` powershell
+TCP    0.0.0.0:3240           0.0.0.0:0              LISTENING
+```
+
+6. 获取本机`ip`
+
+- `powershell`输入`ipconfig`指令获取本机`ip`:
+``` powershell
+Ethernet adapter 以太网:
+
+   Connection-specific DNS Suffix  . : breo.vip
+   Link-local IPv6 Address . . . . . : fe80::a2cf:7a4:df39:7032%7
+   IPv4 Address. . . . . . . . . . . : 192.168.104.29 # 获取此IP
+```
+
+#### 远程Ubuntu服务器配置
+
+1. 安装`USB/IP`客户端工具
+
+- 安装USB/IP客户端工具
+``` shell
+sudo apt install linux-tools-generic hwdata
+sudo update-alternatives --install /usr/local/bin/usbip usbip /usr/lib/linux-tools/*-generic/usbip 20
+```
+
+- 若不兼容，安装与内核`5.15.0-126`兼容的`usbipd`工具及性能调试工具
+``` shell
+sudo apt install linux-tools-5.15.0-126-generic linux-cloud-tools-5.15.0-126-generic
+```
+
+- 验证安装：安装后检查 `usbipd` 是否存在:
+``` shell
+which usbipd   # 输出路径
+```
+
+- 为避免未来内核升级后再次出现版本不兼容问题，安装通用工具包：
+``` shell
+sudo apt install linux-tools-generic linux-cloud-tools-generic
+```
+
+2. 附加远程`USB`设备
+- 在`Ubuntu`服务器执行（需与本地网络互通）：
+``` shell
+sudo usbip attach -r <本地机器IP> -b <总线ID> # 替换为实际IP和总线ID
+```
+- 验证设备是否挂载成功：
+``` shell
+ls /dev/tty*  # 应出现类似/dev/ttyUSB0的设备节点
+dmesg | tail  # 查看内核日志确认设备识别
+```
+
+3. 配置设备权限
+``` shell
+sudo usermod -aG dialout $USER  # 将用户加入串口组,需注销重新登录
+sudo chmod a+rw /dev/ttyUSB0    # 临时权限（可选）
+```
+
+#### 修改ubuntu环境变量
+
+``` shell
+vim ~/.bashrc
+```
+
+添加以下代码：
+``` shell
+#开启ESP32编译环境
+alias get-idf='. $HOME/esp/esp-adf/esp-idf/export.sh'
+alias get-adf='. $HOME/esp/esp-adf/export.sh'
+#烧录到设备，并打开监视器，/dev/ttyUSB0为USB挂载端口，需测试后填写，115200为监视器波特率，与设备UART0波特率对应
+alias esp-download='idf.py -p /dev/ttyUSB0 -b 115200 flash monitor'
+export PATH=/home/ubuntu/esp/esp-adf/esp-idf/tools:$PATH
+export IDF_PATH=/home/ubuntu/esp/esp-adf/esp-idf
+export ADF_PATH=/home/ubuntu/esp/esp-adf
+```
+
+#### 烧录步骤跟上文 WSL 环境一样
+
+#### 断开设备连接
+
+1. 本地释放设备（`Windows`端）
+
+``` powershell
+usbipd unbind --busid <总线ID>
+```
+
+2. 卸载`USB`设备
+
+``` powershell
+sudo usbip detach --port=00  # 查看端口号：sudo usbip port
+```

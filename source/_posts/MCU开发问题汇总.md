@@ -1476,12 +1476,37 @@ SHELL_EXPORT_CMD(SHELL_CMD_PERMISSION(0)|SHELL_CMD_TYPE(SHELL_TYPE_CMD_FUNC)|SHE
 static unsigned char shell_shutdown = 0;			//TX RX短接处理
 static int shell_shutdown_cnts = 0;					//TX RX短接处理cnts次数
 
+void shellExec(Shell *shell)
+{
+......
+    if (shell->status.isChecked)
+    {
+        ......
+        if (command != NULL)
+        {
+            shellRunCommand(shell, command);
+        }
+        else
+        {
+            shell_shutdown_cnts ++;											//shell_shutdown bug 解决
+            if(shell_shutdown_cnts > SHELL_SHUTDOWN_CNTS)
+                shell_shutdown = 1;
+
+            shellWriteString(shell, shellText[SHELL_TEXT_CMD_NOT_FOUND]);
+        }
+    }
+    else
+    {
+        shellCheckPassword(shell);
+    }
+}
+
 void shellInsertByte(Shell *shell, char data)
 {
     /* 判断输入数据是否过长 */
     if (shell->parser.length >= shell->parser.bufferSize - 1)
     {
-		shell_shutdown_cnts ++;											//超长次数过多触发shell不接受标志
+		shell_shutdown_cnts ++;											    //超长次数过多触发shell不接受标志
 		if(shell_shutdown_cnts > SHELL_SHUTDOWN_CNTS)
 			shell_shutdown = 1;
 		
@@ -1490,7 +1515,31 @@ void shellInsertByte(Shell *shell, char data)
         shellWriteString(shell, shell->parser.buffer);
         return;
     }
-...
+......
+}
+
+static void shellWriteCommandHelp(Shell *shell, char *cmd)
+{
+    ShellCommand *command = shellSeekCommand(shell,
+                                             cmd,
+                                             shell->commandList.base,
+                                             0);
+    if (command)
+    {
+        shellWriteString(shell, shellText[SHELL_TEXT_HELP_HEADER]);
+        shellWriteString(shell, shellGetCommandName(command));
+        shellWriteString(shell, "\r\n");
+        shellWriteString(shell, shellGetCommandDesc(command));
+        shellWriteString(shell, "\r\n");
+    }
+    else
+    {
+		shell_shutdown_cnts ++;											//shell_shutdown bug 解决
+		if(shell_shutdown_cnts > SHELL_SHUTDOWN_CNTS)
+			shell_shutdown = 1;
+		
+        shellWriteString(shell, shellText[SHELL_TEXT_CMD_NOT_FOUND]);
+    }
 }
 
 /**
@@ -1525,9 +1574,9 @@ void shellTask(void *param)
 
 ### 串口回环后shell交互键入数据延后解决
 
-- 使用`letter shell`的解决方法：
+- 使用`letter shell`的解决方法：(**依然会复现, 已定位是环形缓冲区的问题**)
 
-- 修改`shell.c`文件中的部分函数，清空缓存区长度：
+- 修改`shell.c`文件中的部分函数，清空缓存区长度：(未解决)
 ``` c
 // shell.c 文件 
 void shellInsertByte(Shell *shell, char data)
@@ -1542,28 +1591,6 @@ void shellInsertByte(Shell *shell, char data)
         return;
     }
 ...
-}
-
-void shellExec(Shell *shell)
-{
-    ...
-    if (shell->status.isChecked)
-    {
-        ...
-        if (command != NULL)
-        {
-            shellRunCommand(shell, command);
-        }
-        else
-        {
-            shellWriteString(shell, shellText[SHELL_TEXT_CMD_NOT_FOUND]);
-            shell->parser.buffer[shell->parser.length] = 0;                 // + 缓存字符串清零
-        }
-    }
-    else
-    {
-        shellCheckPassword(shell);
-    }
 }
 
 static void shellWriteCommandHelp(Shell *shell, char *cmd)
@@ -1587,6 +1614,8 @@ static void shellWriteCommandHelp(Shell *shell, char *cmd)
     }
 }
 ```
+
+<br>
 
 ### letter shell初始化优化
 
@@ -1646,3 +1675,76 @@ static const char *shellText[] =
 
 - 问题：`n32l406`的`ADC`跑飞，代码复用以前可以跑的。
 - 解决：低级错误，`ADC`的`IO`口初始化`PORT`和`PIN`写反，`CmBacktrace`排查出问题。
+
+## n32l406的不定时跑飞
+- 以下是跑飞后`cmbacktrace`追踪的`pc`指针及追踪函数。
+- 可能是串口`RX`干扰问题：(问题定位软件问题或者硬件问题)。
+``` c
+xuan@DESKTOP-A52B6V9:~/work/n5/code/app$ addr2line -e app.elf -a -f 080160c2 08013fcc 080140fc 080141d2 08014252 0800a4b6 08009092 0x080160c2 fault_test_by_div0 /home/xuan/work/n5/code/app/components/cm_backtrace/fault_test.c:38 0x08013fcc shellRunCommand /home/xuan/work/n5/code/app/components/letter_shell/shell.c:1264 0x080140fc shellEnter /home/xuan/work/n5/code/app/components/letter_shell/shell.c:1704 0x080141d2 shellHandler /home/xuan/work/n5/code/app/components/letter_shell/shell.c:1831 0x08014252 shellTask /home/xuan/work/n5/code/app/components/letter_shell/shell.c:1905 0x0800a4b6 main /home/xuan/work/n5/code/app/application/main.c:37 0x08009092 LoopFillZerobss /home/xuan/work/n5/code/app/CMSIS/device/startup/startup_n32l40x_gcc.s:113
+```
+
+<br>
+
+``` c
+xuan@DESKTOP-A52B6V9:~/work/n5/code/app$ addr2line -e app.elf -a -f 6f6d656c 080131aa 08010a62 080131aa 080140c0 080141f0 080142c6 0801434c 0800a4b6 08009092
+0x6f6d656c
+??
+??:0
+0x080131aa
+logHexDump
+/home/xuan/work/n5/code/app/components/letter_shell/log.c:243
+0x08010a62
+board_battery_ntc_get_temp_thres_down_work
+/home/xuan/work/n5/code/app/user/user_board.c:678
+0x080131aa
+logHexDump
+/home/xuan/work/n5/code/app/components/letter_shell/log.c:243
+0x080140c0
+shellRunCommand
+/home/xuan/work/n5/code/app/components/letter_shell/shell.c:1264
+0x080141f0
+shellEnter
+/home/xuan/work/n5/code/app/components/letter_shell/shell.c:1704
+0x080142c6
+shellHandler
+/home/xuan/work/n5/code/app/components/letter_shell/shell.c:1831
+0x0801434c
+shellTask
+/home/xuan/work/n5/code/app/components/letter_shell/shell.c:1905
+0x0800a4b6
+main
+/home/xuan/work/n5/code/app/application/main.c:37
+0x08009092
+LoopFillZerobss
+/home/xuan/work/n5/code/app/CMSIS/device/startup/startup_n32l40x_gcc.s:113
+```
+
+- 修改方法一：软件修改
+``` c
+void ec32_msp_usart_init(void *Instance)
+{
+    GPIO_InitType GPIO_InitStructure;
+    USART_Module *USARTx = (USART_Module *)Instance;
+
+    GPIO_InitStruct(&GPIO_InitStructure);
+	EC_APBxClkCmd_AFIO(EC_PERIPHClk_AFIO,ENABLE);                  //时钟复用
+	
+#ifdef BSP_USING_UART1
+    if(USART1 == USARTx)
+    {
+        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_USART1,ENABLE);
+        RCC_EnableAPB2PeriphClk(EC_USART1_RCC_GPIOx,ENABLE);
+
+        GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+        GPIO_InitStructure.GPIO_Alternate =  EC_USART1_Tx_GPIO_AF;
+        GPIO_InitStructure.Pin = EC_USART1_TxPin;
+        GPIO_InitPeripheral(EC_USART1_GPIO, &GPIO_InitStructure);
+
+        GPIO_InitStructure.GPIO_Alternate =  EC_USART1_Rx_GPIO_AF;
+        GPIO_InitStructure.Pin = EC_USART1_RxPin;
+        GPIO_InitStructure.GPIO_Pull = GPIO_Pull_Up;                       // 添加RX上拉
+        GPIO_InitPeripheral(EC_USART1_GPIO, &GPIO_InitStructure);
+    }
+...
+}
+```
