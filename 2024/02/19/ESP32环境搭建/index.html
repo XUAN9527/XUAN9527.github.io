@@ -28,7 +28,7 @@
 <meta property="og:description" content="ESP32 是一款由乐鑫科技开发的低成本、低功耗、具有 Wi-Fi 和蓝牙功能的 SoC 芯片，广泛应用于物联网领域，如智能家居、可穿戴设备、工业控制等。本教程基于windows子系统WSL，官方开发环境ESP-IDF&#x2F;ESP-ADF。">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2024-02-19T10:12:00.000Z">
-<meta property="article:modified_time" content="2024-04-16T06:26:49.469Z">
+<meta property="article:modified_time" content="2025-03-14T12:08:32.667Z">
 <meta property="article:author" content="boollight">
 <meta property="article:tag" content="ESP32">
 <meta property="article:tag" content="Linux">
@@ -226,7 +226,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2024-04-16 14:26:49" itemprop="dateModified" datetime="2024-04-16T14:26:49+08:00">2024-04-16</time>
+                <time title="Modified: 2025-03-14 20:08:32" itemprop="dateModified" datetime="2025-03-14T20:08:32+08:00">2025-03-14</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -252,14 +252,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">Symbols count in article: </span>
-              <span>1.1k</span>
+              <span>1.9k</span>
             </span>
             <span class="post-meta-item" title="Reading time">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">Reading time &asymp;</span>
-              <span>4 mins.</span>
+              <span>6 mins.</span>
             </span>
             <div class="post-description">ESP32 是一款由乐鑫科技开发的低成本、低功耗、具有 Wi-Fi 和蓝牙功能的 SoC 芯片，广泛应用于物联网领域，如智能家居、可穿戴设备、工业控制等。本教程基于windows子系统WSL，官方开发环境ESP-IDF/ESP-ADF。</div>
 
@@ -294,13 +294,19 @@ cd ~/esp
 </code></pre>
 <p>若子模块拉取失败，尝试手动逐个拉取子模块：</p>
 <pre><code>cd ~/esp/esp-adf/components
-git clone git@github.com:espressif/esp-adf-libs.git
+git clone git@github.com:espressif/esp-adf-libs.git 
+或者
+git clone https://github.com/espressif/esp-adf-libs.git
 
 cd ~/esp/esp-adf/components
 git clone git@github.com:espressif/esp-sr.git
+或者
+git clone https://github.com/espressif/esp-sr.git
 
 cd ~/esp/esp-adf
 git clone git@github.com:espressif/esp-idf.git
+或者
+git clone https://github.com/espressif/esp-idf.git
 </code></pre>
 <h3 id="设置环境变量"><a href="#设置环境变量" class="headerlink" title="设置环境变量"></a>设置环境变量</h3><p>按自己实际路径，可按自己喜好设置，也可不配置，手动敲指令也可。</p>
 <p><code>vi ~/.bashrc</code><br>在后面加上以下代码：</p>
@@ -340,6 +346,7 @@ Component config -&gt; FreeRTOS -&gt;  [*]Run FreeRTOS only on first core
 </code></pre>
 <p>请将 PORT 替换为 ESP32 开发板的串口名称。如果 PORT 未经定义，<code>idf.py</code> 将尝试使用可用的串口自动连接。</p>
 <h3 id="合并执行构建、烧录和监视过程："><a href="#合并执行构建、烧录和监视过程：" class="headerlink" title="合并执行构建、烧录和监视过程："></a>合并执行构建、烧录和监视过程：</h3><pre><code>idf.py -p PORT [-b BAUD] flash monitor
+退出 monitor: Ctrl + ]
 </code></pre>
 <p>注：[-b BAUD] 和 monitor 配合使用，BAUD为程序中UART0的波特率	</p>
 <pre><code>idf.py -p /dev/ttyS15 -b  115200  flash monitor	
@@ -374,7 +381,96 @@ idf.py menuconfig
 idf.py build
 esp-download
 </code></pre>
+<h2 id="通过SSH远程访问本地的USB设备"><a href="#通过SSH远程访问本地的USB设备" class="headerlink" title="通过SSH远程访问本地的USB设备"></a>通过SSH远程访问本地的USB设备</h2><h3 id="开发环境配置"><a href="#开发环境配置" class="headerlink" title="开发环境配置"></a>开发环境配置</h3><h4 id="本地机器配置（以Windows为例）"><a href="#本地机器配置（以Windows为例）" class="headerlink" title="本地机器配置（以Windows为例）"></a>本地机器配置（以Windows为例）</h4><ol>
+<li>安装USB&#x2F;IP工具</li>
+</ol>
+<ul>
+<li><p>下载并安装 <code>usbipd-win</code>（<code>Windows</code>的<code>USB/IP</code>服务端）：</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">winget install <span class="literal">--interactive</span> dorssel.usbipd<span class="literal">-win</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>插入<code>ESP32</code>开发板，确认设备管理器中出现对应的串口（如 <code>COM3</code> 或 <code>/dev/ttyUSB0</code>）。</p>
+</li>
+</ul>
+<ol start="2">
+<li>绑定并共享<code>USB</code>设备</li>
+</ol>
+<ul>
+<li><p>管理员权限打开<code>PowerShell</code>，查看<code>ESP32</code>的总线<code>ID</code>：</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">usbipd list</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>输出示例：</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">BUSID  VID:PID   DEVICE 							STATE</span><br><span class="line"><span class="number">3</span><span class="literal">-1</span>    <span class="number">10</span>c4:ea60  Silicon Labs CP210x USB to UART Bridge (COM17)                Not Shared</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>绑定并共享设备：</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">usbipd bind <span class="literal">--busid</span> <span class="number">3</span><span class="literal">-1</span>  <span class="comment"># 替换为实际总线ID</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<ol start="3">
+<li>配置<code>Windows</code>防火墙</li>
+</ol>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">New-NetFirewallRule</span> <span class="literal">-DisplayName</span> <span class="string">&quot;USB/IP&quot;</span> <span class="literal">-Direction</span> Inbound <span class="literal">-Action</span> Allow <span class="literal">-Protocol</span> TCP <span class="literal">-LocalPort</span> <span class="number">3240</span> <span class="comment"># 关闭防火墙</span></span><br><span class="line">或者：</span><br><span class="line"><span class="built_in">Set-NetFirewallProfile</span> <span class="literal">-Profile</span> Domain,Public,Private <span class="literal">-Enabled</span> False <span class="comment"># 临时关闭防火墙测试</span></span><br></pre></td></tr></table></figure>
 
+<ol start="4">
+<li>确保<code>USB/IP</code>服务已启动</li>
+</ol>
+<ul>
+<li>如果服务未启动，手动启动：<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">usbipd server	<span class="comment"># 需要保持powershell</span></span><br></pre></td></tr></table></figure></li>
+<li>验证服务是否启动:<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">usbipd list</span><br></pre></td></tr></table></figure></li>
+<li>如果输出设备列表（如<code>ESP32</code>），说明服务已成功启动。</li>
+</ul>
+<ol start="5">
+<li>检查端口监听</li>
+</ol>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">netstat <span class="literal">-ano</span> | findstr :<span class="number">3240</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>正常应输出类似以下内容：<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">TCP    <span class="number">0.0</span>.<span class="number">0.0</span>:<span class="number">3240</span>           <span class="number">0.0</span>.<span class="number">0.0</span>:<span class="number">0</span>              LISTENING</span><br></pre></td></tr></table></figure></li>
+</ul>
+<ol start="6">
+<li>获取本机<code>ip</code></li>
+</ol>
+<ul>
+<li><code>powershell</code>输入<code>ipconfig</code>指令获取本机<code>ip</code>:<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Ethernet adapter 以太网:</span><br><span class="line"></span><br><span class="line">   Connection<span class="literal">-specific</span> DNS Suffix  . : breo.vip</span><br><span class="line">   Link<span class="literal">-local</span> IPv6 Address . . . . . : fe80::a2cf:<span class="number">7</span>a4:df39:<span class="number">7032</span>%<span class="number">7</span></span><br><span class="line">   IPv4 Address. . . . . . . . . . . : <span class="number">192.168</span>.<span class="number">104.29</span> <span class="comment"># 获取此IP</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<h4 id="远程Ubuntu服务器配置"><a href="#远程Ubuntu服务器配置" class="headerlink" title="远程Ubuntu服务器配置"></a>远程Ubuntu服务器配置</h4><ol>
+<li>安装<code>USB/IP</code>客户端工具</li>
+</ol>
+<ul>
+<li><p>安装USB&#x2F;IP客户端工具</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install linux-tools-generic hwdata</span><br><span class="line">sudo update-alternatives --install /usr/local/bin/usbip usbip /usr/lib/linux-tools/*-generic/usbip 20</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>若不兼容，安装与内核<code>5.15.0-126</code>兼容的<code>usbipd</code>工具及性能调试工具</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install linux-tools-5.15.0-126-generic linux-cloud-tools-5.15.0-126-generic</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>验证安装：安装后检查 <code>usbipd</code> 是否存在:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">which usbipd   # 输出路径</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>为避免未来内核升级后再次出现版本不兼容问题，安装通用工具包：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install linux-tools-generic linux-cloud-tools-generic</span><br></pre></td></tr></table></figure></li>
+</ul>
+<ol start="2">
+<li>附加远程<code>USB</code>设备</li>
+</ol>
+<ul>
+<li>在<code>Ubuntu</code>服务器执行（需与本地网络互通）：<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo usbip attach -r &lt;本地机器IP&gt; -b &lt;总线ID&gt; # 替换为实际IP和总线ID</span><br></pre></td></tr></table></figure></li>
+<li>验证设备是否挂载成功：<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ls /dev/tty*  # 应出现类似/dev/ttyUSB0的设备节点</span><br><span class="line">dmesg | tail  # 查看内核日志确认设备识别</span><br></pre></td></tr></table></figure></li>
+</ul>
+<ol start="3">
+<li>配置设备权限<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo usermod -aG dialout $USER  # 将用户加入串口组,需注销重新登录</span><br><span class="line">sudo chmod a+rw /dev/ttyUSB0    # 临时权限（可选）</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h4 id="修改ubuntu环境变量"><a href="#修改ubuntu环境变量" class="headerlink" title="修改ubuntu环境变量"></a>修改ubuntu环境变量</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim ~/.bashrc</span><br></pre></td></tr></table></figure>
+
+<p>添加以下代码：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">开启ESP32编译环境</span></span><br><span class="line">alias get-idf=&#x27;. $HOME/esp/esp-adf/esp-idf/export.sh&#x27;</span><br><span class="line">alias get-adf=&#x27;. $HOME/esp/esp-adf/export.sh&#x27;</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">烧录到设备，并打开监视器，/dev/ttyUSB0为USB挂载端口，需测试后填写，115200为监视器波特率，与设备UART0波特率对应</span></span><br><span class="line">alias esp-download=&#x27;idf.py -p /dev/ttyUSB0 -b 115200 flash monitor&#x27;</span><br><span class="line">export PATH=/home/ubuntu/esp/esp-adf/esp-idf/tools:$PATH</span><br><span class="line">export IDF_PATH=/home/ubuntu/esp/esp-adf/esp-idf</span><br><span class="line">export ADF_PATH=/home/ubuntu/esp/esp-adf</span><br></pre></td></tr></table></figure>
+
+<h4 id="烧录步骤跟上文-WSL-环境一样"><a href="#烧录步骤跟上文-WSL-环境一样" class="headerlink" title="烧录步骤跟上文 WSL 环境一样"></a>烧录步骤跟上文 WSL 环境一样</h4><h4 id="断开设备连接"><a href="#断开设备连接" class="headerlink" title="断开设备连接"></a>断开设备连接</h4><ol>
+<li>本地释放设备（<code>Windows</code>端）</li>
+</ol>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">usbipd unbind <span class="literal">--busid</span> &lt;总线ID&gt;</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>卸载<code>USB</code>设备</li>
+</ol>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo usbip detach <span class="literal">--port</span>=<span class="number">00</span>  <span class="comment"># 查看端口号：sudo usbip port</span></span><br></pre></td></tr></table></figure>
     </div>
 
     
@@ -458,7 +554,7 @@ esp-download
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="nav-number">1.</span> <span class="nav-text">开发环境搭建</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96ESP-ADF"><span class="nav-number">1.1.</span> <span class="nav-text">获取ESP-ADF</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AE%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="nav-number">1.2.</span> <span class="nav-text">设置环境变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AE%E5%B7%A5%E5%85%B7"><span class="nav-number">1.3.</span> <span class="nav-text">设置工具</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ESP32%E5%B7%A5%E7%A8%8B%E7%A4%BA%E4%BE%8B"><span class="nav-number">2.</span> <span class="nav-text">ESP32工程示例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%80%E5%A7%8B%E5%88%9B%E5%BB%BA%E5%B7%A5%E7%A8%8B"><span class="nav-number">2.1.</span> <span class="nav-text">开始创建工程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E5%B7%A5%E7%A8%8B"><span class="nav-number">2.2.</span> <span class="nav-text">配置工程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%96%E8%AF%91%E5%B7%A5%E7%A8%8B"><span class="nav-number">2.3.</span> <span class="nav-text">编译工程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%83%A7%E5%BD%95%E5%B7%A5%E7%A8%8B"><span class="nav-number">2.4.</span> <span class="nav-text">烧录工程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%88%E5%B9%B6%E6%89%A7%E8%A1%8C%E6%9E%84%E5%BB%BA%E3%80%81%E7%83%A7%E5%BD%95%E5%92%8C%E7%9B%91%E8%A7%86%E8%BF%87%E7%A8%8B%EF%BC%9A"><span class="nav-number">2.5.</span> <span class="nav-text">合并执行构建、烧录和监视过程：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%93%A6%E9%99%A4flash"><span class="nav-number">2.6.</span> <span class="nav-text">擦除flash</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8C%82%E8%BD%BD%E7%AB%AF%E5%8F%A3"><span class="nav-number">2.7.</span> <span class="nav-text">挂载端口</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#windows-%E5%AD%90%E7%B3%BB%E7%BB%9F-wsl"><span class="nav-number">2.7.1.</span> <span class="nav-text">windows 子系统 wsl</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">2.7.2.</span> <span class="nav-text">总结</span></a></li></ol></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="nav-number">1.</span> <span class="nav-text">开发环境搭建</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96ESP-ADF"><span class="nav-number">1.1.</span> <span class="nav-text">获取ESP-ADF</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AE%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="nav-number">1.2.</span> <span class="nav-text">设置环境变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AE%E5%B7%A5%E5%85%B7"><span class="nav-number">1.3.</span> <span class="nav-text">设置工具</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ESP32%E5%B7%A5%E7%A8%8B%E7%A4%BA%E4%BE%8B"><span class="nav-number">2.</span> <span class="nav-text">ESP32工程示例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%80%E5%A7%8B%E5%88%9B%E5%BB%BA%E5%B7%A5%E7%A8%8B"><span class="nav-number">2.1.</span> <span class="nav-text">开始创建工程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E5%B7%A5%E7%A8%8B"><span class="nav-number">2.2.</span> <span class="nav-text">配置工程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%96%E8%AF%91%E5%B7%A5%E7%A8%8B"><span class="nav-number">2.3.</span> <span class="nav-text">编译工程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%83%A7%E5%BD%95%E5%B7%A5%E7%A8%8B"><span class="nav-number">2.4.</span> <span class="nav-text">烧录工程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%88%E5%B9%B6%E6%89%A7%E8%A1%8C%E6%9E%84%E5%BB%BA%E3%80%81%E7%83%A7%E5%BD%95%E5%92%8C%E7%9B%91%E8%A7%86%E8%BF%87%E7%A8%8B%EF%BC%9A"><span class="nav-number">2.5.</span> <span class="nav-text">合并执行构建、烧录和监视过程：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%93%A6%E9%99%A4flash"><span class="nav-number">2.6.</span> <span class="nav-text">擦除flash</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8C%82%E8%BD%BD%E7%AB%AF%E5%8F%A3"><span class="nav-number">2.7.</span> <span class="nav-text">挂载端口</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#windows-%E5%AD%90%E7%B3%BB%E7%BB%9F-wsl"><span class="nav-number">2.7.1.</span> <span class="nav-text">windows 子系统 wsl</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">2.7.2.</span> <span class="nav-text">总结</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%9A%E8%BF%87SSH%E8%BF%9C%E7%A8%8B%E8%AE%BF%E9%97%AE%E6%9C%AC%E5%9C%B0%E7%9A%84USB%E8%AE%BE%E5%A4%87"><span class="nav-number">3.</span> <span class="nav-text">通过SSH远程访问本地的USB设备</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE"><span class="nav-number">3.1.</span> <span class="nav-text">开发环境配置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9C%AC%E5%9C%B0%E6%9C%BA%E5%99%A8%E9%85%8D%E7%BD%AE%EF%BC%88%E4%BB%A5Windows%E4%B8%BA%E4%BE%8B%EF%BC%89"><span class="nav-number">3.1.1.</span> <span class="nav-text">本地机器配置（以Windows为例）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BF%9C%E7%A8%8BUbuntu%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%85%8D%E7%BD%AE"><span class="nav-number">3.1.2.</span> <span class="nav-text">远程Ubuntu服务器配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9ubuntu%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="nav-number">3.1.3.</span> <span class="nav-text">修改ubuntu环境变量</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%83%A7%E5%BD%95%E6%AD%A5%E9%AA%A4%E8%B7%9F%E4%B8%8A%E6%96%87-WSL-%E7%8E%AF%E5%A2%83%E4%B8%80%E6%A0%B7"><span class="nav-number">3.1.4.</span> <span class="nav-text">烧录步骤跟上文 WSL 环境一样</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%96%AD%E5%BC%80%E8%AE%BE%E5%A4%87%E8%BF%9E%E6%8E%A5"><span class="nav-number">3.1.5.</span> <span class="nav-text">断开设备连接</span></a></li></ol></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -521,12 +617,12 @@ esp-download
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="Symbols count total">43k</span>
+    <span title="Symbols count total">44k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="Reading time total">2:23</span>
+    <span title="Reading time total">2:27</span>
 </div>
   <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
   </div>
