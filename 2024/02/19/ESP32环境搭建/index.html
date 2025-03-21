@@ -28,7 +28,7 @@
 <meta property="og:description" content="ESP32 是一款由乐鑫科技开发的低成本、低功耗、具有 Wi-Fi 和蓝牙功能的 SoC 芯片，广泛应用于物联网领域，如智能家居、可穿戴设备、工业控制等。本教程基于windows子系统WSL，官方开发环境ESP-IDF&#x2F;ESP-ADF。">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2024-02-19T10:12:00.000Z">
-<meta property="article:modified_time" content="2025-03-14T12:15:36.850Z">
+<meta property="article:modified_time" content="2025-03-21T03:47:16.938Z">
 <meta property="article:author" content="boollight">
 <meta property="article:tag" content="ESP32">
 <meta property="article:tag" content="Linux">
@@ -226,7 +226,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2025-03-14 20:15:36" itemprop="dateModified" datetime="2025-03-14T20:15:36+08:00">2025-03-14</time>
+                <time title="Modified: 2025-03-21 11:47:16" itemprop="dateModified" datetime="2025-03-21T11:47:16+08:00">2025-03-21</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -457,7 +457,7 @@ esp-download
 <li>附加远程<code>USB</code>设备</li>
 </ol>
 <ul>
-<li>在<code>Ubuntu</code>服务器执行（需与本地网络互通）：<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo usbip attach -r &lt;本地机器IP&gt; -b &lt;总线ID&gt; # 替换为实际IP和总线ID</span><br></pre></td></tr></table></figure></li>
+<li>在<code>Ubuntu</code>服务器执行（需与本地网络互通）：<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo modprobe usbip-core</span><br><span class="line">sudo modprobe vhci-hcd</span><br><span class="line">sudo usbip attach -r &lt;本地机器IP&gt; -b &lt;总线ID&gt; # 替换为实际IP和总线ID</span><br></pre></td></tr></table></figure></li>
 <li>验证设备是否挂载成功：<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ls /dev/tty*  # 应出现类似/dev/ttyUSB0的设备节点</span><br><span class="line">dmesg | tail  # 查看内核日志确认设备识别</span><br></pre></td></tr></table></figure></li>
 </ul>
 <ol start="3">
@@ -466,7 +466,7 @@ esp-download
 <h4 id="修改ubuntu环境变量"><a href="#修改ubuntu环境变量" class="headerlink" title="修改ubuntu环境变量"></a>修改ubuntu环境变量</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim ~/.bashrc</span><br></pre></td></tr></table></figure>
 
 <p>添加以下代码：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">开启ESP32编译环境</span></span><br><span class="line">alias get-idf=&#x27;. $HOME/esp/esp-adf/esp-idf/export.sh&#x27;</span><br><span class="line">alias get-adf=&#x27;. $HOME/esp/esp-adf/export.sh&#x27;</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">烧录到设备，并打开监视器，/dev/ttyUSB0为USB挂载端口，需测试后填写，115200为监视器波特率，与设备UART0波特率对应</span></span><br><span class="line">alias esp-download=&#x27;idf.py -p /dev/ttyUSB0 -b 115200 flash monitor&#x27;</span><br><span class="line">export PATH=/home/ubuntu/esp/esp-adf/esp-idf/tools:$PATH</span><br><span class="line">export IDF_PATH=/home/ubuntu/esp/esp-adf/esp-idf</span><br><span class="line">export ADF_PATH=/home/ubuntu/esp/esp-adf</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">开启ESP32编译环境</span></span><br><span class="line">alias get-idf=&#x27;. $HOME/esp/esp-adf/esp-idf/export.sh&#x27;</span><br><span class="line">alias get-adf=&#x27;. $HOME/esp/esp-adf/export.sh&#x27;</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">烧录到设备，并打开监视器，/dev/ttyUSB0为USB挂载端口，需测试后填写，115200为监视器波特率，与设备UART0波特率对应</span></span><br><span class="line">alias esp-download=&#x27;idf.py -p /dev/ttyUSB0 -b 115200 flash monitor&#x27;</span><br><span class="line">alias esp-claimed=&#x27;sudo usbip attach -r 192.168.104.29 -b 3-1&#x27;</span><br><span class="line">export PATH=/home/ubuntu/esp/esp-adf/esp-idf/tools:$PATH</span><br><span class="line">export IDF_PATH=/home/ubuntu/esp/esp-adf/esp-idf</span><br><span class="line">export ADF_PATH=/home/ubuntu/esp/esp-adf</span><br></pre></td></tr></table></figure>
 
 <h4 id="烧录步骤跟上文-WSL-环境一样"><a href="#烧录步骤跟上文-WSL-环境一样" class="headerlink" title="烧录步骤跟上文 WSL 环境一样"></a>烧录步骤跟上文 WSL 环境一样</h4><h4 id="断开设备连接"><a href="#断开设备连接" class="headerlink" title="断开设备连接"></a>断开设备连接</h4><ol>
 <li>本地释放设备（<code>Windows</code>端）</li>
