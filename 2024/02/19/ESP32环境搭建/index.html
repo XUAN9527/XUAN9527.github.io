@@ -28,7 +28,7 @@
 <meta property="og:description" content="ESP32 是一款由乐鑫科技开发的低成本、低功耗、具有 Wi-Fi 和蓝牙功能的 SoC 芯片，广泛应用于物联网领域，如智能家居、可穿戴设备、工业控制等。本教程基于windows子系统WSL，官方开发环境ESP-IDF&#x2F;ESP-ADF。">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2024-02-19T10:12:00.000Z">
-<meta property="article:modified_time" content="2025-03-26T08:27:33.420Z">
+<meta property="article:modified_time" content="2025-04-10T01:44:58.572Z">
 <meta property="article:author" content="boollight">
 <meta property="article:tag" content="ESP32">
 <meta property="article:tag" content="Linux">
@@ -226,7 +226,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2025-03-26 16:27:33" itemprop="dateModified" datetime="2025-03-26T16:27:33+08:00">2025-03-26</time>
+                <time title="Modified: 2025-04-10 09:44:58" itemprop="dateModified" datetime="2025-04-10T09:44:58+08:00">2025-04-10</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -419,9 +419,13 @@ esp-download
 <li>确保<code>USB/IP</code>服务已启动</li>
 </ol>
 <ul>
-<li>如果服务未启动，手动启动：<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">usbipd server	<span class="comment"># 需要保持powershell</span></span><br></pre></td></tr></table></figure></li>
-<li>验证服务是否启动:<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">usbipd list</span><br></pre></td></tr></table></figure></li>
-<li>如果输出设备列表（如<code>ESP32</code>），说明服务已成功启动。</li>
+<li><p>如果服务未启动，手动启动：</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">usbipd server	<span class="comment"># 需要保持powershell</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>验证服务是否启动:</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">usbipd list</span><br></pre></td></tr></table></figure></li>
+<li><p>如果输出设备列表（如<code>ESP32</code>），说明服务已成功启动。</p>
+</li>
 </ul>
 <ol start="5">
 <li>检查端口监听</li>
@@ -429,7 +433,11 @@ esp-download
 <figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">netstat <span class="literal">-ano</span> | findstr :<span class="number">3240</span></span><br></pre></td></tr></table></figure>
 
 <ul>
-<li>正常应输出类似以下内容：<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">TCP    <span class="number">0.0</span>.<span class="number">0.0</span>:<span class="number">3240</span>           <span class="number">0.0</span>.<span class="number">0.0</span>:<span class="number">0</span>              LISTENING</span><br></pre></td></tr></table></figure></li>
+<li><p>正常应输出类似以下内容：</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">TCP    <span class="number">0.0</span>.<span class="number">0.0</span>:<span class="number">3240</span>           <span class="number">0.0</span>.<span class="number">0.0</span>:<span class="number">0</span>              LISTENING</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>常用信息</p>
+</li>
 </ul>
 <ol start="6">
 <li>获取本机<code>ip</code></li>
@@ -437,6 +445,9 @@ esp-download
 <ul>
 <li><code>powershell</code>输入<code>ipconfig</code>指令获取本机<code>ip</code>:<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Ethernet adapter 以太网:</span><br><span class="line"></span><br><span class="line">   Connection<span class="literal">-specific</span> DNS Suffix  . : breo.vip</span><br><span class="line">   Link<span class="literal">-local</span> IPv6 Address . . . . . : fe80::a2cf:<span class="number">7</span>a4:df39:<span class="number">7032</span>%<span class="number">7</span></span><br><span class="line">   IPv4 Address. . . . . . . . . . . : <span class="number">192.168</span>.<span class="number">104.29</span> <span class="comment"># 获取此IP</span></span><br></pre></td></tr></table></figure></li>
 </ul>
+<ol start="7">
+<li>其他常用命令<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">usbipd state 				<span class="comment"># 查看当前共享状态</span></span><br><span class="line"><span class="built_in">sc</span> query usbipd 			<span class="comment"># 查看服务状态</span></span><br><span class="line">net stop usbipd 			<span class="comment"># 停止服务</span></span><br><span class="line">usbipd unbind <span class="literal">--all</span> 		<span class="comment"># 停止共享所有设备</span></span><br><span class="line">usbipd bind <span class="literal">--busid</span>=<span class="number">2</span><span class="literal">-1</span>    	<span class="comment"># 共享 COM18</span></span><br><span class="line">usbipd unbind <span class="literal">--busid</span>=<span class="number">2</span><span class="literal">-1</span>  	<span class="comment"># 取消共享</span></span><br></pre></td></tr></table></figure></li>
+</ol>
 <h4 id="远程Ubuntu服务器配置"><a href="#远程Ubuntu服务器配置" class="headerlink" title="远程Ubuntu服务器配置"></a>远程Ubuntu服务器配置</h4><ol>
 <li>安装<code>USB/IP</code>客户端工具</li>
 </ol>
@@ -466,12 +477,12 @@ esp-download
 <h4 id="修改ubuntu环境变量"><a href="#修改ubuntu环境变量" class="headerlink" title="修改ubuntu环境变量"></a>修改ubuntu环境变量</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim ~/.bashrc</span><br></pre></td></tr></table></figure>
 
 <p>添加以下代码：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">开启ESP32编译环境</span></span><br><span class="line">alias get-idf=&#x27;. $HOME/esp/esp-adf/esp-idf/export.sh&#x27;</span><br><span class="line">alias get-adf=&#x27;. $HOME/esp/esp-adf/export.sh&#x27;</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">烧录到设备，并打开监视器，/dev/ttyUSB0为USB挂载端口，需测试后填写，115200为监视器波特率，与设备UART0波特率对应</span></span><br><span class="line">alias esp-u0=&#x27;idf.py -p /dev/ttyUSB0 -b 115200 flash monitor&#x27;</span><br><span class="line">alias esp-u1=&#x27;idf.py -p /dev/ttyUSB1 -b 115200 flash monitor&#x27;</span><br><span class="line">alias esp-normal=&#x27;sudo usbip attach -r 192.168.104.29 -b 3-1&#x27;</span><br><span class="line">alias esp-s3=&#x27;sudo usbip attach -r 192.168.104.29 -b 1-3&#x27;</span><br><span class="line">export PATH=/home/ubuntu/esp/esp-adf/esp-idf/tools:$PATH</span><br><span class="line">export IDF_PATH=/home/ubuntu/esp/esp-adf/esp-idf</span><br><span class="line">export ADF_PATH=/home/ubuntu/esp/esp-adf</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">开启ESP32编译环境</span></span><br><span class="line">alias get-idf=&#x27;. $HOME/esp/esp-adf/esp-idf/export.sh&#x27;</span><br><span class="line">alias get-adf=&#x27;. $HOME/esp/esp-adf/export.sh&#x27;</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">烧录到设备，并打开监视器，/dev/ttyUSB0为USB挂载端口，需测试后填写，115200为监视器波特率，与设备UART0波特率对应</span></span><br><span class="line">alias esp-u0=&#x27;idf.py -p /dev/ttyUSB0 -b 115200 flash monitor&#x27;</span><br><span class="line">alias esp-u1=&#x27;idf.py -p /dev/ttyUSB1 -b 115200 flash monitor&#x27;</span><br><span class="line">alias esp-s3=&#x27;sudo usbip attach -r 192.168.104.29 -b 2-1&#x27;</span><br><span class="line">export PATH=/home/ubuntu/esp/esp-adf/esp-idf/tools:$PATH</span><br><span class="line">export IDF_PATH=/home/ubuntu/esp/esp-adf/esp-idf</span><br><span class="line">export ADF_PATH=/home/ubuntu/esp/esp-adf</span><br></pre></td></tr></table></figure>
 
 <ul>
 <li>释放<code>USB</code>口:</li>
 </ul>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ubuntu@compilation:~/esp/spi_lcd_touch$ lsof /dev/ttyUSB0</span><br><span class="line">COMMAND   PID   USER   FD   TYPE DEVICE SIZE/OFF NODE NAME</span><br><span class="line">python  85630 ubuntu    3uW  CHR  188,0      0t0  730 /dev/ttyUSB0</span><br><span class="line">ubuntu@compilation:~/esp/spi_lcd_touch$ sudo kill -9 85630 </span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ubuntu@compilation:~/esp/spi_lcd_touch$ lsof /dev/ttyUSB0</span><br><span class="line">COMMAND   PID   USER   FD   TYPE DEVICE SIZE/OFF NODE NAME</span><br><span class="line">python  85630 ubuntu    3uW  CHR  188,0      0t0  730 /dev/ttyUSB0</span><br><span class="line"></span><br><span class="line">ubuntu@compilation:~/esp/spi_lcd_touch$ sudo kill -9 85630 </span><br></pre></td></tr></table></figure>
 
 <h4 id="烧录步骤跟上文-WSL-环境一样"><a href="#烧录步骤跟上文-WSL-环境一样" class="headerlink" title="烧录步骤跟上文 WSL 环境一样"></a>烧录步骤跟上文 WSL 环境一样</h4><h4 id="断开设备连接"><a href="#断开设备连接" class="headerlink" title="断开设备连接"></a>断开设备连接</h4><ol>
 <li>本地释放设备（<code>Windows</code>端）</li>
