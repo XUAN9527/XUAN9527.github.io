@@ -238,6 +238,7 @@ Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled False # 临时关
 ``` powershell
 usbipd server	# 需要保持powershell
 ``` 
+
 - 验证服务是否启动:
 ``` powershell
 usbipd list
@@ -255,6 +256,7 @@ netstat -ano | findstr :3240
 TCP    0.0.0.0:3240           0.0.0.0:0              LISTENING
 ```
 
+- 常用信息
 6. 获取本机`ip`
 
 - `powershell`输入`ipconfig`指令获取本机`ip`:
@@ -264,6 +266,16 @@ Ethernet adapter 以太网:
    Connection-specific DNS Suffix  . : breo.vip
    Link-local IPv6 Address . . . . . : fe80::a2cf:7a4:df39:7032%7
    IPv4 Address. . . . . . . . . . . : 192.168.104.29 # 获取此IP
+```
+
+7. 其他常用命令
+``` powershell
+usbipd state 				# 查看当前共享状态
+sc query usbipd 			# 查看服务状态
+net stop usbipd 			# 停止服务
+usbipd unbind --all 		# 停止共享所有设备
+usbipd bind --busid=2-1    	# 共享 COM18
+usbipd unbind --busid=2-1  	# 取消共享
 ```
 
 #### 远程Ubuntu服务器配置
@@ -294,6 +306,8 @@ sudo apt install linux-tools-generic linux-cloud-tools-generic
 2. 附加远程`USB`设备
 - 在`Ubuntu`服务器执行（需与本地网络互通）：
 ``` shell
+sudo modprobe usbip-core
+sudo modprobe vhci-hcd
 sudo usbip attach -r <本地机器IP> -b <总线ID> # 替换为实际IP和总线ID
 ```
 - 验证设备是否挂载成功：
@@ -320,10 +334,22 @@ vim ~/.bashrc
 alias get-idf='. $HOME/esp/esp-adf/esp-idf/export.sh'
 alias get-adf='. $HOME/esp/esp-adf/export.sh'
 #烧录到设备，并打开监视器，/dev/ttyUSB0为USB挂载端口，需测试后填写，115200为监视器波特率，与设备UART0波特率对应
-alias esp-download='idf.py -p /dev/ttyUSB0 -b 115200 flash monitor'
+alias esp-u0='idf.py -p /dev/ttyUSB0 -b 115200 flash monitor'
+alias esp-u1='idf.py -p /dev/ttyUSB1 -b 115200 flash monitor'
+alias esp-s3='sudo usbip attach -r 192.168.104.29 -b 2-1'
 export PATH=/home/ubuntu/esp/esp-adf/esp-idf/tools:$PATH
 export IDF_PATH=/home/ubuntu/esp/esp-adf/esp-idf
 export ADF_PATH=/home/ubuntu/esp/esp-adf
+```
+
+- 释放`USB`口:
+
+``` shell
+ubuntu@compilation:~/esp/spi_lcd_touch$ lsof /dev/ttyUSB0
+COMMAND   PID   USER   FD   TYPE DEVICE SIZE/OFF NODE NAME
+python  85630 ubuntu    3uW  CHR  188,0      0t0  730 /dev/ttyUSB0
+
+ubuntu@compilation:~/esp/spi_lcd_touch$ sudo kill -9 85630 
 ```
 
 #### 烧录步骤跟上文 WSL 环境一样

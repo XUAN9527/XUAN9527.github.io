@@ -18,33 +18,40 @@ description: ESP32 在构建工程，添加组件，编译等步骤上会遇到�
 [中文官方文档链接](https://link.zhihu.com/?target=https%3A//docs.espressif.com/projects/esp-idf/zh_CN/latest/esp32/api-guides/build-system.html%23id21)
 
 #### 示例说明
-此示例在《ESP32 smart_config和airkiss配网》
+此示例在《**ESP32 smart_config和airkiss配网**》
 https://zhuanlan.zhihu.com/p/440454542
 https://link.zhihu.com/?target=https%3A//blog.csdn.net/chentuo2000/article/details/121687760
 基础上，增加连接成功后点亮板载LED功能。
 实现所需功能后将各功能代码分离，再将分离后的代码构造成组件，使得项目有清晰的结构，方便功能代码移植.
 
 ### 开发环境
-《Win10启用Linux子系统安装Ubuntu》
+
+以下有三种方法：
+
+1. 《Win10启用Linux子系统安装Ubuntu》
 https://link.zhihu.com/?target=https%3A//blog.csdn.net/chentuo2000/article/details/112131624
 
-《用乐鑫国内Gitee镜像搭建ESP32开发环境》
+2. 《用乐鑫国内Gitee镜像搭建ESP32开发环境》
 https://link.zhihu.com/?target=https%3A//blog.csdn.net/chentuo2000/article/details/113424934
+
+3. 《ESP32环境搭建》（自己写的环境搭建）
+https://xuan9527.github.io/2024/02/19/ESP32%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/
 
 ### 构建项目
 
 #### 拷贝 && 初始化例程
-将例子项目`hello_world`复制到ESP-IDF开发工具之外,更名为components_demo:
+
+将例子项目`hello_world`复制到`ESP-IDF`开发工具之外,更名为`components_demo`:
 
 	cd ~/esp
 	cp -r ~/esp/esp-adf/esp-idf/examples/get-started/hello_world ./components_demo
 
-清空build目录:
+清空`build`目录:
 
 	cd ~/esp/components_demo
 	rm -r build/*
 
-注意，每当添加了新组件就要删除build目录下的全部内容，或者执行下面这条命令：
+注意，每当添加了新组件就要删除`build`目录下的全部内容，或者执行下面这条命令：
 
 	idf.py fullclean
 
@@ -62,7 +69,9 @@ https://link.zhihu.com/?target=https%3A//blog.csdn.net/chentuo2000/article/detai
 
 ![component_demo设备树](../pictures/component_demo设备树.png)
 
-注意：组件目录components名字不能改，其下的组件名可以随意取。build目录是编译时生成的，编译的结果都放在其中。dependencies.lock是随原来的项目复制过来的不要改。sdkconfig文件可以用idf.py menuconfig命令修改。
+注意：组件目录`components`名字不能改，其下的组件名可以随意取。build目录是编译时生成的，编译的结果都放在其中。`dependencies.lock`是随原来的项目复制过来的不要改。`sdkconfig`文件可以用`idf.py menuconfig`命令修改。
+
+<br>
 
 ### 代码和说明
 各文件的位置关系很重要，请对照前面的项目树看代码文件。
@@ -79,12 +88,15 @@ https://link.zhihu.com/?target=https%3A//blog.csdn.net/chentuo2000/article/detai
 只需要修改`project`中的项目名称。
 
 #### main目录
-CMakeLists.txt
+
+**CMakeLists.txt**
 
 	idf_component_register(SRCS "main.c"
-                    INCLUDE_DIRS ".")
+				INCLUDE_DIRS "."
+				PRIV_REQUIRES letter_shell
+				REQUIRES nvs_flash)
 
-main.c
+**main.c**
 ```c
 #include <stdio.h>
 #include <string.h>
@@ -126,12 +138,13 @@ void app_main(void)
 	}
 }
 ```
-头文件nvs_flash.h是对系统组件的引用，shell_port.h是对自定义组件的引用。
+头文件`nvs_flash.h`是对系统组件的引用，`shell_port.h`是对自定义组件的引用。
 
 #### letter_shell组件
 
-`CMakeLists.txt`:
+**CMakeLists.txt**:
 
+``` shell
 	idf_component_register(
 		SRCS "shell.c"
 			"shell_ext.c"
@@ -139,18 +152,18 @@ void app_main(void)
 			"shell_port.c"
 		INCLUDE_DIRS "include"
 		LDFRAGMENTS "shell.lf"
-		# PRIV_REQUIRES led
-		REQUIRES esp_driver_uart
+		REQUIRES driver
 	)
+```
 
 ##### 说明：
 
-1、PRIV_REQUIRES
+1、**PRIV_REQUIRES**
 该参数指定对其它自定义组件的依赖，即私有依赖项。
 
 `PRIV_REQUIRES led`表示指出在`smart_config`组件中要用到自定义的`led`组件。组件名字可以加引号，也可以不加。多个组件用空格分开。
 
-2、 REQUIRES
+2、 **REQUIRES**
 该参数指定对系统组件的依赖，即公共依赖项。
 
 `REQUIRES esp_driver_uart` 表示在`letter_shell`组件中要用到系统组件`esp_driver_uart`。
@@ -166,12 +179,14 @@ void app_main(void)
 #### 关于CMakeLists.txt文件
 根和每个目录都有一个`CMakeLists.txt`文件，开始遇到的问题是不知道目录结构和怎样写`CMakeLists.txt`文件，要注意每一层目录中`CMakeLists.txt`文件的写法，本文的例子给出了一个简单的示范。对于复杂的项目还需要更多编写`CMakeLists.txt`文件的知识，请看简介中给出的官方文档。
 
+<br>
+
 ## ESP32移植Letter_shell问题
 
 ### 添加shell组件及其log，编译出错
 
 #### 可能原因:
-1) 宏使用不正确: 如果 SHELL_FREE 旨在实际释放与 `companions` 对象关联的内存或资源，则当前定义不正确。它应该调用内存管理函数或执行其他必要的清理任务。
+1) 宏使用不正确: 如果 `SHELL_FREE` 旨在实际释放与 `companions` 对象关联的内存或资源，则当前定义不正确。它应该调用内存管理函数或执行其他必要的清理任务。
 
 1) 编译器警告被视为错误: `-Werror=unused-value` 标志已启用，它将警告视为错误。即使宏使用本身可能不是关键问题，这也可能导致编译失败。
 
@@ -194,11 +209,77 @@ void app_main(void)
 3) 通过遵循这些步骤并提供更多信息，我可以帮助您有效地解决编译错误并确保您的 ESP-IDF 项目成功构建。
 
 #### 配置shell优先级
-将shell的freertos优先级设置为 `tskIDLE_PRIORITY`，为0级，跟空闲函数优先级一样，所有其他优先级任务执行完后才会执行 `tskIDLE_PRIORITY`优先级任务。
+将shell的freertos优先级设置为 `tskIDLE_PRIORITY`，为`0`级，跟空闲函数优先级一样，所有其他优先级任务执行完后才会执行 `tskIDLE_PRIORITY`优先级任务。
 
 #### 源代码例程
 
 [ESP32移植letter_shell组件例程](https://github.com/XUAN9527/components_demo)
 
+<br>
+
+## ESP32启动流程解析
+
+<br>
+
+## ESP32-IDF组件下载安装路径
+
+- 安装所需组件：
+``` shell
+cd ~/esp/esp-adf/esp-idf
+./install.sh esp32,esp32s3 # 可按需求安装
+```
+
+- 若下载很慢，可按以下路径在`Windows`/`Linux`下载:
+``` shell
+cd ~/esp/esp-adf/esp-idf/tools
+vim tools.json
+{
+  "tools": [
+    {
+      "description": "GDB for Xtensa",
+      "export_paths": [
+        [
+          "xtensa-esp-elf-gdb",
+          "bin"
+        ]
+      ],
+      "export_vars": {},
+      "info_url": "https://github.com/espressif/binutils-gdb",
+      "install": "always",
+      "license": "GPL-3.0-or-later",
+      "name": "xtensa-esp-elf-gdb",
+      "supported_targets": [
+        "esp32",
+        "esp32s2",
+        "esp32s3"
+      ],
+      "version_cmd": [
+        "xtensa-esp-elf-gdb-no-python",
+        "--version"
+      ],
+      "version_regex": "GNU gdb \\(esp-gdb\\) ([a-z0-9.-_]+)",
+      "versions": [
+        {
+          "linux-amd64": {
+            "sha256": "b5f7cc3e4b5a58db655754083ed9652e4953e71c3b4922fb624e7a034ec24a64",
+            "size": 26947336,
+            "url": "https://github.com/espressif/binutils-gdb/releases/download/esp-gdb-v11.2_20220823/xtensa-esp-elf-gdb-11.2_20220823-x86_64-linux-gnu.tar.gz"
+          },
+          "linux-arm64": {
+            "sha256": "816acfae38b6b443f4f1590395f68f079243539259d19c7772ae6416c6519444",
+            "size": 27134508,
+            "url": "https://github.com/espressif/binutils-gdb/releases/download/esp-gdb-v11.2_20220823/xtensa-esp-elf-gdb-11.2_20220823-aarch64-linux-gnu.tar.gz"
+          },
+          "linux-armel": {
+            "sha256": "4dd1bace0633196fddfdcef3cebcc4bbfce22f5a0d2d1e3d618f3d8a6cbfcacc",
+            "size": 25205239,
+            "url": "https://github.com/espressif/binutils-gdb/releases/download/esp-gdb-v11.2_20220823/xtensa-esp-elf-gdb-11.2_20220823-arm-linux-gnueabi.tar.gz"
+          },
+          "linux-armhf": {
+            "sha256": "53a142b9a508a8babe6b7edf3090bb49e3714380ba819b54052425fcf1ac6f9c",
+            "size": 23491575,
+            "url": "https://github.com/espressif/binutils-gdb/releases/download/esp-gdb-v11.2_20220823/xtensa-esp-elf-gdb-11.2_20220823-arm-linux-gnueabihf.tar.gz"
+...
+```
 
 

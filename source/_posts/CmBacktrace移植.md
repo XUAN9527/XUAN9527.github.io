@@ -41,7 +41,7 @@ description: CmBacktrace是一款针对 ARM Cortex-M 系列 MCU 的错误代码�
 ``` c
 ASM_SOURCES =  \
 CMSIS/device/startup/startup_n32l40x_gcc.s \
-components/cm_backtrace/fault_handler/gcc/cmb_fault.s # 添加这一行,或者
+components/cm_backtrace/fault_handler/gcc/cmb_fault.s # 添加这一行
 ```
 
 **方法二**、将`cmb_fault.S`将入`makefile`编译选项
