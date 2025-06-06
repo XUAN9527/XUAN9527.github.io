@@ -28,7 +28,7 @@
 <meta property="og:description" content="ESP32 是一款由乐鑫科技开发的低成本、低功耗、具有 Wi-Fi 和蓝牙功能的 SoC 芯片，广泛应用于物联网领域，如智能家居、可穿戴设备、工业控制等。本教程基于windows子系统WSL，官方开发环境ESP-IDF&#x2F;ESP-ADF。">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2024-02-19T10:12:00.000Z">
-<meta property="article:modified_time" content="2025-04-10T01:44:58.572Z">
+<meta property="article:modified_time" content="2025-06-06T03:46:30.596Z">
 <meta property="article:author" content="boollight">
 <meta property="article:tag" content="ESP32">
 <meta property="article:tag" content="Linux">
@@ -226,7 +226,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2025-04-10 09:44:58" itemprop="dateModified" datetime="2025-04-10T09:44:58+08:00">2025-04-10</time>
+                <time title="Modified: 2025-06-06 11:46:30" itemprop="dateModified" datetime="2025-06-06T11:46:30+08:00">2025-06-06</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -252,7 +252,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">Symbols count in article: </span>
-              <span>2k</span>
+              <span>2.1k</span>
             </span>
             <span class="post-meta-item" title="Reading time">
               <span class="post-meta-item-icon">
@@ -446,8 +446,22 @@ esp-download
 <li><code>powershell</code>输入<code>ipconfig</code>指令获取本机<code>ip</code>:<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Ethernet adapter 以太网:</span><br><span class="line"></span><br><span class="line">   Connection<span class="literal">-specific</span> DNS Suffix  . : breo.vip</span><br><span class="line">   Link<span class="literal">-local</span> IPv6 Address . . . . . : fe80::a2cf:<span class="number">7</span>a4:df39:<span class="number">7032</span>%<span class="number">7</span></span><br><span class="line">   IPv4 Address. . . . . . . . . . . : <span class="number">192.168</span>.<span class="number">104.29</span> <span class="comment"># 获取此IP</span></span><br></pre></td></tr></table></figure></li>
 </ul>
 <ol start="7">
-<li>其他常用命令<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">usbipd state 				<span class="comment"># 查看当前共享状态</span></span><br><span class="line"><span class="built_in">sc</span> query usbipd 			<span class="comment"># 查看服务状态</span></span><br><span class="line">net stop usbipd 			<span class="comment"># 停止服务</span></span><br><span class="line">usbipd unbind <span class="literal">--all</span> 		<span class="comment"># 停止共享所有设备</span></span><br><span class="line">usbipd bind <span class="literal">--busid</span>=<span class="number">2</span><span class="literal">-1</span>    	<span class="comment"># 共享 COM18</span></span><br><span class="line">usbipd unbind <span class="literal">--busid</span>=<span class="number">2</span><span class="literal">-1</span>  	<span class="comment"># 取消共享</span></span><br></pre></td></tr></table></figure></li>
+<li><p>其他常用命令</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">usbipd state 				<span class="comment"># 查看当前共享状态</span></span><br><span class="line"><span class="built_in">sc</span> query usbipd 			<span class="comment"># 查看服务状态</span></span><br><span class="line">net stop usbipd 			<span class="comment"># 停止服务</span></span><br><span class="line">usbipd unbind <span class="literal">--all</span> 		<span class="comment"># 停止共享所有设备</span></span><br><span class="line">usbipd bind <span class="literal">--busid</span>=<span class="number">2</span><span class="literal">-1</span>    	<span class="comment"># 共享 COM18</span></span><br><span class="line">usbipd unbind <span class="literal">--busid</span>=<span class="number">2</span><span class="literal">-1</span>  	<span class="comment"># 取消共享</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>遇到问题及解决方式</p>
+</li>
 </ol>
+<ul>
+<li><p><code>powershell</code>中输入<code>usbipd server</code>时出现<code>usbipd: error: Another instance is already running</code></p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tasklist | <span class="built_in">findstr</span> &quot;usbipd&quot;		// 检查是否有进程正在运行</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>若出现 <code>usbipd.exe</code></p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">usbipd.exe                   <span class="number">27428</span> Services                   <span class="number">0</span>     <span class="number">18</span>,<span class="number">684</span> K</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>终止 <code>usbipd.exe</code> 进程, 重新启动</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">taskkill</span> /F /IM usbipd.exe</span><br><span class="line">usbipd server</span><br></pre></td></tr></table></figure></li>
+</ul>
 <h4 id="远程Ubuntu服务器配置"><a href="#远程Ubuntu服务器配置" class="headerlink" title="远程Ubuntu服务器配置"></a>远程Ubuntu服务器配置</h4><ol>
 <li>安装<code>USB/IP</code>客户端工具</li>
 </ol>
@@ -639,12 +653,12 @@ esp-download
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="Symbols count total">45k</span>
+    <span title="Symbols count total">46k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="Reading time total">2:30</span>
+    <span title="Reading time total">2:33</span>
 </div>
   <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
   </div>
