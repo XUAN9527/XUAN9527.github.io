@@ -28,7 +28,7 @@
 <meta property="og:description" content="ESP32 是一款由乐鑫科技开发的低成本、低功耗、具有 Wi-Fi 和蓝牙功能的 SoC 芯片，广泛应用于物联网领域，如智能家居、可穿戴设备、工业控制等。本教程基于windows子系统WSL，官方开发环境ESP-IDF&#x2F;ESP-ADF。">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2024-02-19T10:12:00.000Z">
-<meta property="article:modified_time" content="2025-06-06T03:46:30.596Z">
+<meta property="article:modified_time" content="2025-06-10T07:39:17.773Z">
 <meta property="article:author" content="boollight">
 <meta property="article:tag" content="ESP32">
 <meta property="article:tag" content="Linux">
@@ -226,7 +226,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2025-06-06 11:46:30" itemprop="dateModified" datetime="2025-06-06T11:46:30+08:00">2025-06-06</time>
+                <time title="Modified: 2025-06-10 15:39:17" itemprop="dateModified" datetime="2025-06-10T15:39:17+08:00">2025-06-10</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -252,7 +252,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">Symbols count in article: </span>
-              <span>2.1k</span>
+              <span>2.2k</span>
             </span>
             <span class="post-meta-item" title="Reading time">
               <span class="post-meta-item-icon">
@@ -273,41 +273,44 @@
 
       
         <h2 id="开发环境搭建"><a href="#开发环境搭建" class="headerlink" title="开发环境搭建"></a>开发环境搭建</h2><p><a target="_blank" rel="noopener" href="https://espressif-docs.readthedocs-hosted.com/projects/esp-adf/zh-cn/latest/get-started/index.html#quick-start">ESP-ADF快速上手连接</a><br><a target="_blank" rel="noopener" href="https://docs.espressif.com/projects/esp-idf/zh_CN/stable/esp32/get-started/linux-macos-setup.html#get-started-linux-macos-first-steps">ESP-IDF快速上手连接</a></p>
-<h3 id="获取ESP-ADF"><a href="#获取ESP-ADF" class="headerlink" title="获取ESP-ADF"></a>获取ESP-ADF</h3><p>打开Linux or macOS终端,新建搭建环境所需文件夹。</p>
-<pre><code>mkdir ~/esp
-cd ~/esp
-</code></pre>
-<p>编译 ESP-IDF 需要以下软件包。请根据使用的 Linux 发行版本，选择合适的安装：<br>Ubuntu 和 Debian:</p>
-<pre><code>sudo apt-get install git wget flex bison gperf python3 python3-pip python3-venv cmake ninja-build ccache libffi-dev libssl-dev dfu-util libusb-1.0-0
-</code></pre>
+<br>
+
+<h3 id="获取ESP-ADF"><a href="#获取ESP-ADF" class="headerlink" title="获取ESP-ADF"></a>获取ESP-ADF</h3><ul>
+<li><p>打开Linux or macOS终端,新建搭建环境所需文件夹。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> ~/esp</span><br><span class="line"><span class="built_in">cd</span> ~/esp</span><br></pre></td></tr></table></figure></li>
+<li><p>编译 ESP-IDF 需要以下软件包。请根据使用的 Linux 发行版本，选择合适的安装：</p>
+</li>
+<li><p>Ubuntu 和 Debian:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install git wget flex bison gperf python3 python3-pip python3-venv cmake ninja-build ccache libffi-dev libssl-dev dfu-util libusb-1.0-0</span><br></pre></td></tr></table></figure>
 <p>CentOS 7 &amp; 8:</p>
-<pre><code>sudo yum -y update &amp;&amp; sudo yum install git wget flex bison gperf python3 python3-setuptools cmake ninja-build ccache dfu-util libusbx
-</code></pre>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum -y update &amp;&amp; sudo yum install git wget flex bison gperf python3 python3-setuptools cmake ninja-build ccache dfu-util libusbx</span><br></pre></td></tr></table></figure>
 <p>Arch:</p>
-<pre><code>sudo pacman -S --needed gcc git make flex bison gperf python cmake ninja ccache dfu-util libusb
-</code></pre>
-<p>克隆最新版ESP-ADF：</p>
-<pre><code>git clone --recursive https://github.com/espressif/esp-adf.git
-</code></pre>
-<p>若克隆失败，尝试以下指令：</p>
-<pre><code>git clone --recursive git@github.com:espressif/esp-adf.git
-</code></pre>
-<p>若子模块拉取失败，尝试手动逐个拉取子模块：</p>
-<pre><code>cd ~/esp/esp-adf/components
-git clone git@github.com:espressif/esp-adf-libs.git 
-或者
-git clone https://github.com/espressif/esp-adf-libs.git
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo pacman -S --needed gcc git make flex bison gperf python cmake ninja ccache dfu-util libusb</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>克隆最新版ESP-ADF：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> --recursive https://github.com/espressif/esp-adf.git</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>若克隆失败，尝试以下指令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> --recursive git@github.com:espressif/esp-adf.git</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>若子模块拉取失败，尝试手动逐个拉取子模块：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/esp/esp-adf/components</span><br><span class="line">git <span class="built_in">clone</span> git@github.com:espressif/esp-adf-libs.git </span><br><span class="line">或者</span><br><span class="line">git <span class="built_in">clone</span> https://github.com/espressif/esp-adf-libs.git</span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> ~/esp/esp-adf/components</span><br><span class="line">git <span class="built_in">clone</span> git@github.com:espressif/esp-sr.git</span><br><span class="line">或者</span><br><span class="line">git <span class="built_in">clone</span> https://github.com/espressif/esp-sr.git</span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> ~/esp/esp-adf</span><br><span class="line">git <span class="built_in">clone</span> git@github.com:espressif/esp-idf.git</span><br><span class="line">或者</span><br><span class="line">git <span class="built_in">clone</span> https://github.com/espressif/esp-idf.git</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>当遇到网络比较卡时，<code>github</code>源改为<code>gitee</code>源（以设置<code>idf.py set-target esp32s3</code>的<code>esp32-wifi-lib</code>为例）：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/esp/esp-adf/esp-idf</span><br><span class="line">git config submodule.<span class="string">&quot;components/esp_wifi/lib&quot;</span>.url https://gitee.com/EspressifSystems/esp32-wifi-lib.git</span><br><span class="line">git submodule <span class="built_in">sync</span></span><br><span class="line">git submodule update --init --depth 1 components/esp_wifi/lib</span><br></pre></td></tr></table></figure></li>
+</ul>
+<br>
 
-cd ~/esp/esp-adf/components
-git clone git@github.com:espressif/esp-sr.git
-或者
-git clone https://github.com/espressif/esp-sr.git
+<p><strong>预防措施</strong>：</p>
+<ol>
+<li><p>配置镜像源：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 全局使用 Gitee 镜像</span></span><br><span class="line">git config --global url.<span class="string">&quot;https://gitee.com/EspressifSystems&quot;</span>.insteadOf <span class="string">&quot;https://github.com/espressif&quot;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>定期更新子模块：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 空闲时更新所有子模块</span></span><br><span class="line"><span class="built_in">cd</span> ~/esp/esp-adf</span><br><span class="line">git submodule update --init --recursive --depth 1</span><br></pre></td></tr></table></figure></li>
+</ol>
+<br>
 
-cd ~/esp/esp-adf
-git clone git@github.com:espressif/esp-idf.git
-或者
-git clone https://github.com/espressif/esp-idf.git
-</code></pre>
 <h3 id="设置环境变量"><a href="#设置环境变量" class="headerlink" title="设置环境变量"></a>设置环境变量</h3><p>按自己实际路径，可按自己喜好设置，也可不配置，手动敲指令也可。</p>
 <p><code>vi ~/.bashrc</code><br>在后面加上以下代码：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#开启ESP32编译环境</span></span><br><span class="line"><span class="built_in">alias</span> get-idf=<span class="string">&#x27;. $HOME/esp/esp-adf/esp-idf/export.sh&#x27;</span></span><br><span class="line"><span class="built_in">alias</span> get-adf=<span class="string">&#x27;. $HOME/esp/esp-adf/export.sh&#x27;</span></span><br><span class="line"><span class="comment">#打开本地文件夹（wsl）</span></span><br><span class="line"><span class="built_in">alias</span> open-file=<span class="string">&#x27;explorer.exe .&#x27;</span></span><br><span class="line"><span class="comment">#烧录到设备，并打开监视器，/dev/ttyS15为USB挂载端口，需测试后填写，115200为监视器波特率，与设备UART0波特率对应</span></span><br><span class="line"><span class="built_in">alias</span> esp-download=<span class="string">&#x27;idf.py -p /dev/ttyS15 -b 115200 flash monitor&#x27;</span></span><br><span class="line"><span class="built_in">export</span> PATH=/home/qx_song/esp/esp-adf/esp-idf/tools:<span class="variable">$PATH</span></span><br><span class="line"><span class="built_in">export</span> IDF_PATH=/home/qx_song/esp/esp-adf/esp-idf</span><br><span class="line"><span class="built_in">export</span> ADF_PATH=/home/qx_song/esp/esp-adf</span><br></pre></td></tr></table></figure>
@@ -658,7 +661,7 @@ esp-download
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="Reading time total">2:33</span>
+    <span title="Reading time total">2:34</span>
 </div>
   <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
   </div>
