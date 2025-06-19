@@ -17,49 +17,82 @@ description: ESP32 是一款由乐鑫科技开发的低成本、低功耗、具�
 [ESP-ADF快速上手连接](https://espressif-docs.readthedocs-hosted.com/projects/esp-adf/zh-cn/latest/get-started/index.html#quick-start)
 [ESP-IDF快速上手连接](https://docs.espressif.com/projects/esp-idf/zh_CN/stable/esp32/get-started/linux-macos-setup.html#get-started-linux-macos-first-steps)
 
+<br>
+
 ### 获取ESP-ADF
-打开Linux or macOS终端,新建搭建环境所需文件夹。
+- 打开Linux or macOS终端,新建搭建环境所需文件夹。
+``` bash
+mkdir ~/esp
+cd ~/esp
+```
+- 编译 ESP-IDF 需要以下软件包。请根据使用的 Linux 发行版本，选择合适的安装：
 
-	mkdir ~/esp
-	cd ~/esp
-
-编译 ESP-IDF 需要以下软件包。请根据使用的 Linux 发行版本，选择合适的安装：
-Ubuntu 和 Debian:
-
-	sudo apt-get install git wget flex bison gperf python3 python3-pip python3-venv cmake ninja-build ccache libffi-dev libssl-dev dfu-util libusb-1.0-0
-
+- Ubuntu 和 Debian:
+``` bash
+sudo apt-get install git wget flex bison gperf python3 python3-pip python3-venv cmake ninja-build ccache libffi-dev libssl-dev dfu-util libusb-1.0-0
+```
 CentOS 7 & 8:
-
-	sudo yum -y update && sudo yum install git wget flex bison gperf python3 python3-setuptools cmake ninja-build ccache dfu-util libusbx
-
+``` bash
+sudo yum -y update && sudo yum install git wget flex bison gperf python3 python3-setuptools cmake ninja-build ccache dfu-util libusbx
+```
 Arch:
+``` bash
+sudo pacman -S --needed gcc git make flex bison gperf python cmake ninja ccache dfu-util libusb
+```
 
-	sudo pacman -S --needed gcc git make flex bison gperf python cmake ninja ccache dfu-util libusb
+- 克隆最新版ESP-ADF：
+``` bash
+git clone --recursive https://github.com/espressif/esp-adf.git
+```
 
-克隆最新版ESP-ADF：
-
-	git clone --recursive https://github.com/espressif/esp-adf.git
-
-若克隆失败，尝试以下指令：
-
+- 若克隆失败，尝试以下指令：
+``` bash
 	git clone --recursive git@github.com:espressif/esp-adf.git
+```
 
-若子模块拉取失败，尝试手动逐个拉取子模块：
+- 若子模块拉取失败，尝试手动逐个拉取子模块：
+``` bash
+cd ~/esp/esp-adf/components
+git clone git@github.com:espressif/esp-adf-libs.git 
+或者
+git clone https://github.com/espressif/esp-adf-libs.git
 
-	cd ~/esp/esp-adf/components
-	git clone git@github.com:espressif/esp-adf-libs.git 
-	或者
-	git clone https://github.com/espressif/esp-adf-libs.git
+cd ~/esp/esp-adf/components
+git clone git@github.com:espressif/esp-sr.git
+或者
+git clone https://github.com/espressif/esp-sr.git
 
-	cd ~/esp/esp-adf/components
-	git clone git@github.com:espressif/esp-sr.git
-	或者
-	git clone https://github.com/espressif/esp-sr.git
+cd ~/esp/esp-adf
+git clone git@github.com:espressif/esp-idf.git
+或者
+git clone https://github.com/espressif/esp-idf.git
+```
 
-	cd ~/esp/esp-adf
-	git clone git@github.com:espressif/esp-idf.git
-	或者
-	git clone https://github.com/espressif/esp-idf.git
+- 当遇到网络比较卡时，`github`源改为`gitee`源（以设置`idf.py set-target esp32s3`的`esp32-wifi-lib`为例）：
+``` bash
+	cd ~/esp/esp-adf/esp-idf
+	git config submodule."components/esp_wifi/lib".url https://gitee.com/EspressifSystems/esp32-wifi-lib.git
+	git submodule sync
+	git submodule update --init --depth 1 components/esp_wifi/lib
+```
+
+<br>
+
+**预防措施**：
+1. 配置镜像源：
+``` bash
+# 全局使用 Gitee 镜像
+git config --global url."https://gitee.com/EspressifSystems".insteadOf "https://github.com/espressif"
+```
+
+2. 定期更新子模块：
+``` bash
+# 空闲时更新所有子模块
+cd ~/esp/esp-adf
+git submodule update --init --recursive --depth 1
+```
+
+<br>
 
 ### 设置环境变量
 按自己实际路径，可按自己喜好设置，也可不配置，手动敲指令也可。
@@ -276,6 +309,23 @@ net stop usbipd 			# 停止服务
 usbipd unbind --all 		# 停止共享所有设备
 usbipd bind --busid=2-1    	# 共享 COM18
 usbipd unbind --busid=2-1  	# 取消共享
+```
+
+8. 遇到问题及解决方式
+- `powershell`中输入`usbipd server`时出现`usbipd: error: Another instance is already running`
+``` cmd
+tasklist | findstr "usbipd"		// 检查是否有进程正在运行
+``` 
+
+- 若出现 `usbipd.exe`
+``` cmd
+usbipd.exe                   27428 Services                   0     18,684 K
+``` 
+
+- 终止 `usbipd.exe` 进程, 重新启动
+``` cmd
+taskkill /F /IM usbipd.exe
+usbipd server
 ```
 
 #### 远程Ubuntu服务器配置

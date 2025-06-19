@@ -282,4 +282,40 @@ vim tools.json
 ...
 ```
 
+## ESP32网络问题
+**基本外设**：OV3660（camera） + ILI9341（LCD）
+- 当前`IDF5.4`版本在配置时可以连接下载组件，但是有时候网络不好，连接超时。
 
+1. 修改 `Git` 的 `URL` 为镜像源（如 `Gitee`）
+``` shell
+# 修改 Git 的 URL 为镜像源（如 Gitee）
+git config --global url."https://gitee.com/espressif/esp32-camera.git".insteadOf "https://github.com/espressif/esp32-camera.git"
+# 发现没这个连接,自己去找别的镜像
+
+# 查看当前 Git 的 URL 替换规则
+git config --global --get-regexp "url\..*\.insteadOf"
+# 删除 Gitee 镜像的替换规则
+git config --global --unset url."https://gitee.com/espressif/esp32-camera.git".insteadOf
+# 或者直接修改回 GitHub 官方源（可选）
+git config --global url."https://github.com/espressif/esp32-camera.git".insteadOf "https://gitee.com/espressif/esp32-camera.git"
+```
+
+2. `GitHub` 限流：频繁克隆可能触发限流，稍后再试。
+
+3. 下载 `esp32-camera`
+- 从 `GitHub` 直接下载压缩包：https://github.com/espressif/esp32-camera/archive/refs/heads/master.zip
+- 解压后放到 `ESP-IDF` 的组件目录中：
+``` shell
+unzip esp32-camera-master.zip
+mv esp32-camera-master ~/esp/esp-adf/esp-idf/components/esp32-camera
+```
+
+修改项目的 `CMakeLists.txt`, 确保项目能找到本地组件，例如：
+``` cmake
+set(EXTRA_COMPONENT_DIRS ~/esp/esp-adf/esp-idf/components/esp32-camera)
+```
+
+**常见问题处理**
+- 依赖未更新：修改`idf_component.yml`后需运行`idf.py reconfigure`重新解析。
+- 本地组件覆盖：若同时存在本地组件和注册表同名组件，优先使用路径引用的本地版本。
+- 锁文件冲突：若`dependencies.lock`被误改，删除后重新运行`reconfigure`即可恢复。

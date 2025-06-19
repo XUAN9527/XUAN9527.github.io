@@ -91,6 +91,7 @@ int drv_adc_deinit(EADC_DEVICE adc_dev,EDMA_CHANNEL dma_ch)
 	- `PD0` 和 `PD1` 在 `80` 以下引脚封装复用到 OSC_IN/OUT
 - `PC13`、 `PC14`、 `PC15`：
 	- `PC13～15` 为备电域下的三个` IO`， 备份域初次上电默认为模拟模式；
+- `PD14`为外部晶振输入引脚，不要做`MCU`使能脚，上电电平会有抖动，会误触发上电。
 
 <br>
 
@@ -386,7 +387,9 @@ void af_flash_lock(void)
 }
 ```
 
-#### 指针取址符&与取值*的区别
+## 结构体与指针汇总
+
+### 指针取址符&与取值*的区别
 
 **1. 指针取址符(&)**
 
@@ -470,6 +473,12 @@ typedef struct __attribute__((packed))
 int send_len = offsetof(ble_comm_protocol, data);       // send_len 长度为 8 bytes
 ```
 <br>
+
+### 结构体或指针初始化
+
+- 指针初始化赋值会变成野指针，不知道指向哪，因为是在`ram`里申请指针变量，申请的`ram`之前是什么数据不知道。
+- 结构体初始化跟指针类似，如果不初始化变量，虽然申请了变量，但是变量里还是这段空间释放前的数据。
+- 若未初始化的指针指向的是寄存器的结构体指针，会造成不可预估的错误，比如：影响本身影响的功能；其他引脚的功能（寄存器地址是有序摆放）。
 
 ## TFT屏ST7735S调试问题
 
@@ -1671,10 +1680,14 @@ static const char *shellText[] =
 - 在线升级后打印出不完整清屏指令，显示残留`2J`，不会清屏。
 - 测试两块板，一块有这个问题，另一块没有问题
 
+<br>
+
 ## n32l406的ADC跑飞
 
 - 问题：`n32l406`的`ADC`跑飞，代码复用以前可以跑的。
 - 解决：低级错误，`ADC`的`IO`口初始化`PORT`和`PIN`写反，`CmBacktrace`排查出问题。
+
+<br>
 
 ## n32l406的不定时跑飞
 - 以下是跑飞后`cmbacktrace`追踪的`pc`指针及追踪函数。
@@ -1748,3 +1761,97 @@ void ec32_msp_usart_init(void *Instance)
 ...
 }
 ```
+
+<br>
+
+## N32L40X的DMA复用问题
+- 这个系列芯片的`8`个`DMA`通道源，可以给任意能使用的外设映射。
+- 需求变更，新增ADC检测，在赋予DMA通道时没有自检。
+
+`Scalp 5`光能模组示例：
+``` c
+// USART 定义
+#if defined(BSP_USING_UART2)
+	{	
+		USART2,
+		USART2_IRQn,
+		{
+			DMA_CH2,
+			DMA,
+			DMA_FLAG_GL2,
+			DMA_Channel2_IRQn,
+			0,
+			0,
+            DMA_CH6,
+			DMA,
+			DMA_FLAG_TC6,
+			DMA_Channel6_IRQn,
+			0,
+			0,
+		},
+		&default_cfg2,
+		&uart2_rxbuff,
+		&uart2_txbuff,
+		NULL,
+	},
+	#endif
+...
+
+// ADC部分定义
+#define ADC_DMAy			DMA
+#define	DMAy_FLAG_TCz		DMA_FLAG_TC6
+
+drv_adc_init(adc_dev, EDMA_CH6);
+```
+- `USART2`和`ADC`都使用了`DMA_CH6`这个通道，现象是先初始化的`USART2`发送会异常。
+
+- 解决方案
+``` c
+// ADC部分定义改为通道4
+#define ADC_DMAy			DMA
+#define	DMAy_FLAG_TCz		DMA_FLAG_TC4
+
+drv_adc_init(adc_dev, EDMA_CH4);
+...
+```
+- 总结：复用时需要注意不要被重复映射。排查方法：分析现象->应用层->驱动层。
+
+## 替代接近传感器问题
+- 近期更换接近传感器`MT3101`和`LS9806`,发现应用在`Scalp 5`光能模组上会出现闪灯现象。
+- 排查步骤：
+    - 不使用`SPI级联灯`，连续读取传感器数值，无明显跳变；
+    - 使用`SPI级联灯`，连续读取传感器数值，出现明显跳变；
+
+``` c
+vcnl read sum = [1815],H=[0x07],L=[0x17]
+vcnl read sum = [1815],H=[0x07],L=[0x17]
+vcnl read sum = [1815],H=[0x07],L=[0x17]
+vcnl read sum = [0],H=[0x00],L=[0x00]
+vcnl read sum = [0],H=[0x00],L=[0x00]
+vcnl read sum = [0],H=[0x00],L=[0x00]
+vcnl read sum = [0],H=[0x00],L=[0x00]
+vcnl read sum = [935],H=[0x03],L=[0xA7]
+vcnl read sum = [935],H=[0x03],L=[0xA7]
+vcnl read sum = [935],H=[0x03],L=[0xA7]
+vcnl read sum = [935],H=[0x03],L=[0xA7]
+vcnl read sum = [786],H=[0x03],L=[0x12]
+vcnl read sum = [786],H=[0x03],L=[0x12]
+vcnl read sum = [786],H=[0x03],L=[0x12]
+vcnl read sum = [786],H=[0x03],L=[0x12]
+vcnl read sum = [0],H=[0x00],L=[0x00]
+vcnl read sum = [0],H=[0x00],L=[0x00]
+vcnl read sum = [0],H=[0x00],L=[0x00]
+vcnl read sum = [0],H=[0x00],L=[0x00]
+vcnl read sum = [0],H=[0x00],L=[0x00]
+vcnl read sum = [950],H=[0x03],L=[0xB6]
+vcnl read sum = [950],H=[0x03],L=[0xB6]
+vcnl read sum = [950],H=[0x03],L=[0xB6]
+vcnl read sum = [950],H=[0x03],L=[0xB6]
+vcnl read sum = [617],H=[0x02],L=[0x69]
+vcnl read sum = [617],H=[0x02],L=[0x69]
+```
+- 数据说明与级联灯有关。
+- 进一步排查是否与`I2C`通信有关。
+- 经测试发现`MT3101`在有其他光源干扰的情况下，偶尔会返回`0`，导致触肤启停功能异常，后续咨询供应商能否通过配置解决。
+- `MT3101`偶现返回数据不改变的问题，供应商解决。
+

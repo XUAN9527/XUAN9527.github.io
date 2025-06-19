@@ -13,26 +13,52 @@ description: CmBacktrace是一款针对 ARM Cortex-M 系列 MCU 的错误代码�
 
 ## CmBacktrace简介
 
-- 支持断言（assert）和故障（Hard Fault）
+- 支持断言（`assert`）和故障（`Hard Fault`）
 - 故障原因自动诊断
 - 输出错误现场的 函数调用栈
-- 适配 Cortex-M0/M3/M4/M7 MCU；
-- 支持 IAR、KEIL、GCC 编译器；
+- 适配 `Cortex-M0`/`M3`/`M4`/`M7`等`MCU`；
+- 支持 `IAR`、`KEIL`、`GCC` 编译器；
 
-## 移植步骤
+<br>
 
-**1. 下载源码**
+### 原理及移植方法
 
-**官方源码地址** : https://github.com/armink/CmBacktrace
-**示例项目地址** : https://github.com/XUAN9527/cmbacktrace-demo
+**1 基本原理**
+其原理主要基于 `Cortex-M` 架构的压栈特性和指令分析，以下是其工作原理的详细介绍：
 
-**2. copy源码文件**
+
+**1.1 压栈特性**
+  - `Cortex-M` 架构在发生异常或函数调用时，会自动将相关寄存器（如 `R0-R3`、`R12`、`LR`、`PC`、`PSR` 等）压入栈中。`CmBacktrace` 通过分析栈中的数据来获取函数调用栈的信息。
+
+**1.2 指令分析与函数调用栈还原**
+- 当程序出现异常时，`CmBacktrace` 会获取当前的栈顶指针（`SP`）和栈的起始地址及大小。然后从栈顶开始遍历，每次读取一个地址值。如果该地址值减去一个字的大小后是奇数（即符合 `Thumb` 指令模式的地址），并且该地址对应的指令是 `BL` 或 `BLX`（函数调用指令），则认为这是一个有效的函数调用地址。
+
+**1.3 错误现场信息保存**
+
+- `CmBacktrace` 会在异常发生时保存 `CPU` 的寄存器状态，包括 `R0-R12`、`LR`、`PC`、`PSR` 等。这些寄存器的值可以帮助开发者了解异常发生时程序的执行状态。
+
+- `CmBacktrace` 还会根据异常类型（如 `Hard Fault`、`Bus Fault` 等）保存相关的故障状态寄存器（如 `HFSR`、`BFSR`、`MMFSR` 等），这些寄存器的值可以用来分析异常的具体原因。
+
+<br>
+
+**2. 源码及例程**
+
+**官方源码链接** : https://github.com/armink/CmBacktrace
+**示例项目链接** : https://github.com/XUAN9527/cmbacktrace-demo
+**说明文档链接** : https://xuan9527.github.io/2024/04/19/CmBacktrace%E7%A7%BB%E6%A4%8D/
+
+<br>
+
+**源码目录：**
 
 ![cmbacktrace目录](../pictures/cmbacktrace目录.png)
 
+- 将源码拷贝到工程目录下，如`~/work/cmbacktrace-demo/code/components`
 - 添加头文件`cm_backtrace.h` `cmb_cfg.h` `cmb_def.h`
 - 添加源文件`cm_backtrace.c`
-- 添加demos文件 `demos/non_os/stm32f10x/app/src/fault_test.c`
+- 添加demo文件 `demos/non_os/stm32f10x/app/src/fault_test.c`
+
+<br>
 
 **2.1 添加修改makefile：**
 
@@ -71,13 +97,16 @@ $(OUTPUT_DIR)/%.o: %.S         # 新增 %.S
 ``` c
 int _write(int fd, char* pBuffer, int size)
 {
-    return drv_serial_dma_write(ESERIAL_1, pBuffer, size);
+    // 添加自己的发送函数
+    return drv_serial_dma_write(ESERIAL_1, pBuffer, size); 
 }
 ``` 
 
+<br>
+
 **2.3 修改文件：**
 
-- `cmb_cfg.h`文件
+- `cmb_cfg.h`配置文件：
 ``` c
 #ifndef _CMB_CFG_H_
 #define _CMB_CFG_H_
@@ -101,8 +130,8 @@ int _write(int fd, char* pBuffer, int size)
 #endif /* _CMB_CFG_H_ */
 ``` 
 
-- 修改`n32l40x_flash.ld`链接文件
-	- `text`段开始之前添加 `_stext = .;` 下面为例程：
+- 修改`n32l40x_flash.ld`链接文件如下：
+- `text`段开始之前添加 `_stext = .;` 下面为例程：
 
 ``` c
 /* Define output sections */
@@ -164,7 +193,82 @@ SECTIONS
   } >RAM
 ```
 
-**2.4 main函数例程：**
+<br>
+
+**2.4 储存错误信息：**
+- `cm_backtrace.c`文件修改，添加读写部分：
+``` c
+...
+// 添加读写flash的地址
+#include "dcd_user.h"
+#define ERRORLOG_FLASH_BASIC_ADDR 	USER_DATA_ADDR
+#define ERRORLOG_FLASH_OFFSET 		(0 * 1024)
+#define ERRORLOG_FLASH_TARGET_ADDR 	(ERRORLOG_FLASH_BASIC_ADDR + ERRORLOG_FLASH_OFFSET)
+#define ERRORLOG_FLASH_TARGET_SIZE 	(2 * 1024)
+/**
+ * dump function call stack
+ *
+ * @param sp stack pointer
+ */
+static void print_call_stack(uint32_t sp) {
+    size_t i, cur_depth = 0;
+    uint32_t call_stack_buf[CMB_CALL_STACK_MAX_DEPTH] = {0};
+
+    cur_depth = cm_backtrace_call_stack(call_stack_buf, CMB_CALL_STACK_MAX_DEPTH, sp);
+
+    for (i = 0; i < cur_depth; i++) {
+        sprintf(call_stack_info + i * (8 + 1), "%08lx", (unsigned long)call_stack_buf[i]);
+        call_stack_info[i * (8 + 1) + 8] = ' ';
+    }
+
+    if (cur_depth) {
+        call_stack_info[cur_depth * (8 + 1) - 1] = '\0';
+        cmb_println(print_info[PRINT_CALL_STACK_INFO], fw_name, CMB_ELF_FILE_EXTENSION_NAME, call_stack_info);
+
+        // 添加部分，回溯字符串写到flash里。例：Show more call stack info by run: addr2line -e CmBacktrace.elf -a -f 080154c2 0800a3b3 08009092
+        uint8_t buff[512] = {0};
+        snprintf((char *)buff, sizeof(buff), print_info[PRINT_CALL_STACK_INFO], fw_name, CMB_ELF_FILE_EXTENSION_NAME, call_stack_info);
+        dcd_port_erase(ERRORLOG_FLASH_TARGET_ADDR, ERRORLOG_FLASH_TARGET_SIZE);
+        dcd_port_write(ERRORLOG_FLASH_TARGET_ADDR, (const uint32_t *)buff, strlen((char *)buff) + 1);
+    } else {
+        cmb_println(print_info[PRINT_CALL_STACK_ERR]);
+    }
+}
+
+// 读取错误信息
+static void fault_read_string(void)
+{
+	uint8_t buff[512] = {0};
+	dcd_port_read(ERRORLOG_FLASH_TARGET_ADDR, (uint32_t *)buff, sizeof(buff));
+	buff[512-1] = 0;
+	logPrintln("CmBacktrace hard fault = %s", buff);
+}
+SHELL_EXPORT_CMD(SHELL_CMD_PERMISSION(0)|SHELL_CMD_TYPE(SHELL_TYPE_CMD_FUNC)|SHELL_CMD_DISABLE_RETURN, fault_read_string, fault_read_string, fault_read_string);
+...
+```
+
+<br>
+
+**2.5 注释掉原有的`HardFault_Handler`：**
+``` c
+/**
+ *\*\name   HardFault_Handler.
+ *\*\fun    This function handles Hard Fault exception.
+ *\*\param  none.
+ *\*\return none.
+ */
+// void HardFault_Handler(void)
+// {
+//     /* Go to infinite loop when Hard Fault exception occurs */
+//     while (1)
+//     {
+//     }
+// }
+```
+
+<br>
+
+**2.6 主函数例程：**
 
 ``` c
 #include "cm_backtrace.h"
@@ -179,8 +283,8 @@ int main(void)
 	main_system_init();
 	cm_backtrace_init("CmBacktrace", HARDWARE_VERSION, SOFTWARE_VERSION);     // 在开启时钟，打印和看门狗之后就需要初始化
 	
-	fault_test_by_unalign();
-	fault_test_by_div0();
+	fault_test_by_unalign();    # 字节对齐异常示例
+	fault_test_by_div0();       # 除零异常示例
 
 	while(1)
 	{
@@ -188,7 +292,9 @@ int main(void)
 }
 ```
 
-**编译出错后代码：**
+<br>
+
+**3. 编译出错后代码：**
 ``` c 
 Firmware name: CmBacktrace, hardware version: V1.0.0, software version: V0.1.0
 Fault on interrupt or bare metal(no OS) environment
@@ -228,25 +334,30 @@ Show more call stack info by run: addr2line -e CmBacktrace.elf -a -f 080154c2 08
 
 **转换为定位代码工具：**
 
-- `linux`环境下输入：
+- `linux`环境下输入，`app.elf` 为你的工程编译文件，需在当前目录下：
 
 ```c
-    addr2line -e app.elf -a -f 080154c2 0800a3b2 08009092
+    addr2line -e app.elf -a -f 080154c2 0800a3b3 08009092
 ```
 
-解释：`app.elf` 为你的工程编译文件。
-
 **数据分析结果：**
-
 ``` c
-xuan@DESKTOP-A52B6V9:~/work/n5-mini-s-plus/code/app/build$ addr2line -e app.elf -a -f 080154c2 0800a3b2 08009092
+xuan@DESKTOP-A52B6V9:~/work/n5-mini-s-plus/code/app/build$ addr2line -e app.elf -a -f 080154c2 0800a3b3 08009092
 0x080154c2
 fault_test_by_unalign
 /home/xuan/work/n5-mini-s-plus/code/app/components/cm_backtrace/fault_test.c:18
-0x0800a3b2
+0x0800a3b3
 main
 /home/xuan/work/n5-mini-s-plus/code/app/application/main.c:30
 0x08009092
-LoopFillZerobss
+LoopFillZerobss  # .bss段异常（未初始化的全局和静态变量）
 /home/xuan/work/n5-mini-s-plus/code/app/CMSIS/device/startup/startup_n32l40x_gcc.s:113
 ```
+
+<br>
+
+**3. 总结：**
+
+- `CmBacktrace`能快速方便的定位偶现的程序跑飞问题。
+- 错误`log`全功能打印带储存代码占用为`8K`左右；去掉打印，保留最基本的功能代码占用空间仅`4K`左右。
+- 储存代码段可优化，添加`flash`擦写均衡。
