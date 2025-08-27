@@ -30,7 +30,7 @@
 <meta property="og:image" content="http://example.com/pictures/component_demo%E8%AE%BE%E5%A4%87%E6%A0%91.png">
 <meta property="og:image" content="http://example.com/pictures/requires_error.png">
 <meta property="article:published_time" content="2024-02-22T03:34:40.000Z">
-<meta property="article:modified_time" content="2025-06-13T11:58:37.469Z">
+<meta property="article:modified_time" content="2025-08-15T08:03:59.719Z">
 <meta property="article:author" content="boollight">
 <meta property="article:tag" content="ESP32">
 <meta name="twitter:card" content="summary">
@@ -228,7 +228,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2025-06-13 19:58:37" itemprop="dateModified" datetime="2025-06-13T19:58:37+08:00">2025-06-13</time>
+                <time title="Modified: 2025-08-15 16:03:59" itemprop="dateModified" datetime="2025-08-15T16:03:59+08:00">2025-08-15</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -246,14 +246,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">Symbols count in article: </span>
-              <span>2.1k</span>
+              <span>5k</span>
             </span>
             <span class="post-meta-item" title="Reading time">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">Reading time &asymp;</span>
-              <span>7 mins.</span>
+              <span>17 mins.</span>
             </span>
             <div class="post-description">ESP32 在构建工程，添加组件，编译等步骤上会遇到一些小问题，此文档会记录开发过程中遇到的一些问题，并提供自测的解决方案。</div>
 
@@ -294,9 +294,12 @@ rm -r build/*
 <p>该命令会创建一个新组件,新组件将包含构建组件所需的一组空文件。我们的工作就是在这一组空文件中写上我们的代码。<br>如果熟悉了组件结构，也可以直接在项目中手工创建。</p>
 <h4 id="项目树"><a href="#项目树" class="headerlink" title="项目树"></a>项目树</h4><p>构建好的项目结构如下:</p>
 <p><img src="/../pictures/component_demo%E8%AE%BE%E5%A4%87%E6%A0%91.png" alt="component_demo设备树"></p>
-<p>注意：组件目录<code>components</code>名字不能改，其下的组件名可以随意取。build目录是编译时生成的，编译的结果都放在其中。<code>dependencies.lock</code>是随原来的项目复制过来的不要改。<code>sdkconfig</code>文件可以用<code>idf.py menuconfig</code>命令修改。</p>
-<br>
-
+<p><strong>注意：</strong></p>
+<ul>
+<li>组件目录<code>components</code>名字不能改，其下的组件名可以随意取。<code>build</code>目录是编译时生成的，编译的结果都放在其中。<code>dependencies.lock</code>是随原来的项目复制过来的不要改。<code>sdkconfig</code>文件可以用<code>idf.py menuconfig</code>命令修改。</li>
+<li><code>idf_component.yml</code>是新版自动链接下载文件，以下是<code>esp32-camera</code>依赖组件，下拉在<code>managed_components</code>里。<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">dependencies:</span><br><span class="line">  esp32-camera:</span><br><span class="line">    git: git@github.com:espressif/esp32-camera.git</span><br></pre></td></tr></table></figure>
+<br></li>
+</ul>
 <h3 id="代码和说明"><a href="#代码和说明" class="headerlink" title="代码和说明"></a>代码和说明</h3><p>各文件的位置关系很重要，请对照前面的项目树看代码文件。</p>
 <h4 id="项目的根CMakeLists-txt文件"><a href="#项目的根CMakeLists-txt文件" class="headerlink" title="项目的根CMakeLists.txt文件"></a>项目的根CMakeLists.txt文件</h4><pre><code># The following lines of boilerplate have to be in your project&#39;s
 # CMakeLists in this exact order for cmake to work correctly
@@ -358,13 +361,13 @@ project(components_demo)
 <li><p>若下载很慢，可按以下路径在<code>Windows</code>&#x2F;<code>Linux</code>下载:</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line">cd ~/esp/esp-adf/esp-idf/tools</span><br><span class="line">vim tools.json</span><br><span class="line">&#123;</span><br><span class="line">  &quot;tools&quot;: [</span><br><span class="line">    &#123;</span><br><span class="line">      &quot;description&quot;: &quot;GDB for Xtensa&quot;,</span><br><span class="line">      &quot;export_paths&quot;: [</span><br><span class="line">        [</span><br><span class="line">          &quot;xtensa-esp-elf-gdb&quot;,</span><br><span class="line">          &quot;bin&quot;</span><br><span class="line">        ]</span><br><span class="line">      ],</span><br><span class="line">      &quot;export_vars&quot;: &#123;&#125;,</span><br><span class="line">      &quot;info_url&quot;: &quot;https://github.com/espressif/binutils-gdb&quot;,</span><br><span class="line">      &quot;install&quot;: &quot;always&quot;,</span><br><span class="line">      &quot;license&quot;: &quot;GPL-3.0-or-later&quot;,</span><br><span class="line">      &quot;name&quot;: &quot;xtensa-esp-elf-gdb&quot;,</span><br><span class="line">      &quot;supported_targets&quot;: [</span><br><span class="line">        &quot;esp32&quot;,</span><br><span class="line">        &quot;esp32s2&quot;,</span><br><span class="line">        &quot;esp32s3&quot;</span><br><span class="line">      ],</span><br><span class="line">      &quot;version_cmd&quot;: [</span><br><span class="line">        &quot;xtensa-esp-elf-gdb-no-python&quot;,</span><br><span class="line">        &quot;--version&quot;</span><br><span class="line">      ],</span><br><span class="line">      &quot;version_regex&quot;: &quot;GNU gdb \\(esp-gdb\\) ([a-z0-9.-_]+)&quot;,</span><br><span class="line">      &quot;versions&quot;: [</span><br><span class="line">        &#123;</span><br><span class="line">          &quot;linux-amd64&quot;: &#123;</span><br><span class="line">            &quot;sha256&quot;: &quot;b5f7cc3e4b5a58db655754083ed9652e4953e71c3b4922fb624e7a034ec24a64&quot;,</span><br><span class="line">            &quot;size&quot;: 26947336,</span><br><span class="line">            &quot;url&quot;: &quot;https://github.com/espressif/binutils-gdb/releases/download/esp-gdb-v11.2_20220823/xtensa-esp-elf-gdb-11.2_20220823-x86_64-linux-gnu.tar.gz&quot;</span><br><span class="line">          &#125;,</span><br><span class="line">          &quot;linux-arm64&quot;: &#123;</span><br><span class="line">            &quot;sha256&quot;: &quot;816acfae38b6b443f4f1590395f68f079243539259d19c7772ae6416c6519444&quot;,</span><br><span class="line">            &quot;size&quot;: 27134508,</span><br><span class="line">            &quot;url&quot;: &quot;https://github.com/espressif/binutils-gdb/releases/download/esp-gdb-v11.2_20220823/xtensa-esp-elf-gdb-11.2_20220823-aarch64-linux-gnu.tar.gz&quot;</span><br><span class="line">          &#125;,</span><br><span class="line">          &quot;linux-armel&quot;: &#123;</span><br><span class="line">            &quot;sha256&quot;: &quot;4dd1bace0633196fddfdcef3cebcc4bbfce22f5a0d2d1e3d618f3d8a6cbfcacc&quot;,</span><br><span class="line">            &quot;size&quot;: 25205239,</span><br><span class="line">            &quot;url&quot;: &quot;https://github.com/espressif/binutils-gdb/releases/download/esp-gdb-v11.2_20220823/xtensa-esp-elf-gdb-11.2_20220823-arm-linux-gnueabi.tar.gz&quot;</span><br><span class="line">          &#125;,</span><br><span class="line">          &quot;linux-armhf&quot;: &#123;</span><br><span class="line">            &quot;sha256&quot;: &quot;53a142b9a508a8babe6b7edf3090bb49e3714380ba819b54052425fcf1ac6f9c&quot;,</span><br><span class="line">            &quot;size&quot;: 23491575,</span><br><span class="line">            &quot;url&quot;: &quot;https://github.com/espressif/binutils-gdb/releases/download/esp-gdb-v11.2_20220823/xtensa-esp-elf-gdb-11.2_20220823-arm-linux-gnueabihf.tar.gz&quot;</span><br><span class="line">...</span><br></pre></td></tr></table></figure></li>
 </ul>
-<h2 id="ESP32网络问题"><a href="#ESP32网络问题" class="headerlink" title="ESP32网络问题"></a>ESP32网络问题</h2><p><strong>基本外设</strong>：OV3660（camera） + ILI9341（LCD）</p>
+<h2 id="ESP32网络问题"><a href="#ESP32网络问题" class="headerlink" title="ESP32网络问题"></a>ESP32网络问题</h2><p><strong>基本外设</strong>：<code>camera: OV3660</code> + <code>LCD: ILI9341</code></p>
 <ul>
 <li>当前<code>IDF5.4</code>版本在配置时可以连接下载组件，但是有时候网络不好，连接超时。</li>
 </ul>
 <ol>
 <li><p>修改 <code>Git</code> 的 <code>URL</code> 为镜像源（如 <code>Gitee</code>）</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">修改 Git 的 URL 为镜像源（如 Gitee）</span></span><br><span class="line">git config --global url.&quot;https://gitee.com/espressif/esp32-camera.git&quot;.insteadOf &quot;https://github.com/espressif/esp32-camera.git&quot;</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">发现没这个连接,自己去找别的镜像</span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">查看当前 Git 的 URL 替换规则</span></span><br><span class="line">git config --global --get-regexp &quot;url\..*\.insteadOf&quot;</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">删除 Gitee 镜像的替换规则</span></span><br><span class="line">git config --global --unset url.&quot;https://gitee.com/espressif/esp32-camera.git&quot;.insteadOf</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">或者直接修改回 GitHub 官方源（可选）</span></span><br><span class="line">git config --global url.&quot;https://github.com/espressif/esp32-camera.git&quot;.insteadOf &quot;https://gitee.com/espressif/esp32-camera.git&quot;</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">修改 Git 的 URL 为镜像源（如 Gitee）</span></span><br><span class="line">git config --global url.&quot;git@github.com:espressif/esp32-camera.git&quot;.insteadOf &quot;https://github.com/espressif/esp32-camera.git&quot;</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">查看当前 Git 的 URL 替换规则</span></span><br><span class="line">git config --global --get-regexp &quot;url\..*\.insteadOf&quot;</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">删除 Gitee 镜像的替换规则</span></span><br><span class="line">git config --global --unset url.&quot;https://gitee.com/espressif/esp32-camera.git&quot;.insteadOf</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">或者直接修改回 GitHub 官方源（可选）</span></span><br><span class="line">git config --global url.&quot;https://github.com/espressif/esp32-camera.git&quot;.insteadOf &quot;git@github.com:espressif/esp32-camera.git&quot;</span><br></pre></td></tr></table></figure>
 </li>
 <li><p><code>GitHub</code> 限流：频繁克隆可能触发限流，稍后再试。</p>
 </li>
@@ -383,6 +386,307 @@ project(components_demo)
 <li>依赖未更新：修改<code>idf_component.yml</code>后需运行<code>idf.py reconfigure</code>重新解析。</li>
 <li>本地组件覆盖：若同时存在本地组件和注册表同名组件，优先使用路径引用的本地版本。</li>
 <li>锁文件冲突：若<code>dependencies.lock</code>被误改，删除后重新运行<code>reconfigure</code>即可恢复。</li>
+</ul>
+<h2 id="ESP32对sdkconfig的解释"><a href="#ESP32对sdkconfig的解释" class="headerlink" title="ESP32对sdkconfig的解释"></a>ESP32对sdkconfig的解释</h2><p>当<code>IDF</code>的版本不一样时，<code>sdkconfig</code>如果不加修改就直接用，大概率会跑飞，需要根据实际情况进行修改。</p>
+<ul>
+<li><p><code>sdkconfig</code></p>
+<ul>
+<li>实际构建时生成的最终配置</li>
+<li>合并了所有默认配置和<code>menuconfig</code>的修改</li>
+<li>是实际编译使用的配置文件</li>
+</ul>
+</li>
+<li><p><code>sdkconfig.defaults</code></p>
+<ul>
+<li>项目级别的默认配置</li>
+<li>包含WiFi凭据、分区表、网络设置等应用层配置</li>
+<li>覆盖芯片特定配置中的部分设置</li>
+</ul>
+</li>
+<li><p><code>sdkconfig.defaults.esp32s3</code></p>
+<ul>
+<li>芯片特定的默认配置（针对<code>ESP32-S3</code>）</li>
+<li>包含<code>PSRAM</code>配置、缓存设置、外设配置</li>
+<li>主要用于定义硬件相关的基础配置</li>
+</ul>
+</li>
+</ul>
+<h2 id="RTSP推流问题"><a href="#RTSP推流问题" class="headerlink" title="RTSP推流问题"></a>RTSP推流问题</h2><ul>
+<li><code>VLC</code>可能认为<code>192.168.4.2</code>是主机<code>IP</code>，没有请求<code>192.168.4.1</code>，需要注意修改。</li>
+</ul>
+<br>
+
+<h2 id="ESP32S3开发摄像头模组"><a href="#ESP32S3开发摄像头模组" class="headerlink" title="ESP32S3开发摄像头模组"></a>ESP32S3开发摄像头模组</h2><h3 id="编译环境"><a href="#编译环境" class="headerlink" title="编译环境"></a>编译环境</h3><ul>
+<li><strong>Linux Ubuntu 22.04</strong></li>
+<li><strong>ADF v2.7-105-g4200c64d</strong> </li>
+<li><strong>IDF v5.4.1-851-gb3d3a82daa</strong></li>
+</ul>
+<h3 id="创建仓库，设计框架"><a href="#创建仓库，设计框架" class="headerlink" title="创建仓库，设计框架"></a>创建仓库，设计框架</h3><ul>
+<li><p>复制一个<code>DEMO</code>创建仓库，有<code>main.c</code>函数，能跑通。</p>
+</li>
+<li><p>添加<code>components</code>:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">idf.py -C components create-component lcd_camera</span><br><span class="line">// 下载esp32-camera组件，地址：git@github.com:espressif/esp32-camera.git</span><br><span class="line">mv -rf esp32-camera $&#123;workspaceFolder&#125;/components</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>main</code>文件夹里注释掉注释掉<code>idf_component.yml</code>和<code>Kconfig.projbuild</code>，我们这里暂时不使用自动下载依赖工具和<code>idf.py menuconfig</code>配置，后发现其他组件如<code>esp32-camera</code>组件中也会有<code>.yml</code>文件，暂时从网上更新拉取依赖，后期再做隔离。</p>
+</li>
+<li><p>编写顶层<code>CmakeLists.txt</code>，注意，<code>ESP-IDF</code>构建系统并不会自动为每个组件添加所有依赖关系，需要显式地告诉<code>CMake</code>每个组件依赖谁，以下便是会扫描这些路径，看看里面有没有组件（<code>components</code>）,但是还需要再文件使用时添加依赖的组件，如：<code>REQUIRES esp_wifi</code>。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">cmake_minimum_required(VERSION 3.5)</span><br><span class="line"></span><br><span class="line">include($ENV&#123;ADF_PATH&#125;/CMakeLists.txt)</span><br><span class="line">include($ENV&#123;IDF_PATH&#125;/tools/cmake/project.cmake)</span><br><span class="line"></span><br><span class="line"># file(GLOB_RECURSE SOURCES &quot;main/*.c&quot;)</span><br><span class="line"># set(EXTRA_COMPONENT_DIRS &quot;components&quot;)</span><br><span class="line"></span><br><span class="line">set(EXTRA_COMPONENT_DIRS</span><br><span class="line">    components</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">project(camera_test)</span><br></pre></td></tr></table></figure></li>
+<li><p>以上可分为三步：</p>
+<ul>
+<li><code>set(EXTRA_COMPONENT_DIRS ...)</code>告诉<code>CMake</code>哪里有组件目录，仅是可见范围，不代表使用。</li>
+<li><code>idf_component_register()</code>声明一个组件（模块），必须有，才能被当成组件处理。</li>
+<li><code>PRIV_REQUIRES</code> &#x2F; <code>REQUIRES</code>显式声明我依赖谁，必须手动写，否则链接失败或头文件找不到。</li>
+</ul>
+<p><strong>建议</strong>：可以保持<code>EXTRA_COMPONENT_DIRS</code>写法用于组件扫描；但每一个<code>.c</code>文件所在组件，都必须有自己明确依赖的组件声明。</p>
+</li>
+</ul>
+<br>
+
+<ul>
+<li><code>main</code>主文件夹的<code>CmakeLists.txt</code>:<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">idf_component_register(</span><br><span class="line">    SRCS &quot;main.c&quot;</span><br><span class="line">    INCLUDE_DIRS &quot;.&quot;</span><br><span class="line"></span><br><span class="line">    REQUIRES</span><br><span class="line">        lcd_camera</span><br><span class="line">        wifi_softap</span><br><span class="line">        rtsp_server</span><br><span class="line">        http_server</span><br><span class="line">        web_mjpeg_server</span><br><span class="line">)</span><br></pre></td></tr></table></figure></li>
+</ul>
+<br>
+
+<p>⚡ 为什么 <code>main</code> 里不需要 <code>REQUIRES</code>，在其他组件需要手动添加依赖？</p>
+<ul>
+<li>因为 <code>main</code> 是特殊组件，它会自动看到整个工程的公共 <code>include path</code> 和链接库。</li>
+<li>但单独组件要访问其它组件的 <code>API</code>，就必须在 <code>idf_component_register</code> 里 <code>REQUIRES</code> 指明依赖。</li>
+</ul>
+<p><strong>自动依赖与显式依赖的区别</strong>:</p>
+<ul>
+<li><code>main</code>里没写 <code>REQUIRES/PRIV_REQUIRES</code>，就像“放开手脚，扫描所有能找到的组件”，所以可能包含了 <code>esp_http_server</code>。</li>
+<li><code>main</code>里写了 <code>REQUIRES/PRIV_REQUIRES</code>，就像“限定只扫描你指定的组件及依赖”，没写的组件不会被扫描。</li>
+</ul>
+<p><strong>大致查找顺序是这样</strong>：</p>
+<ol>
+<li>项目本地组件目录</li>
+</ol>
+<ul>
+<li>默认是项目根目录下的 <code>components/</code> 文件夹， 此目录为默认组件目录，<code>set(EXTRA_COMPONENT_DIRS xxx)</code>时可不添加。</li>
+<li>如果设置了 <code>EXTRA_COMPONENT_DIRS</code>，也会优先按顺序在这些路径里查找</li>
+</ul>
+<ol start="2">
+<li><code>ESP-IDF</code> 自带组件目录</li>
+</ol>
+<ul>
+<li>即 <code>$IDF_PATH/components</code></li>
+</ul>
+<ol start="3">
+<li>通过 <code>idf.py add-dependency</code> 或 <code>dependencies.lock</code> 下载的 <code>managed_components</code></li>
+</ol>
+<ul>
+<li>存放在 <code>managed_components/</code> 中,这些优先级比 <code>IDF</code> 内置高，但低于项目本地组件</li>
+</ul>
+<p><strong>现在有两种方法</strong>：</p>
+<ol>
+<li>在线方法：保留<code>managed_components</code>，在编译的时候会对比网上拉取的最新固件版本，并更新，无网络时有风险。</li>
+<li>离线方法：新建<code>offline_components</code>，拷贝<code>managed_components</code>的所有数据到<code>offline_components</code>，删除<code>managed_components</code>，在顶层<code>CmakeLists.txt</code>中添加，但可能组件更新不及时，落后主分支：<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">set(EXTRA_COMPONENT_DIRS</span><br><span class="line">	&quot;components&quot;</span><br><span class="line">	&quot;offline_components&quot;		 # 添加离线组件路径</span><br><span class="line">	&quot;$ENV&#123;ADF_PATH&#125;/components&quot;  # 显式添加ESP-ADF组件路径, 上面 include($ENV&#123;ADF_PATH&#125;/CMakeLists.txt) 未生效</span><br><span class="line">)</span><br></pre></td></tr></table></figure></li>
+</ol>
+<p>**特别的解释(解释ADF_PATH环境中的components未生效)**：</p>
+<ul>
+<li><code>ADF_PATH/CMakeLists.txt</code> → 加载 <code>ADF</code> 的构建逻辑（不一定包含组件路径）。</li>
+<li><code>EXTRA_COMPONENT_DIRS += ADF_PATH/components</code> → 确保 <code>ADF</code> 组件能被找到。</li>
+<li>如果去掉 <code>ADF_PATH/components</code>，可能会导致 部分 <code>ADF</code> 组件无法被扫描到，编译时报错。</li>
+</ul>
+<br>
+
+<h2 id="流媒体协议全解析：RTSP-RTP-TCP-UDP"><a href="#流媒体协议全解析：RTSP-RTP-TCP-UDP" class="headerlink" title="流媒体协议全解析：RTSP&#x2F;RTP&#x2F;TCP&#x2F;UDP"></a>流媒体协议全解析：RTSP&#x2F;RTP&#x2F;TCP&#x2F;UDP</h2><h2 id="摄像头推流问题汇总"><a href="#摄像头推流问题汇总" class="headerlink" title="摄像头推流问题汇总"></a>摄像头推流问题汇总</h2><ol>
+<li><strong>可能的问题点</strong>：</li>
+</ol>
+<ul>
+<li>帧率控制问题：<ul>
+<li>当前实现没有稳定的帧率控制</li>
+<li>帧间隔计算不准确导致画面抖动</li>
+</ul>
+</li>
+<li>RTP时间戳错误：<ul>
+<li>时间戳单位不正确（应该是<code>90kHz</code>）</li>
+<li>时间戳增量不固定导致画面抖动</li>
+</ul>
+</li>
+<li>JPEG头格式问题：<ul>
+<li>类型特定(<code>type specific</code>)字段需要正确设置</li>
+<li><code>Q</code>因子设置不合理</li>
+</ul>
+</li>
+<li>网络稳定性:<ul>
+<li><code>UDP</code>发送缓冲区不足</li>
+<li>缺少重传机制</li>
+</ul>
+</li>
+</ul>
+<br>
+
+<ol start="2">
+<li><strong>分析调试</strong>：</li>
+</ol>
+<ul>
+<li><p><code>frame2jpg(fb, 60, &amp;jpeg_buf, &amp;jpeg_len)</code>这个函数转换需要<code>100ms~150ms</code>，很慢。<code>PIXFORMAT_RGB565</code>适合LCD显示；<code>PIXFORMAT_JPEG</code>，只推流不显示速度会快很多，同时有以下问题。</p>
+<br>
+</li>
+<li><p><code>camera</code>硬件解码（<code>PIXFORMAT_JPEG</code>）<code>VLC</code>显示闪屏：</p>
+<ul>
+<li>已排除<code>errno=12</code> 对应 <code>ENOMEM</code>，即系统内存不足（尤其是 <code>LWIP UDP</code> 发送缓冲区）。这说明 <code>UDP</code> 发送缓冲区或堆内存压力过大，导致 <code>RTP</code> 数据包发送失败，从而客户端播放时卡顿闪屏。</li>
+<li>已排除<code>Quant Table</code> 缺失<code>（q≠0）</code></li>
+<li>已排除<code>VLC</code> 播放器问题</li>
+<li>已排除<code>AP/UDP</code> 网络不稳定</li>
+<li>已排除 <code>JPEG</code> 数据不完整<br></li>
+</ul>
+</li>
+<li><p>调试发现与<code>RTP JPEG Type</code>有很大关系，问题测试过程如下：</p>
+</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>图像来源</th>
+<th>JPEG 类型内容</th>
+<th>RTP JPEG Type</th>
+<th>是否闪屏</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>摄像头原生 JPEG</td>
+<td>包含 DQT&#x2F;DHT</td>
+<td><code>Type = 0</code></td>
+<td>❌ 不闪屏</td>
+<td>✅ 正确</td>
+</tr>
+<tr>
+<td>摄像头原生 RGB565</td>
+<td>无 JPEG</td>
+<td><code>Type = 1</code></td>
+<td>❌ 不闪屏</td>
+<td>✅ 正确</td>
+</tr>
+<tr>
+<td>JPEG → RGB565 → RTP</td>
+<td>原图有 DQT&#x2F;DHT</td>
+<td><code>Type = 0</code></td>
+<td>⚠️ 闪屏</td>
+<td>❌ 错误</td>
+</tr>
+<tr>
+<td>JPEG → RGB565 → RTP</td>
+<td>原图有 DQT&#x2F;DHT</td>
+<td><code>Type = 1</code></td>
+<td>❌ 不闪屏</td>
+<td>✅ 正确</td>
+</tr>
+<tr>
+<td>RGB565 → 软件 JPEG 编码</td>
+<td>编码包含 DQT&#x2F;DHT</td>
+<td><code>Type = 0</code></td>
+<td>❌ 不闪屏</td>
+<td>✅ 正确</td>
+</tr>
+<tr>
+<td>RGB565 → 软件 JPEG 编码</td>
+<td>编码包含 DQT&#x2F;DHT</td>
+<td><code>Type = 1</code></td>
+<td>⚠️ 闪屏</td>
+<td>❌ 错误</td>
+</tr>
+</tbody></table>
+<br>
+
+<ul>
+<li><code>RTP JPEG Type</code> 设置错误带来的解码行为：</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Type 值</th>
+<th>VLC 等播放器行为</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>Type = 0</code></td>
+<td>播放器使用 JPEG 内嵌的 DQT&#x2F;DHT 表进行解码（需 JPEG 包含完整头）</td>
+</tr>
+<tr>
+<td><code>Type = 1</code></td>
+<td>播放器使用默认内置表（RFC2435 附录）进行解码，忽略图像中 DQT</td>
+</tr>
+</tbody></table>
+<p>✅<strong>核心推论</strong>：🚨 不管图像来源是否是 <code>JPEG</code>，如果你用 <code>RTP Type = 0</code>，就必须确保 <code>JPEG</code> 中包含 <code>DQT/DHT</code>！否则 <code>VLC</code> 会闪屏？</p>
+<ul>
+<li>添加打印以验证分析理论：</li>
+<li>前置条件：<code>RGB565</code> → 软件 <code>JPEG</code> 编码; <code>type = 0</code>。<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 检测 JPEG 是否包含 DQT 段 (0xFFDB)</span></span><br><span class="line"><span class="type">static</span> <span class="type">bool</span> <span class="title function_">jpeg_has_dqt</span><span class="params">(<span class="type">const</span> <span class="type">uint8_t</span> *data, <span class="type">size_t</span> len)</span> &#123;</span><br><span class="line">    <span class="type">size_t</span> i = <span class="number">2</span>; <span class="comment">// 跳过 SOI 0xFFD8</span></span><br><span class="line">    <span class="keyword">while</span> (i + <span class="number">4</span> &lt;= len) &#123;</span><br><span class="line">        <span class="keyword">if</span> (data[i] != <span class="number">0xFF</span>) &#123;</span><br><span class="line">            <span class="comment">// 非法 marker</span></span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="type">uint8_t</span> marker = data[i + <span class="number">1</span>];</span><br><span class="line">        <span class="comment">// 0xFFDA 是 SOS，之后是压缩数据段，不再查找</span></span><br><span class="line">        <span class="keyword">if</span> (marker == <span class="number">0xDA</span>) &#123;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 跳过填充的 0xFF（合法 JPEG 允许多个）</span></span><br><span class="line">        <span class="keyword">while</span> (marker == <span class="number">0xFF</span> &amp;&amp; i + <span class="number">2</span> &lt; len) &#123;</span><br><span class="line">            i++;</span><br><span class="line">            marker = data[i + <span class="number">1</span>];</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// marker 长度字段位于 i+2，2 字节</span></span><br><span class="line">        <span class="keyword">if</span> (i + <span class="number">4</span> &gt; len) <span class="keyword">break</span>;</span><br><span class="line">        <span class="type">uint16_t</span> segment_length = (data[i + <span class="number">2</span>] &lt;&lt; <span class="number">8</span>) | data[i + <span class="number">3</span>];</span><br><span class="line">        <span class="keyword">if</span> (segment_length &lt; <span class="number">2</span>) <span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (marker == <span class="number">0xDB</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">true</span>; <span class="comment">// DQT 找到了</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        i += <span class="number">2</span> + segment_length;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">... ...</span><br><span class="line"></span><br><span class="line"><span class="comment">// 检测是否包含 DQT，决定 RTP JPEG Type (在校验完报头时打印)</span></span><br><span class="line">	<span class="type">bool</span> has_dqt = jpeg_has_dqt(jpeg, len);</span><br><span class="line">	<span class="type">uint8_t</span> type = has_dqt ? <span class="number">0</span> : <span class="number">1</span>;</span><br><span class="line">	ESP_LOGI(TAG, <span class="string">&quot;JPEG header: %02X %02X, has_dqt=%s → type=%d&quot;</span>, jpeg[<span class="number">0</span>], jpeg[<span class="number">1</span>], has_dqt ? <span class="string">&quot;YES&quot;</span> : <span class="string">&quot;NO&quot;</span>, type);</span><br><span class="line"></span><br><span class="line">... ...</span><br><span class="line"></span><br><span class="line"><span class="comment">// 打印结果说明具有0xFFD8，包含DQT。</span></span><br><span class="line">I (<span class="number">19451</span>) RTSP_SERVER: JPEG header: FF D8, has_dqt=YES → type=<span class="number">0</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<br>
+
+<ul>
+<li>前置条件：<code>RGB565</code> → 软件 <code>JPEG</code> 编码; <code>type = 1</code>。<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// 打印结果说明具有0xFFD8，包含DQT。</span><br><span class="line">I (19451) RTSP_SERVER: JPEG header: FF D8, has_dqt=YES → type=0</span><br></pre></td></tr></table></figure></li>
+</ul>
+<br>
+
+<ul>
+<li>结论：有 <code>DQT ≠</code> 可以用 <code>type=0</code>，只有 摄像头生成的标准 <code>JPEG</code>（完全按<code> MJPEG over RTP</code> 规范压缩的）才能稳定使用 <code>type=0</code>，否则必须使用 <code>type=1</code>。</li>
+</ul>
+<br>
+
+<ol start="3">
+<li><strong>结论总结</strong>：</li>
+</ol>
+<br>
+
+<h2 id="ESP32S3偶发性重启"><a href="#ESP32S3偶发性重启" class="headerlink" title="ESP32S3偶发性重启"></a>ESP32S3偶发性重启</h2><p><strong>idf.py menuconfig</strong>:</p>
+<ul>
+<li><p>Component config → LWIP → TCP -&gt; (65535) Default send buffer size</p>
+</li>
+<li><p>Component config —&gt; HTTP Server —&gt; [*] WebSocket server support (CONFIG_HTTPD_WS_SUPPORT&#x3D;y)</p>
+</li>
+<li><p>会出现重启、传输时阻塞卡死、画面卡住以下是常见的<code>error</code>日志：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line">I (782633) RTSP_SERVER: Streaming: 10 FPS, 50 pkts, 5619 bytes, 0 errs (0.0%)</span><br><span class="line">W (782833) RTSP_SERVER: Sendto failed at offset 2760, errno=12 (Not enough space)</span><br><span class="line">W (782833) RTSP_SERVER: Non-first packet failed at offset 2760, continuing</span><br><span class="line">W (782843) RTSP_SERVER: Sendto failed at offset 4140, errno=12 (Not enough space)</span><br><span class="line">W (782843) RTSP_SERVER: Non-first packet failed at offset 4140, continuing</span><br><span class="line">W (782853) RTSP_SERVER: Sendto failed at offset 5520, errno=12 (Not enough space)</span><br><span class="line">W (782863) RTSP_SERVER: Non-first packet failed at offset 5520, continuing</span><br><span class="line">W (782963) RTSP_SERVER: Sendto failed at offset 0, errno=12 (Not enough space)</span><br><span class="line">... ...</span><br><span class="line">E (560523) RTSP_SERVER: Fatal send error: errno=-1</span><br><span class="line">W (560523) RTSP_SERVER: Sendto failed at offset 0, errno=-1 ()</span><br><span class="line">W (560523) RTSP_SERVER: Drop frame due to send failure at offset 0 (critical)</span><br><span class="line">... ...</span><br><span class="line">W (1638) cam_hal: NO-SOI</span><br><span class="line">Guru Meditation Error: Core  0 panic&#x27;ed (LoadProhibited). Exception was unhandled.</span><br><span class="line"></span><br><span class="line">Core  0 register dump:</span><br><span class="line">PC      : 0x4037770b  PS      : 0x00060033  A0      : 0x8201981a  A1      : 0x3fc9e0c0  </span><br><span class="line">--- 0x4037770b: ll_cam_send_event at /home/ubuntu/esp/work/camera_test/managed_components/esp32-camera/driver/cam_hal.c:107</span><br><span class="line"></span><br><span class="line">A2      : 0x00060523  A3      : 0x00000001  A4      : 0x3fc9e0f0  A5      : 0x3fcad5f0  </span><br><span class="line">A6      : 0x00060d23  A7      : 0x00000000  A8      : 0x03c9bc78  A9      : 0x01ffffff  </span><br><span class="line">A10     : 0x3fc9bc78  A11     : 0x3fc9e0c0  A12     : 0x3fc9e0f0  A13     : 0x00000000  </span><br><span class="line">A14     : 0x3fc9c604  A15     : 0x0000cdcd  SAR     : 0x00000000  EXCCAUSE: 0x0000001c  </span><br><span class="line">EXCVADDR: 0x0006054b  LBEG    : 0x00000000  LEND    : 0x00000000  LCOUNT  : 0x00000000  </span><br><span class="line"></span><br><span class="line"></span><br><span class="line">Backtrace: 0x40377708:0x3fc9e0c0 0x42019817:0x3fc9e0f0 0x40376ae1:0x3fc9e120 0x40377d3d:0x3fc9e140 0x4037b66b:0x3fcad660 0x42004db6:0x3fcad680 0x403801f1:0x3fcad6a0 0x4037f04d:0x3fcad6c0</span><br><span class="line">--- 0x40377708: ll_cam_send_event at /home/ubuntu/esp/work/camera_test/managed_components/esp32-camera/driver/cam_hal.c:107</span><br><span class="line">--- 0x42019817: ll_cam_vsync_isr at /home/ubuntu/esp/work/camera_test/managed_components/esp32-camera/target/esp32s3/ll_cam.c:106</span><br><span class="line">--- 0x40376ae1: shared_intr_isr at /home/ubuntu/esp/esp-adf/esp-idf/components/esp_hw_support/intr_alloc.c:464</span><br><span class="line">--- 0x40377d3d: _xt_lowint1 at /home/ubuntu/esp/esp-adf/esp-idf/components/xtensa/xtensa_vectors.S:1240</span><br><span class="line">--- 0x4037b66b: xt_utils_wait_for_intr at /home/ubuntu/esp/esp-adf/esp-idf/components/xtensa/include/xt_utils.h:82</span><br><span class="line">---  (inlined by) esp_cpu_wait_for_intr at /home/ubuntu/esp/esp-adf/esp-idf/components/esp_hw_support/cpu.c:55</span><br><span class="line">--- 0x42004db6: esp_vApplicationIdleHook at /home/ubuntu/esp/esp-adf/esp-idf/components/esp_system/freertos_hooks.c:58</span><br><span class="line">--- 0x403801f1: prvIdleTask at /home/ubuntu/esp/esp-adf/esp-idf/components/freertos/FreeRTOS-Kernel/tasks.c:4341 (discriminator 1)</span><br><span class="line">--- 0x4037f04d: vPortTaskWrapper at /home/ubuntu/esp/esp-adf/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:139</span><br><span class="line"></span><br><span class="line">ELF file SHA256: 6ae9a007e</span><br><span class="line"></span><br><span class="line">Rebooting...</span><br><span class="line">���ESP-ROM:esp32s3-20210327</span><br><span class="line">Build:Mar 27 2021</span><br><span class="line">rst:0xc (RTC_SW_CPU_RST),boot:0x28 (SPI_FAST_FLASH_BOOT)</span><br><span class="line">Saved PC:0x40375da1</span><br><span class="line">--- 0x40375da1: esp_restart_noos at /home/ubuntu/esp/esp-adf/esp-idf/components/esp_system/port/soc/esp32s3/system_internal.c:162</span><br><span class="line">... ...</span><br><span class="line"></span><br><span class="line">W (18220) cam_hal: FB-OVF</span><br><span class="line">W (18310) cam_hal: FB-OVF</span><br><span class="line">W (18320) cam_hal: NO-EOI</span><br><span class="line">E (18320) lcd_camera: hardware jpeg get failed!</span><br><span class="line">W (18330) cam_hal: FB-OVF</span><br><span class="line">W (18460) cam_hal: FB-OVF</span><br><span class="line">W (18460) cam_hal: NO-EOI</span><br><span class="line">W (18470) cam_hal: FB-OVF</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>注释法，轮流注释<code>camera</code>和<code>作对比</code>。</p>
+<ul>
+<li>用<code>JPEG</code>格式（<code>PIXFORMAT_JPEG</code>）采集数据会有概率重启?</li>
+</ul>
+</li>
+<li><p><code>jpeg</code>转换成<code>rgb565</code>，参数跟<code>demo</code>有点不同.</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// jpg2rgb565原始函数显示花屏，需要.flags.swap_color_bytes = 1</span></span><br><span class="line"><span class="type">static</span> <span class="type">uint8_t</span> work[<span class="number">3100</span>];</span><br><span class="line"><span class="type">bool</span> <span class="title function_">myjpg2rgb565</span><span class="params">(<span class="type">const</span> <span class="type">uint8_t</span> *src, <span class="type">size_t</span> src_len, <span class="type">uint8_t</span> * out, <span class="type">esp_jpeg_image_scale_t</span> scale)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">esp_jpeg_image_cfg_t</span> jpeg_cfg = &#123;</span><br><span class="line">        .indata = (<span class="type">uint8_t</span> *)src,</span><br><span class="line">        .indata_size = src_len,</span><br><span class="line">        .outbuf = out,</span><br><span class="line">        .outbuf_size = UINT32_MAX, <span class="comment">// @todo: this is very bold assumption, keeping this like this for now, not to break existing code</span></span><br><span class="line">        .out_format = JPEG_IMAGE_FORMAT_RGB565,</span><br><span class="line">        .out_scale = scale,</span><br><span class="line">        .flags.swap_color_bytes = <span class="number">1</span>,</span><br><span class="line">        .advanced.working_buffer = work,</span><br><span class="line">        .advanced.working_buffer_size = <span class="keyword">sizeof</span>(work),</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="type">esp_jpeg_image_output_t</span> output_img = &#123;&#125;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>(esp_jpeg_decode(&amp;jpeg_cfg, &amp;output_img) != ESP_OK)&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<br>
+
+<h2 id="ESP32系列初始化"><a href="#ESP32系列初始化" class="headerlink" title="ESP32系列初始化"></a>ESP32系列初始化</h2><h3 id="NVS（Non-Volatile-Storage，非易失性存储）初始化："><a href="#NVS（Non-Volatile-Storage，非易失性存储）初始化：" class="headerlink" title="NVS（Non-Volatile Storage，非易失性存储）初始化："></a><code>NVS</code>（<code>Non-Volatile Storage</code>，非易失性存储）初始化：</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">esp_err_t</span> ret = nvs_flash_init(); </span><br><span class="line"><span class="keyword">if</span> (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) </span><br><span class="line">&#123; </span><br><span class="line">	ESP_ERROR_CHECK(nvs_flash_erase()); </span><br><span class="line">	ret = nvs_flash_init(); </span><br><span class="line">&#125;</span><br><span class="line">ESP_ERROR_CHECK(ret);</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>初始化 <code>NVS</code></li>
+</ol>
+<ul>
+<li><code>nvs_flash_init()</code> 会挂载 <code>NVS</code> 分区（通常是 <code>flash</code> 里一个叫 “<code>nvs</code>“ 的分区）。</li>
+<li><code>NVS</code> 是一个 <code>key-value</code> 存储系统，可以用来保存 <code>Wi-Fi</code> 配置、设备状态、参数等，断电不会丢失。</li>
+<li>ESP32 内部很多系统组件（比如 <code>Wi-Fi</code>）都依赖 <code>NVS</code> 存储。</li>
+</ul>
+<ol start="2">
+<li>处理版本或容量异常</li>
+</ol>
+<ul>
+<li><code>ESP_ERR_NVS_NO_FREE_PAGES</code>：表示 <code>NVS</code> 分区空间不足，无法再写入新的 <code>key-value</code>（可能是结构变化后旧数据无效占用空间）。</li>
+<li><code>ESP_ERR_NVS_NEW_VERSION_FOUND</code>：表示固件更新后，<code>NVS</code> 的结构版本与当前 <code>IDF</code> 版本不兼容（比如升级了 <code>ESP-IDF</code>）。</li>
+<li>这两种情况都需要 擦除 <code>NVS</code> 分区 再重新初始化。</li>
+</ul>
+<ol start="3">
+<li>调用 <code>nvs_flash_erase()</code></li>
+</ol>
+<ul>
+<li>会清空整个 <code>NVS</code> 分区（相当于恢复出厂设置）。</li>
+<li>然后再次调用 <code>nvs_flash_init()</code> 完成初始化。</li>
+</ul>
+<ol start="4">
+<li><code>ESP_ERROR_CHECK(ret)</code></li>
+</ol>
+<ul>
+<li>如果 <code>ret</code> 不是 <code>ESP_OK</code>，会直接报错并终止程序（方便调试）。</li>
+</ul>
+<p>💡 总结</p>
+<ul>
+<li>这段代码的目的是：<strong>确保 NVS 存储可用且结构版本匹配</strong>，否则会自动清空并重新初始化。</li>
+<li>这是很多 <code>ESP-IDF</code> 项目都会放在 <code>app_main()</code> 开头的“惯用初始化代码”，特别是 <code>Wi-Fi</code> 或 <code>BLE</code> 工程。</li>
+<li>如果你不用 <code>NVS</code>，可以不加，但 <code>ESP-IDF</code> 内部有些 <code>API</code> 会自动依赖它，比如 <code>esp_wifi_init()</code>。</li>
 </ul>
 
     </div>
@@ -467,7 +771,7 @@ project(components_demo)
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#ESP32-ESP-IDF%E8%87%AA%E5%AE%9A%E4%B9%89%E7%BB%84%E4%BB%B6"><span class="nav-number">1.</span> <span class="nav-text">ESP32 ESP-IDF自定义组件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B"><span class="nav-number">1.1.</span> <span class="nav-text">简介</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3"><span class="nav-number">1.1.1.</span> <span class="nav-text">官方文档</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B%E8%AF%B4%E6%98%8E"><span class="nav-number">1.1.2.</span> <span class="nav-text">示例说明</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83"><span class="nav-number">1.2.</span> <span class="nav-text">开发环境</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9E%84%E5%BB%BA%E9%A1%B9%E7%9B%AE"><span class="nav-number">1.3.</span> <span class="nav-text">构建项目</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8B%B7%E8%B4%9D-%E5%88%9D%E5%A7%8B%E5%8C%96%E4%BE%8B%E7%A8%8B"><span class="nav-number">1.3.1.</span> <span class="nav-text">拷贝 &amp;&amp; 初始化例程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0%E7%BB%84%E4%BB%B6letter-shell"><span class="nav-number">1.3.2.</span> <span class="nav-text">添加组件letter_shell</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%A1%B9%E7%9B%AE%E6%A0%91"><span class="nav-number">1.3.3.</span> <span class="nav-text">项目树</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E5%92%8C%E8%AF%B4%E6%98%8E"><span class="nav-number">1.4.</span> <span class="nav-text">代码和说明</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%A1%B9%E7%9B%AE%E7%9A%84%E6%A0%B9CMakeLists-txt%E6%96%87%E4%BB%B6"><span class="nav-number">1.4.1.</span> <span class="nav-text">项目的根CMakeLists.txt文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#main%E7%9B%AE%E5%BD%95"><span class="nav-number">1.4.2.</span> <span class="nav-text">main目录</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#letter-shell%E7%BB%84%E4%BB%B6"><span class="nav-number">1.4.3.</span> <span class="nav-text">letter_shell组件</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%AF%B4%E6%98%8E%EF%BC%9A"><span class="nav-number">1.4.3.1.</span> <span class="nav-text">说明：</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%B3%E4%BA%8ECMakeLists-txt%E6%96%87%E4%BB%B6"><span class="nav-number">1.4.4.</span> <span class="nav-text">关于CMakeLists.txt文件</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ESP32%E7%A7%BB%E6%A4%8DLetter-shell%E9%97%AE%E9%A2%98"><span class="nav-number">2.</span> <span class="nav-text">ESP32移植Letter_shell问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0shell%E7%BB%84%E4%BB%B6%E5%8F%8A%E5%85%B6log%EF%BC%8C%E7%BC%96%E8%AF%91%E5%87%BA%E9%94%99"><span class="nav-number">2.1.</span> <span class="nav-text">添加shell组件及其log，编译出错</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%AF%E8%83%BD%E5%8E%9F%E5%9B%A0"><span class="nav-number">2.1.1.</span> <span class="nav-text">可能原因:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="nav-number">2.1.2.</span> <span class="nav-text">解决方案:</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BF%AE%E5%A4%8D-SHELL-FREE-%E5%AE%9A%E4%B9%89"><span class="nav-number">2.1.2.1.</span> <span class="nav-text">修复 SHELL_FREE 定义:</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%A6%81%E7%94%A8-Werror-unused-value-%E5%A6%82%E6%9E%9C%E9%80%82%E7%94%A8"><span class="nav-number">2.1.2.2.</span> <span class="nav-text">禁用 -Werror&#x3D;unused-value (如果适用):</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E6%8F%90%E7%A4%BA"><span class="nav-number">2.1.2.3.</span> <span class="nav-text">其他提示:</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%85%8D%E7%BD%AEshell%E4%BC%98%E5%85%88%E7%BA%A7"><span class="nav-number">2.1.3.</span> <span class="nav-text">配置shell优先级</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%BA%90%E4%BB%A3%E7%A0%81%E4%BE%8B%E7%A8%8B"><span class="nav-number">2.1.4.</span> <span class="nav-text">源代码例程</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ESP32%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B%E8%A7%A3%E6%9E%90"><span class="nav-number">3.</span> <span class="nav-text">ESP32启动流程解析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ESP32-IDF%E7%BB%84%E4%BB%B6%E4%B8%8B%E8%BD%BD%E5%AE%89%E8%A3%85%E8%B7%AF%E5%BE%84"><span class="nav-number">4.</span> <span class="nav-text">ESP32-IDF组件下载安装路径</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ESP32%E7%BD%91%E7%BB%9C%E9%97%AE%E9%A2%98"><span class="nav-number">5.</span> <span class="nav-text">ESP32网络问题</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#ESP32-ESP-IDF%E8%87%AA%E5%AE%9A%E4%B9%89%E7%BB%84%E4%BB%B6"><span class="nav-number">1.</span> <span class="nav-text">ESP32 ESP-IDF自定义组件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B"><span class="nav-number">1.1.</span> <span class="nav-text">简介</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3"><span class="nav-number">1.1.1.</span> <span class="nav-text">官方文档</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B%E8%AF%B4%E6%98%8E"><span class="nav-number">1.1.2.</span> <span class="nav-text">示例说明</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83"><span class="nav-number">1.2.</span> <span class="nav-text">开发环境</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9E%84%E5%BB%BA%E9%A1%B9%E7%9B%AE"><span class="nav-number">1.3.</span> <span class="nav-text">构建项目</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8B%B7%E8%B4%9D-%E5%88%9D%E5%A7%8B%E5%8C%96%E4%BE%8B%E7%A8%8B"><span class="nav-number">1.3.1.</span> <span class="nav-text">拷贝 &amp;&amp; 初始化例程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0%E7%BB%84%E4%BB%B6letter-shell"><span class="nav-number">1.3.2.</span> <span class="nav-text">添加组件letter_shell</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%A1%B9%E7%9B%AE%E6%A0%91"><span class="nav-number">1.3.3.</span> <span class="nav-text">项目树</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E5%92%8C%E8%AF%B4%E6%98%8E"><span class="nav-number">1.4.</span> <span class="nav-text">代码和说明</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%A1%B9%E7%9B%AE%E7%9A%84%E6%A0%B9CMakeLists-txt%E6%96%87%E4%BB%B6"><span class="nav-number">1.4.1.</span> <span class="nav-text">项目的根CMakeLists.txt文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#main%E7%9B%AE%E5%BD%95"><span class="nav-number">1.4.2.</span> <span class="nav-text">main目录</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#letter-shell%E7%BB%84%E4%BB%B6"><span class="nav-number">1.4.3.</span> <span class="nav-text">letter_shell组件</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%AF%B4%E6%98%8E%EF%BC%9A"><span class="nav-number">1.4.3.1.</span> <span class="nav-text">说明：</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%B3%E4%BA%8ECMakeLists-txt%E6%96%87%E4%BB%B6"><span class="nav-number">1.4.4.</span> <span class="nav-text">关于CMakeLists.txt文件</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ESP32%E7%A7%BB%E6%A4%8DLetter-shell%E9%97%AE%E9%A2%98"><span class="nav-number">2.</span> <span class="nav-text">ESP32移植Letter_shell问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0shell%E7%BB%84%E4%BB%B6%E5%8F%8A%E5%85%B6log%EF%BC%8C%E7%BC%96%E8%AF%91%E5%87%BA%E9%94%99"><span class="nav-number">2.1.</span> <span class="nav-text">添加shell组件及其log，编译出错</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%AF%E8%83%BD%E5%8E%9F%E5%9B%A0"><span class="nav-number">2.1.1.</span> <span class="nav-text">可能原因:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="nav-number">2.1.2.</span> <span class="nav-text">解决方案:</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BF%AE%E5%A4%8D-SHELL-FREE-%E5%AE%9A%E4%B9%89"><span class="nav-number">2.1.2.1.</span> <span class="nav-text">修复 SHELL_FREE 定义:</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%A6%81%E7%94%A8-Werror-unused-value-%E5%A6%82%E6%9E%9C%E9%80%82%E7%94%A8"><span class="nav-number">2.1.2.2.</span> <span class="nav-text">禁用 -Werror&#x3D;unused-value (如果适用):</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E6%8F%90%E7%A4%BA"><span class="nav-number">2.1.2.3.</span> <span class="nav-text">其他提示:</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%85%8D%E7%BD%AEshell%E4%BC%98%E5%85%88%E7%BA%A7"><span class="nav-number">2.1.3.</span> <span class="nav-text">配置shell优先级</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%BA%90%E4%BB%A3%E7%A0%81%E4%BE%8B%E7%A8%8B"><span class="nav-number">2.1.4.</span> <span class="nav-text">源代码例程</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ESP32%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B%E8%A7%A3%E6%9E%90"><span class="nav-number">3.</span> <span class="nav-text">ESP32启动流程解析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ESP32-IDF%E7%BB%84%E4%BB%B6%E4%B8%8B%E8%BD%BD%E5%AE%89%E8%A3%85%E8%B7%AF%E5%BE%84"><span class="nav-number">4.</span> <span class="nav-text">ESP32-IDF组件下载安装路径</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ESP32%E7%BD%91%E7%BB%9C%E9%97%AE%E9%A2%98"><span class="nav-number">5.</span> <span class="nav-text">ESP32网络问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ESP32%E5%AF%B9sdkconfig%E7%9A%84%E8%A7%A3%E9%87%8A"><span class="nav-number">6.</span> <span class="nav-text">ESP32对sdkconfig的解释</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RTSP%E6%8E%A8%E6%B5%81%E9%97%AE%E9%A2%98"><span class="nav-number">7.</span> <span class="nav-text">RTSP推流问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ESP32S3%E5%BC%80%E5%8F%91%E6%91%84%E5%83%8F%E5%A4%B4%E6%A8%A1%E7%BB%84"><span class="nav-number">8.</span> <span class="nav-text">ESP32S3开发摄像头模组</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%96%E8%AF%91%E7%8E%AF%E5%A2%83"><span class="nav-number">8.1.</span> <span class="nav-text">编译环境</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E4%BB%93%E5%BA%93%EF%BC%8C%E8%AE%BE%E8%AE%A1%E6%A1%86%E6%9E%B6"><span class="nav-number">8.2.</span> <span class="nav-text">创建仓库，设计框架</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%81%E5%AA%92%E4%BD%93%E5%8D%8F%E8%AE%AE%E5%85%A8%E8%A7%A3%E6%9E%90%EF%BC%9ARTSP-RTP-TCP-UDP"><span class="nav-number">9.</span> <span class="nav-text">流媒体协议全解析：RTSP&#x2F;RTP&#x2F;TCP&#x2F;UDP</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%91%84%E5%83%8F%E5%A4%B4%E6%8E%A8%E6%B5%81%E9%97%AE%E9%A2%98%E6%B1%87%E6%80%BB"><span class="nav-number">10.</span> <span class="nav-text">摄像头推流问题汇总</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ESP32S3%E5%81%B6%E5%8F%91%E6%80%A7%E9%87%8D%E5%90%AF"><span class="nav-number">11.</span> <span class="nav-text">ESP32S3偶发性重启</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ESP32%E7%B3%BB%E5%88%97%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">12.</span> <span class="nav-text">ESP32系列初始化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#NVS%EF%BC%88Non-Volatile-Storage%EF%BC%8C%E9%9D%9E%E6%98%93%E5%A4%B1%E6%80%A7%E5%AD%98%E5%82%A8%EF%BC%89%E5%88%9D%E5%A7%8B%E5%8C%96%EF%BC%9A"><span class="nav-number">12.1.</span> <span class="nav-text">NVS（Non-Volatile Storage，非易失性存储）初始化：</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -530,12 +834,12 @@ project(components_demo)
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="Symbols count total">47k</span>
+    <span title="Symbols count total">50k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="Reading time total">2:37</span>
+    <span title="Reading time total">2:47</span>
 </div>
   <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
   </div>

@@ -28,7 +28,7 @@
 <meta property="og:description" content="ESP32 是一款由乐鑫科技开发的低成本、低功耗、具有 Wi-Fi 和蓝牙功能的 SoC 芯片，广泛应用于物联网领域，如智能家居、可穿戴设备、工业控制等。本教程基于windows子系统WSL，官方开发环境ESP-IDF&#x2F;ESP-ADF。">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2024-02-19T10:12:00.000Z">
-<meta property="article:modified_time" content="2025-06-10T07:39:17.773Z">
+<meta property="article:modified_time" content="2025-07-14T09:10:20.219Z">
 <meta property="article:author" content="boollight">
 <meta property="article:tag" content="ESP32">
 <meta property="article:tag" content="Linux">
@@ -226,7 +226,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2025-06-10 15:39:17" itemprop="dateModified" datetime="2025-06-10T15:39:17+08:00">2025-06-10</time>
+                <time title="Modified: 2025-07-14 17:10:20" itemprop="dateModified" datetime="2025-07-14T17:10:20+08:00">2025-07-14</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -485,7 +485,7 @@ esp-download
 <li>附加远程<code>USB</code>设备</li>
 </ol>
 <ul>
-<li>在<code>Ubuntu</code>服务器执行（需与本地网络互通）：<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo modprobe usbip-core</span><br><span class="line">sudo modprobe vhci-hcd</span><br><span class="line">sudo usbip attach -r &lt;本地机器IP&gt; -b &lt;总线ID&gt; # 替换为实际IP和总线ID</span><br></pre></td></tr></table></figure></li>
+<li>在<code>Ubuntu</code>服务器执行（需与本地网络互通）：<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo modprobe usbip-core # 可以不需要</span><br><span class="line">sudo modprobe vhci-hcd</span><br><span class="line">sudo usbip attach -r &lt;本地机器IP&gt; -b &lt;总线ID&gt; # 替换为实际IP和总线ID</span><br></pre></td></tr></table></figure></li>
 <li>验证设备是否挂载成功：<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ls /dev/tty*  # 应出现类似/dev/ttyUSB0的设备节点</span><br><span class="line">dmesg | tail  # 查看内核日志确认设备识别</span><br></pre></td></tr></table></figure></li>
 </ul>
 <ol start="3">
@@ -656,12 +656,12 @@ esp-download
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="Symbols count total">47k</span>
+    <span title="Symbols count total">50k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="Reading time total">2:37</span>
+    <span title="Reading time total">2:47</span>
 </div>
   <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
   </div>
