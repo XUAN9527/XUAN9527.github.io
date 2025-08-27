@@ -68,7 +68,7 @@ int drv_adc_deinit(EADC_DEVICE adc_dev,EDMA_CHANNEL dma_ch)
 
 **总结：**
 
-- `n32g45x`系列栈大小和堆大小影响不大，只要代码段大小不变，跳转成功；若代码段长度变化，跳转失败。（芯片原因？）
+- `n32g45x`系列栈大小和堆大小影响不大，只要代码段大小不变，跳转成功；若代码段长度变化，跳转失败。（芯片原因不支持）
 - `n32l40x`系列不存在此类问题。
 
 <br>
@@ -184,8 +184,8 @@ int _write(int fd, char* pBuffer, int size)
 ### LETTER SHELL问题
 
 ``` c
-// SHELL_USING_LOCK设为 1，则需要初始化互斥锁，否则shell会死机。
-// LOG_USING_LOCK设为 0，否则log会死机，问题不详。
+// SHELL_USING_LOCK设为 1，则需要初始化互斥锁，否则shell会卡死。
+// LOG_USING_LOCK设为 0，否则log会卡死，问题待后续验证。
 #define SHELL_USING_LOCK    1       
 #define LOG_USING_LOCK      0
 
@@ -932,6 +932,7 @@ static void ec32_uart_dma_tx_config(struct ec_serial_device *serial, uint8_t *bu
 ... ...
 }
 ```
+
 修改前`tail`指针接近缓存区最大边界时，剩余空间不足时会进入以下函数, 一直卡在`while`中出不来, 需改到后面去：
 ``` c
 if(serial->Txbuffer->tail + length > serial->dma.setting_tx_len) 
@@ -990,10 +991,11 @@ static void ec32_uart_dma_tx_config(struct ec_serial_device *serial, uint8_t *bu
 {
     DMA_EnableChannel(serial->dma.tx_ch, DISABLE);          //去掉这一项，在需要关闭时再关闭DMA，否则会影响数组满时的数据。
 ... ...
+}
 ```
 
 修改后代码：
-```
+``` c
 static void ec32_uart_dma_tx_config(struct ec_serial_device *serial, uint8_t *buffer, uint16_t length)
 {
     DMA_InitType DMA_InitStructure;
@@ -1027,6 +1029,7 @@ static void ec32_uart_dma_tx_config(struct ec_serial_device *serial, uint8_t *bu
 		}
     }
 ... ...
+}
 ```
 
 <br>

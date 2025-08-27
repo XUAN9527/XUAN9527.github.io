@@ -356,7 +356,7 @@ sudo apt install linux-tools-generic linux-cloud-tools-generic
 2. 附加远程`USB`设备
 - 在`Ubuntu`服务器执行（需与本地网络互通）：
 ``` shell
-sudo modprobe usbip-core
+sudo modprobe usbip-core # 可以不需要
 sudo modprobe vhci-hcd
 sudo usbip attach -r <本地机器IP> -b <总线ID> # 替换为实际IP和总线ID
 ```

@@ -1,0 +1,529 @@
+---
+title: Git使用小贴士
+date: 2023-12-21
+tags:
+categories:
+- [Git]
+description: 主要记录Git的常用命令、一些非典型操作及其意义解析，也包括在 Git 应用中所遇到的一些问题及解决方案，便于检索与回顾
+---
+
+
+## 常用命令表
+
+| 命令名称 | 命令 | 备注 |
+|---|---|---|
+| 克隆工程 | git clone xxx | xxx为克隆链接 |
+| 暂存文件修改、删除 | git add -u | 暂存文件修改、删除 |
+| 暂存文件修改、新建 | git add . | 暂存文件修改、新建 |
+| 暂存文件修改、删除、新建 | git add -A | 暂存文件修改、删除、新建 |
+| 暂存文件 | git add xxx | xxx可为目录、文件，为.时暂存所有 |
+| 取消所有已暂存文件 | git reset HEAD . | 放弃所有暂存，不会取消修改 |
+| 取消指定文件的暂存 | git reset HEAD filepathname | 放弃指定文件的暂存 |
+| 放弃未暂存的指定文件的修改 | git checkout -- filepathname | 放弃未暂存的文件修改 |
+| 放弃未暂存的文件修改 | git checkout . | 不会删除新建的，未被git跟踪的文件 |
+| 显示将要被删除的文件 | git clean -n | 显示将要被删除的文件 |
+| 删除工作区新增的文件、文件夹 | git clean -df | 删除新增的文件和新增的文件夹 |
+| 删除工作区新增的文件 | git clean -f | 删除当前目录下所有没被track过的文件，.gitignore指定的文件和文件夹不会被删除 |
+| 提交 | git commit -m "xxxxx" | xxx为备注信息 |
+| 查看修改的地方 | git diff xxx | 查看修改的地方 |
+| 查看工作区、暂存区 | git status | 查看工作区、暂存区 |
+| 拉取 | git pull | 在主目录下操作 |
+| 合并分支 | git merge dev | 把dev分支合并到当前分支 |
+| 合并目标分支的指定文件 | git merge dev --no-ff filepathname | 合并目标分支的指定文件 |
+| 推送 | git push | 推送 |
+| 强制推送 | git push -f origin master | 适用于本地回退版本后修改推送，master为分支名 |
+| 更新远程分支列表 | git remote update origin --prune | 与远程保持同步 |
+| 更新子模块 | git submodule update --init | 首次后可不带--init |
+| 切换到某一本地分支 | git checkout dev | dev为分支名 |
+| 查看本地分支 | git branch | 查看本地分支 |
+| 切换到本地某个分支 | git checkout dev | 切换到本地某个分支 |
+| 查看本地分支与远程分支的关联情况 | git branch -vv | 查看本地分支与远程分支的关联情况 |
+| 查看远程分支 | git branch -a | 查看远程分支 |
+| 创建本地分支并切换 | git checkout -b V1.1 | V1.1为分支名 |
+| 创建远程分支 | git push --set-upstream origin V1.1 | 建立本地分支与新建远程分支的关联 |
+| 新建本地分支并跟踪远程分支 | git branch dev origin/dev | dev为分支名称 |
+| 新建本地分支并跟踪远程分支且切换 | git checkout -b dev origin/dev | 本地新建分支 dev ，跟踪远程的同名分支 dev |
+| 本地新建分支 dev ，跟踪远程的同名分支 dev | git checkout --track origin/dev | 本地新建分支 dev ，跟踪远程的同名分支 dev |
+| 获取远程地址及通信方式 | git remote -v | 以git开头为ssh协议 |
+| 更新本地仓库的remote地址 | git remote set-url origin xxx | xxx为远程地址 |
+| 回退到上一个版本 | git reset --hard HEAD^ | 删除工作区的改动代码，撤销commit、add |
+| 回退到上X个版本 | git reset --hard HEAD~3 | ~4，删除期间的所有改动，撤销commit、add |
+| 撤销提交（commit） | git reset --soft HEAD^ | 不删除工作区的改动代码，不撤销add |
+| 查看代码提交记录 | git log | 查看代码提交记录 |
+| 删除本地分支 | git branch -d Chapater6 | Chapater6为分支名 |
+| 删除远程分支 | git push origin --delete Chapater6 | |
+| 删除本地标签 | git tag -d rel1 | rel1为标签名 |
+| 查看所有本地标签 | git tag -l | |
+| 删除远程标签 | git push --delete origin prod1.0 | |
+| 查看远程仓库信息 | git remote show origin | 查看远程仓库信息 |
+
+
+## 注意项及扩展问题解答
+
+### 执行 git pull 会覆盖本地的修改吗？
+  
+没有冲突的情况下，远端会直接更新至本地上，但不会改变本地未提交的变动；如果本地修改已提交，则会执行一个远端分支和本地分支的合并
+
+### git fetch 和 git pull 的区别与联系
+
+`git fetch`用于从远程仓库获取最新的提交，保存到本地的远程跟踪分支中（`FETCH_HEAD`），可以通过查看此分支了解远程仓库的更新情况
+- `git diff FETCH_HEAD`比较查看该分支和当前工作分支的内容
+
+<br>
+
+`git pull`会自动获取远程仓库的更新，并且合并到当前分支上，相当于`git fetch` + `git merge FETCH_HEAD`
+- 将远程仓库中指定分支的最新提交 ID 保存到本地的 FETCH_HEAD 分支中
+- 将 FETCH_HEAD 分支合并到当前工作分支中
+
+### 如何取消指定文件的修改/暂存/提交？
+
+- 当文件还没暂存，修改还停留着工作区时，执行`git checkout -- <file>`取消文件的修改（注意要带`--`），执行`git checkout .`取消所有工作区的更改
+
+- 当文件已经暂存时，执行`git reset <file>`取消暂存使其回到工作区，执行`git reset .`取消所有暂存
+
+- 当文件已经提交时，执行`git reset --soft HEAD^`，将最近的一次提交记录取消，并将所有内容返回至工作区，可以重新编辑、提交或者取消修改
+
+注意：最近的提交已经取消，而远端的提交还保持，此时如果需要同步提交，执行`git push -f`强制覆盖远端仓库，需要审慎决定。另外，可以采取`git revert HEAD`创建一个新的提交达到反向抵消最近提交的目的。
+
+
+### 如何解决分支合并冲突
+
+当本地两个分支合并时，或者是远端分支与本地分支合并时，如果有冲突，解决流程如下：
+
+- 当执行`git pull`合并远端分支的更改到本地分支，或者执行`git merge dev`将本地的dev分支合并到当前分支，Git 会中止合并，并显示一个消息，列出存在冲突的文件
+
+- 此时可以手动编辑冲突文件：打开冲突的文件，Git 会在有冲突的地方插入特殊的标记，如 `<<<<<<<, =======, >>>>>>>`，编辑文件进行合适的更改后，使用`git add <file>`暂存冲突的文件
+冲突文件示例如下：
+  ```
+  <<<<<<< HEAD
+  本地更改的内容
+  =======
+  远端更改的内容
+  >>>>>>> <commit>
+  ```
+
+- 使用`git commit`提交解决冲突后的更改，此时会进入提交信息的编辑界面，Git 通常会在其中自动填充一个合并提交信息，也可以自行修改。
+  > 当然也可以直接执行`git commit -m "commit message"`，commit message 则为此次分支合并的提交信息。
+
+<br>
+
+### 本地分支与远端分支各有一个新的提交时的做法
+
+当本地分支有一个提交，而远端分支也有一个新的提交时，如果使用`sourcetree`进行拉取，会提示错误，有以下解决方法：
+
+- **创建一个合并提交：** 将远端分支的更改合并到本地分支，这会创建一个新的“合并提交”（merge commit），将两个分支的更改历史合并在一起。可以用命令行直接执行`git pull`
+<br>
+
+- **变基：** 执行`git pull --rebase`，相当于`git fetch`+`git rebase`，此过程不会创建合并提交，仅会把远端的提交和本地的提交重写成一个线性的提交历史。
+  > 如果存在修改冲突的话，git会停止变基过程，提示用户打开文件手动解决冲突。此时用户修改完冲突后，执行`git add <file>`，再执行`git rebase --continue`，git则会继续执行变基过程。
+
+### git commmit相关扩展
+
+当使用`git commit`时，会进入nano编辑器，此时可以编辑文本，按`ctrl + x`退出，按`y`保存，选择保存时会再次提示确认文件名，直接按`Enter`即可保存提交。
+
+当然，可以执行`git config --global core.editor vim`切换为vim编辑器。
+
+#### git commit提交规范
+
+- [git commit 代码提交规范](https://www.cnblogs.com/anly95/p/13163384.html)
+
+基于Angular团队的Git提交指南如下：
+```
+<type>(<scope>): <subject>
+<BLANK LINE>
+<body>
+<BLANK LINE>
+<footer>
+```
+
+**type（类型）**：描述提交的类别，如 feat（新特性）、fix（修复bug）、docs（文档更新）、style（代码格式改变）、refactor（代码重构）、perf（性能优化）、test（添加或修改测试）、chore（其他不修改src或test的更改）等。
+**scope（范围）**：描述提交影响的代码模块或功能，如 api、auth、ui 等。
+**subject（主题）**：简洁明了地描述所做的更改，通常不超过50个字符，并且使用现在时态，如“Fix bug”而不是“Fixed bug”。
+**body（正文）**：更详细地描述更改的内容、原因和影响，如果需要的话。可以分成多行，但每行不超过72个字符。
+**footer（页脚）**：提交信息的最后一部分，可以包含关闭的issue、关联的pull request或breaking changes等信息。
+<br>
+
+一个具体的提交信息示例如下：
+```
+fix(auth): 修复登录时的空指针异常
+
+在用户尝试使用null邮箱地址登录时，系统会抛出空指针异常。这次更改通过在调用登录方法之前检查邮箱地址是否为空来修复这个问题。
+
+此外，这次更改还增加了一个警告日志，以便于监控系统在用户尝试使用无效数据登录时的行为。
+
+Closes #123
+```
+解释如下：
+- type 是 fix，表示这是一个bug修复
+- scope 是 auth，表示更改影响的是认证模块
+- subject 是 “修复登录时的空指针异常”，简洁地描述了更改的内容
+- body 提供了更详细的更改描述和上下文，包括为什么进行这个更改以及它的影响
+- footer 包含了一个关联的issue编号 #123，表示这个提交解决了该issue
+
+
+## 基础非典型操作
+
+### 本地git配置
+<br>
+
+**配置本地与远端的SSH密钥连接流程：**
+- 本地生成SSH公钥和私钥(如果没有的话，另，linux下公钥通常存放于`~/.ssh/*.pub`)
+  - `ssh-keygen -t rsa -b 4096 -C xxx@xxx.com`
+- 复制公钥，添加至远端平台的SSH设置上
+<br>
+
+**查看本地配置：**
+- `git config --list`查看当前项目的所有配置
+- `git config --global --list`查看全局配置
+<br>
+
+**修改用户名(全局/当前项目)**
+
+此用户名即提交日志上所展示的用户名称
+
+  - 修改全局用户名：`git config --global user.name "xxx"`，影响用户的所有仓库
+  - 修改当前路径项目的用户名：`git config user.name "xxx"`
+  - 查看全局用户名：`git config user.name`
+<br>
+
+**初始化本地工程并与远端已有仓库的main分支关联：**
+- 进入工程根目录，`git init`初始化本地仓库
+- 添加远程仓库：`git remote add origin <远程仓库地址>`
+- `git branch -M main`将当前分支重命名为`main`，M即`--move --force`的缩写。（可以分别输入`git add --all`，`git commit -m "first commit"`完成对本地分支的首次提交）
+- 使用`git pull origin main`，将远程仓库的main分支拉取到本地，或者`git push -u origin main -f`将本地的xxx分支强制推送到远端main分支，其中-u是`--set-upstream`的缩写，后续会保持这个跟踪关系
+
+
+
+### 标签相关操作
+
+**克隆远程仓库上指定标签对应的工程：**
+- 模板：`git clone -b v1.0.0 https://github.com/example/my_repo`--克隆仓库 https://github.com/example/my_repo 中标签 v1.0.0 对应的源码到当前目录
+- 如：`git clone -b OpenHarmony-v4.0-Release https://gitee.com/openharmony/kernel_liteos_m.git`
+
+
+### 本地仓库同时推送远端的多个平台（推送gitee、github）
+
+**方法一：为远程仓库指定多个地址**
+- 在本地仓库的根目录有`.git`隐藏目录，找到`.git/config`文件，打开编辑，如下所示
+- 其中代码行`url = git@gitee.com:Jindu-Chen/jindu-chen.git`为新增（首先需要在远程创建/拥有此仓库，并且本地用户已经配置好与gitee、github的连接）
+- 保存退出，此时修改本地代码并提交，会同时推送到两个远端
+```
+[core]
+        repositoryformatversion = 0
+        filemode = true
+        bare = false
+        logallrefupdates = true
+[remote "origin"]
+        url = git@gitee.com:Jindu-Chen/jindu-chen.git       # 新添加行
+        url = git@github.com:Jindu-Chen/Jindu-Chen.github.io.git
+        fetch = +refs/heads/*:refs/remotes/origin/*
+[branch "main"]
+        remote = origin
+        merge = refs/heads/main
+[user]
+        name = Jindu Chen
+```
+
+
+
+### .gitignore忽略规则
+
+- 在git项目根目录下创建.gitignore文件，然后添加需要忽略跟踪的文件选项
+  - .gitignore文件仅对当前目录及其子目录起作用
+- 此前已经被跟踪的文件，添加.gitignore无效
+    >执行`git rm --cached /path/to/remove`取消跟踪，然后提交推送
+
+- 强行跟踪被.gitignore忽略的某个指定文件
+`git add -f /path/to/add`或者 在.gitignore文件后添加`!path/to/track`(`!`表示覆盖前面的忽略规则)
+如：`git add -f hello.bin` or 添加`!hello.bin`
+
+__附上一个自用的.gitignore文件：__
+```
+  .vscode
+  .history
+  build
+  Listings
+  Objects
+
+  # Listing Files
+  *.i
+  *.lst
+  *.map
+
+  # Object Files
+  *.axf
+  *.b[0-2][0-9]
+  *.b3[0-1]
+  *.bak
+  *.build_log.htm
+  *.crf
+  *.d
+  *.dep
+  *.elf
+  *.htm
+  *.iex
+  *.lnp
+  *.o
+  *.obj
+  *.sbr
+
+  # Firmware Files
+  *.bin
+  *.h86
+  *.hex
+
+  # Debugger Files
+  .ini
+```
+
+
+### 版本发布
+
+## 进阶操作
+
+### 钩子配置(Git Hooks)
+
+- Hook 即在执行某个事件之前或之后进行一些其他额外的操作，如下
+  - 自动部署代码
+  - 自动进行代码审查
+  - 安全审查
+  - 日志记录
+  - 通知用户
+- Git有许多的事件（commit、push 等等），每个事件也应了有不同的钩子（如 commit 前，commit 后）
+- 使用：暂略
+
+
+### 子模块
+
+- 对于需要流水线自动化作业编译的项目，可以将其工具链单独存放，作为子模块被调用
+
+- 删除项目内已有的子模块配置，将其转化为本项目内容
+```    
+cd ./path/to/submodule
+rm -rf .git
+
+# at project root directory
+git rm --cached ./path/to/submodule
+git add --all
+git commit -m "xxx"
+git push
+```
+
+- 克隆包含子模块的仓库后，子模块的拉取
+    `git submodule update --init --recursive`
+
+
+## 非典型问题解决方案
+
+### 同一Linux主机-多github账户的权限报错问题
+
+明明已经配置好本地与 Github 云端的 SSH 密钥，但依旧报错，内容如下：
+```
+ERROR: Permission to xxx.git denied to xxx.
+fatal: 无法读取远程仓库。
+请确认您有正确的访问权限并且仓库存在。
+```
+<br>
+
+解决步骤如下：
+- 如果需要使用两个不同的 Github 账户，则需要在本地主机上生成两个相应的 SSH Key，将公钥分别添加到不同 Github 账户上
+- 由于主机有两个 SSH Key，导致 Github 无法识别对应关系，所以会报错权限问题
+- 这时，需要用户手动配置对应映射关系，给另一个 Github 账户的站点**起一个别名**，起到区分作用即可
+- 进入 .ssh 文件夹 -- `cd ~/.ssh`，创建配置文件 -- `vim config`，添加内容如下：
+```
+  #Default GitHub
+  Host github.com             # 选定一个默认账户，别名不用更改
+  HostName github.com
+  User git
+  IdentityFile ~/.ssh/id_rsa    # 对应其生成的密钥
+
+  #new github
+  Host github-alias           # 另一个账户的别名
+  HostName github.com
+  User git
+  IdentityFile ~/.ssh/id_rsa1   # 另一个账户所对应的密钥
+```
+假设现在有一个仓库，是属于另一个 Github 账户的，那么需要更改其远程仓库链接为别名即可：
+
+比如，将`git@github.com:Jindu-Chen/Jindu-Chen.github.io.git`改为`github-alias:Jindu-Chen/Jindu-Chen.github.io.git`
+
+### 本地git配置
+<br>
+
+**配置本地与远端的SSH密钥连接流程：**
+- 本地生成SSH公钥和私钥(如果没有的话，另，linux下公钥通常存放于`~/.ssh/*.pub`)
+  - `ssh-keygen -t rsa -b 4096 -C xxx@xxx.com`
+- 复制公钥，添加至远端平台的SSH设置上
+<br>
+
+**查看本地配置：**
+- `git config --list`查看当前项目的所有配置
+- `git config --global --list`查看全局配置
+<br>
+
+**修改用户名(全局/当前项目)**
+
+此用户名即提交日志上所展示的用户名称
+
+  - 修改全局用户名：`git config --global user.name "xxx"`，影响用户的所有仓库
+  - 修改当前路径项目的用户名：`git config user.name "xxx"`
+  - 查看全局用户名：`git config user.name`
+
+<br>
+
+**初始化本地工程并与远端已有仓库的main分支关联：**
+- 进入工程根目录，`git init`初始化本地仓库
+- 添加远程仓库：`git remote add origin <远程仓库地址>`
+- `git branch -M main`将当前分支重命名为`main`，M即`--move --force`的缩写。（可以分别输入`git add --all`，`git commit -m "first commit"`完成对本地分支的首次提交）
+- 使用`git pull origin main`，将远程仓库的main分支拉取到本地，或者`git push -u origin main -f`将本地的xxx分支强制推送到远端main分支，其中-u是`--set-upstream`的缩写，后续会保持这个跟踪关系
+
+<br>
+
+### 执行 git pull 会覆盖本地的修改吗？
+  
+没有冲突的情况下，远端会直接更新至本地上，但不会改变本地未提交的变动；如果本地修改已提交，则会执行一个远端分支和本地分支的合并
+
+### git fetch 和 git pull 的区别与联系
+
+1. `git fetch`用于从远程仓库获取最新的提交，保存到本地的远程跟踪分支中（`FETCH_HEAD`），可以通过查看此分支了解远程仓库的更新情况
+- `git diff FETCH_HEAD`比较查看该分支和当前工作分支的内容
+
+2. `git pull`会自动获取远程仓库的更新，并且合并到当前分支上，相当于`git fetch` + `git merge FETCH_HEAD`
+- 将远程仓库中指定分支的最新提交 ID 保存到本地的 `FETCH_HEAD` 分支中
+- 将 `FETCH_HEAD` 分支合并到当前工作分支中
+
+<br>
+
+### 分支合并到main
+
+以下是完整的命令流程：
+``` shell
+# 确保你的分支是最新的
+git checkout your-branch
+git pull origin your-branch
+
+# 切换到 main 分支并拉取最新更改
+git checkout main
+git pull origin main
+
+# 将你的分支的更改合并到 main 分支
+git merge your-branch
+
+# 解决冲突（如果需要）
+git add <conflicted-files>
+git commit
+
+# 推送更改到远程 main 分支
+git push origin main
+```
+
+如果你希望使用 `git rebase` 保持提交历史整洁，可以参考以下流程：
+
+``` shell
+# 确保你的分支是最新的
+git checkout your-branch
+git pull origin your-branch
+
+# 基于 main 分支重新应用你的分支的更改
+git rebase main
+
+# 解决冲突（如果需要）
+git add <conflicted-files>
+git rebase --continue
+
+# 切换到 main 分支并拉取最新更改
+git checkout main
+git pull origin main
+
+# 将你的分支的更改合并到 main 分支
+git merge your-branch
+
+# 推送更改到远程 main 分支
+git push origin main
+```
+
+### main合并到分支
+
+使用 `git merge`：
+``` shell
+# 确保本地 main 分支是最新的
+git checkout main
+git pull origin main
+
+# 切换到目标分支
+git checkout your-branch
+
+# 将 main 分支的更改合并到目标分支
+git merge main
+
+# 解决冲突（如果需要）
+git add <conflicted-files>
+git commit
+
+# 推送更改到远程目标分支
+git push origin your-branch
+```
+
+使用 `git rebase`:
+
+``` shell
+# 确保本地 main 分支是最新的
+git checkout main
+git pull origin main
+
+# 切换到目标分支
+git checkout your-branch
+
+# 将目标分支基于 main 分支重新应用更改
+git rebase main
+
+# 解决冲突（如果需要）
+git add <conflicted-files>
+git rebase --continue
+
+# 推送更改到远程目标分支（可能需要强制推送）
+git push origin your-branch --force
+```
+
+### 推送被拒绝，远程冲突时
+
+``` bash
+git fetch origin # 获取远程更新
+
+git diff HEAD origin/你的分支名 # 查看当前分支与远程分支的详细差异
+git log --oneline HEAD..origin/你的分支名 # 或查看简要的提交历史差异
+
+git stash        # 暂存未提交的更改
+git pull origin 你的分支名 --rebase  # 建议使用 --rebase 选项变基式拉取，保持历史线性
+git stash pop    # 恢复暂存的更改，此时可能需要解决冲突
+
+git pull origin 你的分支名 --rebase  # 优先使用 rebase
+# 如果 rebase 出现问题，可以回退并尝试普通 merge
+# git rebase --abort
+# git pull origin 你的分支名        # 这默认会使用 merge
+
+# git status 查看哪些文件有冲突。找到 <<<<<<<, =======, >>>>>>> 标记的区域解决冲突。
+
+git add .  # 或添加特定已解决冲突的文件，如 git add 文件名
+
+git rebase --continue 		# 如果你之前用的是 rebase
+git commit -m "解决合并冲突" # 如果普通的 merge
+
+git push origin 你的分支名
+```
+
+
+## git tag小贴士
+``` shell
+git log                             // 或者 git log --oneline（近期提交）
+git tag -a v1.0.0 <commit-hash>     // 这里的 v1.0.0 是标签名，<commit-hash> 是你想要标记的提交的哈希。-a 表示创建一个带注释的标签（annotated tag），你也可以使用 -s 创建一个签名标签，或者不使用 -a 来创建一个轻量级标签（lightweight tag）。
+git tag                             // 查看所有标签
+git push origin v1.0.0              // git push origin --tags推送所有标签
+```
+
+<br>
+
+## 参考站点
+
+- [What does the -M mean in git branch -M main?](https://stackoverflow.com/questions/68277661/what-does-the-m-mean-in-git-branch-m-main)
+- [Github remote permission denied](https://stackoverflow.com/questions/47465644/github-remote-permission-denied)

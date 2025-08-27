@@ -294,7 +294,7 @@ int main(void)
 
 <br>
 
-**3. 编译出错后代码：**
+**2.7 错误现场信息输出：**
 ``` c 
 Firmware name: CmBacktrace, hardware version: V1.0.0, software version: V0.1.0
 Fault on interrupt or bare metal(no OS) environment
