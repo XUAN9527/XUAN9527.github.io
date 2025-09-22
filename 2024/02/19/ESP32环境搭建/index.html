@@ -28,7 +28,7 @@
 <meta property="og:description" content="ESP32 是一款由乐鑫科技开发的低成本、低功耗、具有 Wi-Fi 和蓝牙功能的 SoC 芯片，广泛应用于物联网领域，如智能家居、可穿戴设备、工业控制等。本教程基于windows子系统WSL，官方开发环境ESP-IDF&#x2F;ESP-ADF。">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2024-02-19T10:12:00.000Z">
-<meta property="article:modified_time" content="2025-07-14T09:10:20.219Z">
+<meta property="article:modified_time" content="2025-09-22T04:10:49.907Z">
 <meta property="article:author" content="boollight">
 <meta property="article:tag" content="ESP32">
 <meta property="article:tag" content="Linux">
@@ -226,7 +226,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2025-07-14 17:10:20" itemprop="dateModified" datetime="2025-07-14T17:10:20+08:00">2025-07-14</time>
+                <time title="Modified: 2025-09-22 12:10:49" itemprop="dateModified" datetime="2025-09-22T12:10:49+08:00">2025-09-22</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -252,14 +252,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">Symbols count in article: </span>
-              <span>2.2k</span>
+              <span>2.4k</span>
             </span>
             <span class="post-meta-item" title="Reading time">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">Reading time &asymp;</span>
-              <span>7 mins.</span>
+              <span>8 mins.</span>
             </span>
             <div class="post-description">ESP32 是一款由乐鑫科技开发的低成本、低功耗、具有 Wi-Fi 和蓝牙功能的 SoC 芯片，广泛应用于物联网领域，如智能家居、可穿戴设备、工业控制等。本教程基于windows子系统WSL，官方开发环境ESP-IDF/ESP-ADF。</div>
 
@@ -313,7 +313,7 @@
 
 <h3 id="设置环境变量"><a href="#设置环境变量" class="headerlink" title="设置环境变量"></a>设置环境变量</h3><p>按自己实际路径，可按自己喜好设置，也可不配置，手动敲指令也可。</p>
 <p><code>vi ~/.bashrc</code><br>在后面加上以下代码：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#开启ESP32编译环境</span></span><br><span class="line"><span class="built_in">alias</span> get-idf=<span class="string">&#x27;. $HOME/esp/esp-adf/esp-idf/export.sh&#x27;</span></span><br><span class="line"><span class="built_in">alias</span> get-adf=<span class="string">&#x27;. $HOME/esp/esp-adf/export.sh&#x27;</span></span><br><span class="line"><span class="comment">#打开本地文件夹（wsl）</span></span><br><span class="line"><span class="built_in">alias</span> open-file=<span class="string">&#x27;explorer.exe .&#x27;</span></span><br><span class="line"><span class="comment">#烧录到设备，并打开监视器，/dev/ttyS15为USB挂载端口，需测试后填写，115200为监视器波特率，与设备UART0波特率对应</span></span><br><span class="line"><span class="built_in">alias</span> esp-download=<span class="string">&#x27;idf.py -p /dev/ttyS15 -b 115200 flash monitor&#x27;</span></span><br><span class="line"><span class="built_in">export</span> PATH=/home/qx_song/esp/esp-adf/esp-idf/tools:<span class="variable">$PATH</span></span><br><span class="line"><span class="built_in">export</span> IDF_PATH=/home/qx_song/esp/esp-adf/esp-idf</span><br><span class="line"><span class="built_in">export</span> ADF_PATH=/home/qx_song/esp/esp-adf</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#开启ESP32编译环境</span></span><br><span class="line"><span class="built_in">alias</span> get-idf=<span class="string">&#x27;. $HOME/esp/esp-adf/esp-idf/export.sh&#x27;</span></span><br><span class="line"><span class="built_in">alias</span> get-adf=<span class="string">&#x27;. $HOME/esp/esp-adf/export.sh&#x27;</span></span><br><span class="line"><span class="comment"># 烧录到设备，并打开监视器，/dev/ttyS15为USB挂载端口，需测试后填写，115200为监视器波特率，与设备UART0波特率对应</span></span><br><span class="line"><span class="built_in">alias</span> esp-u0=<span class="string">&#x27;idf.py -p /dev/ttyUSB0 -b 1152000 flash &amp;&amp; idf.py -p /dev/ttyUSB0 monitor&#x27;</span></span><br><span class="line"><span class="built_in">alias</span> esp-u1=<span class="string">&#x27;idf.py -p /dev/ttyUSB1 -b 1152000 flash &amp;&amp; idf.py -p /dev/ttyUSB1 monitor&#x27;</span></span><br><span class="line"><span class="comment"># 自带USB,如果只想要最简单的 烧录 + 串口调试，推荐直接用 ESP-IDF 自带的 USB Serial/JTAG 驱动模式</span></span><br><span class="line"><span class="built_in">alias</span> esp-acm0=<span class="string">&#x27;idf.py -p /dev/ttyACM0 -b 1152000 flash &amp;&amp; idf.py -p /dev/ttyACM0 monitor&#x27;</span></span><br><span class="line"><span class="built_in">alias</span> esp-busid=<span class="string">&#x27;sudo usbip attach -r 192.168.104.29 -b&#x27;</span></span><br><span class="line"><span class="built_in">alias</span> esp-unbusid=<span class="string">&#x27;sudo usbip detach&#x27;</span>  <span class="comment"># 查看端口号：sudo usbip port</span></span><br><span class="line"><span class="built_in">export</span> PATH=/home/ubuntu/esp/esp-adf/esp-idf/tools:<span class="variable">$PATH</span></span><br><span class="line"><span class="built_in">export</span> IDF_PATH=/home/ubuntu/esp/esp-adf/esp-idf</span><br><span class="line"><span class="built_in">export</span> ADF_PATH=/home/ubuntu/esp/esp-adf</span><br></pre></td></tr></table></figure>
 <p>保存退出 <code>:wq</code></p>
 <h3 id="设置工具"><a href="#设置工具" class="headerlink" title="设置工具"></a>设置工具</h3><p>除了 ESP-IDF 本身，还需要为支持 ESP32 的项目安装 ESP-IDF 使用的各种工具，比如编译器、调试器、Python 包等。</p>
 <pre><code>cd ~/esp/esp-adf/esp-idf
@@ -494,7 +494,7 @@ esp-download
 <h4 id="修改ubuntu环境变量"><a href="#修改ubuntu环境变量" class="headerlink" title="修改ubuntu环境变量"></a>修改ubuntu环境变量</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim ~/.bashrc</span><br></pre></td></tr></table></figure>
 
 <p>添加以下代码：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">开启ESP32编译环境</span></span><br><span class="line">alias get-idf=&#x27;. $HOME/esp/esp-adf/esp-idf/export.sh&#x27;</span><br><span class="line">alias get-adf=&#x27;. $HOME/esp/esp-adf/export.sh&#x27;</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">烧录到设备，并打开监视器，/dev/ttyUSB0为USB挂载端口，需测试后填写，115200为监视器波特率，与设备UART0波特率对应</span></span><br><span class="line">alias esp-u0=&#x27;idf.py -p /dev/ttyUSB0 -b 115200 flash monitor&#x27;</span><br><span class="line">alias esp-u1=&#x27;idf.py -p /dev/ttyUSB1 -b 115200 flash monitor&#x27;</span><br><span class="line">alias esp-s3=&#x27;sudo usbip attach -r 192.168.104.29 -b 2-1&#x27;</span><br><span class="line">export PATH=/home/ubuntu/esp/esp-adf/esp-idf/tools:$PATH</span><br><span class="line">export IDF_PATH=/home/ubuntu/esp/esp-adf/esp-idf</span><br><span class="line">export ADF_PATH=/home/ubuntu/esp/esp-adf</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">开启ESP32编译环境</span></span><br><span class="line">alias get-idf=&#x27;. $HOME/esp/esp-adf/esp-idf/export.sh&#x27;</span><br><span class="line">alias get-adf=&#x27;. $HOME/esp/esp-adf/export.sh&#x27;</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">烧录到设备，并打开监视器，/dev/ttyS15为USB挂载端口，需测试后填写，115200为监视器波特率，与设备UART0波特率对应</span></span><br><span class="line">alias esp-u0=&#x27;idf.py -p /dev/ttyUSB0 -b 1152000 flash &amp;&amp; idf.py -p /dev/ttyUSB0 monitor&#x27;</span><br><span class="line">alias esp-u1=&#x27;idf.py -p /dev/ttyUSB1 -b 1152000 flash &amp;&amp; idf.py -p /dev/ttyUSB1 monitor&#x27;</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">自带USB,如果只想要最简单的 烧录 + 串口调试，推荐直接用 ESP-IDF 自带的 USB Serial/JTAG 驱动模式</span></span><br><span class="line">alias esp-acm0=&#x27;idf.py -p /dev/ttyACM0 -b 1152000 flash &amp;&amp; idf.py -p /dev/ttyACM0 monitor&#x27;</span><br><span class="line">alias esp-busid=&#x27;sudo usbip attach -r 192.168.104.29 -b&#x27;</span><br><span class="line">alias esp-unbusid=&#x27;sudo usbip detach&#x27;  # 查看端口号：sudo usbip port</span><br><span class="line">export PATH=/home/ubuntu/esp/esp-adf/esp-idf/tools:$PATH</span><br><span class="line">export IDF_PATH=/home/ubuntu/esp/esp-adf/esp-idf</span><br><span class="line">export ADF_PATH=/home/ubuntu/esp/esp-adf</span><br></pre></td></tr></table></figure>
 
 <ul>
 <li>释放<code>USB</code>口:</li>
@@ -656,12 +656,12 @@ esp-download
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="Symbols count total">55k</span>
+    <span title="Symbols count total">56k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="Reading time total">3:03</span>
+    <span title="Reading time total">3:05</span>
 </div>
   <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
   </div>
