@@ -1133,3 +1133,84 @@ download:
 
 
 ```
+
+### 编译路径问题
+
+- 下面一段是`makefile`在工程目录下的`.o`生成规则，`makefile`是跟`Libraries`同级目录，规则是生成到`BUILD_DIR`文件夹下，保持子目录结构：
+``` makefile
+C_SOURCES = \
+Libraries/core/system.c \
+Libraries/CMSIS/Device/YICHIP/YC3122/Source/Templates/system_yc3122.c \
+Libraries/sdk/yc_gpio.c \
+Libraries/sdk/yc_uart.c \
+Libraries/sdk/yc_timer.c \
+main.c
+
+ASM_SOURCES = \
+Libraries/CMSIS/Device/YICHIP/YC3122/Source/Templates/gcc/startup_yc3122.S
+
+# 将源文件映射到 obj 目录，保持子目录结构
+OBJECTS := $(patsubst %, $(BUILD_DIR)/%, $(C_SOURCES:.c=.o)) \
+             $(patsubst %, $(BUILD_DIR)/%, $(ASM_SOURCES:.S=.o))
+
+# 编译 C 文件
+$(BUILD_DIR)/%.o: %.c
+	@mkdir -p $(dir $@)
+	@echo "[CC] $<"
+	@$(CC) -c $(CFLAGS) -MMD -MP -MF"$(@:.o=.d)" \
+		$< -o $@
+```
+
+- 如果`makefile`跟`Libraries`不是同级目录，需要建立`PROJECT_PATH`开头，下面通配构建：
+``` makefile
+# 定义一个工程目录，C_SOURCES源文件链接地址统一开头，$(OBJ_DIR)/%.o: $(PROJECT_PATH)/%.c生成规则才能构建编译区目录
+PROJECT_PATH = ../../../../..
+
+OUTPUT_DIR = output
+OBJ_DIR    = $(OUTPUT_DIR)/obj
+
+# 源文件
+C_SOURCES = \
+$(PROJECT_PATH)/Libraries/core/system.c \
+$(PROJECT_PATH)/Libraries/CMSIS/Device/YICHIP/YC3122/Source/Templates/system_yc3122.c \
+$(PROJECT_PATH)/ModuleDemo/GPIO/gpio_toggle/user/main.c \
+$(PROJECT_PATH)/Libraries/sdk/yc_gpio.c \
+$(PROJECT_PATH)/Libraries/sdk/yc_uart.c \
+$(PROJECT_PATH)/Libraries/sdk/yc_timer.c
+
+# 将源文件映射到 obj 目录，保持子目录结构
+OBJ_FILES := $(patsubst $(PROJECT_PATH)/%, $(OBJ_DIR)/%, $(C_SOURCES:.c=.o)) \
+             $(patsubst $(PROJECT_PATH)/%, $(OBJ_DIR)/%, $(ASM_SOURCES:.S=.o))
+
+# 编译 C 文件
+$(OBJ_DIR)/%.o: $(PROJECT_PATH)/%.c
+	@mkdir -p $(dir $@)
+	@echo "[CC] $<"
+	$(GCC) $(CFLAG) -o $@ $<
+```
+
+- 如果`C_SOURCES`路径比较混乱，又用的是通配`$(OBJ_DIR)/%.o: $(PROJECT_PATH)/%.c`，生成的编译文件`.o`就会比较混乱:
+``` makefile
+C_SOURCES = \
+../../../../../Libraries/core/system.c \
+../../../../../Libraries/CMSIS/Device/YICHIP/YC3122/Source/Templates/system_yc3122.c \
+../../user/main.c \
+../../../../../Libraries/sdk/yc_gpio.c \
+../../../../../Libraries/sdk/yc_uart.c \
+../../../../../Libraries/sdk/yc_timer.c
+
+# 下面生成规则会出文件，找不到文件路径，因为通用的规则不能识别不了不同的相对路径
+OBJECTS := $(patsubst %, $(BUILD_DIR)/%, $(C_SOURCES:.c=.o)) \
+             $(patsubst %, $(BUILD_DIR)/%, $(ASM_SOURCES:.S=.o))
+
+# 编译 C 文件
+$(BUILD_DIR)/%.o: %.c
+	@mkdir -p $(dir $@)
+	@echo "[CC] $<"
+	@$(CC) -c $(CFLAGS) -MMD -MP -MF"$(@:.o=.d)" \
+		$< -o $@
+```
+
+**总结：**
+1. 当`makefile`与待编译文件（文件夹）同级目录时，可直接写通用规则。
+2. 当`makefile`与待编译文件（文件夹）不为同级目录时，需找到相对路径最远端的文件夹，设为`PROJECT_PATH`，其他的文件以此目录开始相对路径，编译文件就能用通用编译规则，编译文件也会带目录。

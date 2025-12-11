@@ -103,13 +103,16 @@ git submodule update --init --recursive --depth 1
 #开启ESP32编译环境
 alias get-idf='. $HOME/esp/esp-adf/esp-idf/export.sh'
 alias get-adf='. $HOME/esp/esp-adf/export.sh'
-#打开本地文件夹（wsl）
-alias open-file='explorer.exe .'
-#烧录到设备，并打开监视器，/dev/ttyS15为USB挂载端口，需测试后填写，115200为监视器波特率，与设备UART0波特率对应
-alias esp-download='idf.py -p /dev/ttyS15 -b 115200 flash monitor'
-export PATH=/home/qx_song/esp/esp-adf/esp-idf/tools:$PATH
-export IDF_PATH=/home/qx_song/esp/esp-adf/esp-idf
-export ADF_PATH=/home/qx_song/esp/esp-adf
+# 烧录到设备，并打开监视器，/dev/ttyS15为USB挂载端口，需测试后填写，115200为监视器波特率，与设备UART0波特率对应
+alias esp-u0='idf.py -p /dev/ttyUSB0 -b 1152000 flash && idf.py -p /dev/ttyUSB0 monitor'
+alias esp-u1='idf.py -p /dev/ttyUSB1 -b 1152000 flash && idf.py -p /dev/ttyUSB1 monitor'
+# 自带USB,如果只想要最简单的 烧录 + 串口调试，推荐直接用 ESP-IDF 自带的 USB Serial/JTAG 驱动模式
+alias esp-acm0='idf.py -p /dev/ttyACM0 -b 1152000 flash && idf.py -p /dev/ttyACM0 monitor'
+alias esp-busid='sudo usbip attach -r 192.168.104.29 -b'
+alias esp-unbusid='sudo usbip detach'  # 查看端口号：sudo usbip port
+export PATH=/home/ubuntu/esp/esp-adf/esp-idf/tools:$PATH
+export IDF_PATH=/home/ubuntu/esp/esp-adf/esp-idf
+export ADF_PATH=/home/ubuntu/esp/esp-adf
 ```
 保存退出 `:wq`
 
@@ -383,10 +386,13 @@ vim ~/.bashrc
 #开启ESP32编译环境
 alias get-idf='. $HOME/esp/esp-adf/esp-idf/export.sh'
 alias get-adf='. $HOME/esp/esp-adf/export.sh'
-#烧录到设备，并打开监视器，/dev/ttyUSB0为USB挂载端口，需测试后填写，115200为监视器波特率，与设备UART0波特率对应
-alias esp-u0='idf.py -p /dev/ttyUSB0 -b 115200 flash monitor'
-alias esp-u1='idf.py -p /dev/ttyUSB1 -b 115200 flash monitor'
-alias esp-s3='sudo usbip attach -r 192.168.104.29 -b 2-1'
+# 烧录到设备，并打开监视器，/dev/ttyS15为USB挂载端口，需测试后填写，115200为监视器波特率，与设备UART0波特率对应
+alias esp-u0='idf.py -p /dev/ttyUSB0 -b 1152000 flash && idf.py -p /dev/ttyUSB0 monitor'
+alias esp-u1='idf.py -p /dev/ttyUSB1 -b 1152000 flash && idf.py -p /dev/ttyUSB1 monitor'
+# 自带USB,如果只想要最简单的 烧录 + 串口调试，推荐直接用 ESP-IDF 自带的 USB Serial/JTAG 驱动模式
+alias esp-acm0='idf.py -p /dev/ttyACM0 -b 1152000 flash && idf.py -p /dev/ttyACM0 monitor'
+alias esp-busid='sudo usbip attach -r 192.168.104.29 -b'
+alias esp-unbusid='sudo usbip detach'  # 查看端口号：sudo usbip port
 export PATH=/home/ubuntu/esp/esp-adf/esp-idf/tools:$PATH
 export IDF_PATH=/home/ubuntu/esp/esp-adf/esp-idf
 export ADF_PATH=/home/ubuntu/esp/esp-adf

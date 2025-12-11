@@ -355,8 +355,8 @@ set(EXTRA_COMPONENT_DIRS ~/esp/esp-adf/esp-idf/components/esp32-camera)
 
 ### 编译环境
 - **Linux Ubuntu 22.04**
-- **ADF v2.7-105-g4200c64d** 
-- **IDF v5.4.1-851-gb3d3a82daa**
+- **ADF v2.7 commit:c732d65dee097a97902041cda6fb14013e99631a** 
+- **IDF (HEAD, tag: v5.4) commit:67c1de1eebe095d554d281952fde63c16ee2dca0**
 
 ### 创建仓库，设计框架
 - 复制一个`DEMO`创建仓库，有`main.c`函数，能跑通。
@@ -701,3 +701,94 @@ ESP_ERROR_CHECK(ret);
 - 这段代码的目的是：**确保 NVS 存储可用且结构版本匹配**，否则会自动清空并重新初始化。
 - 这是很多 `ESP-IDF` 项目都会放在 `app_main()` 开头的“惯用初始化代码”，特别是 `Wi-Fi` 或 `BLE` 工程。
 - 如果你不用 `NVS`，可以不加，但 `ESP-IDF` 内部有些 `API` 会自动依赖它，比如 `esp_wifi_init()`。
+
+<br>
+## 摄像头开发
+
+### 摄像头配置
+
+- `OV3660`（`30W`像素）和 `SC101`（`100W`像素）的配置有些不同：
+	- `OV3660` 在 `idf.py menuconfig` 勾选配置好就行了。
+	- `SC101` 需要勾选加配置 `Component config` → `Camera configuration` -> `Support SC101IOT HD` (`SC101iot default regs` (`xclk20M_720p_15fps`))， `xclk20M_720p_15fps` 模式比 `VGA` 模式采样频率低，不容易超时。
+
+### 缓存配置
+- 默认发送缓存太小，需要调整`idf.py menuconfig`:
+``` shell
+Component config  --->
+LWIP  --->
+[*] Enable SO_RCVBUF option # 打开后才能设置缓存大小(这是接收的，设置没用)
+
+LWIP → UDP
+(256) Maximum active UDP control blocks
+(64) Default UDP receive mail box size
+
+LWIP → TCP
+(32768) Default send buffer size
+(5760) Default receive window size
+(32) Default TCP receive mail box size
+(6) Default TCP accept mail box size
+```
+
+- 代码里设置缓存
+``` c
+// ✅ 设置发送缓冲区大小
+#define UDP_SEND_BUF_SIZE  (64 * 1024)  // UDP发送缓冲区
+int send_buf_size = UDP_SEND_BUF_SIZE;
+setsockopt(udp_sock, SOL_SOCKET, SO_SNDBUF, &send_buf_size, sizeof(send_buf_size));
+```
+
+### ESP32S3下载模式
+
+- `USB`下载模式(第一次启动需要使用`boot0`和`EN`启动？):
+``` shell
+idf.py menuconfig
+
+(Top) → Component config → ESP System Settings → Channel for console output
+( ) Default: UART0
+(X) USB CDC
+( ) USB Serial/JTAG Controller
+( ) Custom UART
+( ) None
+```
+
+- 未使用`boot0`和`EN`启动（如果 `IO0（BOOT）`是浮空的，那芯片上电/复位时就可能被误判为“拉低”而进入下载模式）：
+``` shell
+Uploading stub...
+Running stub...
+Stub running...
+Changing baud rate to 1152000
+Changed.
+Configuring flash size...
+Flash will be erased from 0x00000000 to 0x00005fff...
+Flash will be erased from 0x00010000 to 0x00042fff...
+Flash will be erased from 0x00008000 to 0x00008fff...
+SHA digest in image updated
+Compressed 21008 bytes to 13371...
+Writing at 0x00000000... (100 %)
+Wrote 21008 bytes (13371 compressed) at 0x00000000 in 0.1 seconds (effective 1155.7 kbit/s)...
+Hash of data verified.
+Compressed 206832 bytes to 110421...
+Writing at 0x0003da2f... (100 %)
+Wrote 206832 bytes (110421 compressed) at 0x00010000 in 1.0 seconds (effective 1640.5 kbit/s)...
+Hash of data verified.
+Compressed 3072 bytes to 103...
+Writing at 0x00008000... (100 %)
+Wrote 3072 bytes (103 compressed) at 0x00008000 in 0.0 seconds (effective 2204.5 kbit/s)...
+Hash of data verified.
+
+Leaving...
+Hard resetting via RTS pin...
+Done
+Executing action: monitor
+Running idf_monitor in directory /home/ubuntu/esp/work/hello_world
+Executing "/home/ubuntu/.espressif/python_env/idf5.4_py3.10_env/bin/python /home/ubuntu/esp/esp-adf/esp-idf/tools/idf_monitor.py -p /dev/ttyACM0 -b 115200 --toolchain-prefix xtensa-esp32s3-elf- --target esp32s3 --revision 0 /home/ubuntu/esp/work/hello_world/build/hello_world.elf -m '/home/ubuntu/.espressif/python_env/idf5.4_py3.10_env/bin/python' '/home/ubuntu/esp/esp-adf/esp-idf/tools/idf.py' '-p' '/dev/ttyACM0'"...
+--- esp-idf-monitor 1.6.2 on /dev/ttyACM0 115200
+--- Quit: Ctrl+] | Menu: Ctrl+T | Help: Ctrl+T followed by Ctrl+H
+ESP-ROM:esp32s3-20210327
+Build:Mar 27 2021
+rst:0x15 (USB_UART_CHIP_RESET),boot:0x3 (DOWNLOAD(USB/UART0))
+Saved PC:0x40041a76
+--- 0x40041a76: ets_delay_us in ROM
+
+waiting for download
+```

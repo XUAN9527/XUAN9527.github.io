@@ -12,13 +12,17 @@ description: 记录日常开发单片机过程中遇到的一些小问题，以�
 
 ### 常见通用问题
 
-- **内核复位代码，如ADC：**
+1. 内核复位代码，内核复位之前虽然关闭了中断，但是DMA数据接收/发送还是在运行，复位后没有管理的时候就会溢出：
 
 ``` c
 void kernel_reset(void)
 {
     __DSB();
     __disable_irq();							//close irq
+	drv_usart_deinit(ESERIAL_1);				//disable uart
+	drv_usart_deinit(ESERIAL_2);
+	drv_usart_deinit(ESERIAL_3);
+	drv_usart_deinit(ESERIAL_6);
 	drv_adc_deinit(EADC_DEV1,EDMA_CH6);			//disable adc data
     SCB->AIRCR = ((0x5FA << SCB_AIRCR_VECTKEY_Pos)      |
                   (SCB->AIRCR & SCB_AIRCR_PRIGROUP_Msk) |
@@ -34,16 +38,8 @@ DMA_DeInit(dma_chx);		//DMA开启循环接收后会持续接收字节
 ADC_DeInit(adc_handler);
 ```
 
-- `ADC`驱动初始化/反初始化:
+- 驱动反初始化:
 ``` c
-int drv_adc_init(EADC_DEVICE adc_dev,EDMA_CHANNEL dma_ch)
-{
-	drv_adc_configuration(adc_dev);
-	drv_dma_configuration(adc_dev,dma_ch);
-	drv_adc_enable(adc_dev,DISABLE);
-	return 0;
-}
-
 int drv_adc_deinit(EADC_DEVICE adc_dev,EDMA_CHANNEL dma_ch)
 {
 	ADC_Module *adc_handler = drv_get_adc_device(adc_dev)->ADC_Handler;
@@ -53,7 +49,64 @@ int drv_adc_deinit(EADC_DEVICE adc_dev,EDMA_CHANNEL dma_ch)
 	DMA_EnableChannel(dma_chx,DISABLE);
 	return 0;
 }
+
+void drv_usart_deinit(ESERIAL_DEV dev)
+{
+    if(dev == ESERIAL_1)
+    {
+        USART_ConfigInt(USART1, USART_INT_IDLEF, DISABLE);
+        USART_ReceiveData(USART1);
+        USART_EnableDMA(USART1, USART_DMAREQ_TX, DISABLE);
+        USART_EnableDMA(USART1, USART_DMAREQ_RX, DISABLE);
+        USART_Enable(USART1, DISABLE);
+        USART_DeInit(USART1);
+        DMA_ConfigInt(DMA1_CH5, DMA_INT_TXC, DISABLE);
+        DMA_ClearFlag(DMA1_FLAG_TC5,DMA1);
+        DMA_EnableChannel(DMA1_CH5, DISABLE);
+        DMA_EnableChannel(DMA1_CH4, DISABLE);
+        DMA_DeInit(DMA1_CH5);
+        DMA_DeInit(DMA1_CH4);
+    }
+    if(dev == ESERIAL_2)
+    {
+        USART_ConfigInt(USART2, USART_INT_IDLEF, DISABLE);
+        USART_ReceiveData(USART2);
+        USART_EnableDMA(USART2, USART_DMAREQ_RX, DISABLE);
+        USART_Enable(USART2, DISABLE);
+        USART_DeInit(USART2);
+        DMA_ConfigInt(DMA1_CH6, DMA_INT_TXC, DISABLE);
+        DMA_ClearFlag(DMA1_FLAG_TC6,DMA1);
+        DMA_EnableChannel(DMA1_CH6, DISABLE);
+        DMA_DeInit(DMA1_CH6);
+    }
+    if(dev == ESERIAL_3)
+    {
+        USART_ConfigInt(USART3, USART_INT_IDLEF, DISABLE);
+        USART_ReceiveData(USART3);
+        USART_EnableDMA(USART3, USART_DMAREQ_RX, DISABLE);
+        USART_Enable(USART3, DISABLE);
+        USART_DeInit(USART3);
+        DMA_ConfigInt(DMA1_CH3, DMA_INT_TXC, DISABLE);
+        DMA_ClearFlag(DMA1_FLAG_TC3,DMA1);
+        DMA_EnableChannel(DMA1_CH3, DISABLE);
+        DMA_DeInit(DMA1_CH3);
+    }
+    if(dev == ESERIAL_6)
+    {
+        USART_Enable(UART6, DISABLE);
+        USART_DeInit(UART6);
+        DMA_EnableChannel(DMA2_CH6, DISABLE);
+        DMA_DeInit(DMA2_CH6);
+    }
+    
+}
 ```	
+<br>
+
+2. 内核复位引起的外部`flash`初始化失败，串口异常
+
+![外部flash初始化失败](../pictures/外部flash初始化失败.png)
+
 <br>
 
 ### n32g452rc内核复位问题
@@ -1858,3 +1911,86 @@ vcnl read sum = [617],H=[0x02],L=[0x69]
 - 经测试发现`MT3101`在有其他光源干扰的情况下，偶尔会返回`0`，导致触肤启停功能异常，后续咨询供应商能否通过配置解决。
 - `MT3101`偶现返回数据不改变的问题，供应商解决。
 
+## 普冉问题汇总
+
+### USART调试问题
+
+- `WSL`配置普通模式正常，中断就跑飞，加打印：
+``` c
+printf("VTOR=0x%08lx, USART2_IRQn=%d\r\n", SCB->VTOR, USART2_IRQn);
+
+admin: VTOR=0x08002800, USART2_IRQn=28
+```
+但是程序和配置并没有设置偏移，排查链接文件，启动文件，`JLINK`配置文件相关。
+``` system_py32f040.c
+#ifdef VECT_TAB_SRAM
+  SCB->VTOR = SRAM_BASE | VECT_TAB_OFFSET; /* Vector Table Relocation in Internal SRAM */
+#else
+//add by lexy 2025-09-5
+  SCB->VTOR = 0x08002800 | VECT_TAB_OFFSET; /* Vector Table Relocation in Internal FLASH */
+0x08002800 改为 0x08000000
+```
+
+## 易兆开发问题
+
+### 串口打印问题
+- 以下是常规思维的发送驱动和底层：
+``` c
+int drv_usart_write(ESERIAL_DEV serial_dev,const void *buffer,uint32_t size)
+{
+    UART_TypeDef *uart_handle = usart_handle_get(serial_dev);
+	if(uart_handle == NULL)	return 0;
+
+    UART_SendBuf(uart_handle, (uint8_t *)buffer, size);
+	return size;
+}
+
+void UART_SendBuf(UART_TypeDef *UARTx, uint8_t *buf, uint32_t len)
+{
+    _ASSERT(IS_UART(UARTx));
+    _ASSERT(NULL != buf);
+    _ASSERT(len < 0xfffff);
+    uint32_t primask=__get_PRIMASK();
+    
+    DMA_TypeDef *DMAx                = (DMA_TypeDef *)((uint32_t)UARTx - sizeof(DMA_TypeDef));
+    DMAx->SRC_ADDR.reg               = (uint32_t)buf;
+    DMAx->LEN_LOW.bit.TX_LEN_L       = len & 0xffff;
+    DMAx->CTRL.bit.TX_LEN_H          = len >> 16;
+    __disable_irq();
+    if(UARTx->BAUD.bit.TX_INT_EN)
+    {
+        UART_TXIT_STATE[(uint32_t)(UARTx-MUART0)/0x100] = ENABLE;
+    }
+    DMAx->CTRL.bit.START             = 1;
+    if(primask==0)  __enable_irq();
+    
+    while (DMAx->STATUS.bit.DONE != 1);
+}
+```
+
+- 调试发现不能直接打印常量字符串，分析得出`buf`直接把地址给`DMAx->SRC_ADDR.reg`了，因为常量区实在flash储存，DMA的发送地址只能在ram或者rom区，作出以下修改，加发送缓存：
+``` c
+int drv_usart_write(ESERIAL_DEV serial_dev,const void *buffer,uint32_t size)
+{
+    UART_TypeDef *uart_handle = usart_handle_get(serial_dev);
+	if(uart_handle == NULL)	return 0;
+
+	#define BUFFER_SIZE		128
+	uint8_t buff[BUFFER_SIZE];
+	uint8_t *buf = (uint8_t *)buffer;
+    for(int j=0;j<size/BUFFER_SIZE;j++)
+    {
+        for (int i = 0; i < BUFFER_SIZE; i++)
+        {
+            buff[i] = buf[i+j*BUFFER_SIZE];
+        }
+        UART_SendBuf(uart_handle, buff, BUFFER_SIZE);
+    }
+    for (int i = 0; i < size%BUFFER_SIZE; i++)
+    {
+        buff[i] = buf[i+(size/BUFFER_SIZE)*BUFFER_SIZE];
+    }
+    UART_SendBuf(uart_handle, buff, size%BUFFER_SIZE);
+	return size;
+}
+```
