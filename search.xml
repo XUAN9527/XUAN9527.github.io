@@ -1287,6 +1287,257 @@ project(components_demo)
       </tags>
   </entry>
   <entry>
+    <title>ESP32开发环境搭建</title>
+    <url>/2024/02/19/ESP32%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/</url>
+    <content><![CDATA[<h2 id="开发环境搭建"><a href="#开发环境搭建" class="headerlink" title="开发环境搭建"></a>开发环境搭建</h2><p><a href="https://espressif-docs.readthedocs-hosted.com/projects/esp-adf/zh-cn/latest/get-started/index.html#quick-start">ESP-ADF快速上手连接</a><br><a href="https://docs.espressif.com/projects/esp-idf/zh_CN/stable/esp32/get-started/linux-macos-setup.html#get-started-linux-macos-first-steps">ESP-IDF快速上手连接</a></p>
+<br>
+
+<h3 id="获取ESP-ADF"><a href="#获取ESP-ADF" class="headerlink" title="获取ESP-ADF"></a>获取ESP-ADF</h3><ul>
+<li><p>打开Linux or macOS终端,新建搭建环境所需文件夹。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> ~/esp</span><br><span class="line"><span class="built_in">cd</span> ~/esp</span><br></pre></td></tr></table></figure></li>
+<li><p>编译 ESP-IDF 需要以下软件包。请根据使用的 Linux 发行版本，选择合适的安装：</p>
+</li>
+<li><p>Ubuntu 和 Debian:</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install git wget flex bison gperf python3 python3-pip python3-venv cmake ninja-build ccache libffi-dev libssl-dev dfu-util libusb-1.0-0</span><br></pre></td></tr></table></figure>
+<p>CentOS 7 &amp; 8:</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo yum -y update &amp;&amp; sudo yum install git wget flex bison gperf python3 python3-setuptools cmake ninja-build ccache dfu-util libusbx</span><br></pre></td></tr></table></figure>
+<p>Arch:</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo pacman -S --needed gcc git make flex bison gperf python cmake ninja ccache dfu-util libusb</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>克隆最新版ESP-ADF：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git <span class="built_in">clone</span> --recursive https://github.com/espressif/esp-adf.git</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>若克隆失败，尝试以下指令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git <span class="built_in">clone</span> --recursive git@github.com:espressif/esp-adf.git</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>若子模块拉取失败，尝试手动逐个拉取子模块：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/esp/esp-adf/components</span><br><span class="line">git <span class="built_in">clone</span> git@github.com:espressif/esp-adf-libs.git </span><br><span class="line">或者</span><br><span class="line">git <span class="built_in">clone</span> https://github.com/espressif/esp-adf-libs.git</span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> ~/esp/esp-adf/components</span><br><span class="line">git <span class="built_in">clone</span> git@github.com:espressif/esp-sr.git</span><br><span class="line">或者</span><br><span class="line">git <span class="built_in">clone</span> https://github.com/espressif/esp-sr.git</span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> ~/esp/esp-adf</span><br><span class="line">git <span class="built_in">clone</span> git@github.com:espressif/esp-idf.git</span><br><span class="line">或者</span><br><span class="line">git <span class="built_in">clone</span> https://github.com/espressif/esp-idf.git</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>当遇到网络比较卡时，<code>github</code>源改为<code>gitee</code>源（以设置<code>idf.py set-target esp32s3</code>的<code>esp32-wifi-lib</code>为例）：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/esp/esp-adf/esp-idf</span><br><span class="line">git config submodule.<span class="string">&quot;components/esp_wifi/lib&quot;</span>.url https://gitee.com/EspressifSystems/esp32-wifi-lib.git</span><br><span class="line">git submodule <span class="built_in">sync</span></span><br><span class="line">git submodule update --init --depth 1 components/esp_wifi/lib</span><br></pre></td></tr></table></figure></li>
+</ul>
+<br>
+
+<p><strong>预防措施</strong>：</p>
+<ol>
+<li><p>配置镜像源：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 全局使用 Gitee 镜像</span></span><br><span class="line">git config --global url.<span class="string">&quot;https://gitee.com/EspressifSystems&quot;</span>.insteadOf <span class="string">&quot;https://github.com/espressif&quot;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>定期更新子模块：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 空闲时更新所有子模块</span></span><br><span class="line"><span class="built_in">cd</span> ~/esp/esp-adf</span><br><span class="line">git submodule update --init --recursive --depth 1</span><br></pre></td></tr></table></figure></li>
+</ol>
+<br>
+
+<h3 id="设置环境变量"><a href="#设置环境变量" class="headerlink" title="设置环境变量"></a>设置环境变量</h3><p>按自己实际路径，可按自己喜好设置，也可不配置，手动敲指令也可。</p>
+<p><code>vi ~/.bashrc</code><br>在后面加上以下代码：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment">#开启ESP32编译环境</span></span><br><span class="line"><span class="built_in">alias</span> get-idf=<span class="string">&#x27;. $HOME/esp/esp-adf/esp-idf/export.sh&#x27;</span></span><br><span class="line"><span class="built_in">alias</span> get-adf=<span class="string">&#x27;. $HOME/esp/esp-adf/export.sh&#x27;</span></span><br><span class="line"><span class="comment"># 烧录到设备，并打开监视器，/dev/ttyS15为USB挂载端口，需测试后填写，115200为监视器波特率，与设备UART0波特率对应</span></span><br><span class="line"><span class="built_in">alias</span> esp-u0=<span class="string">&#x27;idf.py -p /dev/ttyUSB0 -b 1152000 flash &amp;&amp; idf.py -p /dev/ttyUSB0 monitor&#x27;</span></span><br><span class="line"><span class="built_in">alias</span> esp-u1=<span class="string">&#x27;idf.py -p /dev/ttyUSB1 -b 1152000 flash &amp;&amp; idf.py -p /dev/ttyUSB1 monitor&#x27;</span></span><br><span class="line"><span class="comment"># 自带USB,如果只想要最简单的 烧录 + 串口调试，推荐直接用 ESP-IDF 自带的 USB Serial/JTAG 驱动模式</span></span><br><span class="line"><span class="built_in">alias</span> esp-acm0=<span class="string">&#x27;idf.py -p /dev/ttyACM0 -b 1152000 flash &amp;&amp; idf.py -p /dev/ttyACM0 monitor&#x27;</span></span><br><span class="line"><span class="built_in">alias</span> esp-busid=<span class="string">&#x27;sudo usbip attach -r 192.168.104.29 -b&#x27;</span></span><br><span class="line"><span class="built_in">alias</span> esp-unbusid=<span class="string">&#x27;sudo usbip detach&#x27;</span>  <span class="comment"># 查看端口号：sudo usbip port</span></span><br><span class="line"><span class="built_in">export</span> PATH=/home/ubuntu/esp/esp-adf/esp-idf/tools:<span class="variable">$PATH</span></span><br><span class="line"><span class="built_in">export</span> IDF_PATH=/home/ubuntu/esp/esp-adf/esp-idf</span><br><span class="line"><span class="built_in">export</span> ADF_PATH=/home/ubuntu/esp/esp-adf</span><br></pre></td></tr></table></figure>
+<p>保存退出 <code>:wq</code></p>
+<h3 id="设置工具"><a href="#设置工具" class="headerlink" title="设置工具"></a>设置工具</h3><p>除了 ESP-IDF 本身，还需要为支持 ESP32 的项目安装 ESP-IDF 使用的各种工具，比如编译器、调试器、Python 包等。</p>
+<pre><code>cd ~/esp/esp-adf/esp-idf
+</code></pre>
+<p>安装esp32，esp32s2工具，运行以下指令：（按需求安装）</p>
+<pre><code>./install.sh esp32,esp32s2
+</code></pre>
+<p>若需要安装所有工具，运行以下指令：</p>
+<pre><code>./install.sh all
+</code></pre>
+<p>以下为ESP-IDF编译所需环境，请在需要运行ESP-IDF的终端窗口运行以下命令：</p>
+<pre><code>. $HOME/esp/esp-adf/esp-idf/export.sh   
+</code></pre>
+<p>或者使用快捷指令：</p>
+<pre><code>get-idf
+</code></pre>
+<br>
+
+<h2 id="ESP32工程示例"><a href="#ESP32工程示例" class="headerlink" title="ESP32工程示例"></a>ESP32工程示例</h2><h3 id="开始创建工程"><a href="#开始创建工程" class="headerlink" title="开始创建工程"></a>开始创建工程</h3><p>现在，可以准备开发 ESP32 应用程序了。<br>从 ESP-IDF 中 examples 目录下的 <code>get-started/hello_world</code> 工程开始，将 <code>get-started/hello_world</code> 工程复制至本地的 ~&#x2F;esp 目录下：</p>
+<pre><code>cd ~/esp
+get-idf
+cp -r $IDF_PATH/examples/get-started/hello_world .
+</code></pre>
+<br>
+
+<h3 id="配置工程"><a href="#配置工程" class="headerlink" title="配置工程"></a>配置工程</h3><pre><code>cd ~/esp/hello_world
+idf.py set-target esp32
+</code></pre>
+<p>由于ESP32是单核，默认配置是双核模式，需要配置参数：</p>
+<pre><code>idf.py menuconfig
+Component config -&gt; FreeRTOS -&gt;  [*]Run FreeRTOS only on first core
+</code></pre>
+<p>保存退出</p>
+<h3 id="编译工程"><a href="#编译工程" class="headerlink" title="编译工程"></a>编译工程</h3><pre><code>idf.py build
+</code></pre>
+<h3 id="烧录工程"><a href="#烧录工程" class="headerlink" title="烧录工程"></a>烧录工程</h3><pre><code>idf.py -p PORT flash
+</code></pre>
+<p>请将 PORT 替换为 ESP32 开发板的串口名称。如果 PORT 未经定义，<code>idf.py</code> 将尝试使用可用的串口自动连接。</p>
+<h3 id="合并执行构建、烧录和监视过程："><a href="#合并执行构建、烧录和监视过程：" class="headerlink" title="合并执行构建、烧录和监视过程："></a>合并执行构建、烧录和监视过程：</h3><pre><code>idf.py -p PORT [-b BAUD] flash monitor
+退出 monitor: Ctrl + ]
+</code></pre>
+<p>注：[-b BAUD] 和 monitor 配合使用，BAUD为程序中UART0的波特率	</p>
+<pre><code>idf.py -p /dev/ttyS15 -b  115200  flash monitor	
+idf.py -p [挂载端口]   -b [波特率] flash monitor
+</code></pre>
+<h3 id="擦除flash"><a href="#擦除flash" class="headerlink" title="擦除flash"></a>擦除flash</h3><pre><code>idf.py -p PORT erase-flash
+</code></pre>
+<p>若存在需要擦除的 OTA 数据，请运行以下命令：</p>
+<pre><code>idf.py -p PORT erase-otadata
+</code></pre>
+<h3 id="挂载端口"><a href="#挂载端口" class="headerlink" title="挂载端口"></a>挂载端口</h3><h4 id="windows-子系统-wsl"><a href="#windows-子系统-wsl" class="headerlink" title="windows 子系统 wsl"></a>windows 子系统 wsl</h4><p>输入烧录指令：</p>
+<pre><code>idf.py flash
+</code></pre>
+<p>观察终端设备是挂载在哪个端口上，有ERROR忽略，选择端口例如 <code>/dev/ttyS15</code>，程序中<code>UART0</code>的波特率115200，下次就可以直接输此端口就可以烧录啦。</p>
+<pre><code>idf.py -p /dev/ttyS15 -b 115200 flash monitor	
+</code></pre>
+<p>如果 ESP-IDF 监视器在烧录后很快发生错误，或打印信息全是乱码（如下），很有可能是因为开发板采用了 26 MHz 晶振，而 ESP-IDF 默认支持大多数开发板使用的 40 MHz 晶振。</p>
+<pre><code>x���ff�f�����`�~�~���f���x��f�f�����ff��`���f����`��~x������ff�f�����`�~�~�f����f����f`���x��f�f�����ff��`���f
+</code></pre>
+<p>此时，可以：<br>1、退出监视器。<br>2、返回 idf.py menuconfig。<br>3、进入 Component config –&gt; Hardware Settings –&gt; Main XTAL Config –&gt; Main XTAL frequency 进行配置，将 CONFIG_XTAL_FREQ_SEL 设置为 26 MHz。<br>4、重新编译和烧录应用程序。</p>
+<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p>启动终端ESP32编译只需要进行以下步骤：</p>
+<pre><code>. $HOME/esp/esp-adf/esp-idf/export.sh	//开启编译环境
+idf.py set-target esp32			//首次搭建项目时配置
+idf.py menuconfig   			//选择需要的配置
+idf.py build
+idf.py flash
+</code></pre>
+<p>快捷方式：</p>
+<pre><code>get-idf
+idf.py set-target esp32
+idf.py menuconfig
+idf.py build
+esp-download
+</code></pre>
+<br>
+
+<h2 id="通过SSH远程访问本地的USB设备"><a href="#通过SSH远程访问本地的USB设备" class="headerlink" title="通过SSH远程访问本地的USB设备"></a>通过SSH远程访问本地的USB设备</h2><h3 id="开发环境配置"><a href="#开发环境配置" class="headerlink" title="开发环境配置"></a>开发环境配置</h3><h4 id="本地机器配置（以Windows为例）"><a href="#本地机器配置（以Windows为例）" class="headerlink" title="本地机器配置（以Windows为例）"></a>本地机器配置（以Windows为例）</h4><ol>
+<li>安装USB&#x2F;IP工具</li>
+</ol>
+<ul>
+<li><p>下载并安装 <code>usbipd-win</code>（<code>Windows</code>的<code>USB/IP</code>服务端）：</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">winget install <span class="literal">--interactive</span> dorssel.usbipd<span class="literal">-win</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>插入<code>ESP32</code>开发板，确认设备管理器中出现对应的串口（如 <code>COM3</code> 或 <code>/dev/ttyUSB0</code>）。</p>
+</li>
+</ul>
+<ol start="2">
+<li>绑定并共享<code>USB</code>设备</li>
+</ol>
+<ul>
+<li><p>管理员权限打开<code>PowerShell</code>，查看<code>ESP32</code>的总线<code>ID</code>：</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">usbipd list</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>输出示例：</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">BUSID  VID:PID   DEVICE 							STATE</span><br><span class="line"><span class="number">3</span><span class="literal">-1</span>    <span class="number">10</span>c4:ea60  Silicon Labs CP210x USB to UART Bridge (COM17)                Not Shared</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>绑定并共享设备：</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">usbipd bind <span class="literal">--busid</span> <span class="number">3</span><span class="literal">-1</span>  <span class="comment"># 替换为实际总线ID</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<ol start="3">
+<li>配置<code>Windows</code>防火墙</li>
+</ol>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line"><span class="built_in">New-NetFirewallRule</span> <span class="literal">-DisplayName</span> <span class="string">&quot;USB/IP&quot;</span> <span class="literal">-Direction</span> Inbound <span class="literal">-Action</span> Allow <span class="literal">-Protocol</span> TCP <span class="literal">-LocalPort</span> <span class="number">3240</span> <span class="comment"># 关闭防火墙</span></span><br><span class="line">或者：</span><br><span class="line"><span class="built_in">Set-NetFirewallProfile</span> <span class="literal">-Profile</span> Domain,Public,Private <span class="literal">-Enabled</span> False <span class="comment"># 临时关闭防火墙测试</span></span><br></pre></td></tr></table></figure>
+
+<ol start="4">
+<li>确保<code>USB/IP</code>服务已启动</li>
+</ol>
+<ul>
+<li><p>如果服务未启动，手动启动：</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">usbipd server	<span class="comment"># 需要保持powershell</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>验证服务是否启动:</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">usbipd list</span><br></pre></td></tr></table></figure></li>
+<li><p>如果输出设备列表（如<code>ESP32</code>），说明服务已成功启动。</p>
+</li>
+</ul>
+<ol start="5">
+<li>检查端口监听</li>
+</ol>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">netstat <span class="literal">-ano</span> | findstr :<span class="number">3240</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>正常应输出类似以下内容：</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">TCP    <span class="number">0.0</span>.<span class="number">0.0</span>:<span class="number">3240</span>           <span class="number">0.0</span>.<span class="number">0.0</span>:<span class="number">0</span>              LISTENING</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>常用信息</p>
+</li>
+</ul>
+<ol start="6">
+<li>获取本机<code>ip</code></li>
+</ol>
+<ul>
+<li><code>powershell</code>输入<code>ipconfig</code>指令获取本机<code>ip</code>:<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">Ethernet adapter 以太网:</span><br><span class="line"></span><br><span class="line">   Connection<span class="literal">-specific</span> DNS Suffix  . : breo.vip</span><br><span class="line">   Link<span class="literal">-local</span> IPv6 Address . . . . . : fe80::a2cf:<span class="number">7</span>a4:df39:<span class="number">7032</span>%<span class="number">7</span></span><br><span class="line">   IPv4 Address. . . . . . . . . . . : <span class="number">192.168</span>.<span class="number">104.29</span> <span class="comment"># 获取此IP</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<ol start="7">
+<li><p>其他常用命令</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">usbipd state 				<span class="comment"># 查看当前共享状态</span></span><br><span class="line"><span class="built_in">sc</span> query usbipd 			<span class="comment"># 查看服务状态</span></span><br><span class="line">net stop usbipd 			<span class="comment"># 停止服务</span></span><br><span class="line">usbipd unbind <span class="literal">--all</span> 		<span class="comment"># 停止共享所有设备</span></span><br><span class="line">usbipd bind <span class="literal">--busid</span>=<span class="number">2</span><span class="literal">-1</span>    	<span class="comment"># 共享 COM18</span></span><br><span class="line">usbipd unbind <span class="literal">--busid</span>=<span class="number">2</span><span class="literal">-1</span>  	<span class="comment"># 取消共享</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>遇到问题及解决方式</p>
+</li>
+</ol>
+<ul>
+<li><p><code>powershell</code>中输入<code>usbipd server</code>时出现<code>usbipd: error: Another instance is already running</code></p>
+<figure class="highlight cmd"><table><tr><td class="code"><pre><span class="line">tasklist | <span class="built_in">findstr</span> &quot;usbipd&quot;		// 检查是否有进程正在运行</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>若出现 <code>usbipd.exe</code></p>
+<figure class="highlight cmd"><table><tr><td class="code"><pre><span class="line">usbipd.exe                   <span class="number">27428</span> Services                   <span class="number">0</span>     <span class="number">18</span>,<span class="number">684</span> K</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>终止 <code>usbipd.exe</code> 进程, 重新启动</p>
+<figure class="highlight cmd"><table><tr><td class="code"><pre><span class="line"><span class="built_in">taskkill</span> /F /IM usbipd.exe</span><br><span class="line">usbipd server</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h4 id="远程Ubuntu服务器配置"><a href="#远程Ubuntu服务器配置" class="headerlink" title="远程Ubuntu服务器配置"></a>远程Ubuntu服务器配置</h4><ol>
+<li>安装<code>USB/IP</code>客户端工具</li>
+</ol>
+<ul>
+<li><p>安装USB&#x2F;IP客户端工具</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo apt install linux-tools-generic hwdata</span><br><span class="line">sudo update-alternatives --install /usr/local/bin/usbip usbip /usr/lib/linux-tools/*-generic/usbip 20</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>若不兼容，安装与内核<code>5.15.0-126</code>兼容的<code>usbipd</code>工具及性能调试工具</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo apt install linux-tools-5.15.0-126-generic linux-cloud-tools-5.15.0-126-generic</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>验证安装：安装后检查 <code>usbipd</code> 是否存在:</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">which usbipd   # 输出路径</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>为避免未来内核升级后再次出现版本不兼容问题，安装通用工具包：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo apt install linux-tools-generic linux-cloud-tools-generic</span><br></pre></td></tr></table></figure></li>
+</ul>
+<ol start="2">
+<li>附加远程<code>USB</code>设备</li>
+</ol>
+<ul>
+<li>在<code>Ubuntu</code>服务器执行（需与本地网络互通）：<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo modprobe usbip-core # 可以不需要</span><br><span class="line">sudo modprobe vhci-hcd</span><br><span class="line">sudo usbip attach -r &lt;本地机器IP&gt; -b &lt;总线ID&gt; # 替换为实际IP和总线ID</span><br></pre></td></tr></table></figure></li>
+<li>验证设备是否挂载成功：<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">ls /dev/tty*  # 应出现类似/dev/ttyUSB0的设备节点</span><br><span class="line">dmesg | tail  # 查看内核日志确认设备识别</span><br></pre></td></tr></table></figure></li>
+</ul>
+<ol start="3">
+<li>配置设备权限<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo usermod -aG dialout $USER  # 将用户加入串口组,需注销重新登录</span><br><span class="line">sudo chmod a+rw /dev/ttyUSB0    # 临时权限（可选）</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h4 id="修改ubuntu环境变量"><a href="#修改ubuntu环境变量" class="headerlink" title="修改ubuntu环境变量"></a>修改ubuntu环境变量</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">vim ~/.bashrc</span><br></pre></td></tr></table></figure>
+
+<p>添加以下代码：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">开启ESP32编译环境</span></span><br><span class="line">alias get-idf=&#x27;. $HOME/esp/esp-adf/esp-idf/export.sh&#x27;</span><br><span class="line">alias get-adf=&#x27;. $HOME/esp/esp-adf/export.sh&#x27;</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">烧录到设备，并打开监视器，/dev/ttyS15为USB挂载端口，需测试后填写，115200为监视器波特率，与设备UART0波特率对应</span></span><br><span class="line">alias esp-u0=&#x27;idf.py -p /dev/ttyUSB0 -b 1152000 flash &amp;&amp; idf.py -p /dev/ttyUSB0 monitor&#x27;</span><br><span class="line">alias esp-u1=&#x27;idf.py -p /dev/ttyUSB1 -b 1152000 flash &amp;&amp; idf.py -p /dev/ttyUSB1 monitor&#x27;</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">自带USB,如果只想要最简单的 烧录 + 串口调试，推荐直接用 ESP-IDF 自带的 USB Serial/JTAG 驱动模式</span></span><br><span class="line">alias esp-acm0=&#x27;idf.py -p /dev/ttyACM0 -b 1152000 flash &amp;&amp; idf.py -p /dev/ttyACM0 monitor&#x27;</span><br><span class="line">alias esp-busid=&#x27;sudo usbip attach -r 192.168.104.29 -b&#x27;</span><br><span class="line">alias esp-unbusid=&#x27;sudo usbip detach&#x27;  # 查看端口号：sudo usbip port</span><br><span class="line">export PATH=/home/ubuntu/esp/esp-adf/esp-idf/tools:$PATH</span><br><span class="line">export IDF_PATH=/home/ubuntu/esp/esp-adf/esp-idf</span><br><span class="line">export ADF_PATH=/home/ubuntu/esp/esp-adf</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>释放<code>USB</code>口:</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">ubuntu@compilation:~/esp/spi_lcd_touch$ lsof /dev/ttyUSB0</span><br><span class="line">COMMAND   PID   USER   FD   TYPE DEVICE SIZE/OFF NODE NAME</span><br><span class="line">python  85630 ubuntu    3uW  CHR  188,0      0t0  730 /dev/ttyUSB0</span><br><span class="line"></span><br><span class="line">ubuntu@compilation:~/esp/spi_lcd_touch$ sudo kill -9 85630 </span><br></pre></td></tr></table></figure>
+
+<h4 id="烧录步骤跟上文-WSL-环境一样"><a href="#烧录步骤跟上文-WSL-环境一样" class="headerlink" title="烧录步骤跟上文 WSL 环境一样"></a>烧录步骤跟上文 WSL 环境一样</h4><h4 id="断开设备连接"><a href="#断开设备连接" class="headerlink" title="断开设备连接"></a>断开设备连接</h4><ol>
+<li>本地释放设备（<code>Windows</code>端）</li>
+</ol>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">usbipd unbind <span class="literal">--busid</span> &lt;总线ID&gt;</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>卸载<code>USB</code>设备</li>
+</ol>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">sudo usbip detach <span class="literal">--port</span>=<span class="number">00</span>  <span class="comment"># 查看端口号：sudo usbip port</span></span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>嵌入式</category>
+        <category>环境搭建</category>
+        <category>Bluetooth</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+        <tag>ESP32</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>I.MX6ULL开发指南</title>
     <url>/2024/07/13/I.MX6ULL%E5%BC%80%E5%8F%91%E6%8C%87%E5%8D%97/</url>
     <content><![CDATA[<h2 id="开发环境搭建"><a href="#开发环境搭建" class="headerlink" title="开发环境搭建"></a>开发环境搭建</h2><h3 id="虚拟机安装"><a href="#虚拟机安装" class="headerlink" title="虚拟机安装"></a>虚拟机安装</h3><ol>
@@ -1643,38 +1894,6 @@ project(components_demo)
       </tags>
   </entry>
   <entry>
-    <title>I2C调试记录</title>
-    <url>/2024/03/01/I2C%E8%B0%83%E8%AF%95%E8%AE%B0%E5%BD%95/</url>
-    <content><![CDATA[<h2 id="I2C基本原理介绍"><a href="#I2C基本原理介绍" class="headerlink" title="I2C基本原理介绍"></a>I2C基本原理介绍</h2><h3 id="时序介绍"><a href="#时序介绍" class="headerlink" title="时序介绍"></a>时序介绍</h3><p>参考Vishay的i2c时序图：</p>
-<p><img src="/../pictures/i2c%E6%97%B6%E5%BA%8F%E5%9B%BE1.png" alt="i2c时序图1"><br><img src="/../pictures/i2c%E6%97%B6%E5%BA%8F%E5%9B%BE2.png" alt="i2c时序图2"></p>
-<h3 id="代码实现详解"><a href="#代码实现详解" class="headerlink" title="代码实现详解"></a>代码实现详解</h3><p><code>I2C</code>协议实现有硬件<code>I2C</code>和软件<code>I2C</code>之分，这里只讲解软件<code>I2C</code>实现的版本。一下列出主要结构体和初始化函数。</p>
-<h4 id="I2C协议初始化"><a href="#I2C协议初始化" class="headerlink" title="I2C协议初始化"></a>I2C协议初始化</h4><p><code>I2C</code>协议的<code>scl</code>和<code>sda</code>配置为开漏输出,需要外部上拉（一般为<code>10K</code>电阻）</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment">#define i2c_pin_mode(pin,mode)		drv_pin_mode(pin,mode)</span></span><br><span class="line"><span class="comment">#define i2c_pin_write(pin,level) 	drv_pin_write(pin,level)</span></span><br><span class="line"><span class="comment">#define i2c_pin_read(pin) 		drv_pin_read(pin)</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#define DRV_I2C_WR                      0x00</span></span><br><span class="line"><span class="comment">#define DRV_I2C_RD                      (1u &lt;&lt; 0)</span></span><br><span class="line"><span class="comment">#define DRV_I2C_ADDR_10BIT              (1u &lt;&lt; 2)  /* this is a ten bit chip address */</span></span><br><span class="line"><span class="comment">#define DRV_I2C_NO_START                (1u &lt;&lt; 4)</span></span><br><span class="line"><span class="comment">#define DRV_I2C_IGNORE_NACK             (1u &lt;&lt; 5)</span></span><br><span class="line"><span class="comment">#define DRV_I2C_NO_READ_ACK             (1u &lt;&lt; 6)  /* when I2C reading, we do not ACK */</span></span><br><span class="line"><span class="comment">#define DRV_I2C_NO_STOP                 (1u &lt;&lt; 7)</span></span><br><span class="line"></span><br><span class="line">typedef enum&#123;</span><br><span class="line">	EI2C_DEV_1 = 1,</span><br><span class="line">	EI2C_DEV_2,</span><br><span class="line">	EI2C_DEV_3</span><br><span class="line">&#125;EI2C_DEVICE;</span><br><span class="line"></span><br><span class="line">struct drv_soft_i2c_config</span><br><span class="line">&#123;</span><br><span class="line">	uint8_t scl;</span><br><span class="line">	uint8_t sda;</span><br><span class="line">	uint8_t i2c_num;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">struct drv_i2c_msg</span><br><span class="line">&#123;</span><br><span class="line">    uint16_t addr;</span><br><span class="line">    uint16_t flags;</span><br><span class="line">    uint16_t len;</span><br><span class="line">	uint8_t reg_addr;</span><br><span class="line">    uint8_t  *buf;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">struct drv_i2c_bit_ops</span><br><span class="line">&#123;</span><br><span class="line">    void *data;            /* private data <span class="keyword">for</span> lowlevel routines */</span><br><span class="line">    void (*set_sda)(void *data, int state);</span><br><span class="line">    void (*set_scl)(void *data, int state);</span><br><span class="line">    int (*get_sda)(void *data);</span><br><span class="line">    int (*get_scl)(void *data);</span><br><span class="line"></span><br><span class="line">    void (*udelay)(uint32_t us);</span><br><span class="line"></span><br><span class="line">    uint32_t delay_us;  /* scl and sda line delay */</span><br><span class="line">    uint32_t <span class="built_in">timeout</span>;   /* <span class="keyword">in</span> tick */</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">struct drv_i2c_bus_device</span><br><span class="line">&#123;</span><br><span class="line">	struct drv_i2c_msg msg;</span><br><span class="line">	struct drv_i2c_bit_ops ops;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">static void drv_i2c_gpio_init(struct drv_soft_i2c_config *i2c)</span><br><span class="line">&#123;</span><br><span class="line">    struct drv_soft_i2c_config* cfg = i2c;</span><br><span class="line"></span><br><span class="line">    i2c_pin_mode(cfg-&gt;scl, I2C_PIN_MODE_OUTPUT_OD);	//PIN_MODE_OUTPUT</span><br><span class="line">    i2c_pin_mode(cfg-&gt;sda, I2C_PIN_MODE_OUTPUT_OD);</span><br><span class="line"></span><br><span class="line">    i2c_pin_write(cfg-&gt;scl, I2C_PIN_HIGH);</span><br><span class="line">    i2c_pin_write(cfg-&gt;sda, I2C_PIN_HIGH);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int drv_hw_i2c_init(EI2C_DEVICE dev_e)</span><br><span class="line">&#123;</span><br><span class="line">	int size = sizeof(i2c_pin_config)/sizeof(struct drv_soft_i2c_config);</span><br><span class="line">	struct drv_i2c_bus_device *dev = get_i2c_device(dev_e);</span><br><span class="line">	uint8_t dev_num = (uint8_t)dev_e;</span><br><span class="line">	struct drv_soft_i2c_config *pin_cfg = NULL;</span><br><span class="line">	struct drv_i2c_bit_ops *ops = &amp;dev-&gt;ops;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">for</span>(int i=0;i&lt;size;i++)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">if</span>(i2c_pin_config[i].i2c_num == dev_num)</span><br><span class="line">		&#123;</span><br><span class="line">			pin_cfg = (struct drv_soft_i2c_config *)&amp;i2c_pin_config[i];</span><br><span class="line">			<span class="built_in">break</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span>(pin_cfg == NULL)</span><br><span class="line">		<span class="built_in">return</span> -1;</span><br><span class="line">    ops-&gt;data  = (void*)pin_cfg;</span><br><span class="line">    ops-&gt;set_sda  = n32_set_sda;</span><br><span class="line">    ops-&gt;set_scl  = n32_set_scl;</span><br><span class="line">    ops-&gt;get_sda  = n32_get_sda;</span><br><span class="line">    ops-&gt;get_scl  = n32_get_scl;</span><br><span class="line">    ops-&gt;udelay   = n32_udelay;</span><br><span class="line">    ops-&gt;delay_us = 1;</span><br><span class="line">    ops-&gt;<span class="built_in">timeout</span>  = 5;</span><br><span class="line">    </span><br><span class="line">    drv_i2c_gpio_init(pin_cfg);</span><br><span class="line">    drv_i2c_bus_unlock(pin_cfg);</span><br><span class="line">    <span class="built_in">return</span> 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h4 id="接口函数"><a href="#接口函数" class="headerlink" title="接口函数"></a>接口函数</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">int drv_i2c_bit_xfer(struct drv_i2c_bit_ops *bus,</span><br><span class="line">                 struct drv_i2c_msg msgs[],</span><br><span class="line">                 uint32_t num);</span><br><span class="line">struct drv_i2c_bus_device *get_i2c_device(EI2C_DEVICE dev_e);</span><br><span class="line">static uint64_t i2c_tick_get(void);</span><br><span class="line">int drv_hw_i2c_init(EI2C_DEVICE dev_e);</span><br><span class="line">int drv_i2c_send_data(EI2C_DEVICE dev_e,uint16_t addr,uint8_t reg_addr,uint8_t *buf,uint16_t len);</span><br><span class="line">int drv_i2c_recv_data(EI2C_DEVICE dev_e,uint16_t addr,uint8_t reg_addr,uint8_t *buf,uint16_t len);</span><br></pre></td></tr></table></figure>
-
-<h2 id="实战开发问题分析"><a href="#实战开发问题分析" class="headerlink" title="实战开发问题分析"></a>实战开发问题分析</h2><p>实际开发过程中，同样的<code>I2C</code>驱动程序，在不同厂家芯片的使用上出现一些问题，导致部分厂家通信异常，导致数据接收不正确，以下进行分析对比，作证并解决问题。</p>
-<h3 id="Vishay-和-亿光-接近传感器模块对比"><a href="#Vishay-和-亿光-接近传感器模块对比" class="headerlink" title="Vishay 和 亿光 接近传感器模块对比"></a>Vishay 和 亿光 接近传感器模块对比</h3><p><code>Vishay</code>使用<code>VCNL3682S</code>型号芯片，亿光使用<code>APM-16D24-U6E</code>型号芯片，<code>I2C</code>协议对比。</p>
-<h5 id="Vishay-："><a href="#Vishay-：" class="headerlink" title="Vishay ："></a>Vishay ：</h5><p><img src="/../pictures/Vishay%E5%86%99i2c%E5%8D%8F%E8%AE%AE.png" alt="Vishay写i2c协议"><br><img src="/../pictures/Vishay%E8%AF%BBi2c%E5%8D%8F%E8%AE%AE.png" alt="Vishay读i2c协议"></p>
-<h5 id="亿光："><a href="#亿光：" class="headerlink" title="亿光："></a>亿光：</h5><p><img src="/../pictures/%E4%BA%BF%E5%85%89i2c%E5%8D%8F%E8%AE%AE.png" alt="亿光i2c协议"></p>
-<h6 id="对比波形"><a href="#对比波形" class="headerlink" title="对比波形"></a>对比波形</h6><p>对比协议来看基本上是一致的，用<code>JI2C</code>工具测的<code>i2c</code>波形也基本上一致，但是我自己写的软件<code>i2c</code>驱动，<code>Vishay</code>可以正常使用，亿光读取的数据就有问题，用逻辑分析仪抓一波波形分析一下。</p>
-<p>发现每次读完都会多恢复一个<code>ack</code>，而协议上读完最后一个字节需要恢复<code>nack</code>。</p>
-<h6 id="修改了以下代码"><a href="#修改了以下代码" class="headerlink" title="修改了以下代码"></a>修改了以下代码</h6><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">static int i2c_send_ack_or_nack(struct drv_i2c_bit_ops *bus, int ack)</span><br><span class="line">&#123;</span><br><span class="line">    struct drv_i2c_bit_ops *ops = bus;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (ack)				// <span class="keyword">if</span>(ack &gt;= 0) 改成 <span class="keyword">if</span>(ack)</span><br><span class="line">        SET_SDA(ops, 0);</span><br><span class="line">    i2c_delay(ops);</span><br><span class="line">    <span class="keyword">if</span> (SCL_H(ops) &lt; 0)</span><br><span class="line">    &#123;</span><br><span class="line">//        logVerbose(<span class="string">&quot;ACK or NACK timeout.&quot;</span>);</span><br><span class="line">        <span class="built_in">return</span> -2;</span><br><span class="line">    &#125;</span><br><span class="line">    SCL_L(ops);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">return</span> 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><code>static int i2c_send_ack_or_nack(struct drv_i2c_bit_ops *bus, int ack)&#123;&#125;</code><br>函数主要处理响应回复。</p>
-<pre><code>if(ack &gt;= 0)表示每次都会回复ack/nack
-if(ack)表示除最后一次数据不回复，其他每次都会回复ack/nack
-</code></pre>
-<br>
-]]></content>
-      <categories>
-        <category>硬件调试</category>
-      </categories>
-      <tags>
-        <tag>逻辑分析仪</tag>
-        <tag>接近传感器</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Linux下开发单片机</title>
     <url>/2024/03/28/Linux%E4%B8%8B%E5%BC%80%E5%8F%91%E5%8D%95%E7%89%87%E6%9C%BA/</url>
     <content><![CDATA[<h2 id="Ubuntu-Wsl环境搭建"><a href="#Ubuntu-Wsl环境搭建" class="headerlink" title="Ubuntu Wsl环境搭建"></a>Ubuntu Wsl环境搭建</h2><h3 id="Windows10系统安装子系统Wsl"><a href="#Windows10系统安装子系统Wsl" class="headerlink" title="Windows10系统安装子系统Wsl"></a>Windows10系统安装子系统Wsl</h3><p><strong>1. 通过 Microsoft Store 安装</strong></p>
@@ -1822,123 +2041,6 @@ pyinstaller -F -w -i file.ico file.py
       <categories>
         <category>嵌入式</category>
         <category>环境搭建</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-        <tag>Wsl</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Linux小贴士</title>
-    <url>/2024/05/06/Linux%E5%B0%8F%E8%B4%B4%E5%A3%AB/</url>
-    <content><![CDATA[<h2 id="tree指令小贴士"><a href="#tree指令小贴士" class="headerlink" title="tree指令小贴士"></a>tree指令小贴士</h2><p><strong>1. 基本用法：</strong> 显示当前目录下的文件和目录结构。</p>
-<pre><code>tree
-</code></pre>
-<p><strong>2. 限制目录深度：</strong> 使用 <code>-L</code> 选项后跟数字来限制目录显示的深度。</p>
-<pre><code>tree -L 2
-</code></pre>
-<p>这将显示当前目录及其下最多两级子目录。</p>
-<p><strong>3. 显示隐藏文件：</strong> 默认情况下，隐藏文件（以点 . 开头的文件或目录）不会被显示。要显示这些隐藏文件，可以使用 <code>-a</code> 选项。</p>
-<pre><code>tree -a
-</code></pre>
-<p><strong>4. 递归显示所有文件：</strong> 使用 <code>-R</code> 选项递归显示所有文件。</p>
-<pre><code>tree -R
-</code></pre>
-<p><strong>5. 指定目录：</strong> 显示指定目录的树状结构。</p>
-<pre><code>tree /path/to/directory
-</code></pre>
-<p><strong>6. 使用文件系统类型：</strong> 显示目录结构时，包括文件系统类型。</p>
-<pre><code>tree -F
-</code></pre>
-<p><code>-F</code> 选项会在每个目录名后添加一个斜杠 <code>/</code>。</p>
-<p><strong>7. 排序：</strong> 默认情况下，<code>tree</code> 会按字母顺序排序。使用 <code>-f</code> 选项可以按照文件修改时间排序。</p>
-<pre><code>tree -f
-</code></pre>
-<p><strong>8. 显示文件大小：</strong> 使用 <code>-h</code> 选项以更易读的格式显示文件大小。</p>
-<pre><code>tree -h
-</code></pre>
-<p><strong>9. 显示目录和文件的权限：</strong> 使用 <code>-u</code> 选项显示文件所有者，<code>-g</code> 选项显示文件组。</p>
-<pre><code>tree -ug
-</code></pre>
-<p><strong>10. 使用颜色：</strong> <code>tree</code> 命令使用颜色来区分不同类型的文件和目录。使用 <code>--no-colour</code> 可以关闭颜色显示。</p>
-<pre><code>tree --no-colour
-</code></pre>
-<p><strong>11. 输出到文件：</strong><br>将树状结构输出到一个文件中。</p>
-<pre><code>tree &gt; tree.txt
-</code></pre>
-<p><strong>12. 执行命令：</strong><br>对每个文件或目录执行命令，例如，获取每个文件的详细信息。</p>
-<pre><code>tree -exec ls -l &#123;&#125; \;
-</code></pre>
-<p><strong>13. 帮助和手册：</strong><br>查看 tree 命令的帮助信息。</p>
-<pre><code>tree --help
-man tree
-</code></pre>
-<p><strong>14. 安装 tree 命令（如果尚未安装）通常可以通过你的Linux发行版的包管理器来完成。</strong><br>例如，在Ubuntu上，你可以使用以下命令安装：</p>
-<pre><code>sudo apt-get update
-sudo apt-get install tree
-</code></pre>
-<p>使用 <code>tree</code> 可以帮助你更直观地查看目录结构，特别是在处理复杂的文件系统时。</p>
-<br>
-
-<h2 id="git小贴士"><a href="#git小贴士" class="headerlink" title="git小贴士"></a>git小贴士</h2><p><img src="/../pictures/git%E6%8C%87%E4%BB%A4.jpg" alt="git指令"></p>
-<br>
-
-<p><img src="/../pictures/vim%E6%8C%87%E4%BB%A4.jpg" alt="vim指令"></p>
-<br>
-
-<h2 id="Python问题"><a href="#Python问题" class="headerlink" title="Python问题"></a>Python问题</h2><ul>
-<li><code>python</code> 指向 <code>python3</code></li>
-<li><code>Ubuntu</code> 系统中默认的 <code>python</code> 可能指向 <code>Python 2</code>，但 <code>Python 2</code> 已经停止使用。可以使用以下命令将 <code>python</code> 指向 <code>Python 3</code>：</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install python-is-python3</span><br></pre></td></tr></table></figure>
-
-<br>
-
-<h2 id="OpenHarmony学习笔记"><a href="#OpenHarmony学习笔记" class="headerlink" title="OpenHarmony学习笔记"></a>OpenHarmony学习笔记</h2><h3 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h3><ol>
-<li><p>安装所需的组件和配置<code>git</code>身份信息</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get install git-lfs curl python3-pip ccache</span><br><span class="line"></span><br><span class="line">git config --global user.name <span class="string">&quot;YourName&quot;</span></span><br><span class="line">git config --global user.email <span class="string">&quot;YourEmail@example.com&quot;</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>获取代码步骤</p>
-</li>
-</ol>
-<ul>
-<li><p>安装<code>repo</code>工具</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> -p ~/bin</span><br><span class="line">curl https://gitee.com/oschina/repo/raw/fork_flow/repo-py3 &gt; ~/bin/repo</span><br><span class="line"><span class="built_in">chmod</span> a+x ~/bin/repo</span><br><span class="line"><span class="built_in">export</span> PATH=~/bin:<span class="variable">$PATH</span>  <span class="comment"># 永久生效需写入~/.bashrc</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>初始化仓库</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">(推荐SSH协议)</span><br><span class="line">repo init -u git@gitee.com:openharmony/manifest.git -b OpenHarmony-5.0.2-Release --no-repo-verify</span><br><span class="line">或者：</span><br><span class="line">(HTTPS协议)</span><br><span class="line">repo init -u https://gitee.com/openharmony/manifest.git -b OpenHarmony-5.0.2-Release --no-repo-verify</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>同步全量代码</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">repo <span class="built_in">sync</span> -c -j8  <span class="comment"># -c仅同步当前分支，-j8启用8线程加速</span></span><br><span class="line">repo forall -c <span class="string">&#x27;git lfs pull&#x27;</span>  <span class="comment"># 拉取大文件（如图片/预编译库）</span></span><br></pre></td></tr></table></figure></li>
-</ul>
-<ol start="3">
-<li>常见问题处理</li>
-</ol>
-<ul>
-<li><p>权限错误,若出现<code>Permission denied</code>，检查<code>SSH</code>公钥是否已正确绑定<code>Gitee</code>账户，并修复目录权限：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo <span class="built_in">chown</span> -R <span class="variable">$USER</span>:<span class="variable">$USER</span> .repo/</span><br><span class="line">ex: sudo <span class="built_in">chown</span> -R ubuntu:ubuntu /home/ubuntu/openharmony/.repo</span><br></pre></td></tr></table></figure></li>
-<li><p>如果问题仍存在,可能是父目录权限问题，检查并修复整个<code>openharmony</code>目录的权限：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo <span class="built_in">chown</span> -R ubuntu:ubuntu /home/ubuntu/openharmony</span><br><span class="line">sudo <span class="built_in">chmod</span> -R 755 /home/ubuntu/openharmony</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>网络中断导致同步失败</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">repo <span class="built_in">sync</span> -c -j4 --fail-fast  <span class="comment"># 失败时自动重试</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>依赖缺失</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">./build/prebuilts_download.sh  <span class="comment"># 自动下载依赖:cite[3]:cite[6]</span></span><br></pre></td></tr></table></figure></li>
-</ul>
-<ol start="4">
-<li>验证代码完整性</li>
-</ol>
-<ul>
-<li><p>目录结构检查</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">ls</span> -la .repo/manifests/  <span class="comment"># 应包含default.xml及版本分支文件</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>版本标签匹配</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> .repo/manifests.git</span><br><span class="line">git tag | grep OpenHarmony-5.0.2  <span class="comment"># 确认分支存在:cite[7]</span></span><br></pre></td></tr></table></figure></li>
-</ul>
-]]></content>
-      <categories>
-        <category>小贴士</category>
       </categories>
       <tags>
         <tag>Linux</tag>
@@ -2397,254 +2499,152 @@ sudo apt-get install tree
       </categories>
   </entry>
   <entry>
-    <title>ESP32开发环境搭建</title>
-    <url>/2024/02/19/ESP32%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/</url>
-    <content><![CDATA[<h2 id="开发环境搭建"><a href="#开发环境搭建" class="headerlink" title="开发环境搭建"></a>开发环境搭建</h2><p><a href="https://espressif-docs.readthedocs-hosted.com/projects/esp-adf/zh-cn/latest/get-started/index.html#quick-start">ESP-ADF快速上手连接</a><br><a href="https://docs.espressif.com/projects/esp-idf/zh_CN/stable/esp32/get-started/linux-macos-setup.html#get-started-linux-macos-first-steps">ESP-IDF快速上手连接</a></p>
-<br>
+    <title>I2C调试记录</title>
+    <url>/2024/03/01/I2C%E8%B0%83%E8%AF%95%E8%AE%B0%E5%BD%95/</url>
+    <content><![CDATA[<h2 id="I2C基本原理介绍"><a href="#I2C基本原理介绍" class="headerlink" title="I2C基本原理介绍"></a>I2C基本原理介绍</h2><h3 id="时序介绍"><a href="#时序介绍" class="headerlink" title="时序介绍"></a>时序介绍</h3><p>参考Vishay的i2c时序图：</p>
+<p><img src="/../pictures/i2c%E6%97%B6%E5%BA%8F%E5%9B%BE1.png" alt="i2c时序图1"><br><img src="/../pictures/i2c%E6%97%B6%E5%BA%8F%E5%9B%BE2.png" alt="i2c时序图2"></p>
+<h3 id="代码实现详解"><a href="#代码实现详解" class="headerlink" title="代码实现详解"></a>代码实现详解</h3><p><code>I2C</code>协议实现有硬件<code>I2C</code>和软件<code>I2C</code>之分，这里只讲解软件<code>I2C</code>实现的版本。一下列出主要结构体和初始化函数。</p>
+<h4 id="I2C协议初始化"><a href="#I2C协议初始化" class="headerlink" title="I2C协议初始化"></a>I2C协议初始化</h4><p><code>I2C</code>协议的<code>scl</code>和<code>sda</code>配置为开漏输出,需要外部上拉（一般为<code>10K</code>电阻）</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment">#define i2c_pin_mode(pin,mode)		drv_pin_mode(pin,mode)</span></span><br><span class="line"><span class="comment">#define i2c_pin_write(pin,level) 	drv_pin_write(pin,level)</span></span><br><span class="line"><span class="comment">#define i2c_pin_read(pin) 		drv_pin_read(pin)</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#define DRV_I2C_WR                      0x00</span></span><br><span class="line"><span class="comment">#define DRV_I2C_RD                      (1u &lt;&lt; 0)</span></span><br><span class="line"><span class="comment">#define DRV_I2C_ADDR_10BIT              (1u &lt;&lt; 2)  /* this is a ten bit chip address */</span></span><br><span class="line"><span class="comment">#define DRV_I2C_NO_START                (1u &lt;&lt; 4)</span></span><br><span class="line"><span class="comment">#define DRV_I2C_IGNORE_NACK             (1u &lt;&lt; 5)</span></span><br><span class="line"><span class="comment">#define DRV_I2C_NO_READ_ACK             (1u &lt;&lt; 6)  /* when I2C reading, we do not ACK */</span></span><br><span class="line"><span class="comment">#define DRV_I2C_NO_STOP                 (1u &lt;&lt; 7)</span></span><br><span class="line"></span><br><span class="line">typedef enum&#123;</span><br><span class="line">	EI2C_DEV_1 = 1,</span><br><span class="line">	EI2C_DEV_2,</span><br><span class="line">	EI2C_DEV_3</span><br><span class="line">&#125;EI2C_DEVICE;</span><br><span class="line"></span><br><span class="line">struct drv_soft_i2c_config</span><br><span class="line">&#123;</span><br><span class="line">	uint8_t scl;</span><br><span class="line">	uint8_t sda;</span><br><span class="line">	uint8_t i2c_num;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">struct drv_i2c_msg</span><br><span class="line">&#123;</span><br><span class="line">    uint16_t addr;</span><br><span class="line">    uint16_t flags;</span><br><span class="line">    uint16_t len;</span><br><span class="line">	uint8_t reg_addr;</span><br><span class="line">    uint8_t  *buf;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">struct drv_i2c_bit_ops</span><br><span class="line">&#123;</span><br><span class="line">    void *data;            /* private data <span class="keyword">for</span> lowlevel routines */</span><br><span class="line">    void (*set_sda)(void *data, int state);</span><br><span class="line">    void (*set_scl)(void *data, int state);</span><br><span class="line">    int (*get_sda)(void *data);</span><br><span class="line">    int (*get_scl)(void *data);</span><br><span class="line"></span><br><span class="line">    void (*udelay)(uint32_t us);</span><br><span class="line"></span><br><span class="line">    uint32_t delay_us;  /* scl and sda line delay */</span><br><span class="line">    uint32_t <span class="built_in">timeout</span>;   /* <span class="keyword">in</span> tick */</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">struct drv_i2c_bus_device</span><br><span class="line">&#123;</span><br><span class="line">	struct drv_i2c_msg msg;</span><br><span class="line">	struct drv_i2c_bit_ops ops;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">static void drv_i2c_gpio_init(struct drv_soft_i2c_config *i2c)</span><br><span class="line">&#123;</span><br><span class="line">    struct drv_soft_i2c_config* cfg = i2c;</span><br><span class="line"></span><br><span class="line">    i2c_pin_mode(cfg-&gt;scl, I2C_PIN_MODE_OUTPUT_OD);	//PIN_MODE_OUTPUT</span><br><span class="line">    i2c_pin_mode(cfg-&gt;sda, I2C_PIN_MODE_OUTPUT_OD);</span><br><span class="line"></span><br><span class="line">    i2c_pin_write(cfg-&gt;scl, I2C_PIN_HIGH);</span><br><span class="line">    i2c_pin_write(cfg-&gt;sda, I2C_PIN_HIGH);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int drv_hw_i2c_init(EI2C_DEVICE dev_e)</span><br><span class="line">&#123;</span><br><span class="line">	int size = sizeof(i2c_pin_config)/sizeof(struct drv_soft_i2c_config);</span><br><span class="line">	struct drv_i2c_bus_device *dev = get_i2c_device(dev_e);</span><br><span class="line">	uint8_t dev_num = (uint8_t)dev_e;</span><br><span class="line">	struct drv_soft_i2c_config *pin_cfg = NULL;</span><br><span class="line">	struct drv_i2c_bit_ops *ops = &amp;dev-&gt;ops;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">for</span>(int i=0;i&lt;size;i++)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">if</span>(i2c_pin_config[i].i2c_num == dev_num)</span><br><span class="line">		&#123;</span><br><span class="line">			pin_cfg = (struct drv_soft_i2c_config *)&amp;i2c_pin_config[i];</span><br><span class="line">			<span class="built_in">break</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span>(pin_cfg == NULL)</span><br><span class="line">		<span class="built_in">return</span> -1;</span><br><span class="line">    ops-&gt;data  = (void*)pin_cfg;</span><br><span class="line">    ops-&gt;set_sda  = n32_set_sda;</span><br><span class="line">    ops-&gt;set_scl  = n32_set_scl;</span><br><span class="line">    ops-&gt;get_sda  = n32_get_sda;</span><br><span class="line">    ops-&gt;get_scl  = n32_get_scl;</span><br><span class="line">    ops-&gt;udelay   = n32_udelay;</span><br><span class="line">    ops-&gt;delay_us = 1;</span><br><span class="line">    ops-&gt;<span class="built_in">timeout</span>  = 5;</span><br><span class="line">    </span><br><span class="line">    drv_i2c_gpio_init(pin_cfg);</span><br><span class="line">    drv_i2c_bus_unlock(pin_cfg);</span><br><span class="line">    <span class="built_in">return</span> 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<h3 id="获取ESP-ADF"><a href="#获取ESP-ADF" class="headerlink" title="获取ESP-ADF"></a>获取ESP-ADF</h3><ul>
-<li><p>打开Linux or macOS终端,新建搭建环境所需文件夹。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> ~/esp</span><br><span class="line"><span class="built_in">cd</span> ~/esp</span><br></pre></td></tr></table></figure></li>
-<li><p>编译 ESP-IDF 需要以下软件包。请根据使用的 Linux 发行版本，选择合适的安装：</p>
-</li>
-<li><p>Ubuntu 和 Debian:</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install git wget flex bison gperf python3 python3-pip python3-venv cmake ninja-build ccache libffi-dev libssl-dev dfu-util libusb-1.0-0</span><br></pre></td></tr></table></figure>
-<p>CentOS 7 &amp; 8:</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo yum -y update &amp;&amp; sudo yum install git wget flex bison gperf python3 python3-setuptools cmake ninja-build ccache dfu-util libusbx</span><br></pre></td></tr></table></figure>
-<p>Arch:</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo pacman -S --needed gcc git make flex bison gperf python cmake ninja ccache dfu-util libusb</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>克隆最新版ESP-ADF：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git <span class="built_in">clone</span> --recursive https://github.com/espressif/esp-adf.git</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>若克隆失败，尝试以下指令：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git <span class="built_in">clone</span> --recursive git@github.com:espressif/esp-adf.git</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>若子模块拉取失败，尝试手动逐个拉取子模块：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/esp/esp-adf/components</span><br><span class="line">git <span class="built_in">clone</span> git@github.com:espressif/esp-adf-libs.git </span><br><span class="line">或者</span><br><span class="line">git <span class="built_in">clone</span> https://github.com/espressif/esp-adf-libs.git</span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> ~/esp/esp-adf/components</span><br><span class="line">git <span class="built_in">clone</span> git@github.com:espressif/esp-sr.git</span><br><span class="line">或者</span><br><span class="line">git <span class="built_in">clone</span> https://github.com/espressif/esp-sr.git</span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> ~/esp/esp-adf</span><br><span class="line">git <span class="built_in">clone</span> git@github.com:espressif/esp-idf.git</span><br><span class="line">或者</span><br><span class="line">git <span class="built_in">clone</span> https://github.com/espressif/esp-idf.git</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>当遇到网络比较卡时，<code>github</code>源改为<code>gitee</code>源（以设置<code>idf.py set-target esp32s3</code>的<code>esp32-wifi-lib</code>为例）：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/esp/esp-adf/esp-idf</span><br><span class="line">git config submodule.<span class="string">&quot;components/esp_wifi/lib&quot;</span>.url https://gitee.com/EspressifSystems/esp32-wifi-lib.git</span><br><span class="line">git submodule <span class="built_in">sync</span></span><br><span class="line">git submodule update --init --depth 1 components/esp_wifi/lib</span><br></pre></td></tr></table></figure></li>
-</ul>
-<br>
+<h4 id="接口函数"><a href="#接口函数" class="headerlink" title="接口函数"></a>接口函数</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">int drv_i2c_bit_xfer(struct drv_i2c_bit_ops *bus,</span><br><span class="line">                 struct drv_i2c_msg msgs[],</span><br><span class="line">                 uint32_t num);</span><br><span class="line">struct drv_i2c_bus_device *get_i2c_device(EI2C_DEVICE dev_e);</span><br><span class="line">static uint64_t i2c_tick_get(void);</span><br><span class="line">int drv_hw_i2c_init(EI2C_DEVICE dev_e);</span><br><span class="line">int drv_i2c_send_data(EI2C_DEVICE dev_e,uint16_t addr,uint8_t reg_addr,uint8_t *buf,uint16_t len);</span><br><span class="line">int drv_i2c_recv_data(EI2C_DEVICE dev_e,uint16_t addr,uint8_t reg_addr,uint8_t *buf,uint16_t len);</span><br></pre></td></tr></table></figure>
 
-<p><strong>预防措施</strong>：</p>
-<ol>
-<li><p>配置镜像源：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 全局使用 Gitee 镜像</span></span><br><span class="line">git config --global url.<span class="string">&quot;https://gitee.com/EspressifSystems&quot;</span>.insteadOf <span class="string">&quot;https://github.com/espressif&quot;</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>定期更新子模块：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 空闲时更新所有子模块</span></span><br><span class="line"><span class="built_in">cd</span> ~/esp/esp-adf</span><br><span class="line">git submodule update --init --recursive --depth 1</span><br></pre></td></tr></table></figure></li>
-</ol>
-<br>
-
-<h3 id="设置环境变量"><a href="#设置环境变量" class="headerlink" title="设置环境变量"></a>设置环境变量</h3><p>按自己实际路径，可按自己喜好设置，也可不配置，手动敲指令也可。</p>
-<p><code>vi ~/.bashrc</code><br>在后面加上以下代码：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment">#开启ESP32编译环境</span></span><br><span class="line"><span class="built_in">alias</span> get-idf=<span class="string">&#x27;. $HOME/esp/esp-adf/esp-idf/export.sh&#x27;</span></span><br><span class="line"><span class="built_in">alias</span> get-adf=<span class="string">&#x27;. $HOME/esp/esp-adf/export.sh&#x27;</span></span><br><span class="line"><span class="comment"># 烧录到设备，并打开监视器，/dev/ttyS15为USB挂载端口，需测试后填写，115200为监视器波特率，与设备UART0波特率对应</span></span><br><span class="line"><span class="built_in">alias</span> esp-u0=<span class="string">&#x27;idf.py -p /dev/ttyUSB0 -b 1152000 flash &amp;&amp; idf.py -p /dev/ttyUSB0 monitor&#x27;</span></span><br><span class="line"><span class="built_in">alias</span> esp-u1=<span class="string">&#x27;idf.py -p /dev/ttyUSB1 -b 1152000 flash &amp;&amp; idf.py -p /dev/ttyUSB1 monitor&#x27;</span></span><br><span class="line"><span class="comment"># 自带USB,如果只想要最简单的 烧录 + 串口调试，推荐直接用 ESP-IDF 自带的 USB Serial/JTAG 驱动模式</span></span><br><span class="line"><span class="built_in">alias</span> esp-acm0=<span class="string">&#x27;idf.py -p /dev/ttyACM0 -b 1152000 flash &amp;&amp; idf.py -p /dev/ttyACM0 monitor&#x27;</span></span><br><span class="line"><span class="built_in">alias</span> esp-busid=<span class="string">&#x27;sudo usbip attach -r 192.168.104.29 -b&#x27;</span></span><br><span class="line"><span class="built_in">alias</span> esp-unbusid=<span class="string">&#x27;sudo usbip detach&#x27;</span>  <span class="comment"># 查看端口号：sudo usbip port</span></span><br><span class="line"><span class="built_in">export</span> PATH=/home/ubuntu/esp/esp-adf/esp-idf/tools:<span class="variable">$PATH</span></span><br><span class="line"><span class="built_in">export</span> IDF_PATH=/home/ubuntu/esp/esp-adf/esp-idf</span><br><span class="line"><span class="built_in">export</span> ADF_PATH=/home/ubuntu/esp/esp-adf</span><br></pre></td></tr></table></figure>
-<p>保存退出 <code>:wq</code></p>
-<h3 id="设置工具"><a href="#设置工具" class="headerlink" title="设置工具"></a>设置工具</h3><p>除了 ESP-IDF 本身，还需要为支持 ESP32 的项目安装 ESP-IDF 使用的各种工具，比如编译器、调试器、Python 包等。</p>
-<pre><code>cd ~/esp/esp-adf/esp-idf
-</code></pre>
-<p>安装esp32，esp32s2工具，运行以下指令：（按需求安装）</p>
-<pre><code>./install.sh esp32,esp32s2
-</code></pre>
-<p>若需要安装所有工具，运行以下指令：</p>
-<pre><code>./install.sh all
-</code></pre>
-<p>以下为ESP-IDF编译所需环境，请在需要运行ESP-IDF的终端窗口运行以下命令：</p>
-<pre><code>. $HOME/esp/esp-adf/esp-idf/export.sh   
-</code></pre>
-<p>或者使用快捷指令：</p>
-<pre><code>get-idf
+<h2 id="实战开发问题分析"><a href="#实战开发问题分析" class="headerlink" title="实战开发问题分析"></a>实战开发问题分析</h2><p>实际开发过程中，同样的<code>I2C</code>驱动程序，在不同厂家芯片的使用上出现一些问题，导致部分厂家通信异常，导致数据接收不正确，以下进行分析对比，作证并解决问题。</p>
+<h3 id="Vishay-和-亿光-接近传感器模块对比"><a href="#Vishay-和-亿光-接近传感器模块对比" class="headerlink" title="Vishay 和 亿光 接近传感器模块对比"></a>Vishay 和 亿光 接近传感器模块对比</h3><p><code>Vishay</code>使用<code>VCNL3682S</code>型号芯片，亿光使用<code>APM-16D24-U6E</code>型号芯片，<code>I2C</code>协议对比。</p>
+<h5 id="Vishay-："><a href="#Vishay-：" class="headerlink" title="Vishay ："></a>Vishay ：</h5><p><img src="/../pictures/Vishay%E5%86%99i2c%E5%8D%8F%E8%AE%AE.png" alt="Vishay写i2c协议"><br><img src="/../pictures/Vishay%E8%AF%BBi2c%E5%8D%8F%E8%AE%AE.png" alt="Vishay读i2c协议"></p>
+<h5 id="亿光："><a href="#亿光：" class="headerlink" title="亿光："></a>亿光：</h5><p><img src="/../pictures/%E4%BA%BF%E5%85%89i2c%E5%8D%8F%E8%AE%AE.png" alt="亿光i2c协议"></p>
+<h6 id="对比波形"><a href="#对比波形" class="headerlink" title="对比波形"></a>对比波形</h6><p>对比协议来看基本上是一致的，用<code>JI2C</code>工具测的<code>i2c</code>波形也基本上一致，但是我自己写的软件<code>i2c</code>驱动，<code>Vishay</code>可以正常使用，亿光读取的数据就有问题，用逻辑分析仪抓一波波形分析一下。</p>
+<p>发现每次读完都会多恢复一个<code>ack</code>，而协议上读完最后一个字节需要恢复<code>nack</code>。</p>
+<h6 id="修改了以下代码"><a href="#修改了以下代码" class="headerlink" title="修改了以下代码"></a>修改了以下代码</h6><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">static int i2c_send_ack_or_nack(struct drv_i2c_bit_ops *bus, int ack)</span><br><span class="line">&#123;</span><br><span class="line">    struct drv_i2c_bit_ops *ops = bus;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (ack)				// <span class="keyword">if</span>(ack &gt;= 0) 改成 <span class="keyword">if</span>(ack)</span><br><span class="line">        SET_SDA(ops, 0);</span><br><span class="line">    i2c_delay(ops);</span><br><span class="line">    <span class="keyword">if</span> (SCL_H(ops) &lt; 0)</span><br><span class="line">    &#123;</span><br><span class="line">//        logVerbose(<span class="string">&quot;ACK or NACK timeout.&quot;</span>);</span><br><span class="line">        <span class="built_in">return</span> -2;</span><br><span class="line">    &#125;</span><br><span class="line">    SCL_L(ops);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">return</span> 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>static int i2c_send_ack_or_nack(struct drv_i2c_bit_ops *bus, int ack)&#123;&#125;</code><br>函数主要处理响应回复。</p>
+<pre><code>if(ack &gt;= 0)表示每次都会回复ack/nack
+if(ack)表示除最后一次数据不回复，其他每次都会回复ack/nack
 </code></pre>
 <br>
-
-<h2 id="ESP32工程示例"><a href="#ESP32工程示例" class="headerlink" title="ESP32工程示例"></a>ESP32工程示例</h2><h3 id="开始创建工程"><a href="#开始创建工程" class="headerlink" title="开始创建工程"></a>开始创建工程</h3><p>现在，可以准备开发 ESP32 应用程序了。<br>从 ESP-IDF 中 examples 目录下的 <code>get-started/hello_world</code> 工程开始，将 <code>get-started/hello_world</code> 工程复制至本地的 ~&#x2F;esp 目录下：</p>
-<pre><code>cd ~/esp
-get-idf
-cp -r $IDF_PATH/examples/get-started/hello_world .
-</code></pre>
-<br>
-
-<h3 id="配置工程"><a href="#配置工程" class="headerlink" title="配置工程"></a>配置工程</h3><pre><code>cd ~/esp/hello_world
-idf.py set-target esp32
-</code></pre>
-<p>由于ESP32是单核，默认配置是双核模式，需要配置参数：</p>
-<pre><code>idf.py menuconfig
-Component config -&gt; FreeRTOS -&gt;  [*]Run FreeRTOS only on first core
-</code></pre>
-<p>保存退出</p>
-<h3 id="编译工程"><a href="#编译工程" class="headerlink" title="编译工程"></a>编译工程</h3><pre><code>idf.py build
-</code></pre>
-<h3 id="烧录工程"><a href="#烧录工程" class="headerlink" title="烧录工程"></a>烧录工程</h3><pre><code>idf.py -p PORT flash
-</code></pre>
-<p>请将 PORT 替换为 ESP32 开发板的串口名称。如果 PORT 未经定义，<code>idf.py</code> 将尝试使用可用的串口自动连接。</p>
-<h3 id="合并执行构建、烧录和监视过程："><a href="#合并执行构建、烧录和监视过程：" class="headerlink" title="合并执行构建、烧录和监视过程："></a>合并执行构建、烧录和监视过程：</h3><pre><code>idf.py -p PORT [-b BAUD] flash monitor
-退出 monitor: Ctrl + ]
-</code></pre>
-<p>注：[-b BAUD] 和 monitor 配合使用，BAUD为程序中UART0的波特率	</p>
-<pre><code>idf.py -p /dev/ttyS15 -b  115200  flash monitor	
-idf.py -p [挂载端口]   -b [波特率] flash monitor
-</code></pre>
-<h3 id="擦除flash"><a href="#擦除flash" class="headerlink" title="擦除flash"></a>擦除flash</h3><pre><code>idf.py -p PORT erase-flash
-</code></pre>
-<p>若存在需要擦除的 OTA 数据，请运行以下命令：</p>
-<pre><code>idf.py -p PORT erase-otadata
-</code></pre>
-<h3 id="挂载端口"><a href="#挂载端口" class="headerlink" title="挂载端口"></a>挂载端口</h3><h4 id="windows-子系统-wsl"><a href="#windows-子系统-wsl" class="headerlink" title="windows 子系统 wsl"></a>windows 子系统 wsl</h4><p>输入烧录指令：</p>
-<pre><code>idf.py flash
-</code></pre>
-<p>观察终端设备是挂载在哪个端口上，有ERROR忽略，选择端口例如 <code>/dev/ttyS15</code>，程序中<code>UART0</code>的波特率115200，下次就可以直接输此端口就可以烧录啦。</p>
-<pre><code>idf.py -p /dev/ttyS15 -b 115200 flash monitor	
-</code></pre>
-<p>如果 ESP-IDF 监视器在烧录后很快发生错误，或打印信息全是乱码（如下），很有可能是因为开发板采用了 26 MHz 晶振，而 ESP-IDF 默认支持大多数开发板使用的 40 MHz 晶振。</p>
-<pre><code>x���ff�f�����`�~�~���f���x��f�f�����ff��`���f����`��~x������ff�f�����`�~�~�f����f����f`���x��f�f�����ff��`���f
-</code></pre>
-<p>此时，可以：<br>1、退出监视器。<br>2、返回 idf.py menuconfig。<br>3、进入 Component config –&gt; Hardware Settings –&gt; Main XTAL Config –&gt; Main XTAL frequency 进行配置，将 CONFIG_XTAL_FREQ_SEL 设置为 26 MHz。<br>4、重新编译和烧录应用程序。</p>
-<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p>启动终端ESP32编译只需要进行以下步骤：</p>
-<pre><code>. $HOME/esp/esp-adf/esp-idf/export.sh	//开启编译环境
-idf.py set-target esp32			//首次搭建项目时配置
-idf.py menuconfig   			//选择需要的配置
-idf.py build
-idf.py flash
-</code></pre>
-<p>快捷方式：</p>
-<pre><code>get-idf
-idf.py set-target esp32
-idf.py menuconfig
-idf.py build
-esp-download
-</code></pre>
-<br>
-
-<h2 id="通过SSH远程访问本地的USB设备"><a href="#通过SSH远程访问本地的USB设备" class="headerlink" title="通过SSH远程访问本地的USB设备"></a>通过SSH远程访问本地的USB设备</h2><h3 id="开发环境配置"><a href="#开发环境配置" class="headerlink" title="开发环境配置"></a>开发环境配置</h3><h4 id="本地机器配置（以Windows为例）"><a href="#本地机器配置（以Windows为例）" class="headerlink" title="本地机器配置（以Windows为例）"></a>本地机器配置（以Windows为例）</h4><ol>
-<li>安装USB&#x2F;IP工具</li>
-</ol>
-<ul>
-<li><p>下载并安装 <code>usbipd-win</code>（<code>Windows</code>的<code>USB/IP</code>服务端）：</p>
-<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">winget install <span class="literal">--interactive</span> dorssel.usbipd<span class="literal">-win</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>插入<code>ESP32</code>开发板，确认设备管理器中出现对应的串口（如 <code>COM3</code> 或 <code>/dev/ttyUSB0</code>）。</p>
-</li>
-</ul>
-<ol start="2">
-<li>绑定并共享<code>USB</code>设备</li>
-</ol>
-<ul>
-<li><p>管理员权限打开<code>PowerShell</code>，查看<code>ESP32</code>的总线<code>ID</code>：</p>
-<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">usbipd list</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>输出示例：</p>
-<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">BUSID  VID:PID   DEVICE 							STATE</span><br><span class="line"><span class="number">3</span><span class="literal">-1</span>    <span class="number">10</span>c4:ea60  Silicon Labs CP210x USB to UART Bridge (COM17)                Not Shared</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>绑定并共享设备：</p>
-<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">usbipd bind <span class="literal">--busid</span> <span class="number">3</span><span class="literal">-1</span>  <span class="comment"># 替换为实际总线ID</span></span><br></pre></td></tr></table></figure></li>
-</ul>
-<ol start="3">
-<li>配置<code>Windows</code>防火墙</li>
-</ol>
-<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line"><span class="built_in">New-NetFirewallRule</span> <span class="literal">-DisplayName</span> <span class="string">&quot;USB/IP&quot;</span> <span class="literal">-Direction</span> Inbound <span class="literal">-Action</span> Allow <span class="literal">-Protocol</span> TCP <span class="literal">-LocalPort</span> <span class="number">3240</span> <span class="comment"># 关闭防火墙</span></span><br><span class="line">或者：</span><br><span class="line"><span class="built_in">Set-NetFirewallProfile</span> <span class="literal">-Profile</span> Domain,Public,Private <span class="literal">-Enabled</span> False <span class="comment"># 临时关闭防火墙测试</span></span><br></pre></td></tr></table></figure>
-
-<ol start="4">
-<li>确保<code>USB/IP</code>服务已启动</li>
-</ol>
-<ul>
-<li><p>如果服务未启动，手动启动：</p>
-<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">usbipd server	<span class="comment"># 需要保持powershell</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>验证服务是否启动:</p>
-<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">usbipd list</span><br></pre></td></tr></table></figure></li>
-<li><p>如果输出设备列表（如<code>ESP32</code>），说明服务已成功启动。</p>
-</li>
-</ul>
-<ol start="5">
-<li>检查端口监听</li>
-</ol>
-<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">netstat <span class="literal">-ano</span> | findstr :<span class="number">3240</span></span><br></pre></td></tr></table></figure>
-
-<ul>
-<li><p>正常应输出类似以下内容：</p>
-<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">TCP    <span class="number">0.0</span>.<span class="number">0.0</span>:<span class="number">3240</span>           <span class="number">0.0</span>.<span class="number">0.0</span>:<span class="number">0</span>              LISTENING</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>常用信息</p>
-</li>
-</ul>
-<ol start="6">
-<li>获取本机<code>ip</code></li>
-</ol>
-<ul>
-<li><code>powershell</code>输入<code>ipconfig</code>指令获取本机<code>ip</code>:<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">Ethernet adapter 以太网:</span><br><span class="line"></span><br><span class="line">   Connection<span class="literal">-specific</span> DNS Suffix  . : breo.vip</span><br><span class="line">   Link<span class="literal">-local</span> IPv6 Address . . . . . : fe80::a2cf:<span class="number">7</span>a4:df39:<span class="number">7032</span>%<span class="number">7</span></span><br><span class="line">   IPv4 Address. . . . . . . . . . . : <span class="number">192.168</span>.<span class="number">104.29</span> <span class="comment"># 获取此IP</span></span><br></pre></td></tr></table></figure></li>
-</ul>
-<ol start="7">
-<li><p>其他常用命令</p>
-<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">usbipd state 				<span class="comment"># 查看当前共享状态</span></span><br><span class="line"><span class="built_in">sc</span> query usbipd 			<span class="comment"># 查看服务状态</span></span><br><span class="line">net stop usbipd 			<span class="comment"># 停止服务</span></span><br><span class="line">usbipd unbind <span class="literal">--all</span> 		<span class="comment"># 停止共享所有设备</span></span><br><span class="line">usbipd bind <span class="literal">--busid</span>=<span class="number">2</span><span class="literal">-1</span>    	<span class="comment"># 共享 COM18</span></span><br><span class="line">usbipd unbind <span class="literal">--busid</span>=<span class="number">2</span><span class="literal">-1</span>  	<span class="comment"># 取消共享</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>遇到问题及解决方式</p>
-</li>
-</ol>
-<ul>
-<li><p><code>powershell</code>中输入<code>usbipd server</code>时出现<code>usbipd: error: Another instance is already running</code></p>
-<figure class="highlight cmd"><table><tr><td class="code"><pre><span class="line">tasklist | <span class="built_in">findstr</span> &quot;usbipd&quot;		// 检查是否有进程正在运行</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>若出现 <code>usbipd.exe</code></p>
-<figure class="highlight cmd"><table><tr><td class="code"><pre><span class="line">usbipd.exe                   <span class="number">27428</span> Services                   <span class="number">0</span>     <span class="number">18</span>,<span class="number">684</span> K</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>终止 <code>usbipd.exe</code> 进程, 重新启动</p>
-<figure class="highlight cmd"><table><tr><td class="code"><pre><span class="line"><span class="built_in">taskkill</span> /F /IM usbipd.exe</span><br><span class="line">usbipd server</span><br></pre></td></tr></table></figure></li>
-</ul>
-<h4 id="远程Ubuntu服务器配置"><a href="#远程Ubuntu服务器配置" class="headerlink" title="远程Ubuntu服务器配置"></a>远程Ubuntu服务器配置</h4><ol>
-<li>安装<code>USB/IP</code>客户端工具</li>
-</ol>
-<ul>
-<li><p>安装USB&#x2F;IP客户端工具</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo apt install linux-tools-generic hwdata</span><br><span class="line">sudo update-alternatives --install /usr/local/bin/usbip usbip /usr/lib/linux-tools/*-generic/usbip 20</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>若不兼容，安装与内核<code>5.15.0-126</code>兼容的<code>usbipd</code>工具及性能调试工具</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo apt install linux-tools-5.15.0-126-generic linux-cloud-tools-5.15.0-126-generic</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>验证安装：安装后检查 <code>usbipd</code> 是否存在:</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">which usbipd   # 输出路径</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>为避免未来内核升级后再次出现版本不兼容问题，安装通用工具包：</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo apt install linux-tools-generic linux-cloud-tools-generic</span><br></pre></td></tr></table></figure></li>
-</ul>
-<ol start="2">
-<li>附加远程<code>USB</code>设备</li>
-</ol>
-<ul>
-<li>在<code>Ubuntu</code>服务器执行（需与本地网络互通）：<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo modprobe usbip-core # 可以不需要</span><br><span class="line">sudo modprobe vhci-hcd</span><br><span class="line">sudo usbip attach -r &lt;本地机器IP&gt; -b &lt;总线ID&gt; # 替换为实际IP和总线ID</span><br></pre></td></tr></table></figure></li>
-<li>验证设备是否挂载成功：<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">ls /dev/tty*  # 应出现类似/dev/ttyUSB0的设备节点</span><br><span class="line">dmesg | tail  # 查看内核日志确认设备识别</span><br></pre></td></tr></table></figure></li>
-</ul>
-<ol start="3">
-<li>配置设备权限<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo usermod -aG dialout $USER  # 将用户加入串口组,需注销重新登录</span><br><span class="line">sudo chmod a+rw /dev/ttyUSB0    # 临时权限（可选）</span><br></pre></td></tr></table></figure></li>
-</ol>
-<h4 id="修改ubuntu环境变量"><a href="#修改ubuntu环境变量" class="headerlink" title="修改ubuntu环境变量"></a>修改ubuntu环境变量</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">vim ~/.bashrc</span><br></pre></td></tr></table></figure>
-
-<p>添加以下代码：</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">开启ESP32编译环境</span></span><br><span class="line">alias get-idf=&#x27;. $HOME/esp/esp-adf/esp-idf/export.sh&#x27;</span><br><span class="line">alias get-adf=&#x27;. $HOME/esp/esp-adf/export.sh&#x27;</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">烧录到设备，并打开监视器，/dev/ttyS15为USB挂载端口，需测试后填写，115200为监视器波特率，与设备UART0波特率对应</span></span><br><span class="line">alias esp-u0=&#x27;idf.py -p /dev/ttyUSB0 -b 1152000 flash &amp;&amp; idf.py -p /dev/ttyUSB0 monitor&#x27;</span><br><span class="line">alias esp-u1=&#x27;idf.py -p /dev/ttyUSB1 -b 1152000 flash &amp;&amp; idf.py -p /dev/ttyUSB1 monitor&#x27;</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">自带USB,如果只想要最简单的 烧录 + 串口调试，推荐直接用 ESP-IDF 自带的 USB Serial/JTAG 驱动模式</span></span><br><span class="line">alias esp-acm0=&#x27;idf.py -p /dev/ttyACM0 -b 1152000 flash &amp;&amp; idf.py -p /dev/ttyACM0 monitor&#x27;</span><br><span class="line">alias esp-busid=&#x27;sudo usbip attach -r 192.168.104.29 -b&#x27;</span><br><span class="line">alias esp-unbusid=&#x27;sudo usbip detach&#x27;  # 查看端口号：sudo usbip port</span><br><span class="line">export PATH=/home/ubuntu/esp/esp-adf/esp-idf/tools:$PATH</span><br><span class="line">export IDF_PATH=/home/ubuntu/esp/esp-adf/esp-idf</span><br><span class="line">export ADF_PATH=/home/ubuntu/esp/esp-adf</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>释放<code>USB</code>口:</li>
-</ul>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">ubuntu@compilation:~/esp/spi_lcd_touch$ lsof /dev/ttyUSB0</span><br><span class="line">COMMAND   PID   USER   FD   TYPE DEVICE SIZE/OFF NODE NAME</span><br><span class="line">python  85630 ubuntu    3uW  CHR  188,0      0t0  730 /dev/ttyUSB0</span><br><span class="line"></span><br><span class="line">ubuntu@compilation:~/esp/spi_lcd_touch$ sudo kill -9 85630 </span><br></pre></td></tr></table></figure>
-
-<h4 id="烧录步骤跟上文-WSL-环境一样"><a href="#烧录步骤跟上文-WSL-环境一样" class="headerlink" title="烧录步骤跟上文 WSL 环境一样"></a>烧录步骤跟上文 WSL 环境一样</h4><h4 id="断开设备连接"><a href="#断开设备连接" class="headerlink" title="断开设备连接"></a>断开设备连接</h4><ol>
-<li>本地释放设备（<code>Windows</code>端）</li>
-</ol>
-<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">usbipd unbind <span class="literal">--busid</span> &lt;总线ID&gt;</span><br></pre></td></tr></table></figure>
-
-<ol start="2">
-<li>卸载<code>USB</code>设备</li>
-</ol>
-<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">sudo usbip detach <span class="literal">--port</span>=<span class="number">00</span>  <span class="comment"># 查看端口号：sudo usbip port</span></span><br></pre></td></tr></table></figure>]]></content>
+]]></content>
       <categories>
-        <category>嵌入式</category>
-        <category>环境搭建</category>
-        <category>Bluetooth</category>
+        <category>硬件调试</category>
+      </categories>
+      <tags>
+        <tag>逻辑分析仪</tag>
+        <tag>接近传感器</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Linux小贴士</title>
+    <url>/2024/05/06/Linux%E5%B0%8F%E8%B4%B4%E5%A3%AB/</url>
+    <content><![CDATA[<h2 id="tree指令小贴士"><a href="#tree指令小贴士" class="headerlink" title="tree指令小贴士"></a>tree指令小贴士</h2><p><strong>1. 基本用法：</strong> 显示当前目录下的文件和目录结构。</p>
+<pre><code>tree
+</code></pre>
+<p><strong>2. 限制目录深度：</strong> 使用 <code>-L</code> 选项后跟数字来限制目录显示的深度。</p>
+<pre><code>tree -L 2
+</code></pre>
+<p>这将显示当前目录及其下最多两级子目录。</p>
+<p><strong>3. 显示隐藏文件：</strong> 默认情况下，隐藏文件（以点 . 开头的文件或目录）不会被显示。要显示这些隐藏文件，可以使用 <code>-a</code> 选项。</p>
+<pre><code>tree -a
+</code></pre>
+<p><strong>4. 递归显示所有文件：</strong> 使用 <code>-R</code> 选项递归显示所有文件。</p>
+<pre><code>tree -R
+</code></pre>
+<p><strong>5. 指定目录：</strong> 显示指定目录的树状结构。</p>
+<pre><code>tree /path/to/directory
+</code></pre>
+<p><strong>6. 使用文件系统类型：</strong> 显示目录结构时，包括文件系统类型。</p>
+<pre><code>tree -F
+</code></pre>
+<p><code>-F</code> 选项会在每个目录名后添加一个斜杠 <code>/</code>。</p>
+<p><strong>7. 排序：</strong> 默认情况下，<code>tree</code> 会按字母顺序排序。使用 <code>-f</code> 选项可以按照文件修改时间排序。</p>
+<pre><code>tree -f
+</code></pre>
+<p><strong>8. 显示文件大小：</strong> 使用 <code>-h</code> 选项以更易读的格式显示文件大小。</p>
+<pre><code>tree -h
+</code></pre>
+<p><strong>9. 显示目录和文件的权限：</strong> 使用 <code>-u</code> 选项显示文件所有者，<code>-g</code> 选项显示文件组。</p>
+<pre><code>tree -ug
+</code></pre>
+<p><strong>10. 使用颜色：</strong> <code>tree</code> 命令使用颜色来区分不同类型的文件和目录。使用 <code>--no-colour</code> 可以关闭颜色显示。</p>
+<pre><code>tree --no-colour
+</code></pre>
+<p><strong>11. 输出到文件：</strong><br>将树状结构输出到一个文件中。</p>
+<pre><code>tree &gt; tree.txt
+</code></pre>
+<p><strong>12. 执行命令：</strong><br>对每个文件或目录执行命令，例如，获取每个文件的详细信息。</p>
+<pre><code>tree -exec ls -l &#123;&#125; \;
+</code></pre>
+<p><strong>13. 帮助和手册：</strong><br>查看 tree 命令的帮助信息。</p>
+<pre><code>tree --help
+man tree
+</code></pre>
+<p><strong>14. 安装 tree 命令（如果尚未安装）通常可以通过你的Linux发行版的包管理器来完成。</strong><br>例如，在Ubuntu上，你可以使用以下命令安装：</p>
+<pre><code>sudo apt-get update
+sudo apt-get install tree
+</code></pre>
+<p>使用 <code>tree</code> 可以帮助你更直观地查看目录结构，特别是在处理复杂的文件系统时。</p>
+<br>
+
+<h2 id="git小贴士"><a href="#git小贴士" class="headerlink" title="git小贴士"></a>git小贴士</h2><p><img src="/../pictures/git%E6%8C%87%E4%BB%A4.jpg" alt="git指令"></p>
+<br>
+
+<p><img src="/../pictures/vim%E6%8C%87%E4%BB%A4.jpg" alt="vim指令"></p>
+<br>
+
+<h2 id="Python问题"><a href="#Python问题" class="headerlink" title="Python问题"></a>Python问题</h2><ul>
+<li><code>python</code> 指向 <code>python3</code></li>
+<li><code>Ubuntu</code> 系统中默认的 <code>python</code> 可能指向 <code>Python 2</code>，但 <code>Python 2</code> 已经停止使用。可以使用以下命令将 <code>python</code> 指向 <code>Python 3</code>：</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install python-is-python3</span><br></pre></td></tr></table></figure>
+
+<br>
+
+<h2 id="OpenHarmony学习笔记"><a href="#OpenHarmony学习笔记" class="headerlink" title="OpenHarmony学习笔记"></a>OpenHarmony学习笔记</h2><h3 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h3><ol>
+<li><p>安装所需的组件和配置<code>git</code>身份信息</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get install git-lfs curl python3-pip ccache</span><br><span class="line"></span><br><span class="line">git config --global user.name <span class="string">&quot;YourName&quot;</span></span><br><span class="line">git config --global user.email <span class="string">&quot;YourEmail@example.com&quot;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>获取代码步骤</p>
+</li>
+</ol>
+<ul>
+<li><p>安装<code>repo</code>工具</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> -p ~/bin</span><br><span class="line">curl https://gitee.com/oschina/repo/raw/fork_flow/repo-py3 &gt; ~/bin/repo</span><br><span class="line"><span class="built_in">chmod</span> a+x ~/bin/repo</span><br><span class="line"><span class="built_in">export</span> PATH=~/bin:<span class="variable">$PATH</span>  <span class="comment"># 永久生效需写入~/.bashrc</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>初始化仓库</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">(推荐SSH协议)</span><br><span class="line">repo init -u git@gitee.com:openharmony/manifest.git -b OpenHarmony-5.0.2-Release --no-repo-verify</span><br><span class="line">或者：</span><br><span class="line">(HTTPS协议)</span><br><span class="line">repo init -u https://gitee.com/openharmony/manifest.git -b OpenHarmony-5.0.2-Release --no-repo-verify</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>同步全量代码</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">repo <span class="built_in">sync</span> -c -j8  <span class="comment"># -c仅同步当前分支，-j8启用8线程加速</span></span><br><span class="line">repo forall -c <span class="string">&#x27;git lfs pull&#x27;</span>  <span class="comment"># 拉取大文件（如图片/预编译库）</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<ol start="3">
+<li>常见问题处理</li>
+</ol>
+<ul>
+<li><p>权限错误,若出现<code>Permission denied</code>，检查<code>SSH</code>公钥是否已正确绑定<code>Gitee</code>账户，并修复目录权限：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo <span class="built_in">chown</span> -R <span class="variable">$USER</span>:<span class="variable">$USER</span> .repo/</span><br><span class="line">ex: sudo <span class="built_in">chown</span> -R ubuntu:ubuntu /home/ubuntu/openharmony/.repo</span><br></pre></td></tr></table></figure></li>
+<li><p>如果问题仍存在,可能是父目录权限问题，检查并修复整个<code>openharmony</code>目录的权限：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo <span class="built_in">chown</span> -R ubuntu:ubuntu /home/ubuntu/openharmony</span><br><span class="line">sudo <span class="built_in">chmod</span> -R 755 /home/ubuntu/openharmony</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>网络中断导致同步失败</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">repo <span class="built_in">sync</span> -c -j4 --fail-fast  <span class="comment"># 失败时自动重试</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>依赖缺失</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">./build/prebuilts_download.sh  <span class="comment"># 自动下载依赖:cite[3]:cite[6]</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<ol start="4">
+<li>验证代码完整性</li>
+</ol>
+<ul>
+<li><p>目录结构检查</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">ls</span> -la .repo/manifests/  <span class="comment"># 应包含default.xml及版本分支文件</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>版本标签匹配</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> .repo/manifests.git</span><br><span class="line">git tag | grep OpenHarmony-5.0.2  <span class="comment"># 确认分支存在:cite[7]</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+]]></content>
+      <categories>
+        <category>小贴士</category>
       </categories>
       <tags>
         <tag>Linux</tag>
-        <tag>ESP32</tag>
+        <tag>Wsl</tag>
       </tags>
   </entry>
   <entry>
@@ -2723,6 +2723,81 @@ esp-download
       </categories>
       <tags>
         <tag>Qt</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Markdown小贴士</title>
+    <url>/2024/02/19/Markdown%E5%B0%8F%E8%B4%B4%E5%A3%AB/</url>
+    <content><![CDATA[<h3 id="Markdown-的基本语法"><a href="#Markdown-的基本语法" class="headerlink" title="Markdown 的基本语法"></a>Markdown 的基本语法</h3><p>Markdown 的语法非常简单，常用的标记符号不超过十个，用于日常写作记录绰绰有余，不到半小时就能完全掌握。以下是一些常用的 Markdown 标记符号：</p>
+<h4 id="标题"><a href="#标题" class="headerlink" title="标题"></a>标题</h4><pre><code># 一级标题
+## 二级标题
+### 三级标题
+#### 四级标题
+##### 五级标题
+###### 六级标题	
+</code></pre>
+<h4 id="文本"><a href="#文本" class="headerlink" title="文本"></a>文本</h4><pre><code>普通文本
+**加粗文本**
+*斜体文本*
+**~删除线文本~**
+</code></pre>
+<h4 id="列表"><a href="#列表" class="headerlink" title="列表"></a>列表</h4><pre><code>* 无序列表
+1. 有序列表
+    * 嵌套列表
+</code></pre>
+<h4 id="代码块"><a href="#代码块" class="headerlink" title="代码块"></a>代码块</h4><pre><code><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span> &#123;</span><br><span class="line"><span class="built_in">printf</span>(<span class="string">&quot;Hello, world!\n&quot;</span>);</span><br><span class="line"><span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</code></pre>
+<h4 id="文本中代码高亮"><a href="#文本中代码高亮" class="headerlink" title="文本中代码高亮"></a>文本中代码高亮</h4><pre><code>使用`printf(&quot;Hello, world!\n&quot;);`函数进行打印
+</code></pre>
+<p>效果：使用<code>printf(&quot;Hello, world!\n&quot;);</code>函数进行打印</p>
+<h4 id="链接"><a href="#链接" class="headerlink" title="链接"></a>链接</h4><p><strong>链接文本</strong>: <a href="https://www.example.com/">https://www.example.com</a></p>
+<h4 id="图片"><a href="#图片" class="headerlink" title="图片"></a>图片</h4><pre><code>网络地址: ![这是一张示例图片](https://www.example.com/example.png)
+本地文件路径：![这是一张示例图片](../pictures/这是一张示例图片.png)
+图片链接跳转: ![这是一张示例图片](example.png) &#123;link=https://www.example.com/&#125;
+图片标题: ![这是一张示例图片](example.png) &#123;title=这是一张示例图片&#125;
+图片居中: ![这是一张示例图片](example.png) &#123;align=center&#125;
+
+示例：
+![这是一张示例图片](example.png)
+![这是一张 200x100 像素的图片](example.png) &#123;width=200 height=100&#125;
+![这是一张居中的图片](example.png) &#123;align=center&#125;
+![点击图片跳转到 https://www.example.com/](example.png) &#123;link=https://www.example.com/&#125;
+![这是一张示例图片](example.png) &#123;title=这是一张示例图片&#125;
+</code></pre>
+<h4 id="表格"><a href="#表格" class="headerlink" title="表格"></a>表格</h4><table>
+<thead>
+<tr>
+<th>头部1</th>
+<th>头部2</th>
+<th>头部3</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>内容1</td>
+<td>内容2</td>
+<td>内容3</td>
+</tr>
+<tr>
+<td>内容4</td>
+<td>内容5</td>
+<td>内容6</td>
+</tr>
+</tbody></table>
+<h3 id="Markdown-的应用"><a href="#Markdown-的应用" class="headerlink" title="Markdown 的应用"></a>Markdown 的应用</h3><pre><code>博客文章
+技术文档
+README 文件
+演示文稿
+电子书
+</code></pre>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><pre><code>Markdown 是一种易于学习和使用的标记语言，非常适合编写各种文档。如果您还没有使用过 Markdown，建议您尝试一下。
+</code></pre>
+<p>以下是 Markdown 官方教学网站：<br><a href="https://markdown.com.cn/basic-syntax/headings.html">Markdown 官方网站</a></p>
+]]></content>
+      <categories>
+        <category>文本编辑工具</category>
+      </categories>
+      <tags>
+        <tag>Markdown</tag>
       </tags>
   </entry>
   <entry>
@@ -4113,80 +4188,5 @@ sudo apt upgrade
 </li>
 </ol>
 <figure class="highlight c"><figcaption><span>- coze_chat_app.c</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> WAV_HEADER_SIZE 44</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PCM_CHUNK_SIZE 640   <span class="comment">// 每次发送的 PCM 数据长度</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// WAV 头结构</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">    <span class="type">char</span> riff[<span class="number">4</span>];            <span class="comment">// &quot;RIFF&quot;</span></span><br><span class="line">    <span class="type">uint32_t</span> chunk_size;</span><br><span class="line">    <span class="type">char</span> wave[<span class="number">4</span>];            <span class="comment">// &quot;WAVE&quot;</span></span><br><span class="line">    <span class="type">char</span> fmt[<span class="number">4</span>];             <span class="comment">// &quot;fmt &quot;</span></span><br><span class="line">    <span class="type">uint32_t</span> subchunk1_size; <span class="comment">// 16 for PCM</span></span><br><span class="line">    <span class="type">uint16_t</span> audio_format;   <span class="comment">// PCM = 1</span></span><br><span class="line">    <span class="type">uint16_t</span> num_channels;   <span class="comment">// 1</span></span><br><span class="line">    <span class="type">uint32_t</span> sample_rate;    <span class="comment">// 16000</span></span><br><span class="line">    <span class="type">uint32_t</span> byte_rate;</span><br><span class="line">    <span class="type">uint16_t</span> block_align;</span><br><span class="line">    <span class="type">uint16_t</span> bits_per_sample;</span><br><span class="line">    <span class="type">char</span> subchunk2_id[<span class="number">4</span>];    <span class="comment">// &quot;data&quot;</span></span><br><span class="line">    <span class="type">uint32_t</span> subchunk2_size; <span class="comment">// PCM 数据长度</span></span><br><span class="line">&#125; <span class="type">wav_header_t</span>;</span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="type">void</span> <span class="title function_">fill_wav_header</span><span class="params">(<span class="type">wav_header_t</span> *hdr, <span class="type">uint32_t</span> pcm_len)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">memcpy</span>(hdr-&gt;riff, <span class="string">&quot;RIFF&quot;</span>, <span class="number">4</span>);</span><br><span class="line">    hdr-&gt;chunk_size = <span class="number">36</span> + pcm_len;</span><br><span class="line">    <span class="built_in">memcpy</span>(hdr-&gt;wave, <span class="string">&quot;WAVE&quot;</span>, <span class="number">4</span>);</span><br><span class="line">    <span class="built_in">memcpy</span>(hdr-&gt;fmt, <span class="string">&quot;fmt &quot;</span>, <span class="number">4</span>);</span><br><span class="line">    hdr-&gt;subchunk1_size = <span class="number">16</span>;</span><br><span class="line">    hdr-&gt;audio_format = <span class="number">1</span>;</span><br><span class="line">    hdr-&gt;num_channels = <span class="number">1</span>;</span><br><span class="line">    hdr-&gt;sample_rate = <span class="number">16000</span>;</span><br><span class="line">    hdr-&gt;bits_per_sample = <span class="number">16</span>;</span><br><span class="line">    hdr-&gt;byte_rate = hdr-&gt;sample_rate * hdr-&gt;num_channels * hdr-&gt;bits_per_sample / <span class="number">8</span>;</span><br><span class="line">    hdr-&gt;block_align = hdr-&gt;num_channels * hdr-&gt;bits_per_sample / <span class="number">8</span>;</span><br><span class="line">    <span class="built_in">memcpy</span>(hdr-&gt;subchunk2_id, <span class="string">&quot;data&quot;</span>, <span class="number">4</span>);</span><br><span class="line">    hdr-&gt;subchunk2_size = pcm_len;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="type">void</span> <span class="title function_">audio_data_read_task</span><span class="params">(<span class="type">void</span> *pv)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">uint8_t</span> *pcm_buf = esp_gmf_oal_calloc(<span class="number">1</span>, PCM_CHUNK_SIZE);</span><br><span class="line">    <span class="type">uint8_t</span> *wav_buf = esp_gmf_oal_calloc(<span class="number">1</span>, PCM_CHUNK_SIZE + WAV_HEADER_SIZE);</span><br><span class="line">    <span class="type">int</span> ret;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> (<span class="literal">true</span>) &#123;</span><br><span class="line"><span class="meta">#<span class="keyword">if</span> defined CONFIG_KEY_PRESS_DIALOG_MODE</span></span><br><span class="line">        xEventGroupWaitBits(coze_chat.data_evt_group, BUTTON_REC_READING, pdFALSE, pdFALSE, portMAX_DELAY);</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"></span><br><span class="line">        ret = audio_recorder_read_data(pcm_buf, PCM_CHUNK_SIZE);</span><br><span class="line">        <span class="keyword">if</span> (ret &lt;= <span class="number">0</span>) &#123;</span><br><span class="line">            vTaskDelay(pdMS_TO_TICKS(<span class="number">5</span>));</span><br><span class="line">            <span class="keyword">continue</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 填充 WAV 头</span></span><br><span class="line">        fill_wav_header((<span class="type">wav_header_t</span> *)wav_buf, ret);</span><br><span class="line">        <span class="built_in">memcpy</span>(wav_buf + WAV_HEADER_SIZE, pcm_buf, ret);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 发送到 Coze</span></span><br><span class="line">        <span class="type">int</span> send_len = ret + WAV_HEADER_SIZE;</span><br><span class="line">        <span class="keyword">while</span> (esp_coze_chat_send_audio_data(coze_chat.chat, (<span class="type">char</span> *)wav_buf, send_len) != ESP_OK) &#123;</span><br><span class="line">            vTaskDelay(pdMS_TO_TICKS(<span class="number">5</span>));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
-  </entry>
-  <entry>
-    <title>Markdown小贴士</title>
-    <url>/2024/02/19/Markdown%E5%B0%8F%E8%B4%B4%E5%A3%AB/</url>
-    <content><![CDATA[<h3 id="Markdown-的基本语法"><a href="#Markdown-的基本语法" class="headerlink" title="Markdown 的基本语法"></a>Markdown 的基本语法</h3><p>Markdown 的语法非常简单，常用的标记符号不超过十个，用于日常写作记录绰绰有余，不到半小时就能完全掌握。以下是一些常用的 Markdown 标记符号：</p>
-<h4 id="标题"><a href="#标题" class="headerlink" title="标题"></a>标题</h4><pre><code># 一级标题
-## 二级标题
-### 三级标题
-#### 四级标题
-##### 五级标题
-###### 六级标题	
-</code></pre>
-<h4 id="文本"><a href="#文本" class="headerlink" title="文本"></a>文本</h4><pre><code>普通文本
-**加粗文本**
-*斜体文本*
-**~删除线文本~**
-</code></pre>
-<h4 id="列表"><a href="#列表" class="headerlink" title="列表"></a>列表</h4><pre><code>* 无序列表
-1. 有序列表
-    * 嵌套列表
-</code></pre>
-<h4 id="代码块"><a href="#代码块" class="headerlink" title="代码块"></a>代码块</h4><pre><code><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span> &#123;</span><br><span class="line"><span class="built_in">printf</span>(<span class="string">&quot;Hello, world!\n&quot;</span>);</span><br><span class="line"><span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</code></pre>
-<h4 id="文本中代码高亮"><a href="#文本中代码高亮" class="headerlink" title="文本中代码高亮"></a>文本中代码高亮</h4><pre><code>使用`printf(&quot;Hello, world!\n&quot;);`函数进行打印
-</code></pre>
-<p>效果：使用<code>printf(&quot;Hello, world!\n&quot;);</code>函数进行打印</p>
-<h4 id="链接"><a href="#链接" class="headerlink" title="链接"></a>链接</h4><p><strong>链接文本</strong>: <a href="https://www.example.com/">https://www.example.com</a></p>
-<h4 id="图片"><a href="#图片" class="headerlink" title="图片"></a>图片</h4><pre><code>网络地址: ![这是一张示例图片](https://www.example.com/example.png)
-本地文件路径：![这是一张示例图片](../pictures/这是一张示例图片.png)
-图片链接跳转: ![这是一张示例图片](example.png) &#123;link=https://www.example.com/&#125;
-图片标题: ![这是一张示例图片](example.png) &#123;title=这是一张示例图片&#125;
-图片居中: ![这是一张示例图片](example.png) &#123;align=center&#125;
-
-示例：
-![这是一张示例图片](example.png)
-![这是一张 200x100 像素的图片](example.png) &#123;width=200 height=100&#125;
-![这是一张居中的图片](example.png) &#123;align=center&#125;
-![点击图片跳转到 https://www.example.com/](example.png) &#123;link=https://www.example.com/&#125;
-![这是一张示例图片](example.png) &#123;title=这是一张示例图片&#125;
-</code></pre>
-<h4 id="表格"><a href="#表格" class="headerlink" title="表格"></a>表格</h4><table>
-<thead>
-<tr>
-<th>头部1</th>
-<th>头部2</th>
-<th>头部3</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>内容1</td>
-<td>内容2</td>
-<td>内容3</td>
-</tr>
-<tr>
-<td>内容4</td>
-<td>内容5</td>
-<td>内容6</td>
-</tr>
-</tbody></table>
-<h3 id="Markdown-的应用"><a href="#Markdown-的应用" class="headerlink" title="Markdown 的应用"></a>Markdown 的应用</h3><pre><code>博客文章
-技术文档
-README 文件
-演示文稿
-电子书
-</code></pre>
-<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><pre><code>Markdown 是一种易于学习和使用的标记语言，非常适合编写各种文档。如果您还没有使用过 Markdown，建议您尝试一下。
-</code></pre>
-<p>以下是 Markdown 官方教学网站：<br><a href="https://markdown.com.cn/basic-syntax/headings.html">Markdown 官方网站</a></p>
-]]></content>
-      <categories>
-        <category>文本编辑工具</category>
-      </categories>
-      <tags>
-        <tag>Markdown</tag>
-      </tags>
   </entry>
 </search>
