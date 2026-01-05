@@ -29,7 +29,7 @@
 <meta property="og:image" content="http://example.com/pictures/menuconfig.png">
 <meta property="og:image" content="http://example.com/pictures/menusubconfig.png">
 <meta property="article:published_time" content="2024-05-08T06:56:40.000Z">
-<meta property="article:modified_time" content="2026-01-05T03:58:55.345Z">
+<meta property="article:modified_time" content="2026-01-05T09:56:30.986Z">
 <meta property="article:author" content="boollight">
 <meta property="article:tag" content="Linux">
 <meta property="article:tag" content="Makefile">
@@ -213,7 +213,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2026-01-05 11:58:55" itemprop="dateModified" datetime="2026-01-05T11:58:55+08:00">2026-01-05</time>
+      <time title="Modified: 2026-01-05 17:56:30" itemprop="dateModified" datetime="2026-01-05T17:56:30+08:00">2026-01-05</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -250,9 +250,7 @@
     
     
     
-    <div class="post-body" itemprop="articleBody"><br>
-
-<h2 id="makefile问题汇总"><a href="#makefile问题汇总" class="headerlink" title="makefile问题汇总"></a>makefile问题汇总</h2><h3 id="修改-h文件没有重新编译"><a href="#修改-h文件没有重新编译" class="headerlink" title="修改.h文件没有重新编译"></a>修改.h文件没有重新编译</h3><ul>
+    <div class="post-body" itemprop="articleBody"><h2 id="makefile问题汇总"><a href="#makefile问题汇总" class="headerlink" title="makefile问题汇总"></a>makefile问题汇总</h2><h3 id="修改-h文件没有重新编译"><a href="#修改-h文件没有重新编译" class="headerlink" title="修改.h文件没有重新编译"></a>修改.h文件没有重新编译</h3><ul>
 <li>定义<code>COMPILE_FLAGS = -MD</code>或者<code>-MMD</code>, 编译器标志，用于生成 <code>.d</code> 文件</li>
 <li><code>$(BUILD_DIR)</code>为编译文件目录，跟进自身makefile修改，原来的编译规则：</li>
 </ul>
@@ -263,8 +261,6 @@
 或者：<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">-include $(wildcard $(BUILD_DIR)<span class="comment">/**/</span>*.d)</span><br><span class="line">-include $(wildcard $(BUILD_DIR)<span class="comment">/*/*/</span>*.d)</span><br></pre></td></tr></table></figure>
 <code>/**/*.d</code> 它允许你搜索和匹配嵌套在任意深度的目录中的文件。<br><code>/*/*/*.d</code> 为当前目录下的三级所有文件检索，根据具体情况修改。</li>
 </ul>
-<br>
-
 <h3 id=""><a href="#" class="headerlink" title="$&lt; 和 $^ 的区别"></a><code>$&lt;</code> 和 <code>$^</code> 的区别</h3><p>在<code>Makefile</code>中，<code>$&lt;</code> 和 <code>$^</code> 是两个自动变量，它们在规则中用来引用规则的依赖文件，但它们的用途和行为有所不同：</p>
 <ul>
 <li><p><code>$&lt;</code> - 代表规则的第一个依赖文件。</p>
@@ -292,8 +288,6 @@
 <li>使用 <code>$^</code> 时，所有依赖文件都会被考虑。</li>
 </ul>
 <p>在实际编写Makefile时，根据你的需要选择合适的变量。</p>
-<br>
-
 <h3 id="makefile伪指令"><a href="#makefile伪指令" class="headerlink" title="makefile伪指令"></a>makefile伪指令</h3><p>在 <code>Makefile</code> 中，<code>.PHONY</code> 是一个特殊的声明，用来指出一些目标并不是实际的文件，而是一些需要执行的命令序列。这样做可以让 <code>Make</code> 工具在遇到同名文件时，不会误认为这些目标是要操作的文件，而是要执行的命令。</p>
 <figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">.PHONY : clean all copy mix download</span><br><span class="line"></span><br><span class="line"><span class="section">all: <span class="variable">$(TARGET)</span>.bin <span class="variable">$(TARGET)</span>.list <span class="variable">$(TARGET)</span>.hex</span></span><br><span class="line">	<span class="variable">$(SZ)</span> <span class="variable">$(TARGET)</span>.elf</span><br><span class="line">	@make copy</span><br><span class="line">	@make mix</span><br><span class="line">	</span><br><span class="line"><span class="section">copy: <span class="variable">$(TARGET)</span>.bin</span></span><br><span class="line">	cp <span class="variable">$(TARGET)</span>.bin app.bin</span><br><span class="line">	cp ../bootloader/bootloader.bin bootloader.bin</span><br><span class="line"><span class="comment">#	cp $(TARGET).hex app.hex</span></span><br><span class="line"></span><br><span class="line"><span class="section">mix:</span></span><br><span class="line">	./tools/papp_up</span><br><span class="line">	./tools/mix_10K</span><br><span class="line">	<span class="variable">$(OC)</span> -I binary -O ihex --change-addresses 0x8000000 mix.bin mix.hex</span><br><span class="line">	rm bootloader.bin</span><br><span class="line">	rm app.bin</span><br><span class="line">	rm mix.bin</span><br><span class="line"></span><br><span class="line"><span class="section">clean:</span></span><br><span class="line">	rm -rf <span class="variable">$(BUILD_DIR)</span></span><br><span class="line">	rm papp.bin</span><br><span class="line">	rm mix.hex</span><br></pre></td></tr></table></figure>
 
@@ -303,8 +297,6 @@
 <li><code>@</code>符号使得 <code>Make</code> 工具在执行命令时不会打印该命令本身,如<code>make copy</code>。</li>
 <li><strong>拓展</strong>：<code>$(OC) -I binary -O ihex --change-addresses 0x8000000 mix.bin mix.hex</code>表示将 <code>mix.bin</code> 的二进制文件转换为名为 <code>mix.hex</code> 的 <code>Intel HEX</code>格式文件，并将所有地址偏移设置为 <code>0x8000000</code></li>
 </ul>
-<br>
-
 <h2 id="n32g452rc的makefile解析"><a href="#n32g452rc的makefile解析" class="headerlink" title="n32g452rc的makefile解析"></a>n32g452rc的makefile解析</h2><p><strong><code>makefile</code>源码：</strong></p>
 <figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># C编译器的宏定义</span></span><br><span class="line">C_DEFS +=  \</span><br><span class="line">-DN32G45X \</span><br><span class="line">-DUSE_STDPERIPH_DRIVER</span><br><span class="line"></span><br><span class="line"><span class="comment"># C编译器的头文件搜索路径</span></span><br><span class="line">INCLUDE +=  \</span><br><span class="line">-ICMSIS/core  \</span><br><span class="line">-ICMSIS/device	\</span><br><span class="line">-Istd_periph_lib/inc</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># APP源文件</span></span><br><span class="line">C_APP_SOURCES +=  \</span><br><span class="line">application/main.c \</span><br><span class="line">application/n32g45x_it.c</span><br><span class="line"></span><br><span class="line"><span class="comment"># 中间层驱动源文件</span></span><br><span class="line">C_DRV_SOURCES +=  \</span><br><span class="line">msp/drv_msp.c \</span><br><span class="line"><span class="variable">$(<span class="built_in">wildcard</span> rtt-nano/src/*.c)</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># C编译器的底层驱动源文件</span></span><br><span class="line">C_LIB_SOURCES +=  \</span><br><span class="line">CMSIS/device/system_n32g45x.c \</span><br><span class="line">std_periph_lib/src/misc.c \</span><br><span class="line">std_periph_lib/src/n32g45x_rcc.c</span><br><span class="line"></span><br><span class="line">C_SOURCES += <span class="variable">$(C_LIB_SOURCES)</span></span><br><span class="line">C_SOURCES += <span class="variable">$(C_APP_SOURCES)</span></span><br><span class="line">C_SOURCES += <span class="variable">$(C_DRV_SOURCES)</span></span><br><span class="line"></span><br><span class="line">ASM_SOURCES +=  \</span><br><span class="line">CMSIS/device/startup/startup_n32g45x_gcc.S \</span><br><span class="line">rtt-nano/libcpu/arm/cortex-m4/context_gcc.S</span><br><span class="line"></span><br><span class="line"><span class="comment"># 指定交叉编译工具链的 编译器、连接器、库管理器、</span></span><br><span class="line">CROSS_COMPILE=arm-none-eabi-</span><br><span class="line">CC=<span class="variable">$(CROSS_COMPILE)</span>gcc</span><br><span class="line">LD=<span class="variable">$(CROSS_COMPILE)</span>ld</span><br><span class="line">AR=<span class="variable">$(CROSS_COMPILE)</span>ar</span><br><span class="line">AS=<span class="variable">$(CROSS_COMPILE)</span>as</span><br><span class="line">OC=<span class="variable">$(CROSS_COMPILE)</span>objcopy</span><br><span class="line">OD=<span class="variable">$(CROSS_COMPILE)</span>objdump</span><br><span class="line">SZ=<span class="variable">$(CROSS_COMPILE)</span>size</span><br><span class="line"></span><br><span class="line"><span class="comment"># 指定目标硬件的架构和浮点运算单元   -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mfloat-abi=soft </span></span><br><span class="line">MCU = -mcpu=cortex-m4 -mthumb \</span><br><span class="line">	-ffunction-sections \</span><br><span class="line">	-fdata-sections \</span><br><span class="line">	--specs=nano.specs \</span><br><span class="line">	--specs=nosys.specs \</span><br><span class="line">	-Os -ggdb</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义编译C源文件的编译选项：禁用共享变量、函数和数据分段、优化级别、调试信息级别、开启所有警告、目标架构、预定义宏</span></span><br><span class="line"><span class="comment"># O0:禁用优化，O1：基本优化，O2, O3, Os</span></span><br><span class="line"><span class="comment"># g0:禁用调试信息, g1, g2, g3, g</span></span><br><span class="line">CFLAGS += -c -fno-common \</span><br><span class="line">	--specs=rdimon.specs \</span><br><span class="line">	-std=gnu99 -mabi=aapcs \</span><br><span class="line">	-Wall \</span><br><span class="line">	<span class="variable">$(MCU)</span> \</span><br><span class="line">	<span class="variable">$(C_DEFS)</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义链接器脚本、链接选项、目标文件格式转换选项、反汇编 -nostdlib -lnosys</span></span><br><span class="line">LDSCRIPT=n32g452_flash.ld</span><br><span class="line">LDFLAGS += -Wl,--gc-sections --data-sections -mabi=aapcs <span class="variable">$(MCU)</span> -T<span class="variable">$(LDSCRIPT)</span> \</span><br><span class="line">	-x assembler-with-cpp -Wa,-mimplicit-it=thumb</span><br><span class="line"></span><br><span class="line"><span class="comment"># printf打印浮点数</span></span><br><span class="line"><span class="comment"># LDFLAGS += -lc -lrdimon -u _printf_float</span></span><br><span class="line"></span><br><span class="line">OCFLAGS	= -Obinary</span><br><span class="line">ODFLAGS	= -S</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#输出目录和目标文件名</span></span><br><span class="line">BUILD_DIR = build</span><br><span class="line">TARGET  = <span class="variable">$(BUILD_DIR)</span>/app</span><br><span class="line"></span><br><span class="line"><span class="comment"># C源文件、汇编源文件的目标文件路径</span></span><br><span class="line">C_OBJECTS = <span class="variable">$(<span class="built_in">addprefix</span> <span class="variable">$(BUILD_DIR)</span>/, $(C_SOURCES:.c=.o)</span>)</span><br><span class="line">ASM_OBJECTS = <span class="variable">$(<span class="built_in">addprefix</span> <span class="variable">$(BUILD_DIR)</span>/, $(ASM_SOURCES:.S=.o)</span>)</span><br><span class="line">OBJECTS += <span class="variable">$(ASM_OBJECTS)</span> <span class="variable">$(C_OBJECTS)</span></span><br><span class="line"></span><br><span class="line">.PHONY : clean all</span><br><span class="line"></span><br><span class="line"><span class="section">all: <span class="variable">$(TARGET)</span>.bin <span class="variable">$(TARGET)</span>.list <span class="variable">$(TARGET)</span>.hex</span></span><br><span class="line">	<span class="variable">$(SZ)</span> <span class="variable">$(TARGET)</span>.elf</span><br><span class="line">	@make copy</span><br><span class="line">	@make mix</span><br><span class="line"></span><br><span class="line"><span class="meta"><span class="keyword">.PHONY</span>: copy</span></span><br><span class="line"></span><br><span class="line"><span class="section">copy: <span class="variable">$(TARGET)</span>.bin</span></span><br><span class="line">	cp <span class="variable">$(TARGET)</span>.bin app.bin</span><br><span class="line">	cp ../bootloader/bootloader.bin bootloader.bin</span><br><span class="line"><span class="comment">#	cp $(TARGET).hex app.hex</span></span><br><span class="line"></span><br><span class="line"><span class="section">mix:</span></span><br><span class="line">	./tools/papp_up</span><br><span class="line">	./tools/mix_10K</span><br><span class="line">	<span class="variable">$(OC)</span> -I binary -O ihex --change-addresses 0x8000000 mix.bin mix.hex</span><br><span class="line">	rm bootloader.bin</span><br><span class="line">	rm app.bin</span><br><span class="line">	rm mix.bin</span><br><span class="line"></span><br><span class="line"><span class="section">clean:</span></span><br><span class="line">	rm -rf <span class="variable">$(BUILD_DIR)</span></span><br><span class="line">	rm papp.bin</span><br><span class="line">	rm mix.hex</span><br><span class="line"></span><br><span class="line">SYS := <span class="variable">$(<span class="built_in">shell</span> uname -a)</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">ifeq</span> (<span class="variable">$(<span class="built_in">findstring</span> Microsoft,<span class="variable">$(SYS)</span>)</span>,Microsoft)</span><br><span class="line"><span class="section">COPY_CMD:</span></span><br><span class="line">	cp <span class="variable">$(TARGET)</span>.hex <span class="string">&quot;/mnt/c/Users/Breo/Desktop/iap-tools/linux_download&quot;</span></span><br><span class="line">	wsl.exe -d Ubuntu-20.04 cmd.exe /c <span class="string">&quot;C:\\\Users\\\BREO\\\Desktop\\\iap-tools\\\linux_download\\\program452RC.bat&quot;</span></span><br><span class="line"><span class="keyword">else</span></span><br><span class="line"><span class="section">COPY_CMD:</span></span><br><span class="line">	echo <span class="string">&quot;当前系统不是 WSL，跳过拷贝文件指令&quot;</span></span><br><span class="line"><span class="keyword">endif</span></span><br><span class="line"></span><br><span class="line"><span class="section">download:</span></span><br><span class="line">	@make all</span><br><span class="line">	@<span class="variable">$(MAKE)</span> COPY_CMD</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义生成目标文件的规则</span></span><br><span class="line"><span class="variable">$(TARGET)</span>.list: <span class="variable">$(TARGET)</span>.elf</span><br><span class="line">	<span class="variable">$(OD)</span> <span class="variable">$(ODFLAGS)</span> <span class="variable">$&lt;</span> &gt; <span class="variable">$(TARGET)</span>.lst</span><br><span class="line"></span><br><span class="line"><span class="variable">$(TARGET)</span>.bin: <span class="variable">$(TARGET)</span>.elf</span><br><span class="line">	<span class="variable">$(OC)</span> <span class="variable">$(OCFLAGS)</span> <span class="variable">$(TARGET)</span>.elf <span class="variable">$(TARGET)</span>.bin</span><br><span class="line"></span><br><span class="line"><span class="variable">$(TARGET)</span>.elf: <span class="variable">$(OBJECTS)</span></span><br><span class="line">	<span class="variable">$(CC)</span> <span class="variable">$(ASM_OBJECTS)</span> <span class="variable">$(C_OBJECTS)</span> <span class="variable">$(LDFLAGS)</span> -Wl,-Map=<span class="variable">$(TARGET)</span>.map -o <span class="variable">$(TARGET)</span>.elf</span><br><span class="line"></span><br><span class="line"><span class="variable">$(TARGET)</span>.hex: <span class="variable">$(TARGET)</span>.elf</span><br><span class="line">	<span class="variable">$(OC)</span> -O ihex <span class="variable">$&lt;</span> <span class="variable">$@</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义编译C源文件、汇编源文件的规则，将源文件编译成目标文件</span></span><br><span class="line"><span class="variable">$(BUILD_DIR)</span>/%.o: %.c</span><br><span class="line">	mkdir -p <span class="variable">$(<span class="built_in">dir</span> <span class="variable">$@</span>)</span></span><br><span class="line">	<span class="variable">$(CC)</span> <span class="variable">$(INCLUDE)</span> <span class="variable">$(CFLAGS)</span> -MMD -c <span class="variable">$&lt;</span> -o <span class="variable">$@</span></span><br><span class="line"></span><br><span class="line"><span class="variable">$(BUILD_DIR)</span>/%.o: %.S</span><br><span class="line">	mkdir -p <span class="variable">$(<span class="built_in">dir</span> <span class="variable">$@</span>)</span></span><br><span class="line">	<span class="variable">$(CC)</span> <span class="variable">$(INCLUDE)</span> <span class="variable">$(CFLAGS)</span> -c <span class="variable">$&lt;</span> -o <span class="variable">$@</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#-include $(wildcard $(BUILD_DIR)/**/*.d)	# 包含所有生成的依赖文件，避免重复编译、提高效率</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 找到所有的 .d 文件</span></span><br><span class="line">DEP_FILES := <span class="variable">$(<span class="built_in">shell</span> find <span class="variable">$(BUILD_DIR)</span> -type f -name &#x27;*.d&#x27;)</span><span class="comment"># 包含所有生成的依赖文件，避免重复编译、提高效率</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 包含所有的 .d 文件</span></span><br><span class="line"><span class="keyword">-include</span> <span class="variable">$(DEP_FILES)</span></span><br></pre></td></tr></table></figure>
 <p>下面是对这段代码的逐句分析：</p>
@@ -314,71 +306,39 @@
 <li><code>-DN32G45X</code> 和 <code>-DUSE_STDPERIPH_DRIVER</code> 是编译器的宏定义，用于在编译时定义特定的预处理变量。</li>
 </ul>
 </li>
-</ol>
-<br>
-
-<ol start="2">
 <li><p>头文件搜索路径 (<code>INCLUDE</code>):</p>
 <p> <code>-ICMSIS/core</code>, <code>-ICMSIS/device</code>, <code>-Istd_periph_lib/inc</code> 指定了编译器搜索头文件的路径。</p>
 </li>
-</ol>
-<br>
-
-<ol start="3">
 <li><p>应用层源文件 (<code>C_APP_SOURCES</code>):</p>
 <ul>
 <li>列出了应用层的 <code>C</code> 源文件。</li>
 </ul>
 </li>
-</ol>
-<br>
-
-<ol start="4">
 <li><p>中间层驱动源文件 (<code>C_DRV_SOURCES</code>):</p>
 <ul>
 <li>使用 $(wildcard rtt-nano&#x2F;src&#x2F;*.c) 来匹配 rtt-nano&#x2F;src 目录下的所有 .c 文件。</li>
 </ul>
 </li>
-</ol>
-<br>
-
-<ol start="5">
 <li><p>底层驱动源文件 (<code>C_LIB_SOURCES</code>):</p>
 <ul>
 <li>列出了底层驱动的 C 源文件。</li>
 </ul>
 </li>
-</ol>
-<br>
-
-<ol start="6">
 <li><p>源文件汇总 (<code>C_SOURCES</code>):</p>
 <ul>
 <li>将应用层、中间层和底层驱动的源文件汇总到 <code>C_SOURCES。</code></li>
 </ul>
 </li>
-</ol>
-<br>
-
-<ol start="7">
 <li><p>汇编源文件 (<code>ASM_SOURCES</code>):</p>
 <ul>
 <li>列出了汇编语言的源文件。</li>
 </ul>
 </li>
-</ol>
-<br>
-
-<ol start="8">
 <li><p>交叉编译工具链 (<code>CROSS_COMPILE</code>, <code>CC</code>, <code>LD</code>, <code>AR</code>, <code>AS</code>, <code>OC</code>, <code>OD</code>, <code>SZ</code>):</p>
 <ul>
 <li>定义了交叉编译工具链的前缀和各个工具（编译器、链接器、库管理器等）的命令。</li>
 </ul>
 </li>
-</ol>
-<br>
-
-<ol start="9">
 <li><p>目标硬件的架构和浮点运算单元 (<code>MCU</code>):</p>
 <ul>
 <li><p><code>-mcpu=cortex-m4</code>:</p>
@@ -440,11 +400,8 @@
 </ul>
 <p> <strong>注意：</strong><code>-mfpu=fpv4-sp-d16</code> 与 <code>-mfloat-abi=hard</code> 或 <code>-mfloat-abi=soft</code> 选项一起使用。</p>
 </li>
-</ol>
-<br>
-
-<ol start="10">
-<li>编译选项 (<code>CFLAGS</code>):<br>定义了编译 <code>C</code> 源文件时使用的选项,<code>$(MCU)</code> 和 <code>$(C_DEFS)</code>上面有解释，不过多阐述。<ul>
+<li><p>编译选项 (<code>CFLAGS</code>):<br>定义了编译 <code>C</code> 源文件时使用的选项,<code>$(MCU)</code> 和 <code>$(C_DEFS)</code>上面有解释，不过多阐述。</p>
+<ul>
 <li><code>-c</code>:<ul>
 <li>这个选项告诉编译器 <strong>仅编译源代码</strong> 文件而 <strong>不进行链接</strong>。编译器会为每个源文件生成一个目标（<code>object</code>）文件，这些目标文件 <strong>随后可以被链接</strong> 器链接成<strong>可执行文件</strong>或<strong>库</strong>。</li>
 </ul>
@@ -471,10 +428,6 @@
 </li>
 </ul>
 </li>
-</ol>
-<br>
-
-<ol start="11">
 <li><p>链接器脚本和链接选项 (<code>LDSCRIPT</code>, <code>LDFLAGS</code>):</p>
 <ul>
 <li><code>LDSCRIPT=n32g452_flash.ld</code><ul>
@@ -508,24 +461,15 @@
 </li>
 </ul>
 </li>
-</ol>
-<br>
-
-<ol start="12">
-<li>目标文件格式转换选项 (<code>OCFLAGS</code>, <code>ODFLAGS</code>):<br>- <code>OCFLAGS = -Obinary</code><br>- <code>ODFLAGS = -S</code></li>
-</ol>
-<br>
-
-<ol start="13">
-<li>输出目录和目标文件名 (<code>BUILD_DIR</code>, <code>TARGET</code>):<ul>
+<li><p>目标文件格式转换选项 (<code>OCFLAGS</code>, <code>ODFLAGS</code>):<br>- <code>OCFLAGS = -Obinary</code><br>- <code>ODFLAGS = -S</code></p>
+</li>
+<li><p>输出目录和目标文件名 (<code>BUILD_DIR</code>, <code>TARGET</code>):</p>
+<ul>
 <li>定义了构建输出目录和最终目标文件的名称。</li>
 </ul>
 </li>
-</ol>
-<br>
-
-<ol start="14">
-<li>目标文件的生成 (<code>C_OBJECTS</code>, <code>ASM_OBJECTS</code>, <code>OBJECTS</code>):<ul>
+<li><p>目标文件的生成 (<code>C_OBJECTS</code>, <code>ASM_OBJECTS</code>, <code>OBJECTS</code>):</p>
+<ul>
 <li><code>C_OBJECTS = $(addprefix $(BUILD_DIR)/, $(C_SOURCES:.c=.o))</code><ul>
 <li><code>$(C_SOURCES:.c=.o)</code>将所有的 <code>C</code> 源文件列表 <code>$(C_SOURCES)</code> 中的每个 <code>.c</code> 扩展名替换为 <code>.o</code> 扩展名，得到目标文件（<code>object files</code>）列表。</li>
 <li><code>$(addprefix $(BUILD_DIR)/, ...) </code>为每个 <code>.o</code> 文件<strong>加前缀</strong>加上构建目录 <code>$(BUILD_DIR)/</code> 的路径。</li>
@@ -545,19 +489,13 @@
 </li>
 </ul>
 </li>
-</ol>
-<br>
-
-<ol start="15">
-<li>伪目标 (<code>.PHONY</code>):<ul>
+<li><p>伪目标 (<code>.PHONY</code>):</p>
+<ul>
 <li>定义了 <code>clean</code>, <code>all</code>, <code>copy</code>, <code>mix</code>, <code>download</code> 等伪目标，用于执行特定的命令序列。</li>
 </ul>
 </li>
-</ol>
-<br>
-
-<ol start="16">
-<li>条件命令 (<code>SYS</code>, <code>ifeq</code>):<ul>
+<li><p>条件命令 (<code>SYS</code>, <code>ifeq</code>):</p>
+<ul>
 <li><code>SYS := $(shell uname -a)</code>:<ul>
 <li>这行使用 <code>uname -a</code> 命令来获取当前系统的内核信息，并将输出赋值给 <code>SYS</code> 变量。<code>$(shell ...)</code> 命令会在 <code>shell</code> 中执行括号内的内容，并返回其输出。</li>
 </ul>
@@ -578,11 +516,8 @@
 </li>
 </ul>
 </li>
-</ol>
-<br>
-
-<ol start="17">
-<li>生成目标文件的规则 (<code>$(TARGET).list</code>, <code>$(TARGET).bin</code>, <code>$(TARGET).elf</code>, <code>$(TARGET).hex</code>):<ul>
+<li><p>生成目标文件的规则 (<code>$(TARGET).list</code>, <code>$(TARGET).bin</code>, <code>$(TARGET).elf</code>, <code>$(TARGET).hex</code>):</p>
+<ul>
 <li><code>$(TARGET).list: $(TARGET).elf</code>:(以下规则类似)<ul>
 <li><code>$(TARGET).list</code>: <code>$@</code>(<strong>目标文件</strong>)</li>
 <li><code>$(TARGET).elf</code>: <code>$&lt;</code>(<strong>输入文件</strong>)</li>
@@ -635,33 +570,22 @@
 </li>
 </ul>
 </li>
-</ol>
-<br>
-
-<ol start="18">
 <li><p>编译C源文件和汇编源文件的规则 (<code>$(BUILD_DIR)/%.o: %.c</code>, <code>$(BUILD_DIR)/%.o: %.S</code>):</p>
 <ul>
 <li>定义了如何编译 <code>C</code> 和汇编源文件为 <code>.o</code> 目标文件。</li>
 </ul>
 </li>
-</ol>
-<br>
-
-<ol start="19">
-<li>包含生成的依赖文件 <code>(-include $(wildcard $(BUILD_DIR)/**/*.d), DEP_FILES)</code>:<ul>
+<li><p>包含生成的依赖文件 <code>(-include $(wildcard $(BUILD_DIR)/**/*.d), DEP_FILES)</code>:</p>
+<ul>
 <li>使用 <code>find</code> 命令找到所有的 <code>.d</code> 文件，然后使用 <code>-include</code> 指令包含这些文件，以确保 <code>Make</code> 能够跟踪源文件的变化并避免不必要的重新编译。</li>
 </ul>
 </li>
 </ol>
-<br>
-
 <h2 id="标准makefile基本语法"><a href="#标准makefile基本语法" class="headerlink" title="标准makefile基本语法"></a>标准makefile基本语法</h2><p>[参考文档]：<a target="_blank" rel="noopener" href="https://seisman.github.io/how-to-write-makefile/index.html">https://seisman.github.io/how-to-write-makefile/index.html</a></p>
 <h3 id="书写规则"><a href="#书写规则" class="headerlink" title="书写规则"></a>书写规则</h3><h4 id="规则的语法"><a href="#规则的语法" class="headerlink" title="规则的语法"></a>规则的语法</h4><figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">targets : prerequisites</span><br><span class="line">    command</span><br><span class="line">    ...</span><br></pre></td></tr></table></figure>
 <p>或是这样：</p>
 <figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">targets : prerequisites ; command</span><br><span class="line">    command</span><br><span class="line">    ...</span><br></pre></td></tr></table></figure>
 <p>如果命令太长，你可以使用反斜杠（ <code>\</code> ）作为换行符</p>
-<br>
-
 <h4 id="在规则中使用通配符"><a href="#在规则中使用通配符" class="headerlink" title="在规则中使用通配符"></a>在规则中使用通配符</h4><p><code>make</code>支持三个通配符： <code>*</code> ， <code>?</code> 和 <code>~</code> 。这是和<code>Unix</code>的<code>B-Shell</code>是相同的。</p>
 <ul>
 <li><code>*</code>：通配符代替了你一系列的文件，如 <code>*.c</code> 表示所有后缀为c的文件。一个需要我们注意的是，如果我们的文件名中有通配符，如： <code>*</code> ，那么可以用转义字符 <code>\</code> ，如 <code>\*</code> 来表示真实的 <code>*</code> 字符，而不是任意长度的字符串。<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">clean:</span></span><br><span class="line">    rm -f *.o</span><br></pre></td></tr></table></figure>
@@ -680,8 +604,6 @@
 <li><code>patsubst</code> 函数用于将第一个参数中匹配第二个参数模式的部分替换为第三个参数中的相应模式</li>
 <li><code>patsubst</code> 函数用于将 <code>*.c</code> 替换为 <code>*.o</code>，<code>wildcard</code> 函数用于获取当前目录下所有 <code>.c</code> 文件。</li>
 </ul>
-<br>
-
 <h4 id="文件搜索"><a href="#文件搜索" class="headerlink" title="文件搜索"></a>文件搜索</h4><figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">VPATH = src:../headers</span><br></pre></td></tr></table></figure>
 <ul>
 <li><code>Makefile</code>文件中的特殊变量 <code>VPATH</code>,当<code>make</code>就会在当前目录找不到的情况下，到所指定的目录中去找寻文件了。</li>
@@ -691,8 +613,6 @@
 <ul>
 <li><code>vpath</code>使用方法中的<code>&lt;pattern&gt;</code>需要包含 <code>%</code> 字符。 <code>%</code> 的意思是匹配<code>零</code>或<code>若干字符</code>，（需引用 <code>%</code> ，使用 <code>\</code> ）例如， <code>%.h</code> 表示所有以 <code>.h</code> 结尾的文件。<code>&lt;pattern&gt;</code>指定了要搜索的文件集，而<code>&lt;directories&gt;</code>则指定了<code>&lt;pattern&gt;</code>的文件集的搜索的目录。</li>
 </ul>
-<br>
-
 <h4 id="伪目标"><a href="#伪目标" class="headerlink" title="伪目标"></a>伪目标</h4><figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">.PHONY : clean</span><br><span class="line">clean :</span><br><span class="line">    rm *.o temp</span><br></pre></td></tr></table></figure>
 <p>伪目标一般没有依赖的文件。但是，我们也可以为伪目标指定所依赖的文件。伪目标同样可以作为“<strong>默认目标</strong>”，只要将其放在<strong>第一个</strong>。</p>
 <figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">all : prog1 prog2 prog3</span><br><span class="line">.PHONY : all</span><br><span class="line"></span><br><span class="line">prog1 : prog1.o utils.o</span><br><span class="line">    cc -o prog1 prog1.o utils.o</span><br><span class="line"></span><br><span class="line">prog2 : prog2.o</span><br><span class="line">    cc -o prog2 prog2.o</span><br><span class="line"></span><br><span class="line">prog3 : prog3.o sort.o utils.o</span><br><span class="line">    cc -o prog3 prog3.o sort.o utils.o</span><br></pre></td></tr></table></figure>
@@ -700,8 +620,6 @@
 <li><code>Makefile</code>中的第一个目标会被作为其<strong>默认目标</strong>。我们声明了一个“<code>all</code>”的伪目标，其依赖于其它三个目标。由于默认目标的特性是，总是被执行的，但由于“<code>all</code>”又是一个伪目标，伪目标只是一个标签不会生成文件，所以不会有“<code>all</code>”文件产生。于是，其它三个目标的规则总是会被决议。也就达到了我们一口气生成多个目标的目的。</li>
 <li><code>.PHONY : all</code> 声明了“<code>all</code>”这个目标为“伪目标”。（注：这里的显式“<code>.PHONY : all</code>” 不写的话一般情况也可以正确的执行，这样<code>make</code>可通过隐式规则推导出， “<code>all</code>” 是一个伪目标，执行<code>make</code>不会生成“<code>all</code>”文件，而执行后面的多个目标。建议：显式写出是一个好习惯。）</li>
 </ul>
-<br>
-
 <h4 id="多目标"><a href="#多目标" class="headerlink" title="多目标"></a>多目标</h4><p><code>Makefile</code>的规则中的目标可以不止一个，其支持多目标，有可能我们的多个目标同时依赖于一个文件，并且其生成的命令大体类似。</p>
 <figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">bigoutput littleoutput : text.g</span><br><span class="line">    generate text.g -<span class="variable">$(<span class="built_in">subst</span> output,,<span class="variable">$@</span>)</span> &gt; <span class="variable">$@</span></span><br></pre></td></tr></table></figure>
 <p>上述规则等价于：</p>
@@ -716,8 +634,6 @@
 </li>
 <li><code>generate text.g -$(subst output,,$@) &gt; $@</code>中的”<code>&gt;</code>“ 是一个<code>shell</code>命令，用于将 <code>generate text.g -$(subst output,,$@)</code> 的输出重定向到右侧<code>$@</code>文件中。</li>
 </ul>
-<br>
-
 <h4 id="静态模式"><a href="#静态模式" class="headerlink" title="静态模式"></a>静态模式</h4><p>静态模式可以更加容易地定义多目标的规则，可以让我们的规则变得更加的有弹性和灵活。我们还是先来看一下语法：</p>
 <figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;targets ...&gt; : &lt;target-pattern&gt; : &lt;prereq-patterns ...&gt;</span><br><span class="line">    &lt;commands&gt;</span><br><span class="line">    ...</span><br></pre></td></tr></table></figure>
 <p>我们的“<strong>目标模式</strong>”或是“<strong>依赖模式</strong>”中都应该有 <code>%</code> 这个字符，如果你的文件名中有 <code>%</code> 那么你可以使用反斜杠 <code>\</code> 进行转义，来标明真实的 <code>%</code> 字符。看一个例子：</p>
@@ -735,8 +651,6 @@
 <ul>
 <li><code>$(filter %.o,$(files))</code>表示调用<code>Makefile</code>的<code>filter</code>函数，过滤“<code>$files</code>”集，只要其中模式为“<code>%.o</code>”的内容。</li>
 </ul>
-<br>
-
 <h4 id="自动生成依赖性"><a href="#自动生成依赖性" class="headerlink" title="自动生成依赖性"></a>自动生成依赖性</h4><p>在<code>Makefile</code>中，我们的依赖关系可能会需要包含一系列的头文件，比如，如果我们的<code>main.c</code>中有一句 <code>#include &quot;defs.h&quot;</code> ，那么我们的依赖关系应该是：</p>
 <pre><code>main.o : main.c defs.h
 </code></pre>
@@ -773,8 +687,6 @@
 <li><code>$(sources:.c=.d)</code> 中的 <code>.c=.d</code> 的意思是做一个替换，把变量 <code>$(sources)</code> 所有 <code>.c</code> 的字串都替换成 <code>.d</code></li>
 <li>因为<code>include</code>是按次序来载入文件，最先载入的 <code>.d</code> 文件中的目标会成为默认目标。</li>
 </ul>
-<br>
-
 <h3 id="书写命令"><a href="#书写命令" class="headerlink" title="书写命令"></a>书写命令</h3><h4 id="显示命令"><a href="#显示命令" class="headerlink" title="显示命令"></a>显示命令</h4><figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">@echo 正在编译XXX模块......</span><br></pre></td></tr></table></figure>
 <p>当<code>make</code>执行时，会输出“正在编译XXX模块……”字串，但不会输出命令，如果没有“<code>@</code>”，那么，<code>make</code>将输出:</p>
 <figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">echo 正在编译XXX模块......		//输出命令</span><br><span class="line">正在编译XXX模块......</span><br></pre></td></tr></table></figure>
@@ -828,8 +740,6 @@ export variable
 而在完成下层make后离开目录时，我们会看到:<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make: Leaving directory `/home/hchen/gnu/make&#x27;</span><br></pre></td></tr></table></figure></li>
 <li>当你使用 <code>-C</code> 参数来指定<code>make</code>下层<code>Makefile</code>时， <code>-w</code> 会被自动打开的。如果参数中有 <code>-s</code> （ <code>--slient</code> ）或是 <code>--no-print-directory</code> ，那么， <code>-w</code> 总是失效的。</li>
 </ul>
-<br>
-
 <h4 id="定义命令包"><a href="#定义命令包" class="headerlink" title="定义命令包"></a>定义命令包</h4><p>如果Makefile中出现一些相同命令序列，那么我们可以为这些相同的命令序列定义一个变量。定义这种命令序列的语法以 <code>define</code> 开始，以 <code>endef</code> 结束，如:</p>
 <figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">define</span> run-yacc</span><br><span class="line">yacc <span class="variable">$(<span class="built_in">firstword</span> <span class="variable">$^</span>)</span></span><br><span class="line">mv y.tab.c <span class="variable">$@</span></span><br><span class="line"><span class="keyword">endef</span></span><br></pre></td></tr></table></figure>
 <ul>
@@ -837,8 +747,6 @@ export variable
 </ul>
 <figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">foo.c : foo.y</span><br><span class="line">    $(run-yacc)</span><br></pre></td></tr></table></figure>
 <p>我们可以看见，要使用这个命令包，我们就好像使用变量一样。在这个命令包的使用中，命令包“<code>run-yacc</code>”中的 <code>$^</code> 就是 <code>foo.y</code> ， <code>$@</code> 就是 <code>foo.c</code> （有关这种以 <code>$</code> 开头的特殊变量，我们会在后面介绍），<code>make</code>在执行命令包时，命令包中的每个命令会被依次独立执行。</p>
-<br>
-
 <h3 id="使用函数"><a href="#使用函数" class="headerlink" title="使用函数"></a>使用函数</h3><h4 id="函数的调用语法"><a href="#函数的调用语法" class="headerlink" title="函数的调用语法"></a>函数的调用语法</h4><p>函数调用，很像变量的使用，也是以 <code>$</code> 来标识的，其语法如下：</p>
 <pre><code>$(&lt;function&gt; &lt;arguments&gt;)    
 // 或者
@@ -880,8 +788,6 @@ $&#123;&lt;function&gt; &lt;arguments&gt;&#125;
 </code></pre>
 <p>如果我们的 <code>$(VPATH)</code> 值是 <code>src:../headers </code>，那么 <code>$(patsubst %,-I%,$(subst :, ,$(VPATH)))</code> 将返回 <code>-Isrc -I../headers</code> ，这正是<code>cc</code>或<code>gcc</code>搜索头文件路径的参数。</p>
 <p><strong>注</strong>：函数太多，不做概述。详见：<a target="_blank" rel="noopener" href="https://seisman.github.io/how-to-write-makefile/functions.html">https://seisman.github.io/how-to-write-makefile/functions.html</a><br><strong>例程</strong>：<a target="_blank" rel="noopener" href="https://github.com/XUAN9527/linux_test/tree/main/make_demo">https://github.com/XUAN9527/linux_test/tree/main/make_demo</a></p>
-<br>
-
 <h2 id="Makefile搭配Kconfig使用"><a href="#Makefile搭配Kconfig使用" class="headerlink" title="Makefile搭配Kconfig使用"></a>Makefile搭配Kconfig使用</h2><p>话不多说，我们一般使用<code>menuconfig</code>+<code>Kconfig</code>的方式进行版本配置，这里简单的笔记一个<code>Python</code>解析器版本的实现<code>Kconfiglib</code>。<br>[参考链接1]：<a target="_blank" rel="noopener" href="https://cstriker1407.info/blog/kconfiglib-simple-note/">https://cstriker1407.info/blog/kconfiglib-simple-note/</a><br>[参考链接2]：<a target="_blank" rel="noopener" href="https://juejin.cn/post/7101836149915648030">https://juejin.cn/post/7101836149915648030</a></p>
 <h3 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h3><ul>
 <li>安装必须组件：<code>Python3</code> + <code>kconfiglib</code></li>
@@ -990,7 +896,7 @@ $&#123;&lt;function&gt; &lt;arguments&gt;&#125;
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="Reading time total">3:13</span>
+    <span title="Reading time total">3:14</span>
   </span>
 </div>
   <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>

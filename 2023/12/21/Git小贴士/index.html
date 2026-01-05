@@ -27,7 +27,7 @@
 <meta property="og:description" content="主要记录Git的常用命令、一些非典型操作及其意义解析，也包括在 Git 应用中所遇到的一些问题及解决方案，便于检索与回顾">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2023-12-20T16:00:00.000Z">
-<meta property="article:modified_time" content="2026-01-05T03:58:55.345Z">
+<meta property="article:modified_time" content="2026-01-05T09:56:30.982Z">
 <meta property="article:author" content="boollight">
 <meta property="article:tag" content="C语言,嵌入式软硬件,Linux,mcu">
 <meta name="twitter:card" content="summary">
@@ -209,7 +209,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2026-01-05 11:58:55" itemprop="dateModified" datetime="2026-01-05T11:58:55+08:00">2026-01-05</time>
+      <time title="Modified: 2026-01-05 17:56:30" itemprop="dateModified" datetime="2026-01-05T17:56:30+08:00">2026-01-05</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -480,8 +480,6 @@
 <ul>
 <li><code>git diff FETCH_HEAD</code>比较查看该分支和当前工作分支的内容</li>
 </ul>
-<br>
-
 <p><code>git pull</code>会自动获取远程仓库的更新，并且合并到当前分支上，相当于<code>git fetch</code> + <code>git merge FETCH_HEAD</code></p>
 <ul>
 <li>将远程仓库中指定分支的最新提交 ID 保存到本地的 FETCH_HEAD 分支中</li>
@@ -509,12 +507,9 @@
 </blockquote>
 </li>
 </ul>
-<br>
-
 <h3 id="本地分支与远端分支各有一个新的提交时的做法"><a href="#本地分支与远端分支各有一个新的提交时的做法" class="headerlink" title="本地分支与远端分支各有一个新的提交时的做法"></a>本地分支与远端分支各有一个新的提交时的做法</h3><p>当本地分支有一个提交，而远端分支也有一个新的提交时，如果使用<code>sourcetree</code>进行拉取，会提示错误，有以下解决方法：</p>
 <ul>
 <li><p><strong>创建一个合并提交：</strong> 将远端分支的更改合并到本地分支，这会创建一个新的“合并提交”（merge commit），将两个分支的更改历史合并在一起。可以用命令行直接执行<code>git pull</code></p>
-<br>
 </li>
 <li><p><strong>变基：</strong> 执行<code>git pull --rebase</code>，相当于<code>git fetch</code>+<code>git rebase</code>，此过程不会创建合并提交，仅会把远端的提交和本地的提交重写成一个线性的提交历史。</p>
 <blockquote>
@@ -530,7 +525,7 @@
 <p>基于Angular团队的Git提交指南如下：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;type&gt;(&lt;scope&gt;): &lt;subject&gt;</span><br><span class="line">&lt;BLANK LINE&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">&lt;BLANK LINE&gt;</span><br><span class="line">&lt;footer&gt;</span><br></pre></td></tr></table></figure>
 
-<p><strong>type（类型）</strong>：描述提交的类别，如 feat（新特性）、fix（修复bug）、docs（文档更新）、style（代码格式改变）、refactor（代码重构）、perf（性能优化）、test（添加或修改测试）、chore（其他不修改src或test的更改）等。<br><strong>scope（范围）</strong>：描述提交影响的代码模块或功能，如 api、auth、ui 等。<br><strong>subject（主题）</strong>：简洁明了地描述所做的更改，通常不超过50个字符，并且使用现在时态，如“Fix bug”而不是“Fixed bug”。<br><strong>body（正文）</strong>：更详细地描述更改的内容、原因和影响，如果需要的话。可以分成多行，但每行不超过72个字符。<br><strong>footer（页脚）</strong>：提交信息的最后一部分，可以包含关闭的issue、关联的pull request或breaking changes等信息。<br><br></p>
+<p><strong>type（类型）</strong>：描述提交的类别，如 feat（新特性）、fix（修复bug）、docs（文档更新）、style（代码格式改变）、refactor（代码重构）、perf（性能优化）、test（添加或修改测试）、chore（其他不修改src或test的更改）等。<br><strong>scope（范围）</strong>：描述提交影响的代码模块或功能，如 api、auth、ui 等。<br><strong>subject（主题）</strong>：简洁明了地描述所做的更改，通常不超过50个字符，并且使用现在时态，如“Fix bug”而不是“Fixed bug”。<br><strong>body（正文）</strong>：更详细地描述更改的内容、原因和影响，如果需要的话。可以分成多行，但每行不超过72个字符。<br><strong>footer（页脚）</strong>：提交信息的最后一部分，可以包含关闭的issue、关联的pull request或breaking changes等信息。</p>
 <p>一个具体的提交信息示例如下：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">fix(auth): 修复登录时的空指针异常</span><br><span class="line"></span><br><span class="line">在用户尝试使用null邮箱地址登录时，系统会抛出空指针异常。这次更改通过在调用登录方法之前检查邮箱地址是否为空来修复这个问题。</span><br><span class="line"></span><br><span class="line">此外，这次更改还增加了一个警告日志，以便于监控系统在用户尝试使用无效数据登录时的行为。</span><br><span class="line"></span><br><span class="line">Closes #123</span><br></pre></td></tr></table></figure>
 <p>解释如下：</p>
@@ -541,27 +536,25 @@
 <li>body 提供了更详细的更改描述和上下文，包括为什么进行这个更改以及它的影响</li>
 <li>footer 包含了一个关联的issue编号 #123，表示这个提交解决了该issue</li>
 </ul>
-<h2 id="基础非典型操作"><a href="#基础非典型操作" class="headerlink" title="基础非典型操作"></a>基础非典型操作</h2><h3 id="本地git配置"><a href="#本地git配置" class="headerlink" title="本地git配置"></a>本地git配置</h3><br>
-
-<p><strong>配置本地与远端的SSH密钥连接流程：</strong></p>
+<h2 id="基础非典型操作"><a href="#基础非典型操作" class="headerlink" title="基础非典型操作"></a>基础非典型操作</h2><h3 id="本地git配置"><a href="#本地git配置" class="headerlink" title="本地git配置"></a>本地git配置</h3><p><strong>配置本地与远端的SSH密钥连接流程：</strong></p>
 <ul>
 <li>本地生成SSH公钥和私钥(如果没有的话，另，linux下公钥通常存放于<code>~/.ssh/*.pub</code>)<ul>
 <li><code>ssh-keygen -t rsa -b 4096 -C xxx@xxx.com</code></li>
 </ul>
 </li>
-<li>复制公钥，添加至远端平台的SSH设置上<br></li>
+<li>复制公钥，添加至远端平台的SSH设置上</li>
 </ul>
 <p><strong>查看本地配置：</strong></p>
 <ul>
 <li><code>git config --list</code>查看当前项目的所有配置</li>
-<li><code>git config --global --list</code>查看全局配置<br></li>
+<li><code>git config --global --list</code>查看全局配置</li>
 </ul>
 <p><strong>修改用户名(全局&#x2F;当前项目)</strong></p>
 <p>此用户名即提交日志上所展示的用户名称</p>
 <ul>
 <li>修改全局用户名：<code>git config --global user.name &quot;xxx&quot;</code>，影响用户的所有仓库</li>
 <li>修改当前路径项目的用户名：<code>git config user.name &quot;xxx&quot;</code></li>
-<li>查看全局用户名：<code>git config user.name</code><br></li>
+<li>查看全局用户名：<code>git config user.name</code></li>
 </ul>
 <p><strong>初始化本地工程并与远端已有仓库的main分支关联：</strong></p>
 <ul>
@@ -622,7 +615,6 @@
 </ul>
 <h2 id="非典型问题解决方案"><a href="#非典型问题解决方案" class="headerlink" title="非典型问题解决方案"></a>非典型问题解决方案</h2><h3 id="同一Linux主机-多github账户的权限报错问题"><a href="#同一Linux主机-多github账户的权限报错问题" class="headerlink" title="同一Linux主机-多github账户的权限报错问题"></a>同一Linux主机-多github账户的权限报错问题</h3><p>明明已经配置好本地与 Github 云端的 SSH 密钥，但依旧报错，内容如下：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ERROR: Permission to xxx.git denied to xxx.</span><br><span class="line">fatal: 无法读取远程仓库。</span><br><span class="line">请确认您有正确的访问权限并且仓库存在。</span><br></pre></td></tr></table></figure>
-<br>
 
 <p>解决步骤如下：</p>
 <ul>
@@ -633,20 +625,18 @@
 假设现在有一个仓库，是属于另一个 Github 账户的，那么需要更改其远程仓库链接为别名即可：</li>
 </ul>
 <p>比如，将<code>git@github.com:Jindu-Chen/Jindu-Chen.github.io.git</code>改为<code>github-alias:Jindu-Chen/Jindu-Chen.github.io.git</code></p>
-<h3 id="本地git配置-1"><a href="#本地git配置-1" class="headerlink" title="本地git配置"></a>本地git配置</h3><br>
-
-<p><strong>配置本地与远端的SSH密钥连接流程：</strong></p>
+<h3 id="本地git配置-1"><a href="#本地git配置-1" class="headerlink" title="本地git配置"></a>本地git配置</h3><p><strong>配置本地与远端的SSH密钥连接流程：</strong></p>
 <ul>
 <li>本地生成SSH公钥和私钥(如果没有的话，另，linux下公钥通常存放于<code>~/.ssh/*.pub</code>)<ul>
 <li><code>ssh-keygen -t rsa -b 4096 -C xxx@xxx.com</code></li>
 </ul>
 </li>
-<li>复制公钥，添加至远端平台的SSH设置上<br></li>
+<li>复制公钥，添加至远端平台的SSH设置上</li>
 </ul>
 <p><strong>查看本地配置：</strong></p>
 <ul>
 <li><code>git config --list</code>查看当前项目的所有配置</li>
-<li><code>git config --global --list</code>查看全局配置<br></li>
+<li><code>git config --global --list</code>查看全局配置</li>
 </ul>
 <p><strong>修改用户名(全局&#x2F;当前项目)</strong></p>
 <p>此用户名即提交日志上所展示的用户名称</p>
@@ -655,8 +645,6 @@
 <li>修改当前路径项目的用户名：<code>git config user.name &quot;xxx&quot;</code></li>
 <li>查看全局用户名：<code>git config user.name</code></li>
 </ul>
-<br>
-
 <p><strong>初始化本地工程并与远端已有仓库的main分支关联：</strong></p>
 <ul>
 <li>进入工程根目录，<code>git init</code>初始化本地仓库</li>
@@ -664,8 +652,6 @@
 <li><code>git branch -M main</code>将当前分支重命名为<code>main</code>，M即<code>--move --force</code>的缩写。（可以分别输入<code>git add --all</code>，<code>git commit -m &quot;first commit&quot;</code>完成对本地分支的首次提交）</li>
 <li>使用<code>git pull origin main</code>，将远程仓库的main分支拉取到本地，或者<code>git push -u origin main -f</code>将本地的xxx分支强制推送到远端main分支，其中-u是<code>--set-upstream</code>的缩写，后续会保持这个跟踪关系</li>
 </ul>
-<br>
-
 <h3 id="分支合并到main"><a href="#分支合并到main" class="headerlink" title="分支合并到main"></a>分支合并到main</h3><p>以下是完整的命令流程：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">确保你的分支是最新的</span></span><br><span class="line">git checkout your-branch</span><br><span class="line">git pull origin your-branch</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">切换到 main 分支并拉取最新更改</span></span><br><span class="line">git checkout main</span><br><span class="line">git pull origin main</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">将你的分支的更改合并到 main 分支</span></span><br><span class="line">git merge your-branch</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">解决冲突（如果需要）</span></span><br><span class="line">git add &lt;conflicted-files&gt;</span><br><span class="line">git commit</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">推送更改到远程 main 分支</span></span><br><span class="line">git push origin main</span><br></pre></td></tr></table></figure>
 
@@ -683,7 +669,6 @@
 
 <h2 id="git-tag小贴士"><a href="#git-tag小贴士" class="headerlink" title="git tag小贴士"></a>git tag小贴士</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">git log                             // 或者 git log --oneline（近期提交）</span><br><span class="line">git tag -a v1.0.0 &lt;commit-hash&gt;     // 这里的 v1.0.0 是标签名，&lt;commit-hash&gt; 是你想要标记的提交的哈希。-a 表示创建一个带注释的标签（annotated tag），你也可以使用 -s 创建一个签名标签，或者不使用 -a 来创建一个轻量级标签（lightweight tag）。</span><br><span class="line">git tag                             // 查看所有标签</span><br><span class="line">git push origin v1.0.0              // git push origin --tags推送所有标签</span><br></pre></td></tr></table></figure>
 
-<br>
 
 <h2 id="参考站点"><a href="#参考站点" class="headerlink" title="参考站点"></a>参考站点</h2><ul>
 <li><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/68277661/what-does-the-m-mean-in-git-branch-m-main">What does the -M mean in git branch -M main?</a></li>
@@ -743,7 +728,7 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="Reading time total">3:13</span>
+    <span title="Reading time total">3:14</span>
   </span>
 </div>
   <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>

@@ -27,7 +27,7 @@
 <meta property="og:description" content="ESP32 是一款由乐鑫科技开发的低成本、低功耗、具有 Wi-Fi 和蓝牙功能的 SoC 芯片，广泛应用于物联网领域，如智能家居、可穿戴设备、工业控制等。本教程基于windows子系统WSL，官方开发环境ESP-IDF&#x2F;ESP-ADF。">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2024-02-19T10:12:00.000Z">
-<meta property="article:modified_time" content="2026-01-05T03:58:55.345Z">
+<meta property="article:modified_time" content="2026-01-05T09:56:30.982Z">
 <meta property="article:author" content="boollight">
 <meta property="article:tag" content="Linux">
 <meta property="article:tag" content="ESP32">
@@ -210,7 +210,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2026-01-05 11:58:55" itemprop="dateModified" datetime="2026-01-05T11:58:55+08:00">2026-01-05</time>
+      <time title="Modified: 2026-01-05 17:56:30" itemprop="dateModified" datetime="2026-01-05T17:56:30+08:00">2026-01-05</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -256,8 +256,6 @@
     
     
     <div class="post-body" itemprop="articleBody"><h2 id="开发环境搭建"><a href="#开发环境搭建" class="headerlink" title="开发环境搭建"></a>开发环境搭建</h2><p><a target="_blank" rel="noopener" href="https://espressif-docs.readthedocs-hosted.com/projects/esp-adf/zh-cn/latest/get-started/index.html#quick-start">ESP-ADF快速上手连接</a><br><a target="_blank" rel="noopener" href="https://docs.espressif.com/projects/esp-idf/zh_CN/stable/esp32/get-started/linux-macos-setup.html#get-started-linux-macos-first-steps">ESP-IDF快速上手连接</a></p>
-<br>
-
 <h3 id="获取ESP-ADF"><a href="#获取ESP-ADF" class="headerlink" title="获取ESP-ADF"></a>获取ESP-ADF</h3><ul>
 <li><p>打开Linux or macOS终端,新建搭建环境所需文件夹。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> ~/esp</span><br><span class="line"><span class="built_in">cd</span> ~/esp</span><br></pre></td></tr></table></figure></li>
@@ -282,8 +280,6 @@
 <li><p>当遇到网络比较卡时，<code>github</code>源改为<code>gitee</code>源（以设置<code>idf.py set-target esp32s3</code>的<code>esp32-wifi-lib</code>为例）：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/esp/esp-adf/esp-idf</span><br><span class="line">git config submodule.<span class="string">&quot;components/esp_wifi/lib&quot;</span>.url https://gitee.com/EspressifSystems/esp32-wifi-lib.git</span><br><span class="line">git submodule <span class="built_in">sync</span></span><br><span class="line">git submodule update --init --depth 1 components/esp_wifi/lib</span><br></pre></td></tr></table></figure></li>
 </ul>
-<br>
-
 <p><strong>预防措施</strong>：</p>
 <ol>
 <li><p>配置镜像源：</p>
@@ -292,8 +288,6 @@
 <li><p>定期更新子模块：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 空闲时更新所有子模块</span></span><br><span class="line"><span class="built_in">cd</span> ~/esp/esp-adf</span><br><span class="line">git submodule update --init --recursive --depth 1</span><br></pre></td></tr></table></figure></li>
 </ol>
-<br>
-
 <h3 id="设置环境变量"><a href="#设置环境变量" class="headerlink" title="设置环境变量"></a>设置环境变量</h3><p>按自己实际路径，可按自己喜好设置，也可不配置，手动敲指令也可。</p>
 <p><code>vi ~/.bashrc</code><br>在后面加上以下代码：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#开启ESP32编译环境</span></span><br><span class="line"><span class="built_in">alias</span> get-idf=<span class="string">&#x27;. $HOME/esp/esp-adf/esp-idf/export.sh&#x27;</span></span><br><span class="line"><span class="built_in">alias</span> get-adf=<span class="string">&#x27;. $HOME/esp/esp-adf/export.sh&#x27;</span></span><br><span class="line"><span class="comment"># 烧录到设备，并打开监视器，/dev/ttyS15为USB挂载端口，需测试后填写，115200为监视器波特率，与设备UART0波特率对应</span></span><br><span class="line"><span class="built_in">alias</span> esp-u0=<span class="string">&#x27;idf.py -p /dev/ttyUSB0 -b 1152000 flash &amp;&amp; idf.py -p /dev/ttyUSB0 monitor&#x27;</span></span><br><span class="line"><span class="built_in">alias</span> esp-u1=<span class="string">&#x27;idf.py -p /dev/ttyUSB1 -b 1152000 flash &amp;&amp; idf.py -p /dev/ttyUSB1 monitor&#x27;</span></span><br><span class="line"><span class="comment"># 自带USB,如果只想要最简单的 烧录 + 串口调试，推荐直接用 ESP-IDF 自带的 USB Serial/JTAG 驱动模式</span></span><br><span class="line"><span class="built_in">alias</span> esp-acm0=<span class="string">&#x27;idf.py -p /dev/ttyACM0 -b 1152000 flash &amp;&amp; idf.py -p /dev/ttyACM0 monitor&#x27;</span></span><br><span class="line"><span class="built_in">alias</span> esp-busid=<span class="string">&#x27;sudo usbip attach -r 192.168.104.29 -b&#x27;</span></span><br><span class="line"><span class="built_in">alias</span> esp-unbusid=<span class="string">&#x27;sudo usbip detach&#x27;</span>  <span class="comment"># 查看端口号：sudo usbip port</span></span><br><span class="line"><span class="built_in">export</span> PATH=/home/ubuntu/esp/esp-adf/esp-idf/tools:<span class="variable">$PATH</span></span><br><span class="line"><span class="built_in">export</span> IDF_PATH=/home/ubuntu/esp/esp-adf/esp-idf</span><br><span class="line"><span class="built_in">export</span> ADF_PATH=/home/ubuntu/esp/esp-adf</span><br></pre></td></tr></table></figure>
@@ -313,15 +307,11 @@
 <p>或者使用快捷指令：</p>
 <pre><code>get-idf
 </code></pre>
-<br>
-
 <h2 id="ESP32工程示例"><a href="#ESP32工程示例" class="headerlink" title="ESP32工程示例"></a>ESP32工程示例</h2><h3 id="开始创建工程"><a href="#开始创建工程" class="headerlink" title="开始创建工程"></a>开始创建工程</h3><p>现在，可以准备开发 ESP32 应用程序了。<br>从 ESP-IDF 中 examples 目录下的 <code>get-started/hello_world</code> 工程开始，将 <code>get-started/hello_world</code> 工程复制至本地的 ~&#x2F;esp 目录下：</p>
 <pre><code>cd ~/esp
 get-idf
 cp -r $IDF_PATH/examples/get-started/hello_world .
 </code></pre>
-<br>
-
 <h3 id="配置工程"><a href="#配置工程" class="headerlink" title="配置工程"></a>配置工程</h3><pre><code>cd ~/esp/hello_world
 idf.py set-target esp32
 </code></pre>
@@ -371,8 +361,6 @@ idf.py menuconfig
 idf.py build
 esp-download
 </code></pre>
-<br>
-
 <h2 id="通过SSH远程访问本地的USB设备"><a href="#通过SSH远程访问本地的USB设备" class="headerlink" title="通过SSH远程访问本地的USB设备"></a>通过SSH远程访问本地的USB设备</h2><h3 id="开发环境配置"><a href="#开发环境配置" class="headerlink" title="开发环境配置"></a>开发环境配置</h3><h4 id="本地机器配置（以Windows为例）"><a href="#本地机器配置（以Windows为例）" class="headerlink" title="本地机器配置（以Windows为例）"></a>本地机器配置（以Windows为例）</h4><ol>
 <li>安装USB&#x2F;IP工具</li>
 </ol>
@@ -553,7 +541,7 @@ esp-download
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="Reading time total">3:13</span>
+    <span title="Reading time total">3:14</span>
   </span>
 </div>
   <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>

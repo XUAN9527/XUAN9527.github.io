@@ -27,7 +27,7 @@
 <meta property="og:description" content="Linux环境搭建Arm-gcc平台，使用Make编译，方便代码移植。此教程使用Windows10系统的Wsl+Vscode开发，Linux版本为Ubuntu 20.04。">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2024-03-28T03:07:00.000Z">
-<meta property="article:modified_time" content="2026-01-05T03:58:55.345Z">
+<meta property="article:modified_time" content="2026-01-05T09:56:30.986Z">
 <meta property="article:author" content="boollight">
 <meta property="article:tag" content="Linux">
 <meta property="article:tag" content="Wsl">
@@ -210,7 +210,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2026-01-05 11:58:55" itemprop="dateModified" datetime="2026-01-05T11:58:55+08:00">2026-01-05</time>
+      <time title="Modified: 2026-01-05 17:56:30" itemprop="dateModified" datetime="2026-01-05T17:56:30+08:00">2026-01-05</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -233,7 +233,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">Word count in article: </span>
-      <span>998</span>
+      <span>989</span>
     </span>
     <span class="post-meta-item" title="Reading time">
       <span class="post-meta-item-icon">
@@ -317,31 +317,21 @@
 <li>cd n32g452_gcc</li>
 <li>make</li>
 </ul>
-<br>
-
 <h2 id="环境配置及工具链"><a href="#环境配置及工具链" class="headerlink" title="环境配置及工具链"></a>环境配置及工具链</h2><h3 id="打开新终端-bashrc不会自动刷新"><a href="#打开新终端-bashrc不会自动刷新" class="headerlink" title="打开新终端 ~&#x2F;.bashrc不会自动刷新"></a>打开新终端 ~&#x2F;.bashrc不会自动刷新</h3><p>解决linux每次打开新终端都要重新<code>source ~/.bashrc</code>问题<br>执行以下代码：</p>
 <pre><code>vi ~/.bash_profile
 </code></pre>
 <p>有可能此文件是空白新建的，无所谓。然后在此文件末尾加入：</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> [ -f ~/.bashrc ];then</span><br><span class="line">source ~/.bashrc</span><br><span class="line">fi</span><br></pre></td></tr></table></figure>
 <p>然后<code>:wq</code>保存即可。<br>此时打开新终端可以自动执行<code>source ~/.bashrc</code></p>
-<br>
-
 <h3 id="arm-none-eabi-gcc工具链问题"><a href="#arm-none-eabi-gcc工具链问题" class="headerlink" title="arm-none-eabi-gcc工具链问题"></a>arm-none-eabi-gcc工具链问题</h3><ul>
 <li>arm-none-eabi-gcc工具链需加入用户变量：<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">export PATH=/home/xuan/OpenHarmony/install-software/gcc-arm-none-eabi<span class="number">-9</span><span class="number">-2019</span>-q4-major/bin:$PATH</span><br></pre></td></tr></table></figure></li>
 </ul>
 <p>注意：需确认路径，否则找不到用户路径会搜索系统自带编译链 <code>/usr/lib/gcc/arm-none-eabi/10.3.1</code></p>
-<br>
-
 <h2 id="Linux下编写Python合并脚本"><a href="#Linux下编写Python合并脚本" class="headerlink" title="Linux下编写Python合并脚本"></a>Linux下编写Python合并脚本</h2><h3 id="合并-bootloader-app-mix"><a href="#合并-bootloader-app-mix" class="headerlink" title="合并 bootloader + app  &#x3D; mix"></a>合并 bootloader + app  &#x3D; mix</h3><p><strong>1. 安装 PyInstaller</strong></p>
 <pre><code>pip install pyinstaller
 </code></pre>
-<br>
-
 <p><strong>2. 编写Python合并程序</strong></p>
 <p><a target="_blank" rel="noopener" href="https://github.com/XUAN9527/script">代码链接</a></p>
-<br>
-
 <p><strong>3. 打包 Python 程序</strong></p>
 <p><strong>参数说明：</strong></p>
 <ul>
@@ -366,17 +356,11 @@ pyinstaller -F -w (-i icofile) 文件名.py
 <pre><code>pyinstaller -F file.py
 pyinstaller -F -w -i file.ico file.py
 </code></pre>
-<br>
-
 <p><strong>4. 运行可执行文件</strong></p>
 <pre><code>./dist/file
 </code></pre>
-<br>
-
 <p><strong>5. 例程</strong></p>
 <p><a target="_blank" rel="noopener" href="https://github.com/XUAN9527/script">代码链接</a></p>
-<br>
-
 <p><strong>6. 实际应用场景</strong></p>
 <ul>
 <li>单独使用：Linux环境下单独执行使用。</li>
@@ -388,10 +372,6 @@ pyinstaller -F -w -i file.ico file.py
 </ul>
 </li>
 </ul>
-<br>
-
-
-
 
     </div>
 
@@ -453,7 +433,7 @@ pyinstaller -F -w -i file.ico file.py
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="Reading time total">3:13</span>
+    <span title="Reading time total">3:14</span>
   </span>
 </div>
   <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>

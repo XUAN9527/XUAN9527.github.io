@@ -35,7 +35,7 @@
 <meta property="og:image" content="http://example.com/pictures/ubuntu%E7%BD%91%E7%BB%9C%E9%85%8D%E7%BD%AE.png">
 <meta property="og:image" content="http://example.com/pictures/IMX6ULL%E5%90%AF%E5%8A%A8%E6%8B%A8%E7%A0%81%E5%9B%BE.png">
 <meta property="article:published_time" content="2024-07-13T03:07:00.000Z">
-<meta property="article:modified_time" content="2026-01-05T03:58:55.345Z">
+<meta property="article:modified_time" content="2026-01-05T09:56:30.982Z">
 <meta property="article:author" content="boollight">
 <meta property="article:tag" content="Linux">
 <meta property="article:tag" content="I.MX6ULL">
@@ -220,7 +220,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2026-01-05 11:58:55" itemprop="dateModified" datetime="2026-01-05T11:58:55+08:00">2026-01-05</time>
+      <time title="Modified: 2026-01-05 17:56:30" itemprop="dateModified" datetime="2026-01-05T17:56:30+08:00">2026-01-05</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -304,7 +304,7 @@
 <ul>
 <li>虚拟机右下角的USB是灰的，不能链接&#x2F;断开。</li>
 </ul>
-<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_44259058/article/details/127639566">参考资料</a><br><br></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_44259058/article/details/127639566">参考资料</a></p>
 <h2 id="Uboot移植"><a href="#Uboot移植" class="headerlink" title="Uboot移植"></a>Uboot移植</h2><p><a target="_blank" rel="noopener" href="https://www.eet-china.com/mp/a68264.html">参考资料</a></p>
 <h3 id="I-MX6ULL启动模式"><a href="#I-MX6ULL启动模式" class="headerlink" title="I.MX6ULL启动模式"></a>I.MX6ULL启动模式</h3><p><img src="/../pictures/IMX6ULL%E5%90%AF%E5%8A%A8%E6%8B%A8%E7%A0%81%E5%9B%BE.png" alt="IMX6ULL启动拨码图"></p>
 <h3 id="Uboot编译烧录"><a href="#Uboot编译烧录" class="headerlink" title="Uboot编译烧录"></a>Uboot编译烧录</h3><ul>
@@ -320,25 +320,22 @@
 </li>
 </ul>
 <h4 id="Uboot烧录到SD卡"><a href="#Uboot烧录到SD卡" class="headerlink" title="Uboot烧录到SD卡"></a>Uboot烧录到SD卡</h4><ul>
-<li>插上<code>SD卡</code>，启动<code>uboot</code>, <code>SD</code>卡和<code>EMMC</code>驱动检查:<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">mmc dev 0</span><br><span class="line">mmc info</span><br><span class="line"></span><br><span class="line">mmc dev 1</span><br><span class="line">mmc info</span><br></pre></td></tr></table></figure></li>
-<li>烧写验证与驱动测试<ul>
+<li><p>插上<code>SD卡</code>，启动<code>uboot</code>, <code>SD</code>卡和<code>EMMC</code>驱动检查:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">mmc dev 0</span><br><span class="line">mmc info</span><br><span class="line"></span><br><span class="line">mmc dev 1</span><br><span class="line">mmc info</span><br></pre></td></tr></table></figure></li>
+<li><p>烧写验证与驱动测试</p>
+<ul>
 <li>挂载<code>SD卡</code>，不做描述，挂载上之后<code>ls /dev/sd*</code>显示。</li>
 <li>执行以下<code>shell</code>指令。<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cd ~/linux/uboot-alientek-v2.4		//进入uboot文件夹	</span><br><span class="line">chmod 777 imxdownload 				//给予 imxdownload 可执行权限</span><br><span class="line">./imxdownload u-boot.bin /dev/sdb 	//烧写到 SD 卡中，不能烧写到/dev/sda 或 sda1 里面</span><br></pre></td></tr></table></figure></li>
 </ul>
 </li>
-</ul>
-<br>
-
-<ul>
-<li><code>U-Boot</code> 图形化配置</li>
+<li><p><code>U-Boot</code> 图形化配置</p>
+</li>
 </ul>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install build-essential</span><br><span class="line">sudo apt-get install libncurses5-dev</span><br><span class="line"></span><br><span class="line">make mx6ull_alientek_emmc_defconfig</span><br><span class="line">make menuconfig</span><br></pre></td></tr></table></figure>
 
 <ul>
 <li>配置网口的环境变量，开发板上的<code>ENET2</code>,上电进入<code>uboot</code>,打开的<code>USB_TTL</code>对应的串口控制台。<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">env default -a;saveenv				//default好像有问题</span><br><span class="line">setenv ipaddr 192.168.104.130		//开发板 ip 地址</span><br><span class="line">setenv ethaddr b8:ae:1d:01:00:00	//开发板的MAC地址，一定要设置, 如有多块开发板，MAC需不一致</span><br><span class="line">setenv gatewayip 192.168.104.1		//网关地址</span><br><span class="line">setenv netmask 255.255.240.0		//子网掩码</span><br><span class="line">setenv serverip 192.168.104.129		//服务器 IP 地址，也就是 Ubuntu 主机 IP 地址，用于调试代码。</span><br><span class="line">saveenv</span><br></pre></td></tr></table></figure></li>
 </ul>
-<br>
-
 <h2 id="Linux内核移植"><a href="#Linux内核移植" class="headerlink" title="Linux内核移植"></a>Linux内核移植</h2><h3 id="移植步骤"><a href="#移植步骤" class="headerlink" title="移植步骤"></a>移植步骤</h3><p><strong>1. Ubuntu下搭建网络传输环境</strong></p>
 <p><strong>1.1 搭建网络tftp服务</strong></p>
 <ul>
@@ -374,8 +371,6 @@
 </ul>
 </li>
 </ul>
-<br>
-
 <p><strong>1.2 搭建网络nfs服务</strong></p>
 <ul>
 <li><p>在 <code>Ubuntu</code> 终端执行以下指令安装 <code>NFS</code></p>
@@ -406,8 +401,6 @@
 <li><p>卸载 <code>NFS</code> 目录：<code>umount get</code></p>
 </li>
 </ul>
-<br>
-
 <p><strong>2. 拷贝内核文件</strong></p>
 <ul>
 <li><p>将内核压缩文件<code>linux-imx-rel_imx_4.1.15_2.1.1_ga_alientek_v2.4.tar.bz2</code>放到<code>/home/xuan/linux/linux-imx-rel_imx_4.1.15_2.1.1_ga_alientek_v2.4</code>目录下。</p>
@@ -426,8 +419,6 @@
 <li>添加lzop到环境变量：export PATH&#x3D;$PATH:&#x2F;usr&#x2F;bin(直接安装的不需要添加环境变量)</li>
 <li>重新编译：make -j16</li>
 </ol>
-<br>
-
 <ul>
 <li>若执行 <code>./mx6ull_alientek_emmc.sh</code></li>
 </ul>
@@ -437,16 +428,12 @@
 <ul>
 <li>执行 <code>make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- menuconfig</code> 后报错 <code>fatal error:curses.h:</code>没有那个文件或目录，这个是少了某个库，执行如下指令安装库：<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install libncurses*</span><br></pre></td></tr></table></figure></li>
 </ul>
-<br>
-
 <p><strong>4. 整理编译后的镜像文件</strong></p>
 <p><code>Linux</code> 内核编译完成以后会在 <code>arch/arm/boot</code> 目录下生成 <code>zImage</code> 镜像文件，如果使用设备树<br>的话还会在 <code>arch/arm/boot/dtb</code> 目录下开发板对应的.dtb(设备树)文件，比如 <code>imx6ull-alientek-emmc.dtb</code><br>就是 <code>NXP</code> 官方的 <code>I.MX6ULL EVK开发板</code>对应的设备树文件。至此我们得到两个文件：</p>
 <ul>
 <li><code>Linux</code> 内核镜像文件： <code>zImage。</code></li>
 <li><code>NXP</code>官方<code>I.MX6ULL EVK开发板</code>对应的设备树文件： imx6ull-alientek-emmc.dtb。</li>
 </ul>
-<br>
-
 <p><strong>5. 内核启动测试</strong></p>
 <ul>
 <li><p>修改<code>uboot</code> 中的环境变量 <code>bootargs</code></p>
@@ -466,7 +453,6 @@
 <p>或者在uboot中保存环境变量：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">setenv bootcmd &#x27;mmc dev 1;fatload mmc 1:1 80800000 zImage;fatload mmc 1:1 83000000 imx6ull-alientek-emmc.dtb;bootz 80800000 - 83000000&#x27;</span><br><span class="line">setenv bootargs &#x27;console=ttymxc0,115200 root=/dev/mmcblk1p2 rootwait rw&#x27;</span><br><span class="line">saveenv</span><br></pre></td></tr></table></figure>
 
-<br>
 
 <h3 id="从网络启动Linux系统"><a href="#从网络启动Linux系统" class="headerlink" title="从网络启动Linux系统"></a>从网络启动Linux系统</h3><p><a target="_blank" rel="noopener" href="https://blog.angustar.com/archives/system-migration-and-rootfs-construction-based-on-i-mx6ull-2.html">移植参考资料</a></p>
 <h4 id="使用tftpboot启动传输。"><a href="#使用tftpboot启动传输。" class="headerlink" title="使用tftpboot启动传输。"></a>使用<code>tftpboot</code>启动传输。</h4><ul>
@@ -482,8 +468,6 @@
 <li>在<code>uboot</code>配置<code>bootargs</code>参数并保存。<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">setenv bootargs &#x27;console=ttymxc0,115200 root=/dev/nfs nfsroot=192.168.104.129:/home/xuan/linux/nfs/rootfs,proto=tcp rw ip=192.168.104.130:192.168.104.129:192.168.104.1:255.255.240.0::eth0:off&#x27; 		//设置 bootargs</span><br><span class="line">saveenv 				//保存环境变量</span><br></pre></td></tr></table></figure></li>
 <li>输入<code>boot</code>启动</li>
 </ul>
-<br>
-
 <p><strong>Error solving</strong></p>
 <p>[参考资料]：<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_44256228/article/details/113830253">https://blog.csdn.net/weixin_44256228/article/details/113830253</a>)</p>
 <ul>
@@ -496,8 +480,6 @@
 <li>重启NFS服务器<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo service nfs-kernel-server restart</span><br></pre></td></tr></table></figure></li>
 <li>重新开机挂载，问题解决。</li>
 </ul>
-<br>
-
 <h2 id="Linux驱动开发"><a href="#Linux驱动开发" class="headerlink" title="Linux驱动开发"></a>Linux驱动开发</h2><h3 id="老字符驱动开发（手动创建节点）"><a href="#老字符驱动开发（手动创建节点）" class="headerlink" title="老字符驱动开发（手动创建节点）"></a>老字符驱动开发（手动创建节点）</h3><ul>
 <li><p><code>led</code>驱动的<code>Makefile</code>文件如下：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">KERNELDIR := /home/xuan/linux/linux-ga</span><br><span class="line">CURRENT_PATH := $(shell pwd)</span><br><span class="line">obj-m := led.o</span><br><span class="line">build: kernel_modules</span><br><span class="line">kernel_modules:</span><br><span class="line">$(MAKE) -C $(KERNELDIR) M=$(CURRENT_PATH) modules</span><br><span class="line">clean:</span><br><span class="line">$(MAKE) -C $(KERNELDIR) M=$(CURRENT_PATH) clean</span><br></pre></td></tr></table></figure>
@@ -515,8 +497,6 @@
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">cat /proc/devices		//查看当前系统中有没有 led 这个设备</span><br><span class="line">mknod /dev/led c 200 0		//创建设备节点文件</span><br><span class="line">./ledApp /dev/led 1		//亮灯</span><br><span class="line">./ledApp /dev/led 0		//灭灯</span><br></pre></td></tr></table></figure>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">rmmod led.ko</span><br><span class="line">或者</span><br><span class="line">modprobe -r led.ko 		//卸载 led.ko 驱动文件</span><br></pre></td></tr></table></figure></li>
 </ul>
-<br>
-
 <h3 id="老字符驱动开发（自动创建节点）"><a href="#老字符驱动开发（自动创建节点）" class="headerlink" title="老字符驱动开发（自动创建节点）"></a>老字符驱动开发（自动创建节点）</h3><ul>
 <li><p>编写 <code>Makefile</code> 文件</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">KERNELDIR := /home/xuan/linux/linux-ga</span><br><span class="line">CURRENT_PATH := $(shell pwd)</span><br><span class="line"></span><br><span class="line">obj-m := newchrled.o</span><br><span class="line"></span><br><span class="line">build: kernel_modules</span><br><span class="line"></span><br><span class="line">kernel_modules:</span><br><span class="line"><span class="meta prompt_">	$</span><span class="language-bash">(MAKE) -C $(KERNELDIR) M=$(CURRENT_PATH) modules</span></span><br><span class="line"></span><br><span class="line">clean:</span><br><span class="line"><span class="meta prompt_">	$</span><span class="language-bash">(MAKE) -C $(KERNELDIR) M=$(CURRENT_PATH) clean</span></span><br></pre></td></tr></table></figure>
@@ -527,8 +507,6 @@
 <li><p>重新上电运行开发板</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">cd /lib/modules/4.1.15</span><br><span class="line">depmod 						//第一次加载驱动的时候需要运行此命令</span><br><span class="line">modprobe newchrled.ko 		//加载驱动</span><br><span class="line">ls /dev/newchrled -l		//查看/dev/newchrdev 这个设备节点文件是否存在</span><br><span class="line">./ledApp /dev/newchrled 1 	//打开 LED 灯</span><br><span class="line">./ledApp /dev/newchrled 0 	//关闭 LED 灯</span><br><span class="line">rmmod newchrled.ko</span><br></pre></td></tr></table></figure></li>
 </ul>
-<br>
-
 <h3 id="Linux-设备树"><a href="#Linux-设备树" class="headerlink" title="Linux 设备树"></a>Linux 设备树</h3><p>以LED点灯驱动为例主要步骤：</p>
 <ul>
 <li>修改设备树(.dts文件),跟根节点下添加设备子节点，子节点添加属性，举例：<figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="title class_">alphaled</span> <span class="punctuation">&#123;</span></span><br><span class="line">	<span class="meta">#address-cells = &lt;1&gt;;</span></span><br><span class="line">	<span class="meta">#size-cells = &lt;1&gt;;</span></span><br><span class="line">	<span class="attr">compatible</span> <span class="operator">=</span> <span class="string">&quot;atkalpha-led&quot;</span><span class="punctuation">;</span></span><br><span class="line">	<span class="attr">status</span> <span class="operator">=</span> <span class="string">&quot;okay&quot;</span><span class="punctuation">;</span></span><br><span class="line">	<span class="attr">reg</span> <span class="operator">=</span> <span class="params">&lt; <span class="number">0X020C406C</span> <span class="number">0X04</span> /* CCM_CCGR1_BASE */</span></span><br><span class="line"><span class="params">	<span class="number">0X020E0068</span> <span class="number">0X04</span> /* SW_MUX_GPIO1_IO03_BASE */</span></span><br><span class="line"><span class="params">	<span class="number">0X020E02F4</span> <span class="number">0X04</span> /* SW_PAD_GPIO1_IO03_BASE */</span></span><br><span class="line"><span class="params">	<span class="number">0X0209C000</span> <span class="number">0X04</span> /* GPIO1_DR_BASE */</span></span><br><span class="line"><span class="params">	<span class="number">0X0209C004</span> <span class="number">0X04</span> &gt;</span><span class="punctuation">;</span> <span class="comment">/* GPIO1_GDIR_BASE */</span></span><br><span class="line"><span class="punctuation">&#125;;</span></span><br></pre></td></tr></table></figure></li>
@@ -538,8 +516,6 @@
 <li>编写<code>dtsled.c</code>文件和文件<code>ledApp.c</code>,修改<code>Makefile</code>中的<code>KERNELDIR</code>参数为<code>/home/xuan/linux/linux-ga</code><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">make -j32</span><br><span class="line">arm-linux-gnueabihf-gcc ledApp.c -o ledApp</span><br></pre></td></tr></table></figure></li>
 <li>编译出来的<code>dtsled.ko</code>和<code>ledApp</code>这两个文件拷贝到<code>rootfs/lib/modules/4.1.15</code>目录中，<strong>重启开发板</strong>，进入到目录<code>lib/modules/4.1.15</code>中，输入如下命令加载<code>dtsled.ko</code>驱动模块：<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">depmod 				//第一次加载驱动的时候需要运行此命令</span><br><span class="line">modprobe dtsled.ko 		//加载驱动</span><br><span class="line">./ledApp /dev/dtsled 1 		//打开 LED 灯</span><br><span class="line">./ledApp /dev/dtsled 0 		//关闭 LED 灯</span><br><span class="line">rmmod dtsled.ko</span><br></pre></td></tr></table></figure></li>
 </ul>
-<br>
-
 <h3 id="pinctrl-和-gpio-子系统实验"><a href="#pinctrl-和-gpio-子系统实验" class="headerlink" title="pinctrl 和 gpio 子系统实验"></a>pinctrl 和 gpio 子系统实验</h3><h4 id="pinctrl-子系统介绍"><a href="#pinctrl-子系统介绍" class="headerlink" title="pinctrl 子系统介绍"></a>pinctrl 子系统介绍</h4><p><code>pinctrl</code> 子系统主要工作内容如下：</p>
 <ul>
 <li>获取设备树中 <code>pin</code> 信息。</li>
@@ -547,8 +523,6 @@
 <li>根据获取到的 <code>pin</code> 信息来设置 <code>pin</code> 的电气特性，比如上&#x2F;下拉、速度、驱动能力等。</li>
 </ul>
 <p>对于我们使用者来讲，只需要在设备树里面设置好某个 <code>pin</code> 的相关属性即可，其他的初始化工作均由 <code>pinctrl</code> 子系统来完成， <code>pinctrl</code> 子系统源码目录为 <code>drivers/pinctrl</code>。</p>
-<br>
-
 <h4 id="设备树中添加-pinctrl-节点模板"><a href="#设备树中添加-pinctrl-节点模板" class="headerlink" title="设备树中添加 pinctrl 节点模板"></a>设备树中添加 pinctrl 节点模板</h4><ul>
 <li>创建对应的节点，打开 <code>imx6ull-alientek-emmc.dts</code>，在 <code>iomuxc</code> 节点中的 <code>imx6ul-evk</code> 子节点下添加 “<code>pinctrl_test</code>” 节点</li>
 <li>添加 “<code>fsl,pins</code>” 属性，名字一定要为“<code>fsl,pins</code>”，因为对于 <code>I.MX</code> 系列 <code>SOC</code> 而言， <code>pinctrl</code> 驱动程序是通过读取“<code>fsl,pins</code>”属性值来获取 <code>PIN</code> 的配置信息</li>
@@ -557,11 +531,7 @@
 <ul>
 <li>至此，我们已经在 <code>imx6ull-alientek-emmc.dts</code> 文件中添加好了 <code>test</code> 设备所使用的 <code>PIN</code> 配置信息。</li>
 </ul>
-<br>
-
-<h4 id="gpio子系统"><a href="#gpio子系统" class="headerlink" title="gpio子系统"></a>gpio子系统</h4><br>
-
-<h4 id="gpio实验"><a href="#gpio实验" class="headerlink" title="gpio实验"></a>gpio实验</h4><ul>
+<h4 id="gpio子系统"><a href="#gpio子系统" class="headerlink" title="gpio子系统"></a>gpio子系统</h4><h4 id="gpio实验"><a href="#gpio实验" class="headerlink" title="gpio实验"></a>gpio实验</h4><ul>
 <li><p>添加 <code>pinctrl</code> 节点, ，打开 <code>imx6ull-alientekemmc.dts</code>，在 <code>iomuxc</code> 节点的 <code>imx6ul-evk</code> 子节点下创建一个名为“<code>pinctrl_led</code>”的子节点</p>
 <figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">pinctrl_led:</span> <span class="title class_">ledgrp</span> <span class="punctuation">&#123;</span></span><br><span class="line">	<span class="attr">fsl,pins</span> <span class="operator">=</span> <span class="params">&lt;</span></span><br><span class="line"><span class="params">		MX6UL_PAD_GPIO1_IO03__GPIO1_IO03 <span class="number">0x10B0</span> /* LED0 */</span></span><br><span class="line"><span class="params">	&gt;</span><span class="punctuation">;</span></span><br><span class="line"><span class="punctuation">&#125;;</span></span><br></pre></td></tr></table></figure>
 </li>
@@ -579,8 +549,6 @@
 <li><p>如别的模块有使用到<code>GPIO_IO03</code>，需要注释掉。</p>
 </li>
 </ul>
-<br>
-
 <h3 id="Linux-蜂鸣器实验"><a href="#Linux-蜂鸣器实验" class="headerlink" title="Linux 蜂鸣器实验"></a>Linux 蜂鸣器实验</h3><ul>
 <li><p>打开<code>imx6ull-alientekemmc.dts</code>，在 <code>iomuxc</code> 节点的 <code>imx6ul-evk</code> 子节点下创建一个名为“<code>pinctrl_beep</code>”的子节点</p>
 <figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">pinctrl_beep:</span> <span class="title class_">beepgrp</span> <span class="punctuation">&#123;</span></span><br><span class="line">	<span class="attr">fsl,pins</span> <span class="operator">=</span> <span class="params">&lt;</span></span><br><span class="line"><span class="params">		MX6ULL_PAD_SNVS_TAMPER1__GPIO5_IO01 <span class="number">0x10B0</span> /* beep */</span></span><br><span class="line"><span class="params">	&gt;</span><span class="punctuation">;</span></span><br><span class="line"><span class="punctuation">&#125;;</span></span><br></pre></td></tr></table></figure>
@@ -601,8 +569,6 @@
 <li><p>开发板运行测试</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">depmod 			//第一次加载驱动的时候需要运行此命令</span><br><span class="line">modprobe beep.ko 	//加载驱动</span><br><span class="line">./beepApp /dev/beep 1 	//打开蜂鸣器</span><br><span class="line">./beepApp /dev/beep 0 	//关闭蜂鸣器</span><br><span class="line">rmmod beep.ko</span><br></pre></td></tr></table></figure></li>
 </ul>
-<br>
-
 
     </div>
 
@@ -665,7 +631,7 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="Reading time total">3:13</span>
+    <span title="Reading time total">3:14</span>
   </span>
 </div>
   <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
