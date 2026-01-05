@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.1.1">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.26.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="Linux环境搭建Arm-gcc平台，使用Make编译，方便代码移植。此教程使用Windows10系统的Wsl+Vscode开发，Linux版本为Ubuntu 20.04。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux下开发单片机">
+<meta property="og:url" content="http://example.com/2024/03/28/Linux%E4%B8%8B%E5%BC%80%E5%8F%91%E5%8D%95%E7%89%87%E6%9C%BA/index.html">
+<meta property="og:site_name" content="xuan9527">
+<meta property="og:description" content="Linux环境搭建Arm-gcc平台，使用Make编译，方便代码移植。此教程使用Windows10系统的Wsl+Vscode开发，Linux版本为Ubuntu 20.04。">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-03-28T03:07:00.000Z">
+<meta property="article:modified_time" content="2026-01-05T03:04:08.654Z">
+<meta property="article:author" content="boollight">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="Wsl">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2024/03/28/Linux%E4%B8%8B%E5%BC%80%E5%8F%91%E5%8D%95%E7%89%87%E6%9C%BA/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://example.com/2024/03/28/Linux%E4%B8%8B%E5%BC%80%E5%8F%91%E5%8D%95%E7%89%87%E6%9C%BA/","path":"2024/03/28/Linux下开发单片机/","title":"Linux下开发单片机"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Linux下开发单片机 | xuan9527</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">xuan9527</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">常能遣其欲而心自静，澄其心而神自清。</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Ubuntu-Wsl%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="nav-number">1.</span> <span class="nav-text">Ubuntu Wsl环境搭建</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Windows10%E7%B3%BB%E7%BB%9F%E5%AE%89%E8%A3%85%E5%AD%90%E7%B3%BB%E7%BB%9FWsl"><span class="nav-number">1.1.</span> <span class="nav-text">Windows10系统安装子系统Wsl</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%96%E8%AF%91%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE"><span class="nav-number">1.2.</span> <span class="nav-text">编译环境配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Winodows-Gcc-Make-%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="nav-number">1.3.</span> <span class="nav-text">Winodows Gcc + Make 环境搭建</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A3%B8%E6%9C%BA%E5%B7%A5%E7%A8%8B%E7%BC%96%E8%AF%91"><span class="nav-number">1.4.</span> <span class="nav-text">裸机工程编译</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE%E5%8F%8A%E5%B7%A5%E5%85%B7%E9%93%BE"><span class="nav-number">2.</span> <span class="nav-text">环境配置及工具链</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%93%E5%BC%80%E6%96%B0%E7%BB%88%E7%AB%AF-bashrc%E4%B8%8D%E4%BC%9A%E8%87%AA%E5%8A%A8%E5%88%B7%E6%96%B0"><span class="nav-number">2.1.</span> <span class="nav-text">打开新终端 ~&#x2F;.bashrc不会自动刷新</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#arm-none-eabi-gcc%E5%B7%A5%E5%85%B7%E9%93%BE%E9%97%AE%E9%A2%98"><span class="nav-number">2.2.</span> <span class="nav-text">arm-none-eabi-gcc工具链问题</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Linux%E4%B8%8B%E7%BC%96%E5%86%99Python%E5%90%88%E5%B9%B6%E8%84%9A%E6%9C%AC"><span class="nav-number">3.</span> <span class="nav-text">Linux下编写Python合并脚本</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%88%E5%B9%B6-bootloader-app-mix"><span class="nav-number">3.1.</span> <span class="nav-text">合并 bootloader + app  &#x3D; mix</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">boollight</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">16</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/03/28/Linux%E4%B8%8B%E5%BC%80%E5%8F%91%E5%8D%95%E7%89%87%E6%9C%BA/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="boollight">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="xuan9527">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Linux下开发单片机 | xuan9527">
+      <meta itemprop="description" content="Linux环境搭建Arm-gcc平台，使用Make编译，方便代码移植。此教程使用Windows10系统的Wsl+Vscode开发，Linux版本为Ubuntu 20.04。">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Linux下开发单片机
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-03-28 11:07:00" itemprop="dateCreated datePublished" datetime="2024-03-28T11:07:00+08:00">2024-03-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2026-01-05 11:04:08" itemprop="dateModified" datetime="2026-01-05T11:04:08+08:00">2026-01-05</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">嵌入式</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/" itemprop="url" rel="index"><span itemprop="name">环境搭建</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="Word count in article">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">Word count in article: </span>
+      <span>998</span>
+    </span>
+    <span class="post-meta-item" title="Reading time">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">Reading time &asymp;</span>
+      <span>3 mins.</span>
+    </span>
+</div>
+
+            <div class="post-description">Linux环境搭建Arm-gcc平台，使用Make编译，方便代码移植。此教程使用Windows10系统的Wsl+Vscode开发，Linux版本为Ubuntu 20.04。</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="Ubuntu-Wsl环境搭建"><a href="#Ubuntu-Wsl环境搭建" class="headerlink" title="Ubuntu Wsl环境搭建"></a>Ubuntu Wsl环境搭建</h2><h3 id="Windows10系统安装子系统Wsl"><a href="#Windows10系统安装子系统Wsl" class="headerlink" title="Windows10系统安装子系统Wsl"></a>Windows10系统安装子系统Wsl</h3><p><strong>1. 通过 Microsoft Store 安装</strong></p>
+<ul>
+<li>打开 Microsoft Store。</li>
+<li>搜索 “适用于 Linux 的 Windows 子系统”。</li>
+<li>选择 “Ubuntu” 或您喜欢的其他 Linux 发行版。</li>
+<li>点击 “获取”。</li>
+<li>安装完成后，点击 “启动”。</li>
+</ul>
+<p><strong>2. 通过命令行</strong></p>
+<ul>
+<li><p>打开 PowerShell 或 命令提示符 以管理员身份运行。</p>
+</li>
+<li><p>输入以下命令:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wsl --install</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>重启您的计算机。</p>
+</li>
+<li><p>安装完成后，您可以通过以下命令启动 WSL：</p>
+</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wsl</span><br></pre></td></tr></table></figure>
+
+<p><strong>注意:</strong></p>
+<ul>
+<li>WSL 需要 Windows 10 版本 1709 或更高版本。</li>
+<li>您可以通过以下命令检查您的 Windows 版本：</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">winver</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>如果您使用的是 Windows 10 家庭版，您需要启用 “<strong>适用于 Linux 的 Windows 子系统</strong>” 功能：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">控制面板-&gt;程序和功能-&gt;启用或关闭 Windows 功能-&gt;适用于 Linux 的 Windows 子系统-&gt;确定</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>您可以通过以下命令启用 “<strong>适用于 Linux 的 Windows 子系统</strong>” 功能：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>重启您的计算机后，您就可以通过上述方法安装 WSL 了。</p>
+</li>
+</ul>
+<p>安装 Windows Terminal</p>
+<h3 id="编译环境配置"><a href="#编译环境配置" class="headerlink" title="编译环境配置"></a>编译环境配置</h3><ul>
+<li><p><code>gcc-arm-none-eabi</code>工具链安装</p>
+<ul>
+<li>手动安装：<a target="_blank" rel="noopener" href="https://developer.arm.com/downloads/-/gnu-rm">官方链接地址</a> 下载所需版本；  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install bzip2</span><br><span class="line">sudo tar -xvf ~/n32_gcc/software_package/gcc-arm-none-eabi-9-2019-q4-major-x86_64-linux.tar.bz2 -C ~/n32_gcc</span><br></pre></td></tr></table></figure></li>
+<li>自动安装：<code>sudo apt-get install gcc-arm-none-eabi</code></li>
+<li>打开 <code>~/.bashrc</code></li>
+<li>添加<code>export PATH=$PATH:~/n32_gcc/gcc-arm-none-eabi-9-2019-q4-major/bin</code></li>
+<li>添加<code>alias open-file=&#39;explorer.exe .&#39;</code></li>
+<li>使能用户环境变量<code>source ~/.bashrc</code></li>
+</ul>
+</li>
+<li><p>Make</p>
+<ul>
+<li><code>sudo apt-get install make</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="Winodows-Gcc-Make-环境搭建"><a href="#Winodows-Gcc-Make-环境搭建" class="headerlink" title="Winodows Gcc + Make 环境搭建"></a>Winodows Gcc + Make 环境搭建</h3><ul>
+<li>安装software_package目录下的<code>gcc-arm-none-eabi-9-2019-q4-major-win32-sha2.exe</code>和<code>make-3.81.exe</code></li>
+<li>分别将其安装目录下的 <code>./bin</code>添加到系统环境变量，重启生效</li>
+<li>复制裸机工程至Windows下，修改部分Makefile的linux指令以适配Windows即可</li>
+</ul>
+<h3 id="裸机工程编译"><a href="#裸机工程编译" class="headerlink" title="裸机工程编译"></a>裸机工程编译</h3><ul>
+<li>cd n32g452_gcc</li>
+<li>make</li>
+</ul>
+<br>
+
+<h2 id="环境配置及工具链"><a href="#环境配置及工具链" class="headerlink" title="环境配置及工具链"></a>环境配置及工具链</h2><h3 id="打开新终端-bashrc不会自动刷新"><a href="#打开新终端-bashrc不会自动刷新" class="headerlink" title="打开新终端 ~&#x2F;.bashrc不会自动刷新"></a>打开新终端 ~&#x2F;.bashrc不会自动刷新</h3><p>解决linux每次打开新终端都要重新<code>source ~/.bashrc</code>问题<br>执行以下代码：</p>
+<pre><code>vi ~/.bash_profile
+</code></pre>
+<p>有可能此文件是空白新建的，无所谓。然后在此文件末尾加入：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> [ -f ~/.bashrc ];then</span><br><span class="line">source ~/.bashrc</span><br><span class="line">fi</span><br></pre></td></tr></table></figure>
+<p>然后<code>:wq</code>保存即可。<br>此时打开新终端可以自动执行<code>source ~/.bashrc</code></p>
+<br>
+
+<h3 id="arm-none-eabi-gcc工具链问题"><a href="#arm-none-eabi-gcc工具链问题" class="headerlink" title="arm-none-eabi-gcc工具链问题"></a>arm-none-eabi-gcc工具链问题</h3><ul>
+<li>arm-none-eabi-gcc工具链需加入用户变量：<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">export PATH=/home/xuan/OpenHarmony/install-software/gcc-arm-none-eabi<span class="number">-9</span><span class="number">-2019</span>-q4-major/bin:$PATH</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>注意：需确认路径，否则找不到用户路径会搜索系统自带编译链 <code>/usr/lib/gcc/arm-none-eabi/10.3.1</code></p>
+<br>
+
+<h2 id="Linux下编写Python合并脚本"><a href="#Linux下编写Python合并脚本" class="headerlink" title="Linux下编写Python合并脚本"></a>Linux下编写Python合并脚本</h2><h3 id="合并-bootloader-app-mix"><a href="#合并-bootloader-app-mix" class="headerlink" title="合并 bootloader + app  &#x3D; mix"></a>合并 bootloader + app  &#x3D; mix</h3><p><strong>1. 安装 PyInstaller</strong></p>
+<pre><code>pip install pyinstaller
+</code></pre>
+<br>
+
+<p><strong>2. 编写Python合并程序</strong></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/XUAN9527/script">代码链接</a></p>
+<br>
+
+<p><strong>3. 打包 Python 程序</strong></p>
+<p><strong>参数说明：</strong></p>
+<ul>
+<li><code>-F</code>：生成单一可执行文件。</li>
+<li><code>-D</code>：生成包含所有依赖项的目录。</li>
+<li><code>-n</code>：指定可执行文件名。</li>
+<li><code>--distpath</code>：指定可执行文件输出目录。</li>
+<li><code>--noconfirm</code>：覆盖输出文件时无需确认。</li>
+</ul>
+<p><strong>以下是一些常用的高级选项：</strong></p>
+<ul>
+<li><code>--hidden-import</code>：指定要隐藏导入的模块。</li>
+<li><code>--exclude-module</code>：指定要排除的模块。</li>
+<li><code>--onefile</code>：将所有文件打包成一个可执行文件。</li>
+<li><code>--runtime</code>：指定 Python 运行时版本。</li>
+</ul>
+<p><strong>执行规则:</strong></p>
+<pre><code>cd new_file,copy file.py and file.ico
+pyinstaller -F -w (-i icofile) 文件名.py
+</code></pre>
+<p><strong>example:</strong></p>
+<pre><code>pyinstaller -F file.py
+pyinstaller -F -w -i file.ico file.py
+</code></pre>
+<br>
+
+<p><strong>4. 运行可执行文件</strong></p>
+<pre><code>./dist/file
+</code></pre>
+<br>
+
+<p><strong>5. 例程</strong></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/XUAN9527/script">代码链接</a></p>
+<br>
+
+<p><strong>6. 实际应用场景</strong></p>
+<ul>
+<li>单独使用：Linux环境下单独执行使用。</li>
+<li>集成在<code>makefile</code>中，使用<code>make</code>编译自动生成文件：<ul>
+<li>将<code>papp_up</code>和<code>mix_10K</code>打包至<code>tools</code>文件夹，放在<code>makefile</code>同一目录下。</li>
+<li>需要<code>bootloder.bin</code>在<code>../bootloader</code>目录下。</li>
+<li>修改makefile生成规则。</li>
+<li><code>$(BUILD_DIR)</code>为编译文件目录，跟进自身makefile修改。<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">.PHONY : clean all</span><br><span class="line"></span><br><span class="line">all: $(TARGET).bin $(TARGET).<span class="built_in">list</span> $(TARGET).hex</span><br><span class="line">	$(SZ) $(TARGET).elf</span><br><span class="line">	@make copy</span><br><span class="line">	@make mix</span><br><span class="line"></span><br><span class="line">.PHONY: copy</span><br><span class="line"></span><br><span class="line">copy: $(TARGET).bin</span><br><span class="line">	cp $(TARGET).bin app.bin</span><br><span class="line">	cp ../bootloader/bootloader.bin bootloader.bin</span><br><span class="line"><span class="meta">#	cp $(TARGET).hex app.hex</span></span><br><span class="line"></span><br><span class="line">mix:</span><br><span class="line">	./tools/papp_up</span><br><span class="line">	./tools/mix_10K</span><br><span class="line">	$(OC) -I binary -O ihex --change-addresses <span class="number">0x8000000</span> mix.bin mix.hex</span><br><span class="line">	rm bootloader.bin</span><br><span class="line">	rm app.bin</span><br><span class="line">	rm mix.bin</span><br><span class="line"></span><br><span class="line">clean:</span><br><span class="line">	rm -rf $(BUILD_DIR)</span><br><span class="line">	rm papp.bin</span><br><span class="line">	rm mix.hex</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ul>
+<br>
+
+
+
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Linux/" rel="tag"># Linux</a>
+              <a href="/tags/Wsl/" rel="tag"># Wsl</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/03/01/I2C%E8%B0%83%E8%AF%95%E8%AE%B0%E5%BD%95/" rel="prev" title="I2C调试记录">
+                  <i class="fa fa-angle-left"></i> I2C调试记录
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/04/19/CmBacktrace%E7%A7%BB%E6%A4%8D/" rel="next" title="CmBacktrace移植">
+                  CmBacktrace移植 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">boollight</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="Word count total">58k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="Reading time total">3:13</span>
+  </span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.1.1">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.26.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="C++算法编译打包成.a文件，配合.h接口供给MCU使用。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MCU搭载C++算法">
+<meta property="og:url" content="http://example.com/2025/01/31/MCU%E6%90%AD%E8%BD%BDC++%E7%AE%97%E6%B3%95/index.html">
+<meta property="og:site_name" content="xuan9527">
+<meta property="og:description" content="C++算法编译打包成.a文件，配合.h接口供给MCU使用。">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2025-01-31T04:11:02.000Z">
+<meta property="article:modified_time" content="2026-01-05T03:04:08.654Z">
+<meta property="article:author" content="boollight">
+<meta property="article:tag" content="MCU">
+<meta property="article:tag" content="C">
+<meta property="article:tag" content="C++">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2025/01/31/MCU%E6%90%AD%E8%BD%BDC++%E7%AE%97%E6%B3%95/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://example.com/2025/01/31/MCU%E6%90%AD%E8%BD%BDC++%E7%AE%97%E6%B3%95/","path":"2025/01/31/MCU搭载C++算法/","title":"MCU搭载C++算法"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>MCU搭载C++算法 | xuan9527</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">xuan9527</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">常能遣其欲而心自静，澄其心而神自清。</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83"><span class="nav-number">1.</span> <span class="nav-text">开发环境</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#C-%E7%AB%AF%E9%85%8D%E7%BD%AE%E5%92%8C%E6%89%93%E5%8C%85"><span class="nav-number">2.</span> <span class="nav-text">C++端配置和打包</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MCU%E7%AB%AF%E9%85%8D%E7%BD%AE%E5%92%8C%E6%89%93%E5%8C%85"><span class="nav-number">3.</span> <span class="nav-text">MCU端配置和打包</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E4%BE%8B%E7%A8%8B"><span class="nav-number">4.</span> <span class="nav-text">使用例程</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">boollight</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">16</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2025/01/31/MCU%E6%90%AD%E8%BD%BDC++%E7%AE%97%E6%B3%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="boollight">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="xuan9527">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="MCU搭载C++算法 | xuan9527">
+      <meta itemprop="description" content="C++算法编译打包成.a文件，配合.h接口供给MCU使用。">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          MCU搭载C++算法
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2025-01-31 12:11:02" itemprop="dateCreated datePublished" datetime="2025-01-31T12:11:02+08:00">2025-01-31</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2026-01-05 11:04:08" itemprop="dateModified" datetime="2026-01-05T11:04:08+08:00">2026-01-05</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">嵌入式</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="Word count in article">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">Word count in article: </span>
+      <span>1k</span>
+    </span>
+    <span class="post-meta-item" title="Reading time">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">Reading time &asymp;</span>
+      <span>3 mins.</span>
+    </span>
+</div>
+
+            <div class="post-description">C++算法编译打包成.a文件，配合.h接口供给MCU使用。</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="开发环境"><a href="#开发环境" class="headerlink" title="开发环境"></a>开发环境</h2><ul>
+<li>wsl1 ubuntu 20.04</li>
+<li>gcc-arm-none-eabi-9-2019-q4-major</li>
+<li>N32G452REL7开发板(rt-thread nano)</li>
+</ul>
+<h2 id="C-端配置和打包"><a href="#C-端配置和打包" class="headerlink" title="C++端配置和打包"></a>C++端配置和打包</h2><ul>
+<li><p><strong>文件夹结构</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">my_math</span><br><span class="line">    ├── build</span><br><span class="line">    │   ├── libmy_math.a</span><br><span class="line">    │   └── my_math.o</span><br><span class="line">    ├── include</span><br><span class="line">    │   └── my_math.h</span><br><span class="line">    ├── Makefile</span><br><span class="line">    └── src</span><br><span class="line">        └── my_math.cpp</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>my_math.h</code></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">ifndef</span> MY_MATH_H</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> MY_MATH_H</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> __cplusplus</span></span><br><span class="line"><span class="keyword">extern</span> <span class="string">&quot;C&quot;</span> &#123;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * @brief 对输入数组执行处理并返回浮点结果</span></span><br><span class="line"><span class="comment"> * @param data 输入数组</span></span><br><span class="line"><span class="comment"> * @param len  数组长度</span></span><br><span class="line"><span class="comment"> * @return 浮点结果</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="type">float</span> <span class="title function_">my_process</span><span class="params">(<span class="type">const</span> <span class="type">float</span>* data, <span class="type">int</span> len)</span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> __cplusplus</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span> <span class="comment">// MY_MATH_H</span></span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>my_math.cpp</code></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;my_math.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cmath&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 思想：输入数组 -&gt; 拷贝到动态buffer -&gt; 处理 -&gt; 输出平均值(示例)</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="type">float</span> <span class="title">my_process</span><span class="params">(<span class="type">const</span> <span class="type">float</span>* data, <span class="type">int</span> len)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (data == <span class="literal">nullptr</span> || len &lt;= <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0.0f</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 动态容器（内部malloc）</span></span><br><span class="line">    std::vector&lt;<span class="type">float</span>&gt; buf;</span><br><span class="line">    buf.<span class="built_in">reserve</span>(len);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 拷贝</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; len; i++) &#123;</span><br><span class="line">        buf.<span class="built_in">push_back</span>(data[i]);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 浮点运算示例：计算均方根</span></span><br><span class="line">    <span class="type">float</span> sum = <span class="number">0.0f</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; len; i++) &#123;</span><br><span class="line">        sum += buf[i] * buf[i];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="type">float</span> rms = std::<span class="built_in">sqrt</span>(sum / (<span class="type">float</span>)len);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> rms;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>Makefile</code> 文件，关键配置：<code>-mfpu=fpv4-sp-d16</code> <code>-mfloat-abi=hard</code> <code>-std=c++11</code></p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ======= 编译器选项 =======</span></span><br><span class="line">CC = arm-none-eabi-g++</span><br><span class="line">AR = arm-none-eabi-ar</span><br><span class="line"></span><br><span class="line"><span class="comment"># ======= FPU &amp; 优化 =======</span></span><br><span class="line">CFLAGS = -mcpu=cortex-m4 \</span><br><span class="line">         -mthumb \</span><br><span class="line">         -mfloat-abi=hard \</span><br><span class="line">         -mfpu=fpv4-sp-d16 \</span><br><span class="line">         -Os \</span><br><span class="line">         -ffunction-sections \</span><br><span class="line">         -fdata-sections \</span><br><span class="line">         -std=c++11 \</span><br><span class="line">         -Wall</span><br><span class="line"></span><br><span class="line">INCLUDE = -Iinclude</span><br><span class="line"></span><br><span class="line"><span class="comment"># ======= 路径定义 =======</span></span><br><span class="line">SRC_DIR = src</span><br><span class="line">BUILD_DIR = build</span><br><span class="line"></span><br><span class="line"><span class="comment"># ======= 自动扫描所有源文件 =======</span></span><br><span class="line">SOURCES := <span class="variable">$(<span class="built_in">wildcard</span> <span class="variable">$(SRC_DIR)</span>/*.cpp)</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># ======= 自动生成对应对象文件名 =======</span></span><br><span class="line">OBJECTS := <span class="variable">$(<span class="built_in">patsubst</span> <span class="variable">$(SRC_DIR)</span>/%.cpp,<span class="variable">$(BUILD_DIR)</span>/%.o,<span class="variable">$(SOURCES)</span>)</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># ======= 输出静态库 =======</span></span><br><span class="line">LIB = <span class="variable">$(BUILD_DIR)</span>/libmy_math.a</span><br><span class="line"></span><br><span class="line"><span class="comment"># ======= 默认目标 =======</span></span><br><span class="line"><span class="section">all: <span class="variable">$(LIB)</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment"># ======= 创建静态库 =======</span></span><br><span class="line"><span class="variable">$(LIB)</span>: <span class="variable">$(OBJECTS)</span></span><br><span class="line">	<span class="variable">$(AR)</span> rcs <span class="variable">$@</span> <span class="variable">$^</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># ======= 编译 .cpp 到 .o =======</span></span><br><span class="line"><span class="variable">$(BUILD_DIR)</span>/%.o: <span class="variable">$(SRC_DIR)</span>/%.cpp | <span class="variable">$(BUILD_DIR)</span></span><br><span class="line">	<span class="variable">$(CC)</span> <span class="variable">$(CFLAGS)</span> <span class="variable">$(INCLUDE)</span> -c <span class="variable">$&lt;</span> -o <span class="variable">$@</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># ======= 创建 build 目录 =======</span></span><br><span class="line"><span class="variable">$(BUILD_DIR)</span>:</span><br><span class="line">	mkdir -p <span class="variable">$(BUILD_DIR)</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># ======= 清理 =======</span></span><br><span class="line"><span class="section">clean:</span></span><br><span class="line">	rm -rf <span class="variable">$(BUILD_DIR)</span></span><br><span class="line"></span><br><span class="line"><span class="meta"><span class="keyword">.PHONY</span>: all clean</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="MCU端配置和打包"><a href="#MCU端配置和打包" class="headerlink" title="MCU端配置和打包"></a>MCU端配置和打包</h2><ul>
+<li><p><strong>添加文件夹</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">lib</span><br><span class="line"> ├── libmy_math.a</span><br><span class="line"> └── my_math.h</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>Makefile</code>中添加</p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># mcu中添加配置</span></span><br><span class="line">MCU = -mcpu=cortex-m4 -mthumb \</span><br><span class="line">	-mfpu=fpv4-sp-d16 -mfloat-abi=hard \ <span class="comment"># 增加硬浮点编译</span></span><br><span class="line">	-ffunction-sections \</span><br><span class="line">	-fdata-sections \</span><br><span class="line">	--specs=nosys.specs \</span><br><span class="line">	-Os -ggdb</span><br><span class="line"></span><br><span class="line"><span class="comment"># 头文件路径加上lib</span></span><br><span class="line">INCLUDE += -Ilib</span><br><span class="line"></span><br><span class="line"><span class="comment"># 最后链接添加lib</span></span><br><span class="line">TARGET_LIBS += -Llib -lmy_math -lstdc++ -lsupc++ -lm		<span class="comment"># 找到 libmy_math.a, C++ runtime lib, math lib</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 增加链接规则</span></span><br><span class="line"><span class="variable">$(TARGET)</span>.elf: <span class="variable">$(OBJECTS)</span></span><br><span class="line">	<span class="variable">$(CC)</span> <span class="variable">$(ASM_OBJECTS)</span> <span class="variable">$(C_OBJECTS)</span> <span class="variable">$(LDFLAGS)</span> <span class="variable">$(TARGET_LIBS)</span> -Wl,-Map=<span class="variable">$(TARGET)</span>.map -o <span class="variable">$(TARGET)</span>.elf</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>rt-thread nano</code>需要修改<code>context_gcc.S</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">#if defined (__VFP_FP__) &amp;&amp; !defined(__SOFTFP__)</span><br><span class="line">    TST     lr, #0x10           /* if(!EXC_RETURN[4]) */</span><br><span class="line">    IT      EQ					/* 新增适配硬浮点适配：下面一条指令仅在 Z=1 时执行 */</span><br><span class="line">    VSTMDBEQ r1!, &#123;d8 - d15&#125;    /* push FPU register s16~s31 */</span><br><span class="line">#endif</span><br><span class="line"></span><br><span class="line">#if defined (__VFP_FP__) &amp;&amp; !defined(__SOFTFP__)</span><br><span class="line">    MOV     r4, #0x00           /* flag = 0 */</span><br><span class="line"></span><br><span class="line">    TST     lr, #0x10           /* if(!EXC_RETURN[4]) */</span><br><span class="line">    IT      EQ					/* 新增适配硬浮点适配：下面一条指令仅在 Z=1 时执行 */</span><br><span class="line">    MOVEQ   r4, #0x01           /* flag = 1 */</span><br><span class="line"></span><br><span class="line">#if defined (__VFP_FP__) &amp;&amp; !defined(__SOFTFP__)</span><br><span class="line">    CMP     r3,  #0             /* if(flag_r3 != 0) */</span><br><span class="line">    IT      NE					/* 新增适配硬浮点，下一条指令在 Z=0（比较结果不相等）时执行。 */</span><br><span class="line">    VLDMIANE  r1!, &#123;d8 - d15&#125;   /* pop FPU register s16~s31 */</span><br><span class="line">#endif</span><br><span class="line"></span><br><span class="line">    MSR psp, r1                 /* update stack pointer */</span><br><span class="line"></span><br><span class="line">#if defined (__VFP_FP__) &amp;&amp; !defined(__SOFTFP__)</span><br><span class="line">    ORR     lr, lr, #0x10       /* lr |=  (1 &lt;&lt; 4), clean FPCA. */</span><br><span class="line">    CMP     r3,  #0             /* if(flag_r3 != 0) */</span><br><span class="line">    IT      NE					/* 新增适配硬浮点，下一条指令在 Z=0（比较结果不相等）时执行。 */</span><br><span class="line">    BICNE   lr, lr, #0x10       /* lr &amp;= ~(1 &lt;&lt; 4), set FPCA. */</span><br><span class="line">#endif</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="使用例程"><a href="#使用例程" class="headerlink" title="使用例程"></a>使用例程</h2><ul>
+<li>使用例程及堆栈<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;my_math.h&quot;</span></span></span><br><span class="line"><span class="comment">// 打印rtthread heap的数据信息</span></span><br><span class="line"><span class="type">static</span> <span class="type">void</span> <span class="title function_">print_heap</span><span class="params">(<span class="type">const</span> <span class="type">char</span>* tag)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">rt_uint32_t</span> total = <span class="number">0</span>, used = <span class="number">0</span>, max_used = <span class="number">0</span>;</span><br><span class="line">    rt_memory_info(&amp;total, &amp;used, &amp;max_used);</span><br><span class="line">    <span class="type">rt_uint32_t</span> <span class="built_in">free</span> = total - used;</span><br><span class="line">    logDebug(<span class="string">&quot;[%s] heap total=%u used=%u free=%u max_used=%u&quot;</span>,</span><br><span class="line">              tag, total, used, <span class="built_in">free</span>, max_used);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span>  <span class="comment">// _sbrk</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">extern</span> <span class="type">char</span> end;      <span class="comment">// 链接器脚本定义的 end，heap 起点</span></span><br><span class="line"><span class="keyword">extern</span> <span class="type">char</span> _estack;  <span class="comment">// 链接器脚本定义的 stack 顶</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 打印标准heap的数据信息</span></span><br><span class="line"><span class="type">void</span> <span class="title function_">print_libc_heap</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">void</span>* heap_end = _sbrk(<span class="number">0</span>);            <span class="comment">// 当前 heap top</span></span><br><span class="line">    <span class="type">size_t</span> used = (<span class="type">char</span>*)heap_end - &amp;end; <span class="comment">// 已用 heap</span></span><br><span class="line">    <span class="type">size_t</span> <span class="built_in">free</span> = &amp;_estack - (<span class="type">char</span>*)heap_end; <span class="comment">// 剩余给 heap 的空间（理论上）</span></span><br><span class="line">    </span><br><span class="line">    logDebug(<span class="string">&quot;libc heap used=%u, free=%u, heap_start=%p, heap_end=%p, stack_top=%p&quot;</span>,</span><br><span class="line">             (<span class="type">unsigned</span> <span class="type">int</span>)used, (<span class="type">unsigned</span> <span class="type">int</span>)<span class="built_in">free</span>, &amp;end, heap_end, &amp;_estack);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">my_test_cpp</span><span class="params">(<span class="type">int</span> array0)</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="type">float</span> arr[<span class="number">1024</span>] = &#123;<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>&#125;;</span><br><span class="line">	arr[<span class="number">0</span>] = (<span class="type">float</span>)array0;</span><br><span class="line">	print_heap(<span class="string">&quot;before my_process&quot;</span>);</span><br><span class="line">	print_libc_heap();</span><br><span class="line">	<span class="type">float</span> out = my_process(arr, <span class="keyword">sizeof</span>(arr)/<span class="keyword">sizeof</span>(arr[<span class="number">0</span>]));</span><br><span class="line">	print_heap(<span class="string">&quot;after my_process&quot;</span>);</span><br><span class="line">	print_libc_heap();</span><br><span class="line">	logDebug(<span class="string">&quot;my_test_cpp out = [%f]&quot;</span>, out);</span><br><span class="line">&#125;</span><br><span class="line">SHELL_EXPORT_CMD(SHELL_CMD_PERMISSION(<span class="number">0</span>)|SHELL_CMD_TYPE(SHELL_TYPE_CMD_FUNC)|SHELL_CMD_DISABLE_RETURN, my_test_cpp, my_test_cpp, my_test_cpp <span class="number">1</span> or <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">my_rt_heap_test</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="type">int</span> size = <span class="number">128</span> * (i + <span class="number">1</span>);</span><br><span class="line">		print_heap(<span class="string">&quot;before my_process&quot;</span>);</span><br><span class="line">		<span class="type">void</span> *p = rt_malloc(size);</span><br><span class="line">		<span class="keyword">if</span> (p)</span><br><span class="line">		&#123;</span><br><span class="line">			logDebug(<span class="string">&quot;my_heap_test malloc size = [%d] success, addr = [%p]&quot;</span>, size, p);</span><br><span class="line">			rt_memset(p, <span class="number">0xA5</span>, size);</span><br><span class="line">			rt_free(p);</span><br><span class="line">			print_heap(<span class="string">&quot;before my_process&quot;</span>);</span><br><span class="line">			logDebug(<span class="string">&quot;my_heap_test free addr = [%p]&quot;</span>, p);</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">else</span></span><br><span class="line">		&#123;</span><br><span class="line">			logError(<span class="string">&quot;my_heap_test malloc size = [%d] failed!&quot;</span>, size);</span><br><span class="line">		&#125;</span><br><span class="line">		print_heap(<span class="string">&quot;after my_process&quot;</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line">SHELL_EXPORT_CMD(SHELL_CMD_PERMISSION(<span class="number">0</span>)|SHELL_CMD_TYPE(SHELL_TYPE_CMD_FUNC)|SHELL_CMD_DISABLE_RETURN, rt_heap_test, my_rt_heap_test, my_rt_heap_test);</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">my_heap_test</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="type">int</span> size = <span class="number">128</span> * (i + <span class="number">1</span>);</span><br><span class="line">		print_libc_heap();</span><br><span class="line">		<span class="type">void</span> *p = <span class="built_in">malloc</span>(size);</span><br><span class="line">		<span class="keyword">if</span> (p)</span><br><span class="line">		&#123;</span><br><span class="line">			logDebug(<span class="string">&quot;my_heap_test malloc size = [%d] success, addr = [%p]&quot;</span>, size, p);</span><br><span class="line">			<span class="built_in">memset</span>(p, <span class="number">0xA5</span>, size);</span><br><span class="line">			<span class="built_in">free</span>(p);</span><br><span class="line">			print_libc_heap();</span><br><span class="line">			logDebug(<span class="string">&quot;my_heap_test free addr = [%p]&quot;</span>, p);</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">else</span></span><br><span class="line">		&#123;</span><br><span class="line">			logError(<span class="string">&quot;my_heap_test malloc size = [%d] failed!&quot;</span>, size);</span><br><span class="line">		&#125;</span><br><span class="line">		print_heap(<span class="string">&quot;after my_process&quot;</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line">SHELL_EXPORT_CMD(SHELL_CMD_PERMISSION(<span class="number">0</span>)|SHELL_CMD_TYPE(SHELL_TYPE_CMD_FUNC)|SHELL_CMD_DISABLE_RETURN, heap_test, my_heap_test, my_heap_test);</span><br></pre></td></tr></table></figure></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/MCU/" rel="tag"># MCU</a>
+              <a href="/tags/C/" rel="tag"># C</a>
+              <a href="/tags/C/" rel="tag"># C++</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/07/13/I.MX6ULL%E5%BC%80%E5%8F%91%E6%8C%87%E5%8D%97/" rel="prev" title="I.MX6ULL开发指南">
+                  <i class="fa fa-angle-left"></i> I.MX6ULL开发指南
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">boollight</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="Word count total">58k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="Reading time total">3:13</span>
+  </span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

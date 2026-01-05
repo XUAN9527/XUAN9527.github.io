@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.1.1">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.26.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="记录日常开发过程中遇到的一些小问题，以及解决方法。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="杂项笔记">
+<meta property="og:url" content="http://example.com/2024/01/31/%E6%9D%82%E9%A1%B9%E7%AC%94%E8%AE%B0/index.html">
+<meta property="og:site_name" content="xuan9527">
+<meta property="og:description" content="记录日常开发过程中遇到的一些小问题，以及解决方法。">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-01-31T00:30:02.000Z">
+<meta property="article:modified_time" content="2026-01-05T03:04:08.654Z">
+<meta property="article:author" content="boollight">
+<meta property="article:tag" content="C语言,嵌入式软硬件,Linux,mcu">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2024/01/31/%E6%9D%82%E9%A1%B9%E7%AC%94%E8%AE%B0/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://example.com/2024/01/31/%E6%9D%82%E9%A1%B9%E7%AC%94%E8%AE%B0/","path":"2024/01/31/杂项笔记/","title":"杂项笔记"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>杂项笔记 | xuan9527</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">xuan9527</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">常能遣其欲而心自静，澄其心而神自清。</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#J-Link-J-Flash"><span class="nav-number">1.</span> <span class="nav-text">J-Link&#x2F;J-Flash</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Ubuntu-%E6%97%A0%E6%B3%95%E6%9B%B4%E6%96%B0%E9%97%AE%E9%A2%98"><span class="nav-number">2.</span> <span class="nav-text">Ubuntu 无法更新问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9B%B4%E6%94%B9%E8%BD%AF%E4%BB%B6%E6%BA%90"><span class="nav-number">2.1.</span> <span class="nav-text">更改软件源</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B8%85%E9%99%A4-apt-%E7%BC%93%E5%AD%98"><span class="nav-number">2.2.</span> <span class="nav-text">清除 apt 缓存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%9D%E8%AF%95%E6%9B%B4%E6%96%B0%E7%B3%BB%E7%BB%9F"><span class="nav-number">2.3.</span> <span class="nav-text">尝试更新系统</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Breo%E8%93%9D%E7%89%99%E5%90%AF%E5%8A%A8%E5%BC%82%E5%B8%B8"><span class="nav-number">3.</span> <span class="nav-text">Breo蓝牙启动异常</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Breo%E8%93%9D%E7%89%99%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">3.1.</span> <span class="nav-text">Breo蓝牙初始化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BF%83%E8%B7%B3%E5%8C%85%E5%9B%9E%E5%A4%8D%E8%B6%85%E6%97%B6"><span class="nav-number">3.2.</span> <span class="nav-text">心跳包回复超时</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SPI%E7%BA%A7%E8%81%94led%E7%81%AF%E8%B0%83%E8%AF%95%E5%B0%8F%E5%8A%A9%E6%89%8B"><span class="nav-number">4.</span> <span class="nav-text">SPI级联led灯调试小助手</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#SPI%E7%BA%A7%E8%81%94led%E7%81%AF%E9%97%AE%E9%A2%98%E6%B1%87%E6%80%BB"><span class="nav-number">4.1.</span> <span class="nav-text">SPI级联led灯问题汇总</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%85%E7%94%B5%E9%97%AA%E7%81%AF%E9%97%AE%E9%A2%98"><span class="nav-number">4.1.1.</span> <span class="nav-text">充电闪灯问题</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90"><span class="nav-number">4.1.1.1.</span> <span class="nav-text">问题分析</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95"><span class="nav-number">4.1.1.2.</span> <span class="nav-text">解决方法</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%91%BC%E5%90%B8%E7%81%AF%E9%97%AA%E7%83%81%E9%97%AE%E9%A2%98"><span class="nav-number">4.1.2.</span> <span class="nav-text">呼吸灯闪烁问题</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90-1"><span class="nav-number">4.1.2.1.</span> <span class="nav-text">问题分析</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95-1"><span class="nav-number">4.1.2.2.</span> <span class="nav-text">解决方法</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9F%90%E9%A1%B9%E7%9B%AE%E5%85%85%E7%94%B5%E4%BF%9D%E6%8A%A4%E4%BB%8D%E5%85%85%E7%94%B5"><span class="nav-number">5.</span> <span class="nav-text">某项目充电保护仍充电</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%AF%E5%8F%98%E5%8F%82%E6%95%B0%E5%87%BD%E6%95%B0%E8%AF%A6%E8%A7%A3"><span class="nav-number">6.</span> <span class="nav-text">可变参数函数详解</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B1%87%E7%BC%96%E5%9F%BA%E7%A1%80"><span class="nav-number">7.</span> <span class="nav-text">汇编基础</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E4%BE%8B%E5%88%86%E6%9E%90"><span class="nav-number">7.1.</span> <span class="nav-text">实例分析</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#VSCODE%E6%96%87%E4%BB%B6%E6%A0%87%E7%AD%BE%E6%A0%8F%E5%A4%9A%E8%A1%8C%E6%98%BE%E7%A4%BA"><span class="nav-number">8.</span> <span class="nav-text">VSCODE文件标签栏多行显示</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%89%A3%E5%AD%90%E6%99%BA%E8%83%BD%E8%AF%AD%E9%9F%B3"><span class="nav-number">9.</span> <span class="nav-text">扣子智能语音</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">boollight</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">16</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/01/31/%E6%9D%82%E9%A1%B9%E7%AC%94%E8%AE%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="boollight">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="xuan9527">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="杂项笔记 | xuan9527">
+      <meta itemprop="description" content="记录日常开发过程中遇到的一些小问题，以及解决方法。">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          杂项笔记
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-01-31 08:30:02" itemprop="dateCreated datePublished" datetime="2024-01-31T08:30:02+08:00">2024-01-31</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2026-01-05 11:04:08" itemprop="dateModified" datetime="2026-01-05T11:04:08+08:00">2026-01-05</time>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="Word count in article">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">Word count in article: </span>
+      <span>3.1k</span>
+    </span>
+    <span class="post-meta-item" title="Reading time">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">Reading time &asymp;</span>
+      <span>10 mins.</span>
+    </span>
+</div>
+
+            <div class="post-description">记录日常开发过程中遇到的一些小问题，以及解决方法。</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="J-Link-J-Flash"><a href="#J-Link-J-Flash" class="headerlink" title="J-Link&#x2F;J-Flash"></a>J-Link&#x2F;J-Flash</h2><p><strong>J-Flash批处理脚本配置烧录：</strong>当然，前提是要添加J-Link的可执行程序路径到<code>$PATH</code>环境变量中</p>
+<ul>
+<li><code>program.bat</code>脚本代码如下，参考修改即可：<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">echo start...</span><br><span class="line"></span><br><span class="line">JLink -device N32L406CB -if swd -speed 4000 -CommanderScript &quot;C:\Users\Breo\Desktop\Wireless moxibustion\Software\program.jlink&quot;</span><br></pre></td></tr></table></figure></li>
+<li><code>program.jlink</code>文件代码如下，其中目标设备、文件路径、烧录地址等根据需要配置：<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">connect</span><br><span class="line">device N32L406CB</span><br><span class="line">si SWD</span><br><span class="line">speed 4000</span><br><span class="line">h		// halt-停止</span><br><span class="line">r		// 复位，可以考虑去掉</span><br><span class="line">erase		// 或 erase 0x8002800，去掉也行，但可能会出现error fail address 0x00000000错误提示</span><br><span class="line"></span><br><span class="line">loadfile app.bin 0x8002800      // loadfile app.hex 或 loadfile app.bin 0x8000000</span><br><span class="line">verifybin app.bin 0x8002800</span><br><span class="line">r</span><br><span class="line">go		// r go表示reset and run</span><br><span class="line">q		// 退出J-Link命令行工具</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="Ubuntu-无法更新问题"><a href="#Ubuntu-无法更新问题" class="headerlink" title="Ubuntu 无法更新问题"></a>Ubuntu 无法更新问题</h2><p>Ubuntu 无法使用<code>apt update</code></p>
+<h3 id="更改软件源"><a href="#更改软件源" class="headerlink" title="更改软件源"></a>更改软件源</h3><p>编辑 <code>/etc/apt/sources.list</code> 文件，将以下内容添加到文件末尾</p>
+<pre><code>deb https://mirrors.aliyun.com/ubuntu/ jammy main restricted universe multiverse
+deb-src https://mirrors.aliyun.com/ubuntu/ jammy main restricted universe multiverse
+
+deb https://mirrors.aliyun.com/ubuntu/ jammy-updates main restricted universe multiverse
+deb-src https://mirrors.aliyun.com/ubuntu/ jammy-updates main restricted universe multiverse
+
+deb https://mirrors.aliyun.com/ubuntu/ jammy-backports main restricted universe multiverse
+deb-src https://mirrors.aliyun.com/ubuntu/ jammy-backports main restricted universe multiverse
+</code></pre>
+<h3 id="清除-apt-缓存"><a href="#清除-apt-缓存" class="headerlink" title="清除 apt 缓存"></a>清除 apt 缓存</h3><pre><code>sudo apt clean
+sudo apt autoclean
+</code></pre>
+<h3 id="尝试更新系统"><a href="#尝试更新系统" class="headerlink" title="尝试更新系统"></a>尝试更新系统</h3><pre><code>sudo apt update
+</code></pre>
+<p>显示 <code>ModuleNotFoundError: No module named &#39;apt_pkg&#39;</code>，重新安装 “<code>apt_pkg</code>“ 模块：</p>
+<pre><code>sudo apt install --reinstall python3-apt
+</code></pre>
+<p>显示 ERROR：</p>
+<pre><code>E: Could not read response to hello message from hook [ ! -f /usr/bin/snap ] || /usr/bin/snap advise-snap --from-apt 2&gt;/dev/null || true: Success
+</code></pre>
+<p>如果问题仍然存在，尝试修复 Python 包：</p>
+<pre><code>sudo apt install --fix-broken
+</code></pre>
+<p>然后就更新系统了：</p>
+<pre><code>sudo apt update
+sudo apt upgrade
+</code></pre>
+<p>执行<code>sudo apt upgrade</code>后显示ERROR：</p>
+<pre><code>Errors were encountered while processing:
+/tmp/apt-dpkg-install-cQBLJW/626-linux-iot-tools-common_5.4.0-1030.31_all.deb
+E: Sub-process /usr/bin/dpkg returned an error code (1)
+</code></pre>
+<p>最后一步，修复损坏的软件包配置：</p>
+<pre><code>sudo dpkg --configure -a
+sudo apt upgrade
+</code></pre>
+<h2 id="Breo蓝牙启动异常"><a href="#Breo蓝牙启动异常" class="headerlink" title="Breo蓝牙启动异常"></a>Breo蓝牙启动异常</h2><h3 id="Breo蓝牙初始化"><a href="#Breo蓝牙初始化" class="headerlink" title="Breo蓝牙初始化"></a>Breo蓝牙初始化</h3><p>蓝牙初始化没完成，透传未开启，app就连接蓝牙了。<br>设置透传参数，开启透传的的状态中增加连接蓝牙接受指令。</p>
+<h3 id="心跳包回复超时"><a href="#心跳包回复超时" class="headerlink" title="心跳包回复超时"></a>心跳包回复超时</h3><p>现在是接收&#x2F;刷新设备数据200ms超时，延迟太长还可以缩短。</p>
+<h2 id="SPI级联led灯调试小助手"><a href="#SPI级联led灯调试小助手" class="headerlink" title="SPI级联led灯调试小助手"></a>SPI级联led灯调试小助手</h2><p>产品名称：1209RGB幻彩雾状<br>产品型号：XTQ-016B.RGB-2307125-20</p>
+<h3 id="SPI级联led灯问题汇总"><a href="#SPI级联led灯问题汇总" class="headerlink" title="SPI级联led灯问题汇总"></a>SPI级联led灯问题汇总</h3><h4 id="充电闪灯问题"><a href="#充电闪灯问题" class="headerlink" title="充电闪灯问题"></a>充电闪灯问题</h4><h5 id="问题分析"><a href="#问题分析" class="headerlink" title="问题分析"></a>问题分析</h5><p>充电中拔掉电源，立即再次插入，会闪一下灯；若等两秒再插入则不会出现，初步判断是此款芯片有锁存功能，会保存到寄存器中，未完全掉电再次插入则会继续执行上次的寄存器数据。</p>
+<h5 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h5><p>充电中拔掉电源，程序不要立即断电，持续两秒反初始化spi灯珠，即给spi寄存器写全灭数据。</p>
+<h4 id="呼吸灯闪烁问题"><a href="#呼吸灯闪烁问题" class="headerlink" title="呼吸灯闪烁问题"></a>呼吸灯闪烁问题</h4><h5 id="问题分析-1"><a href="#问题分析-1" class="headerlink" title="问题分析"></a>问题分析</h5><p>程序中呼吸灯会跑偶尔闪烁，影响显示效果。分析发现，代码中有电机的FG检测，此检测开启了输入捕获功能，会持续中断触发，虽然spi灯的驱动是dma发送，但是也是由CPU来调度的，并不能与中断并行。spi呼吸灯效果需要持续发送数据，且时序要求很高，中断会抢占spi的dma发送，打断spi传输数据，导致数据传输出错，造成闪灯效果。</p>
+<h5 id="解决方法-1"><a href="#解决方法-1" class="headerlink" title="解决方法"></a>解决方法</h5><p>1、提高芯片主频，n32l403KB最高主频为64MHz，如果主频提高效果会好一些。<br>2、spi呼吸灯效果持续发送数据，不能与中断频繁的代码一起使用。</p>
+<h2 id="某项目充电保护仍充电"><a href="#某项目充电保护仍充电" class="headerlink" title="某项目充电保护仍充电"></a>某项目充电保护仍充电</h2><p>修改代码：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">&#123;-1, 1, PIN_CHARGE_CC_DETECT, PIN_MODE_INPUT&#125;,	//input/output switch</span><br><span class="line"></span><br><span class="line">static void board_charge_cc_set(bool en)</span><br><span class="line">&#123;	</span><br><span class="line">	struct pin_status_desc *pin = pin_handle(PIN_CHARGE_CC_DETECT);</span><br><span class="line">	<span class="keyword">if</span>(en)</span><br><span class="line">	&#123;</span><br><span class="line">		pin-&gt;<span class="built_in">type</span> = PIN_MODE_INPUT;</span><br><span class="line">		drv_pin_mode(pin-&gt;pin_id,pin-&gt;<span class="built_in">type</span>);</span><br><span class="line">		pin-&gt;lvl_rt = -1;			//重置lvl_rt，以防止output出问题</span><br><span class="line">	&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">		pin-&gt;<span class="built_in">type</span> = PIN_MODE_OUTPUT;</span><br><span class="line">		drv_pin_mode(pin-&gt;pin_id,pin-&gt;<span class="built_in">type</span>);</span><br><span class="line">		pin_set_func(pin, PIN_HIGH);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<br>
+
+<h2 id="可变参数函数详解"><a href="#可变参数函数详解" class="headerlink" title="可变参数函数详解"></a>可变参数函数详解</h2><p>C语言中的可变参数函数允许您定义函数，其参数个数是不确定的，可以根据具体需求接受可变数量的参数。这在处理不定数量参数的情况下非常有用，比如<code>printf</code>和<code>scanf</code>等函数。让我为您详细解释一下可变参数函数的原理和实现。</p>
+<p><strong>1. 原理与实现：</strong></p>
+<ul>
+<li><p>可变参数函数的参数列表是从右往左压入堆栈的。假设堆栈中有以下参数：不可变参数1、不可变参数2、…、不可变参数n、可变参数1、可变参数2、…、可变参数n。</p>
+</li>
+<li><p>为了获取可变参数，我们需要知道每个可变参数的地址。这是通过前一个不可变参数的地址和类型来实现的。</p>
+</li>
+<li><p>ANSI标准提供了三个宏来实现这个过程：</p>
+<ul>
+<li><p><code>va_start(va_list arg_ptr, prev_param)</code>: 初始化可变参数列表，将arg_ptr指向第一个可变参数。</p>
+</li>
+<li><p><code>va_arg(va_list arg_ptr, type)</code>: 获取当前参数的值，类型由前面的不可变参数传递。例如，printf中的格式化字符串或者可变参数列表的参数类型和第几个不可变参数的相同。</p>
+</li>
+<li><p><code>va_end(va_list arg_ptr)</code>: 释放资源，结束可变参数列表的访问。</p>
+</li>
+</ul>
+</li>
+<li><p>这些宏的实现细节由编译器和标准库提供，我们只需调用它们即可。</p>
+</li>
+</ul>
+<p><strong>2. 可变参数函数：</strong></p>
+<ul>
+<li>可变参数函数允许在函数定义中接受不定数量的参数。</li>
+<li>C语言提供了 <code>stdarg.h</code> 头文件来支持可变参数函数的实现。</li>
+<li>下面是一个示例代码，展示了如何实现一个可变参数函数 sum，它接受一个整数参数 count，表示接下来的可变参数的数量：</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdarg.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">sum</span><span class="params">(<span class="type">int</span> count, ...)</span> &#123;</span><br><span class="line">    <span class="type">int</span> total = <span class="number">0</span>;</span><br><span class="line">    va_list args;</span><br><span class="line">    va_start(args, count);</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; count; i++) &#123;</span><br><span class="line">        <span class="type">int</span> num = va_arg(args, <span class="type">int</span>);</span><br><span class="line">        total += num;</span><br><span class="line">    &#125;</span><br><span class="line">    va_end(args);</span><br><span class="line">    <span class="keyword">return</span> total;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="type">int</span> result = sum(<span class="number">4</span>, <span class="number">10</span>, <span class="number">20</span>, <span class="number">30</span>, <span class="number">40</span>);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;Sum: %d\n&quot;</span>, result);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>在这个示例中，我们定义了一个可变参数函数 sum，它计算传入的整数参数的总和。</li>
+</ul>
+<br>
+
+<p><strong>3. 可变参数宏：</strong></p>
+<ul>
+<li>可变参数宏允许在宏调用中接受可变数量的参数。</li>
+<li>在C语言中，可变参数宏使用 <code>__VA_ARGS__</code> 表示可变参数的部分。</li>
+<li>下面是一个示例代码，展示了如何定义一个可变参数宏 <code>PRINT_VALUES</code>，它使用 printf 函数来打印可变数量的值:</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PRINT_VALUES(...) do &#123; \</span></span><br><span class="line"><span class="meta">    printf(<span class="string">&quot;Values: &quot;</span>); \</span></span><br><span class="line"><span class="meta">    printf(__VA_ARGS__); \</span></span><br><span class="line"><span class="meta">    printf(<span class="string">&quot;\n&quot;</span>); \</span></span><br><span class="line"><span class="meta">&#125; while (0)</span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span> &#123;</span><br><span class="line">    PRINT_VALUES(<span class="string">&quot;%d %s %f&quot;</span>, <span class="number">10</span>, <span class="string">&quot;hello&quot;</span>, <span class="number">3.14</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>在这个示例中，我们定义了一个可变参数宏 <code>PRINT_VALUES</code>，它使用 <code>printf</code> 函数来打印多个值。</li>
+</ul>
+<br>
+
+<p><strong>4. 实现自己的 printf 函数：</strong></p>
+<ul>
+<li><code>printf</code> 函数接受一个格式字符串作为第一个参数，后面是可变数量的参数，用于替换格式字符串中的格式占位符。</li>
+<li>以下是一个简化版的示例代码，展示了一个实现类似于 <code>printf</code> 函数的功能的函数：</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdarg.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">my_printf</span><span class="params">(<span class="type">const</span> <span class="type">char</span>* format, ...)</span> &#123;</span><br><span class="line">    va_list args;</span><br><span class="line">    va_start(args, format);</span><br><span class="line">    <span class="keyword">while</span> (*format != <span class="string">&#x27;\0&#x27;</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (*format == <span class="string">&#x27;%&#x27;</span>) &#123;</span><br><span class="line">            format++; <span class="comment">// 移动到占位符的下一个字符</span></span><br><span class="line">            <span class="keyword">if</span> (*format == <span class="string">&#x27;d&#x27;</span>) &#123;</span><br><span class="line">                <span class="type">int</span> value = va_arg(args, <span class="type">int</span>);</span><br><span class="line">                <span class="built_in">printf</span>(<span class="string">&quot;%d&quot;</span>, value);</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (*format == <span class="string">&#x27;f&#x27;</span>) &#123;</span><br><span class="line">                <span class="type">double</span> value = va_arg(args, <span class="type">double</span>);</span><br><span class="line">                <span class="built_in">printf</span>(<span class="string">&quot;%f&quot;</span>, value);</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (*format == <span class="string">&#x27;s&#x27;</span>) &#123;</span><br><span class="line">                <span class="type">char</span>* value = va_arg(args, <span class="type">char</span>*);</span><br><span class="line">                <span class="built_in">printf</span>(<span class="string">&quot;%s&quot;</span>, value);</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (*format == <span class="string">&#x27;c&#x27;</span>) &#123;</span><br><span class="line">                <span class="type">int</span> value = va_arg(args, <span class="type">int</span>);</span><br><span class="line">                <span class="built_in">printf</span>(<span class="string">&quot;%c&quot;</span>, value);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="built_in">printf</span>(<span class="string">&quot;Unsupported format specifier: %c&quot;</span>, *format);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">&quot;%c&quot;</span>, *format);</span><br><span class="line">        &#125;</span><br><span class="line">        format++; <span class="comment">// 移动到下一个字符</span></span><br><span class="line">    &#125;</span><br><span class="line">    va_end(args);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span> &#123;</span><br><span class="line">	<span class="type">int</span> num = <span class="number">42</span>;</span><br><span class="line">	<span class="type">double</span> pi = <span class="number">3.14159</span>;</span><br><span class="line">	<span class="type">char</span> str[] = <span class="string">&quot;Hello, world!&quot;</span>;</span><br><span class="line">	<span class="type">char</span> ch = <span class="string">&#x27;A&#x27;</span>;</span><br><span class="line"></span><br><span class="line">	my_printf(<span class="string">&quot;Integer: %d\n&quot;</span>, num);</span><br><span class="line">	my_printf(<span class="string">&quot;Float: %f\n&quot;</span>, pi);</span><br><span class="line">	my_printf(<span class="string">&quot;Float: %s\n&quot;</span>, str);</span><br><span class="line">	my_printf(<span class="string">&quot;Float: %c\n&quot;</span>, ch);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<br>
+
+<h2 id="汇编基础"><a href="#汇编基础" class="headerlink" title="汇编基础"></a>汇编基础</h2><p>参考文档：<a target="_blank" rel="noopener" href="https://www.ruanyifeng.com/blog/2018/01/assembly-language-primer.html">汇编语言入门教程</a></p>
+<h3 id="实例分析"><a href="#实例分析" class="headerlink" title="实例分析"></a>实例分析</h3><p>了解寄存器和内存模型以后，就可以来看汇编语言到底是什么了。下面是一个简单的程序example.c。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">add_a_and_b</span><span class="params">(<span class="type">int</span> a, <span class="type">int</span> b)</span> &#123;</span><br><span class="line">   <span class="keyword">return</span> a + b;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span> &#123;</span><br><span class="line">   <span class="keyword">return</span> add_a_and_b(<span class="number">2</span>, <span class="number">3</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>gcc 将这个程序转成汇编语言。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ gcc -S example.c</span><br></pre></td></tr></table></figure>
+<p>example.s经过简化以后，大概是下面的样子。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">_add_a_and_b:</span><br><span class="line">   push   %ebx</span><br><span class="line">   mov    %eax, [%esp+8] </span><br><span class="line">   mov    %ebx, [%esp+12]</span><br><span class="line">   add    %eax, %ebx </span><br><span class="line">   pop    %ebx </span><br><span class="line">   ret  </span><br><span class="line"></span><br><span class="line">_main:</span><br><span class="line">   push   3</span><br><span class="line">   push   2</span><br><span class="line">   call   _add_a_and_b </span><br><span class="line">   add    %esp, 8</span><br><span class="line">   ret</span><br></pre></td></tr></table></figure>
+<p>可以看到，原程序的两个函数add_a_and_b和main，对应两个标签_add_a_and_b和_main。每个标签里面是该函数所转成的 CPU 运行流程。</p>
+<br>
+
+<h2 id="VSCODE文件标签栏多行显示"><a href="#VSCODE文件标签栏多行显示" class="headerlink" title="VSCODE文件标签栏多行显示"></a>VSCODE文件标签栏多行显示</h2><ul>
+<li>如果你希望打开多个文件时，所有文件都能显示出来，而不是需要滚动条来查看，可以启用文件标签栏多行显示功能：<ul>
+<li>按下 <code>Ctrl + Shift + P</code>（或 <code>Command + Shift + P</code>），输入 “<code>Open Workspace Settings</code>“ 并选择。</li>
+<li>在搜索框中输入 “<code>Show Tabs</code>“，显示”<code>Workbench › Editor: Show Tabs</code>“选择框，勾选”<code>multiple</code>“设置项。</li>
+</ul>
+</li>
+</ul>
+<p>通过上述方法，你可以解决 <code>VSCode</code> 只显示一个文件，点击另一个文件会覆盖当前文件的问题。希望这些信息对你有所帮助！</p>
+<br>
+
+<h2 id="扣子智能语音"><a href="#扣子智能语音" class="headerlink" title="扣子智能语音"></a>扣子智能语音</h2><ul>
+<li>设置wifi账号密码，</li>
+<li>创建智能体，生成<code>space_id</code>，<code>bot_ID</code>，<code>Access token</code>，填入<code>menuconfig</code>中。</li>
+<li>创建个人<code>Access token</code>的时候要添加<code>API</code>和<code>Chat SDK</code>模板。</li>
+<li><code>idf.py menuconfig</code>中<code>menuconfig → Component config → ESP-TLS</code>需要修改<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">// 原始配置</span><br><span class="line">Choose SSL/TLS library for ESP-TLS (See help for more Info) (mbedTLS)  ---&gt;</span><br><span class="line">[*] Use Digital Signature (DS) Peripheral with ESP-TLS</span><br><span class="line">[ ] Enable client session tickets</span><br><span class="line">[ ] Enable server session tickets</span><br><span class="line">[ ] Certificate selection hook</span><br><span class="line">[ ] ESP-TLS Server: Set minimum Certificate Verification mode to Optional</span><br><span class="line">[ ] Enable PSK verification</span><br><span class="line">[*] Allow potentially insecure options</span><br><span class="line">[*]     Skip server certificate verification by default (WARNING: ONLY FOR TESTING PURPOSE, READ HELP)</span><br></pre></td></tr></table></figure></li>
+<li>建议在 <code>menuconfig</code> 里做两件事：<ul>
+<li>保留 [*] Skip server certificate verification by default（方便测试）</li>
+<li>关闭 [*] Use Digital Signature (DS) Peripheral with ESP-TLS（除非 demo 专门用了 DS）<br>这样 TLS 会走 mbedTLS 普通模式，直接用 HTTPs 连 Coze，不会因为硬件 DS 或证书校验卡住。</li>
+</ul>
+</li>
+</ul>
+<br>
+
+<ul>
+<li>遇到<code>bug</code>如下：</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">E (109608) ESP_COZE_CHAT: Audio data send to queue failed</span><br><span class="line">E (109668) ESP_COZE_CHAT: Audio data send to queue failed</span><br><span class="line">E (109728) ESP_COZE_CHAT: Audio data send to queue failed</span><br><span class="line">E (109803) ESP_COZE_CHAT: Audio data send to queue failed</span><br><span class="line">W (109849) ESP_COZE_CHAT: coze websocket error reason: &#123;&quot;event_type&quot;:&quot;error&quot;,&quot;id&quot;:&quot;3c08849d-6518-4ed6-8884-bee1a853a19a&quot;,&quot;data&quot;:&#123;&quot;code&quot;:4000,&quot;msg&quot;:&quot;The parameter audio is invalid. It should follow the format: wav. or set input_audio via chat.update event. Please review your input.&quot;&#125;,&quot;detail&quot;:&#123;&quot;logid&quot;:&quot;021755077983527fdbddc030018071200000000000000325163fb&quot;,&quot;respond_at&quot;:&quot;1755077992134&quot;&#125;&#125;�2&lt;Y</span><br><span class="line"></span><br><span class="line">E (109923) ESP_COZE_CHAT: Audio data send to queue failed</span><br><span class="line">E (110118) ESP_COZE_CHAT: Audio data send to queue failed</span><br><span class="line">W (110152) ESP_COZE_CHAT: coze websocket error reason: &#123;&quot;event_type&quot;:&quot;error&quot;,&quot;id&quot;:&quot;0c329541-cc0b-44d0-9ef4-b5954edd3dc1&quot;,&quot;data&quot;:&#123;&quot;code&quot;:4000,&quot;msg&quot;:&quot;The parameter audio is invalid. It should follow the format: wav. or set input_audio via chat.update event. Please review your input.&quot;&#125;,&quot;detail&quot;:&#123;&quot;logid&quot;:&quot;021755077983527fdbddc030018071200000000000000325163fb&quot;,&quot;respond_at&quot;:&quot;1755077994608&quot;&#125;&#125;~2&lt;</span><br><span class="line"></span><br><span class="line">I (113425) COZE_CHAT_APP: vad start</span><br><span class="line">I (113427) AUDIO_PROCESSOR: VAD_START</span><br><span class="line">W (113531) ESP_COZE_CHAT: coze websocket error reason: &#123;&quot;event_type&quot;:&quot;error&quot;,&quot;id&quot;:&quot;e70d4fef-42a4-4d06-8542-4ba09e47c0fe&quot;,&quot;data&quot;:&#123;&quot;code&quot;:4000,&quot;msg&quot;:&quot;The parameter audio is invalid. It should follow the format: wav. or set input_audio via chat.update event. Please review your input.&quot;&#125;,&quot;detail&quot;:&#123;&quot;logid&quot;:&quot;021755077983527fdbddc030018071200000000000000325163fb&quot;,&quot;respond_at&quot;:&quot;1755077997990&quot;&#125;&#125;&lt;2&lt;</span><br><span class="line"></span><br><span class="line">W (113657) ESP_COZE_CHAT: coze websocket error reason: &#123;&quot;event_type&quot;:&quot;error&quot;,&quot;id&quot;:&quot;966a0434-f467-48f7-8447-3e951fa56b72&quot;,&quot;data&quot;:&#123;&quot;code&quot;:4000,&quot;msg&quot;:&quot;The parameter audio is invalid. It should follow the format: wav. or set input_audio via chat.update event. Please review your input.&quot;&#125;,&quot;detail&quot;:&#123;&quot;logid&quot;:&quot;021755077983527fdbddc030018071200000000000000325163fb&quot;,&quot;respond_at&quot;:&quot;1755077998114&quot;&#125;&#125;2&lt;�</span><br><span class="line"></span><br><span class="line">W (113754) ESP_COZE_CHAT: coze websocket error reason: &#123;&quot;event_type&quot;:&quot;error&quot;,&quot;id&quot;:&quot;a2d73423-d0d7-4356-80fc-0f5a963ffe45&quot;,&quot;data&quot;:&#123;&quot;code&quot;:4000,&quot;msg&quot;:&quot;The parameter audio is invalid. It should follow the format: wav. or set input_audio via chat.update event. Please review your input.&quot;&#125;,&quot;detail&quot;:&#123;&quot;logid&quot;:&quot;021755077983527fdbddc030018071200000000000000325163fb&quot;,&quot;respond_at&quot;:&quot;1755077998203&quot;&#125;&#125;s2&lt;�</span><br><span class="line"></span><br><span class="line">W (114268) ESP_COZE_CHAT: coze websocket error reason: &#123;&quot;event_type&quot;:&quot;error&quot;,&quot;id&quot;:&quot;e136e24c-da6a-486e-8ba3-1fe0b9cd6b0d&quot;,&quot;data&quot;:&#123;&quot;code&quot;:4000,&quot;msg&quot;:&quot;The parameter audio is invalid. It should follow the format: wav. or set input_audio via chat.update event. Please review your input.&quot;&#125;,&quot;detail&quot;:&#123;&quot;logid&quot;:&quot;021755077983527fdbddc030018071200000000000000325163fb&quot;,&quot;respond_at&quot;:&quot;1755077998542&quot;&#125;&#125;�2&lt;�</span><br><span class="line"></span><br><span class="line">E (114421) esp-tls-mbedtls: write error :-0x6C00</span><br><span class="line">E (114422) transport_base: esp_tls_conn_write error, errno=Socket is not connected</span><br><span class="line">E (114422) transport_ws: Error write header</span><br><span class="line">E (114426) websocket_client: esp_transport_write() returned -1, transport_error=ESP_ERR_MBEDTLS_SSL_WRITE_FAILED, tls_error_code=27648, tls_flags=0, errno=128</span><br><span class="line">E (114440) ESP_COZE_CHAT: WEBSOCKET_EVENT_ERROR</span><br><span class="line">I (114445) websocket_client: Reconnect after 10000 ms</span><br><span class="line">I (114449) ESP_COZE_CHAT: WEBSOCKET_EVENT_DISCONNECTED</span><br><span class="line">E (114454) ESP_COZE_CHAT: Last error reported from esp-tls: 0x8018</span><br><span class="line">E (114460) ESP_COZE_CHAT: Last error reported from tls stack: 0x6c00</span><br><span class="line">E (114468) websocket_client: Websocket client is not connected</span><br><span class="line">E (114473) websocket_client: Websocket client is not connected</span><br><span class="line">E (114478) websocket_client: Websocket client is not connected</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>我们可以直接在你的 <code>audio_data_read_task()</code> 里做几个改动，让它满足 Coze 的 WAV 格式要求，同时解决队列满导致的 Audio data send to queue failed。</li>
+<li>主要改动点：</li>
+</ul>
+<ol>
+<li>将 PCM 封装为 WAV：<ul>
+<li>16kHz，16bit，mono。</li>
+<li>每次发送一小块（如 320~640 字节 PCM）生成对应 WAV chunk。</li>
+</ul>
+</li>
+<li>增加队列发送重试：<ul>
+<li>如果 esp_coze_chat_send_audio_data() 失败，等待 5ms 再重试。</li>
+<li>循环复用 buffer，避免频繁 malloc&#x2F;free。</li>
+</ul>
+</li>
+</ol>
+<figure class="highlight c"><figcaption><span>- coze_chat_app.c</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> WAV_HEADER_SIZE 44</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PCM_CHUNK_SIZE 640   <span class="comment">// 每次发送的 PCM 数据长度</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// WAV 头结构</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">    <span class="type">char</span> riff[<span class="number">4</span>];            <span class="comment">// &quot;RIFF&quot;</span></span><br><span class="line">    <span class="type">uint32_t</span> chunk_size;</span><br><span class="line">    <span class="type">char</span> wave[<span class="number">4</span>];            <span class="comment">// &quot;WAVE&quot;</span></span><br><span class="line">    <span class="type">char</span> fmt[<span class="number">4</span>];             <span class="comment">// &quot;fmt &quot;</span></span><br><span class="line">    <span class="type">uint32_t</span> subchunk1_size; <span class="comment">// 16 for PCM</span></span><br><span class="line">    <span class="type">uint16_t</span> audio_format;   <span class="comment">// PCM = 1</span></span><br><span class="line">    <span class="type">uint16_t</span> num_channels;   <span class="comment">// 1</span></span><br><span class="line">    <span class="type">uint32_t</span> sample_rate;    <span class="comment">// 16000</span></span><br><span class="line">    <span class="type">uint32_t</span> byte_rate;</span><br><span class="line">    <span class="type">uint16_t</span> block_align;</span><br><span class="line">    <span class="type">uint16_t</span> bits_per_sample;</span><br><span class="line">    <span class="type">char</span> subchunk2_id[<span class="number">4</span>];    <span class="comment">// &quot;data&quot;</span></span><br><span class="line">    <span class="type">uint32_t</span> subchunk2_size; <span class="comment">// PCM 数据长度</span></span><br><span class="line">&#125; <span class="type">wav_header_t</span>;</span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="type">void</span> <span class="title function_">fill_wav_header</span><span class="params">(<span class="type">wav_header_t</span> *hdr, <span class="type">uint32_t</span> pcm_len)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">memcpy</span>(hdr-&gt;riff, <span class="string">&quot;RIFF&quot;</span>, <span class="number">4</span>);</span><br><span class="line">    hdr-&gt;chunk_size = <span class="number">36</span> + pcm_len;</span><br><span class="line">    <span class="built_in">memcpy</span>(hdr-&gt;wave, <span class="string">&quot;WAVE&quot;</span>, <span class="number">4</span>);</span><br><span class="line">    <span class="built_in">memcpy</span>(hdr-&gt;fmt, <span class="string">&quot;fmt &quot;</span>, <span class="number">4</span>);</span><br><span class="line">    hdr-&gt;subchunk1_size = <span class="number">16</span>;</span><br><span class="line">    hdr-&gt;audio_format = <span class="number">1</span>;</span><br><span class="line">    hdr-&gt;num_channels = <span class="number">1</span>;</span><br><span class="line">    hdr-&gt;sample_rate = <span class="number">16000</span>;</span><br><span class="line">    hdr-&gt;bits_per_sample = <span class="number">16</span>;</span><br><span class="line">    hdr-&gt;byte_rate = hdr-&gt;sample_rate * hdr-&gt;num_channels * hdr-&gt;bits_per_sample / <span class="number">8</span>;</span><br><span class="line">    hdr-&gt;block_align = hdr-&gt;num_channels * hdr-&gt;bits_per_sample / <span class="number">8</span>;</span><br><span class="line">    <span class="built_in">memcpy</span>(hdr-&gt;subchunk2_id, <span class="string">&quot;data&quot;</span>, <span class="number">4</span>);</span><br><span class="line">    hdr-&gt;subchunk2_size = pcm_len;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="type">void</span> <span class="title function_">audio_data_read_task</span><span class="params">(<span class="type">void</span> *pv)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">uint8_t</span> *pcm_buf = esp_gmf_oal_calloc(<span class="number">1</span>, PCM_CHUNK_SIZE);</span><br><span class="line">    <span class="type">uint8_t</span> *wav_buf = esp_gmf_oal_calloc(<span class="number">1</span>, PCM_CHUNK_SIZE + WAV_HEADER_SIZE);</span><br><span class="line">    <span class="type">int</span> ret;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> (<span class="literal">true</span>) &#123;</span><br><span class="line"><span class="meta">#<span class="keyword">if</span> defined CONFIG_KEY_PRESS_DIALOG_MODE</span></span><br><span class="line">        xEventGroupWaitBits(coze_chat.data_evt_group, BUTTON_REC_READING, pdFALSE, pdFALSE, portMAX_DELAY);</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"></span><br><span class="line">        ret = audio_recorder_read_data(pcm_buf, PCM_CHUNK_SIZE);</span><br><span class="line">        <span class="keyword">if</span> (ret &lt;= <span class="number">0</span>) &#123;</span><br><span class="line">            vTaskDelay(pdMS_TO_TICKS(<span class="number">5</span>));</span><br><span class="line">            <span class="keyword">continue</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 填充 WAV 头</span></span><br><span class="line">        fill_wav_header((<span class="type">wav_header_t</span> *)wav_buf, ret);</span><br><span class="line">        <span class="built_in">memcpy</span>(wav_buf + WAV_HEADER_SIZE, pcm_buf, ret);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 发送到 Coze</span></span><br><span class="line">        <span class="type">int</span> send_len = ret + WAV_HEADER_SIZE;</span><br><span class="line">        <span class="keyword">while</span> (esp_coze_chat_send_audio_data(coze_chat.chat, (<span class="type">char</span> *)wav_buf, send_len) != ESP_OK) &#123;</span><br><span class="line">            vTaskDelay(pdMS_TO_TICKS(<span class="number">5</span>));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/12/21/Git%E5%B0%8F%E8%B4%B4%E5%A3%AB/" rel="prev" title="Git使用小贴士">
+                  <i class="fa fa-angle-left"></i> Git使用小贴士
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/01/31/MCU%E5%BC%80%E5%8F%91%E9%97%AE%E9%A2%98%E6%B1%87%E6%80%BB/" rel="next" title="单片机开发问题汇总">
+                  单片机开发问题汇总 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">boollight</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="Word count total">58k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="Reading time total">3:13</span>
+  </span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>
