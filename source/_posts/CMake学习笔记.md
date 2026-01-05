@@ -16,12 +16,11 @@ description: CMake 是一个项目构建工具，并且是跨平台的。可以�
 - [参考资料2] : https://subingwen.cn/cmake/CMake-advanced/
 - [参考资料3] : https://zhuanlan.zhihu.com/p/534439206
 
-<br>
 
 ## 编写一个简单的CMakeLists.txt文件
 
 ### 1. 示例文件的目录结构如下：
-``` c
+```c
 $ tree
 .
 ├── add.c
@@ -32,7 +31,6 @@ $ tree
 └── sub.c
 ```
 
-<br>
 
 ### 2. 添加 CMakeLists.txt 文件
 在上述源文件所在目录下添加一个新文件 CMakeLists.txt，文件内容如下：
@@ -62,22 +60,21 @@ add_executable(app add.c div.c main.c mult.c sub.c)
 add_executable(app add.c;div.c;main.c;mult.c;sub.c)
 ```
 
-<br>
 
 ### 3. 执行CMake命令
-``` shell
+```shell
 # cmake 命令原型
 $ cmake CMakeLists.txt 文件所在路径
 ```
 执行示例 (当前`CMakeLists.txt`路径) ：
-``` shell
+```shell
 $ cmake .
 ```
 当执行`cmake`命令之后，`CMakeLists.txt` 中的命令就会被执行，所以一定要注意给`cmake`命令指定路径的时候一定不能出错。
 
 执行命令之后，看一下源文件所在目录中是否多了一些文件：
 
-``` shell
+```shell
 $ tree -L 1
 .
 ├── add.c
@@ -95,12 +92,11 @@ $ tree -L 1
 
 我们可以看到在对应的目录下生成了一个`makefile`文件，此时再执行`make`命令，就可以对项目进行构建得到所需的可执行程序了。
 
-<br>
 
 ### 4. 头文件及指定宏
 
 - `CMakeLists.txt` 示例代码文件：
-``` shell
+```shell
 cmake_minimum_required(VERSION 3.0)
 project(CALC)
 set(CMAKE_CXX_STANDARD 11)
@@ -111,36 +107,32 @@ file(GLOB SRC_LIST ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
 add_executable(app  ${SRC_LIST})
 ```
 
-<br>
 
 #### 4.1 通过参数`-std=c++11`指定出要使用c++11标准编译程序,对应宏`DCMAKE_CXX_STANDARD`: 
 ``` c++ 
 # 增加-std=c++11
 set(CMAKE_CXX_STANDARD 11)
 ```
-``` shell
+```shell
 # 增加-std=c++11
 cmake (CMakeLists.txt文件路径) -DCMAKE_CXX_STANDARD=11
 ```
 
-<br>
 
 #### 4.2 指定输出的路径(EXECUTABLE_OUTPUT_PATH)：
-``` shell
+```shell
 set(HOME /home/robin/Linux/Sort)
 set(EXECUTABLE_OUTPUT_PATH ${HOME}/bin)
 ```
 如果这个路径中的子目录不存在，会自动生成，无需自己手动创建。
 
-<br>
 
 #### 4.3 头文件的路径(include_directories)
-``` c
+```c
 include_directories(headpath)
 ```
 其中，第六行指定就是头文件的路径，PROJECT_SOURCE_DIR宏对应的值就是我们在使用cmake命令时，后面紧跟的目录，一般是工程的根目录。
 
-<br>
 
 #### 4.4 搜索文件(aux_source_directory)
 - `aux_source_directory(< dir > < variable >)` 示例：
@@ -156,7 +148,6 @@ file(GLOB MAIN_HEAD ${CMAKE_CURRENT_SOURCE_DIR}/include/*.h)
 
 - `CMAKE_CURRENT_SOURCE_DIR` 宏表示当前访问的 `CMakeLists.txt` 文件所在的路径
 
-<br>
 
 ### 5. 制作动态库或静态库
 
@@ -180,17 +171,16 @@ add_library(calc STATIC ${SRC_LIST})
 ```
 这样最终就会生成对应的静态库文件 `libcalc.a`
 
-<br>
 
 ##### 5.1.2 gcc生成规则：
 
-``` shell
+```shell
 gcc -c add.c div.c mult.c sub.c -I ./include/
 ```
 
 - 生成 `.o` 编译文件
 
-``` shell
+```shell
 # 查看目录中的文件
 $ tree
 .
@@ -208,7 +198,7 @@ $ tree
 ```
 - 将生成的目标文件通过 ar工具打包生成静态库
 
-``` shell
+```shell
 # 将生成的目标文件 .o 打包成静态库
 $ ar rcs libcalc.a add.o div.o mult.o sub.o    #在同一个目录中可以写成 *.o
 
@@ -231,16 +221,15 @@ $ tree
 
 - 将生成的的静态库 libcalc.a和库对应的头文件head.h一并发布给使用者就可以了。
 
-``` shell
+```shell
 # 3. 发布静态库
 	1. head.h    => 函数声明
 	2. libcalc.a => 函数定义(二进制格式)
 ```
-<br>
 
 ##### 5.1.3 gcc静态库的使用:
 
-``` shell
+```shell
 # 首先拿到了发布的静态库
 	`head.h` 和 `libcalc.a`
 	
@@ -253,7 +242,7 @@ $ tree
 
 - 编译测试程序, 得到可执行文件。
 
-``` shell
+```shell
 # 编译的时候指定库信息
  	-I: 指定头文件所在的目录(相对或者绝对路径)
 	-L: 指定库所在的目录(相对或者绝对路径)
@@ -270,7 +259,6 @@ $ tree
 └── main.c
 ```
 
-<br>
 
 #### 5.2 动态库：
 
@@ -286,7 +274,6 @@ add_library(calc SHARED ${SRC_LIST})
 ```
 这样最终就会生成对应的动态库文件 `libcalc.so`
 
-<br>
 
 ##### 5.1.2 gcc生成规则：
 
@@ -294,14 +281,14 @@ add_library(calc SHARED ${SRC_LIST})
 	- `-fPIC` 或 `-fpic` 参数的作用是使得 `gcc` 生成的代码是与位置无关的，也就是使用相对位置。
 	- `-shared`参数的作用是告诉编译器生成一个动态链接库。
 
-``` shell
+```shell
 # 1. 将.c汇编得到.o, 需要额外的参数 -fpic/-fPIC
 $ gcc -c -fpic add.c div.c mult.c sub.c -I ./include/
 ```
 
 - 生成 `.o` 编译文件
 
-``` shell
+```shell
 # 查看目录文件信息, 检查是否生成了目标文件
 $ tree
 .
@@ -319,7 +306,7 @@ $ tree
 ```
 - 使用`gcc`将得到的目标文件打包生成动态库, 需要使用参数 `-shared`
 
-``` shell
+```shell
 # 2. 将得到 .o 打包成动态库, 使用gcc , 参数 -shared
 $ gcc -shared add.o div.o mult.o sub.o -o libcalc.so  
 
@@ -342,7 +329,7 @@ $ tree
 
 - 将生成的的动态库 libcalc.so和库对应的头文件head.h一并发布给使用者就可以了。
 
-``` shell
+```shell
 # 发布库文件和头文件
 	1. head.h
 	2. libcalc.so
@@ -350,7 +337,7 @@ $ tree
 
 ##### 5.1.3 gcc静态库的使用:
 
-``` shell
+```shell
 # 1. 拿到发布的动态库
 	`head.h   libcalc.so
 # 2. 基于头文件编写测试程序, 测试动态库中提供的接口是否可用
@@ -364,7 +351,7 @@ $ tree
 
 - 编译测试程序, 得到可执行文件。
 
-``` shell
+```shell
 # 在编译的时候指定动态库相关的信息: 头文件路径-I 库的路径 -L, 库的名字 -l
 $ gcc main.c -o app -I./ -L./ -lcalc
 
@@ -392,7 +379,7 @@ $ ./app
 
 2. 使用 vim 打开配置文件, 在文件最后添加这样一句话
 
-``` shell
+```shell
 # 自己把路径写进去就行了
 export LD_LIBRARY_PATH =$LD_LIBRARY_PATH :动态库的绝对路径
 ```
@@ -403,7 +390,7 @@ export LD_LIBRARY_PATH =$LD_LIBRARY_PATH :动态库的绝对路径
 - 修改了系统级别的配置文件, 注销或关闭系统, 再开机配置就生效了
 - 不想执行上边的操作, 可以执行一个命令让配置重新被加载
 
-``` shell
+```shell
 # 修改的是哪一个就执行对应的那个命令
 # source 可以简写为一个 . , 作用是让文件内容被重新加载
 $ source ~/.bashrc          (. ~/.bashrc)
@@ -416,7 +403,7 @@ $ source /etc/profile       (. /etc/profile)
 
 2. 使用vim 修改 /etc/ld.so.conf 这个文件, 将上边的路径添加到文件中(独自占一行)
 
-``` shell
+```shell
 # 1. 打开文件
 $ sudo vim /etc/ld.so.conf
 
@@ -425,14 +412,14 @@ $ sudo vim /etc/ld.so.conf
 
 3. 更新 /etc/ld.so.conf中的数据到 /etc/ld.so.cache 中
 
-``` shell
+```shell
 # 必须使用管理员权限执行这个命令
 $ sudo ldconfig   
 ```
 
 方案 3: 拷贝动态库文件到系统库目录 /lib/ 或者 /usr/lib 中 (或者将库的软链接文件放进去)
 
-``` shell
+```shell
 # 库拷贝
 sudo cp /xxx/xxx/libxxx.so /usr/lib
 
@@ -442,7 +429,7 @@ sudo ln -s /xxx/xxx/libxxx.so /usr/lib/libxxx.so
 
 验证执行命令：
 
-``` shell
+```shell
 # 语法:
 $ ldd 可执行程序名
 
@@ -454,7 +441,6 @@ $ ldd app
     /lib64/ld-linux-x86-64.so.2 (0x00007f5d85fd6000)  ==> 动态链接器, 操作系统提供
 ```
 
-<br>
 
 #### 5.3 指定输出的路径：
 
@@ -469,13 +455,12 @@ set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 ```
 
-<br>
 
 #### 5.4 包含库文件：
 
 ##### 5.4.1 链接静态库：
 
-``` shell
+```shell
 src
 ├── add.cpp
 ├── div.cpp
@@ -487,7 +472,7 @@ src
 
 测试目录结构如下：
 
-``` shell
+```shell
 $ tree 
 .
 ├── build
@@ -533,7 +518,6 @@ link_directories(${PROJECT_SOURCE_DIR}/lib)
 link_libraries(calc)
 add_executable(app ${SRC_LIST})
 ``` 
-<br>
 
 ##### 5.4.2 链接动态库：
 
@@ -570,7 +554,7 @@ target_link_libraries(app pthread calc)
 
 在第六行中，pthread、calc都是可执行程序app要链接的动态库的名字。当可执行程序app生成之后并执行该文件，会提示有如下错误信息：
 
-``` shell
+```shell
 $ ./app 
 ./app: error while loading shared libraries: libcalc.so: cannot open shared object file: No such file or directory
 ```
@@ -601,7 +585,6 @@ target_link_libraries(app pthread calc)
 
 **温馨提示：使用 target_link_libraries 命令就可以链接动态库，也可以链接静态库文件。**
 
-<br>
 
 ### 6. 日志
 
@@ -631,7 +614,6 @@ message(WARNING "source path: ${PROJECT_SOURCE_DIR}")
 message(FATAL_ERROR "source path: ${PROJECT_SOURCE_DIR}")
 ```
 
-<br>
 
 ### 7. 变量操作
 
@@ -639,7 +621,6 @@ message(FATAL_ERROR "source path: ${PROJECT_SOURCE_DIR}")
 
 有时候项目中的源文件并不一定都在同一个目录中，但是这些源文件最终却需要一起进行编译来生成最终的可执行文件或者库文件。如果我们通过`file`命令对各个目录下的源文件进行搜索，最后还需要做一个字符串拼接的操作，关于字符串拼接可以使用`set`命令也可以使用`list`命令。
 
-<br>
 
 ##### 7.1.1 使用set拼接
 
@@ -663,7 +644,6 @@ set(SRC_1 ${SRC_1} ${SRC_2} ${TEMP})
 message(STATUS "message: ${SRC_1}")
 ```
 
-<br>
 
 ##### 7.1.2 使用list拼接
 `list`命令的功能比`set`要强大，字符串拼接只是它的其中一个功能，所以需要在它第一个参数的位置指定出我们要做的操作，`APPEND`表示进行数据追加，后边的参数和`set`就一样了。
@@ -672,7 +652,6 @@ message(STATUS "message: ${SRC_1}")
 list(APPEND <list> [<element> ...])
 ```
 
-<br>
 
 #### 7.2 字符串移除
 
@@ -695,7 +674,6 @@ list(REMOVE_ITEM SRC_1 ${PROJECT_SOURCE_DIR}/main.cpp)
 message(STATUS "message: ${SRC_1}")
 ```
 
-<br>
 
 ### 8. 宏定义
 
@@ -713,7 +691,6 @@ add_definitions(-DDEBUG)
 add_executable(app ./test.c)
 ```
 
-<br>
 
 ### 9. 预定义宏
 
@@ -730,7 +707,6 @@ add_executable(app ./test.c)
 | PROJECT_NAME | 返回通过`PROJECT`指令定义的项目名称|
 | CMAKE_BINARY_DIR | 项目实际构建路径，假设在`build`目录进行的构建，那么得到的就是这个目录的路径|
 
-<br>
 
 ### 10. 嵌套的CMake
 
@@ -738,7 +714,7 @@ add_executable(app ./test.c)
 
 先来看一下下面的这个的目录结构：
 
-``` shell
+```shell
 $ tree
 .
 ├── build
@@ -776,7 +752,6 @@ $ tree
 
 可以看到各个源文件目录所需要的`CMakeLists.txt`文件现在已经添加完毕了。接下来庖丁解牛，我们依次分析一下各个文件中需要添加的内容。
 
-<br>
 
 ### 10.1 节点关系
 
@@ -786,7 +761,6 @@ $ tree
 - 父节点`CMakeLists.txt`中的变量可以在子节点中使用
 - 子节点`CMakeLists.txt`中的变量只能在当前节点中使用
 
-<br>
 
 ### 10.2 添加子目录
 
@@ -914,11 +888,10 @@ target_link_libraries(${APP_NAME_2} ${SORT_LIB})
 - set(EXECUTABLE_OUTPUT_PATH `${EXEC_PATH}`) 写成如下就会出错：
 - set(EXECUTABLE_OUTPUT_PATH `$(EXEC_PATH)`) 就会出错
 
-<br>
 
 #### 10.3.4 构建项目
 
-``` shell
+```shell
 xuan@DESKTOP-A52B6V9:~/linux/demos/cpro$ cd build/
 xuan@DESKTOP-A52B6V9:~/linux/demos/cpro/build$ cmake ..
 -- The C compiler identification is GNU 11.4.0
@@ -965,7 +938,7 @@ xuan@DESKTOP-A52B6V9:~/linux/demos/cpro/build$ make
 
 以下是生成的树状图：
 
-``` shell
+```shell
 $ tree bin/ lib/
 bin/
 ├── test1
@@ -978,7 +951,6 @@ lib/
 - 在项目中，如果将程序中的某个模块制作成了动态库或者静态库并且在`CMakeLists.txt` 中指定了库的输出目录，而后其它模块又需要加载这个生成的库文件，此时直接使用就可以了。
 - 如果没有指定库的输出路径或者需要直接加载外部提供的库文件，此时就需要使用`link_directories(${LIB_PATH})`将库文件路径指定出来,然后链接库的名字`link_libraries(${CALC_LIB})`。
 
-<br>
 
 ### 11. 流程控制
 
@@ -1001,7 +973,6 @@ endif()
 	- 如果是`1`, `ON`, `YES`, `TRUE`, `Y`, `非零值`，`非空字符串`时，条件判断返回`True`
 	- 如果是 `0`, `OFF`, `NO`, `FALSE`, `N`, `IGNORE`, `NOTFOUND`，`空字符串`时，条件判断返回`False`
 
-<br>
 
 ##### 11.1.2 逻辑判断
 
@@ -1009,7 +980,6 @@ endif()
 - if(<cond1> AND <cond2>)
 - if(<cond1> OR <cond2>)
 
-<br>
 
 ##### 11.1.3 比较
 
@@ -1021,7 +991,6 @@ endif()
 	- `LESS_EQUAL`：如果左侧数值/字符串`小于等于`右侧，返回`True`
 	- `GREATER_EQUAL`：如果左侧数值/字符串`大于等于`右侧，返回`True`
 
-<br>
 
 ##### 11.1.4 文件操作
 
@@ -1036,14 +1005,12 @@ endif()
 	- 如果绝对路径是Linux，该路径需要从根目录开始描述
 	- 如果绝对路径是Windows，该路径需要从盘符开始描述
 
-<br>
 
 ##### 11.1.5 其他
 
 - 判断某个元素是否在列表中：`if(<variable|string> IN_LIST <variable>)`
 - 比较两个路径是否相等：`if(<variable|string> PATH_EQUAL <variable|string>)`
 
-<br>
 
 #### 11.2 循环
 在 `CMake` 中循环有两种方式，分别是：`foreach`和`while`。
@@ -1071,7 +1038,6 @@ endforeach()
 ```
 上面例子输出`0~10`
 
-<br>
 
 - `foreach(<loop_var> RANGE <start> <stop> [<step>])`
 	- `RANGE`：关键字，表示要遍历范围
@@ -1090,7 +1056,6 @@ endforeach()
 ```
 上面例子输出`10~30`,从`10`开始,每次增长`2`。
 
-<br>
 
 - `foreach(<loop_var> IN [LISTS [<lists>]] [ITEMS [<items>]])`
 	- `IN`：关键字，表示在 `xxx` 里边
@@ -1122,7 +1087,7 @@ foreach(item IN ITEMS ${WORD} ${NAME})
 endforeach()
 ```
 在上面的例子中，遍历过程中将关键字`LISTS`改成了`ITEMS`，后边跟的还是一个或者多个列表，只不过此时需要通过`${}`将列表中的值取出。其输出的信息和上一个例子是一样的：
-``` shell
+```shell
 $ cd build/
 $ cmake ..
 -- 当前遍历的值为: a
@@ -1139,7 +1104,6 @@ $ cmake ..
 
 小细节：在通过 set 组织列表的时候，如果某个字符串中有空格，可以通过双引号将其包裹起来，具体的操作方法可以参考上面的例子。
 
-<br>
 
 - `foreach(<loop_var>... IN ZIP_LISTS <lists>)`
 	- `loop_var`：存储每次循环取出的值，可以根据要遍历的列表的数量指定多个变量，用于存储对应的列表当前取出的那个值。
@@ -1170,7 +1134,7 @@ endforeach()
 
 上面的例子输出的结果如下：
 
-``` shell
+```shell
 $ cd build/
 $ cmake ..
 -- 当前遍历的值为: item1 = hello, item2=ace
@@ -1189,7 +1153,6 @@ $ cmake ..
 -- Build files have been written to: /home/robin/abc/a/build
 ```
 
-<br>
 
 ##### 11.2.2 while
 
@@ -1200,7 +1163,6 @@ endwhile()
 ```
 `while` 比较简单就不做描述了。
 
-<br>
 
 ### 12. cmake设置编译器
 
@@ -1208,11 +1170,10 @@ endwhile()
 
 在命令行中指定编译器，你可以在调用 `cmake` 命令时使用 `-DCMAKE_C_COMPILER` 和 `-DCMAKE_CXX_COMPILER` 选项来分别为`C`和`C++`设置编译器。例如：
 
-``` shell
+```shell
 cmake -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ /path/to/source
 ```
 
-<br>
 
 #### 12.2 CMakeLists.txt
 
@@ -1223,7 +1184,6 @@ set(CMAKE_C_COMPILER /user/bin/gcc)
 set(CMAKE_CXX_COMPILER /user/bin/g++)
 ```
 
-<br>
 
 #### 12.3 工具链文件
 

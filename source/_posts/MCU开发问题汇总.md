@@ -14,7 +14,7 @@ description: 记录日常开发单片机过程中遇到的一些小问题，以�
 
 1. 内核复位代码，内核复位之前虽然关闭了中断，但是DMA数据接收/发送还是在运行，复位后没有管理的时候就会溢出：
 
-``` c
+```c
 void kernel_reset(void)
 {
     __DSB();
@@ -33,13 +33,13 @@ void kernel_reset(void)
 ```
 
 - 板级初始化前先要重置状态：
-``` c
+```c
 DMA_DeInit(dma_chx);		//DMA开启循环接收后会持续接收字节
 ADC_DeInit(adc_handler);
 ```
 
 - 驱动反初始化:
-``` c
+```c
 int drv_adc_deinit(EADC_DEVICE adc_dev,EDMA_CHANNEL dma_ch)
 {
 	ADC_Module *adc_handler = drv_get_adc_device(adc_dev)->ADC_Handler;
@@ -101,13 +101,11 @@ void drv_usart_deinit(ESERIAL_DEV dev)
     
 }
 ```	
-<br>
 
 2. 内核复位引起的外部`flash`初始化失败，串口异常
 
 ![外部flash初始化失败](../pictures/外部flash初始化失败.png)
 
-<br>
 
 ### n32g452rc内核复位问题
 
@@ -124,7 +122,6 @@ void drv_usart_deinit(ESERIAL_DEV dev)
 - `n32g45x`系列栈大小和堆大小影响不大，只要代码段大小不变，跳转成功；若代码段长度变化，跳转失败。（芯片原因不支持）
 - `n32l40x`系列不存在此类问题。
 
-<br>
 
 ## MCU复位后状态
 
@@ -146,31 +143,28 @@ void drv_usart_deinit(ESERIAL_DEV dev)
 	- `PC13～15` 为备电域下的三个` IO`， 备份域初次上电默认为模拟模式；
 - `PD14`为外部晶振输入引脚，不要做`MCU`使能脚，上电电平会有抖动，会误触发上电。
 
-<br>
 
 - `PB2`/`BOOT1`：
 	- `PB2`/`BOOT1` 默认处于下拉输入状态；
 
-<br>
 
 - `BOOT0` 默认输入下拉，参照下表， 若 `BOOT` 的引脚未连接，则默认选择 `Flash` 主存储区。
 
 ![mcu启动选项表](../pictures/mcu启动选项表.png)
 
-<br>
 
 **问题**：`n32g452`系列芯片， `串口2`无法发送数据问题
 - 打印测试进入了`usart2`的串口发送函数，示波器测量，有尖峰异常波形。
 
 **解决**：`串口2`引脚为`PB4`,默认为`JTAG`引脚，复用时应关闭`JTAG`功能。
 
-``` c
+```c
 // 使用jlink引脚复用成GPIO时需要关闭jlink引脚功能，否则无法正常输出。
 GPIO_ConfigPinRemap(GPIO_RMP_SW_JTAG_SW_ENABLE, ENABLE);
 ```
 
 - 时钟引脚使用问题(`n32l406`为例)，可能不需要复用，以实际为准。
-``` c
+```c
 	/*开启复用的外设时钟使能*/
 	if(pin == 5)
 	{
@@ -184,7 +178,6 @@ GPIO_ConfigPinRemap(GPIO_RMP_SW_JTAG_SW_ENABLE, ENABLE);
 		GPIO_ConfigPinRemap(GPIOD_PORT_SOURCE,GPIO_PIN_SOURCE15,GPIO_NO_AF);	/*映射的使能*/
 	}
 ```
-<br>
 
 ## printf重定向
 
@@ -230,13 +223,12 @@ int _write(int fd, char* pBuffer, int size)
     return size;
 }
 ```
-<br>
 
 ## RT-THREAD调试问题
 
 ### LETTER SHELL问题
 
-``` c
+```c
 // SHELL_USING_LOCK设为 1，则需要初始化互斥锁，否则shell会卡死。
 // LOG_USING_LOCK设为 0，否则log会卡死，问题待后续验证。
 #define SHELL_USING_LOCK    1       
@@ -303,7 +295,7 @@ void User_Shell_Init(void)
 
 - 打开UART7接收为`DMA IDLE`中断，申请一个超时定时器，发送/接受各一个任务，发送/接受两个队列,以下是错误信息：
 
-``` bash
+```bash
 psr: 0x60000000
 r00: 0x00000000
 r01: 0x20007978
@@ -363,7 +355,7 @@ static int usart_key_rx_indicate(ESERIAL_DEV serial_dev, uint16_t size)
 - 上述问题`LETTER SHELL`问题中`SHELL_USING_LOCK`设为`1`，`LOG_USING_LOCK`需设为`0`,否则会卡死，经调试后下面会做出解释。
 - 在初始化的时候，不管是`KVDB`还是`TSDB`，必须在烧完程序后，`reboot`一下才能初始化扇区成功，原因待查。
 - 会出现以下打印后卡住：
-``` c
+```c
 admin:/$ tsdb_test
 [D/FAL] (fal_flash_init:47) Flash device |               n32_onchip | addr: 0x08000000 | len: 0x00080000 | blk_size: 0x00000800 |initialized finish.
 [I/FAL] ==================== FAL partition table ====================
@@ -385,7 +377,7 @@ admin:/$ tsdb_test
 ```
 
 - 烧录完`reboot`后，正常的打印：
-``` c
+```c
 admin:/$ tsdb_test
 [D/FAL] (fal_flash_init:47) Flash device |               n32_onchip | addr: 0x08000000 | len: 0x00080000 | blk_size: 0x00000800 |initialized finish.
 [I/FAL] ==================== FAL partition table ====================
@@ -420,7 +412,7 @@ admin:/$ tsdb_test
 ```
 
 - 原因：由于flash解锁是给互斥量加锁，之前写成一致了，写反了，导致进去一次之后卡死。
-``` c
+```c
 static struct rt_mutex flashMutex;
 void af_flash_init(void)
 {
@@ -502,12 +494,11 @@ int value = *p;		// 访问 num 的值
 
 在大多数情况下，对指针变量进行取址会导致程序崩溃。这是因为程序会试图访问一个不存在的内存地址。
 
-<br>
 
 ### 结构体偏移操作
 
 - `offsetof(TYPE, MEMBER)` 函数用法：
-``` c
+```c
 /* Offset of member MEMBER in a struct of type TYPE. */
 #define offsetof(TYPE, MEMBER) __builtin_offsetof (TYPE, MEMBER)
 
@@ -525,7 +516,6 @@ typedef struct __attribute__((packed))
 
 int send_len = offsetof(ble_comm_protocol, data);       // send_len 长度为 8 bytes
 ```
-<br>
 
 ### 结构体或指针初始化
 
@@ -642,7 +632,6 @@ void LCD_WR_DATA(u16 dat)
 }
 ```
 
-<br>
 
 ## Cortex-M系列内核字节对齐汇总
 
@@ -677,7 +666,6 @@ struct Test
 ```
 在Test结构体中，最大的成员为`float` x3，因此结构体的自然对界条件为4字节对齐。则结构体长度就为12字节，内存布局为`1100 1111 1000`。
 
-<br>
 
 #### 指令对齐
 
@@ -712,7 +700,7 @@ struct s2
 `sizeof(s2)`的结果为24。S1的内存布局为`1100 1111`，S2的内存布局为`1000 1100 1111 0000 1111 1111`。
 
 **例子2**(按照2个字节对齐时)：
-``` c
+```c
 #include <stdio.h>
 #pragma pack(2)
 typedef struct
@@ -769,21 +757,21 @@ int main(void)
 - `int a attribute((aligned(64))) = 10;`
 
 这个修饰的影响主要是对齐，所谓对齐是存储为值的起始地址。变量a的地址&a,本来是4字节对齐，变成了64字节对齐（有的环境对最大对齐数值有限制）。64字节对齐就是`&a`的最后6位为0。
-``` c
+```c
 sizeof(a) = 4; 		//a 占用的字节数还是4个字节
 ```
 
 - `typedef int myint attribute((aligned(64))) ;`
 
 这样说明myint 声明的变量按照64字节对齐，大小是4字节，这样就会有一个问题，这个变量不能定义数组：
-``` c
+```c
 myint myarray[2]; 	//这样定义编译器会报err
 ```
 报错的原因是数组的存储在内存中是连续的，而myint只有4字节确要64字节对齐，这样对齐和连续就不能同时保证，就会报错。
 
 **例子1**：
 
-``` c
+```c
 typedef struct st_tag {
 	int a;
 	char b;
@@ -798,7 +786,7 @@ ST1 myst；
 - 结构体内每个变量按照自身字节数对齐；
 - 结构体的大小`(sizeof(myst))`是最大变量字节数的整数倍（8/4=2）；
 
-``` c
+```c
 typedef struct st_tag {
 	int a;
 	char b;
@@ -807,7 +795,7 @@ ST1 myst；
 sizeof(ST1) = sizeof(myst) = 64; 
 ```
 对比：
-``` c
+```c
 typedef struct st_tag {
 	int a;
 	char b;
@@ -819,7 +807,7 @@ sizeof(ST1) = sizeof(myst) = 8 ;
 这第二种情况可以理解为`__attribute__((aligned(64)))`作用于变量ST1 ，只影响对齐，不影响结构的大小。
 
 **例子2**：
-``` c
+```c
 typedef struct __attribute__((packed))
 {
     uint8_t comm_version;
@@ -829,7 +817,6 @@ typedef struct __attribute__((packed))
 ```
 `__attribute__((packed))`是GCC编译器提供的一个属性,`__attribute__((packed))`其中的成员变量不会进行对齐。
 
-<br>
 
 ## HSV 模型
 
@@ -882,7 +869,6 @@ void led_set_poll(void)
 }
 ```
 
-<br>
 
 ## 内存管理
 
@@ -917,7 +903,7 @@ void led_set_poll(void)
 
 ## 国民UART+DMA+TX问题
 改之前：
-``` c
+```c
 static void ec32_uart_dma_tx_config(struct ec_serial_device *serial, uint8_t *buffer, uint16_t length)
 {
     if(serial->Txbuffer->tail + length > serial->dma.setting_tx_len) 
@@ -949,7 +935,7 @@ static void ec32_uart_dma_tx_config(struct ec_serial_device *serial, uint8_t *bu
 ```
 
 问题解决来自`jindu-chen`，修改后：
-``` c
+```c
 static void ec32_uart_dma_tx_config(struct ec_serial_device *serial, uint8_t *buffer, uint16_t length)
 {
     DMA_EnableChannel(serial->dma.tx_ch, DISABLE);
@@ -987,7 +973,7 @@ static void ec32_uart_dma_tx_config(struct ec_serial_device *serial, uint8_t *bu
 ```
 
 修改前`tail`指针接近缓存区最大边界时，剩余空间不足时会进入以下函数, 一直卡在`while`中出不来, 需改到后面去：
-``` c
+```c
 if(serial->Txbuffer->tail + length > serial->dma.setting_tx_len) 
 {
     while(DMA_GetFlagStatus(serial->dma.tx_gl_flag, serial->dma.tx_dma_type) == RESET){}
@@ -997,7 +983,7 @@ if(serial->Txbuffer->tail + length > serial->dma.setting_tx_len)
 DMA_GetCurrDataCounter(serial->dma.tx_ch) 需要实时获取
 ```
 即以下代码：
-``` c
+```c
 static void ec32_uart_dma_tx_config(struct ec_serial_device *serial, uint8_t *buffer, uint16_t length)
 {
     DMA_EnableChannel(serial->dma.tx_ch, DISABLE);
@@ -1039,7 +1025,7 @@ static void ec32_uart_dma_tx_config(struct ec_serial_device *serial, uint8_t *bu
 ```
 
 修改后还是会在DMA发送数据满的时候，多出不知名的符号，再次修改：
-``` c
+```c
 static void ec32_uart_dma_tx_config(struct ec_serial_device *serial, uint8_t *buffer, uint16_t length)
 {
     DMA_EnableChannel(serial->dma.tx_ch, DISABLE);          //去掉这一项，在需要关闭时再关闭DMA，否则会影响数组满时的数据。
@@ -1048,7 +1034,7 @@ static void ec32_uart_dma_tx_config(struct ec_serial_device *serial, uint8_t *bu
 ```
 
 修改后代码：
-``` c
+```c
 static void ec32_uart_dma_tx_config(struct ec_serial_device *serial, uint8_t *buffer, uint16_t length)
 {
     DMA_InitType DMA_InitStructure;
@@ -1085,11 +1071,10 @@ static void ec32_uart_dma_tx_config(struct ec_serial_device *serial, uint8_t *bu
 }
 ```
 
-<br>
 
 ## RT-THREAD下IAP升级问题
 当前代码：
-``` c
+```c
 #define RT_THREAD_PRIORITY_MAX          32 
 #define RT_THREAD_COMM_TASK_PRIORITY    10
 static void iap(void)
@@ -1106,7 +1091,7 @@ static void iap(void)
 - 后面测试发现如果升级途中被外部字符输入打断，会一直在`YMODEM`里面出不来，开了看门口也没用（`YMODEM`接收程序里有看门狗）。
 - 解决方法：
 目前添加`rt_schedule();`暂时解决问题，测试中会偶发，最近测试没有发现，待进一步测试。
-``` c
+```c
     rt_thread_t th = rt_thread_find("tidle");					//fix it（2022.8.30）
     int original_priority = th->current_priority;
     int new_priority = RT_THREAD_COMM_TASK_PRIORITY - 1;
@@ -1135,7 +1120,7 @@ static void iap(void)
 ## 利用正弦曲线模拟呼吸灯
 
 - 直接上示例：
-``` c
+```c
 // 宏定义
 #include <math.h>
 
@@ -1185,14 +1170,13 @@ RLED_RUN_MODE rled_ring_charge_function(event_param_t ep)
 }
 ```
 
-<br>
 
 ## RTC低功耗唤醒问题
 
 ### RTC设置日期时间问题
 
 - 遇到问题
-``` c
+```c
 void drv_low_power_rtc_init(void)
 {
 	rtc_date_time_default_value();
@@ -1214,7 +1198,7 @@ void drv_low_power_rtc_init(void)
 ```
 
 - `rtc_clk_source_config(...)`执行完后，设置日期`rtc_date_params_set(...)`，设置会失败显示`The current date (WeekDay-Date-Month-Year) is < 00-01-01-00 >`：
-``` c
+```c
 D [00:00:00,000] (driver/drv_lp_rtc.c) drv_low_power_rtc_init [380]: RTC not yet configured.... 
 D [00:00:00,000] (driver/drv_lp_rtc.c) rtc_clk_source_config [331]: RTC_ClkSrc Is Set LSI!
 D [00:00:00,001] (driver/drv_lp_rtc.c) rtc_date_params_set [166]: >> RTC Set Date success. <<
@@ -1224,7 +1208,7 @@ D [00:00:00,001] (driver/drv_lp_rtc.c) rtc_time_param_show [137]: The current ti
 ```
 
 - 原因分析，在函数`ErrorStatus RTC_Init(RTC_InitType* RTC_InitStruct){...}`中有以下代码：
-``` c
+```c
 /* Delay for the RTC prescale effect */
 for(i=0;i<0x2FF;i++);
 ```
@@ -1241,7 +1225,7 @@ for(i=0;i<0x2FF;i++);
 #### 唤醒例程
 
 - 代码如下：
-``` c
+```c
 #define RTC_WAKEUP_EN  			0
 #define IWDG_MAX_TIMEOUT_SECS	25
 #define IWDG_MAX_USER_SECS	21
@@ -1317,7 +1301,7 @@ void board_pwr_enter_stop2(void)
 ```
 
 - `RTC auto wakeup`成功, 需注意唤醒时钟问题:
-``` c
+```c
 void drv_low_power_rtc_init(void)
 {
 	rtc_date_time_default_value();
@@ -1354,11 +1338,10 @@ void rtc_auto_wakeup_set(uint8_t seconds)
 - `O0`级优化低功耗会跑飞，`Os`级优化低功耗就是正常的，原因待查，下一步**先查打印函数**, **不是打印函数原因**，已验证。
 - `arm-none-eabi-gcc`的`nano`系统：添加`--specs=nano.specs` 打印不了`float`和`64位`整数，但是程序缩小`20K`左右; 但是标准库跑不了低功耗，原因为**串口打印函数问题**, 待分析。
 
-<br>
 
 ## 自写printf函数
 
-``` c
+```c
 static int lp_printf(const char *format, ...) {
     va_list args;
     char buffer[256];  			// 定义一个足够大的缓冲区
@@ -1392,7 +1375,6 @@ static int lp_printf(const char *format, ...) {
     - 检查资源管理：确保在进入和退出低功耗模式时，所有资源都被正确管理。特别是对于标准库中使用的资源，如内存分配器等，确保它们在低功耗模式下能够正常工作。
     - 使用线程安全的实现：如果在多线程环境中使用标准库，确保所有函数都是线程安全的，以避免在低功耗模式下出现并发问题。
 
-<br>
 
 ## rt-thread 互斥量问题
 
@@ -1404,14 +1386,13 @@ static int lp_printf(const char *format, ...) {
 - **优先级继承**：当低优先级任务持有互斥量时，如果高优先级任务试图获取同一个互斥量，可以通过优先级继承机制来避免死锁。这样，低优先级任务的优先级会临时提升，以减少高优先级任务的等待时间。
 - **设计合理的资源访问顺序**：确保系统中的所有任务以相同的顺序获取互斥量，这可以避免循环等待，从而减少死锁的可能性。
 
-<br>
 
 **项目中的解决方案及代码**：
 - `shell`是空闲任务，线程优先级最低。
 - `brains_electric_data_send(&send_data, sizeof(send_data));`函数会传递队列，接收队列任务优先级要比`shell`线程优先级高。
 - 在这里进入打印时`不设上锁等待时间`，会直接重入。
 - **影响**：有部分打印会被覆盖，不显示。
-``` c
+```c
 #if LOG_USING_LOCK
 static struct rt_mutex logMutex;
 int userLogLock(Log *log)
@@ -1462,7 +1443,7 @@ SHELL_EXPORT_CMD(SHELL_CMD_PERMISSION(0)|SHELL_CMD_TYPE(SHELL_TYPE_CMD_FUNC)|SHE
 ## letter shell调试问题
 
 - 使用`letter shell`调试时间戳转换函数时遇到问题，设置时间对不上，代码如下：
-``` c
+```c
 // 将UTC的Unix时间戳转换为RTC时间和日期
 static void rtc_utc_timestamp_set(time_t timestamp)
 {
@@ -1493,10 +1474,9 @@ void rtc_local_timestamp_set(time_t timestamp)
 SHELL_EXPORT_CMD(SHELL_CMD_PERMISSION(0)|SHELL_CMD_TYPE(SHELL_TYPE_CMD_FUNC)|SHELL_CMD_DISABLE_RETURN, local_timestamp_set, rtc_local_timestamp_set, rtc_local_timestamp_set);
 ```
 
-<br>
 
 - 查阅`letter shell`相关资料发现，参数只支持`char(字符)`，`char(数字)`，`short(数字)`，`int(数字)`，`char *(字符串)`，`pointer`这几个数据类型，并不支持`time_t`，所以敲`shell`指令入参的时候，会把数据强制转为`int`类型，而在使用`gmtime(&timestamp)`转换的时候，`timestamp`是需要为`time_t`类型的，所以做出如下修改：
-``` c
+```c
 // 将UTC的Unix时间戳转换为RTC时间和日期
 static void rtc_utc_timestamp_set(int timestamp)       // 改为int类型
 {
@@ -1529,14 +1509,13 @@ void rtc_local_timestamp_set(time_t timestamp)      // 无需改为int类型能�
 SHELL_EXPORT_CMD(SHELL_CMD_PERMISSION(0)|SHELL_CMD_TYPE(SHELL_TYPE_CMD_FUNC)|SHELL_CMD_DISABLE_RETURN, local_timestamp_set, rtc_local_timestamp_set, rtc_local_timestamp_set);
 ```
 
-<br>
 
 ## 串口相关问题
 
 ### 不带数据线USB的D+和D-短接
 
 - 添加`shell.c`文件中的判断，可能会出现恢复后`shell`交互键入数据延后：
-``` c
+```c
 #define SHELL_SHUTDOWN_CNTS		50
 static unsigned char shell_shutdown = 0;			//TX RX短接处理
 static int shell_shutdown_cnts = 0;					//TX RX短接处理cnts次数
@@ -1635,14 +1614,13 @@ void shellTask(void *param)
 
 ```
 
-<br>
 
 ### 串口回环后shell交互键入数据延后解决
 
 - 使用`letter shell`的解决方法：(**依然会复现, 已定位是环形缓冲区的问题**)
 
 - 修改`shell.c`文件中的部分函数，清空缓存区长度：(未解决)
-``` c
+```c
 // shell.c 文件 
 void shellInsertByte(Shell *shell, char data)
 {
@@ -1680,13 +1658,12 @@ static void shellWriteCommandHelp(Shell *shell, char *cmd)
 }
 ```
 
-<br>
 
 ### letter shell初始化优化
 
 - `letter shell`新增初始化设置打印等级参数
 
-``` c
+```c
 void User_Shell_Init(uint8_t level)
 {
     struct serial_configure config = EC_SERIAL_CONFIG_DEFAULT;
@@ -1705,12 +1682,11 @@ void User_Shell_Init(uint8_t level)
 }
 ```
 
-<br>
 
 ### 串口升级后清屏指令问题
 
 - 串口升级后清屏指令打不全导致字符重叠，`letter shell`优化代码如下：
-``` c
+```c
 static const char *shellText[] =
 {
     ...
@@ -1729,32 +1705,28 @@ static const char *shellText[] =
 }
 ```
 
-<br>
 
 ## secure CRT问题
 
 - 在线升级后打印出不完整清屏指令，显示残留`2J`，不会清屏。
 - 测试两块板，一块有这个问题，另一块没有问题
 
-<br>
 
 ## n32l406的ADC跑飞
 
 - 问题：`n32l406`的`ADC`跑飞，代码复用以前可以跑的。
 - 解决：低级错误，`ADC`的`IO`口初始化`PORT`和`PIN`写反，`CmBacktrace`排查出问题。
 
-<br>
 
 ## n32l406的不定时跑飞
 - 以下是跑飞后`cmbacktrace`追踪的`pc`指针及追踪函数。
 - 可能是串口`RX`干扰问题：(问题定位软件问题或者硬件问题)。
-``` c
+```c
 xuan@DESKTOP-A52B6V9:~/work/n5/code/app$ addr2line -e app.elf -a -f 080160c2 08013fcc 080140fc 080141d2 08014252 0800a4b6 08009092 0x080160c2 fault_test_by_div0 /home/xuan/work/n5/code/app/components/cm_backtrace/fault_test.c:38 0x08013fcc shellRunCommand /home/xuan/work/n5/code/app/components/letter_shell/shell.c:1264 0x080140fc shellEnter /home/xuan/work/n5/code/app/components/letter_shell/shell.c:1704 0x080141d2 shellHandler /home/xuan/work/n5/code/app/components/letter_shell/shell.c:1831 0x08014252 shellTask /home/xuan/work/n5/code/app/components/letter_shell/shell.c:1905 0x0800a4b6 main /home/xuan/work/n5/code/app/application/main.c:37 0x08009092 LoopFillZerobss /home/xuan/work/n5/code/app/CMSIS/device/startup/startup_n32l40x_gcc.s:113
 ```
 
-<br>
 
-``` c
+```c
 xuan@DESKTOP-A52B6V9:~/work/n5/code/app$ addr2line -e app.elf -a -f 6f6d656c 080131aa 08010a62 080131aa 080140c0 080141f0 080142c6 0801434c 0800a4b6 08009092
 0x6f6d656c
 ??
@@ -1789,7 +1761,7 @@ LoopFillZerobss
 ```
 
 - 修改方法一：软件修改
-``` c
+```c
 void ec32_msp_usart_init(void *Instance)
 {
     GPIO_InitType GPIO_InitStructure;
@@ -1818,14 +1790,13 @@ void ec32_msp_usart_init(void *Instance)
 }
 ```
 
-<br>
 
 ## N32L40X的DMA复用问题
 - 这个系列芯片的`8`个`DMA`通道源，可以给任意能使用的外设映射。
 - 需求变更，新增ADC检测，在赋予DMA通道时没有自检。
 
 `Scalp 5`光能模组示例：
-``` c
+```c
 // USART 定义
 #if defined(BSP_USING_UART2)
 	{	
@@ -1862,7 +1833,7 @@ drv_adc_init(adc_dev, EDMA_CH6);
 - `USART2`和`ADC`都使用了`DMA_CH6`这个通道，现象是先初始化的`USART2`发送会异常。
 
 - 解决方案
-``` c
+```c
 // ADC部分定义改为通道4
 #define ADC_DMAy			DMA
 #define	DMAy_FLAG_TCz		DMA_FLAG_TC4
@@ -1878,7 +1849,7 @@ drv_adc_init(adc_dev, EDMA_CH4);
     - 不使用`SPI级联灯`，连续读取传感器数值，无明显跳变；
     - 使用`SPI级联灯`，连续读取传感器数值，出现明显跳变；
 
-``` c
+```c
 vcnl read sum = [1815],H=[0x07],L=[0x17]
 vcnl read sum = [1815],H=[0x07],L=[0x17]
 vcnl read sum = [1815],H=[0x07],L=[0x17]
@@ -1916,7 +1887,7 @@ vcnl read sum = [617],H=[0x02],L=[0x69]
 ### USART调试问题
 
 - `WSL`配置普通模式正常，中断就跑飞，加打印：
-``` c
+```c
 printf("VTOR=0x%08lx, USART2_IRQn=%d\r\n", SCB->VTOR, USART2_IRQn);
 
 admin: VTOR=0x08002800, USART2_IRQn=28
@@ -1935,7 +1906,7 @@ admin: VTOR=0x08002800, USART2_IRQn=28
 
 ### 串口打印问题
 - 以下是常规思维的发送驱动和底层：
-``` c
+```c
 int drv_usart_write(ESERIAL_DEV serial_dev,const void *buffer,uint32_t size)
 {
     UART_TypeDef *uart_handle = usart_handle_get(serial_dev);
@@ -1969,7 +1940,7 @@ void UART_SendBuf(UART_TypeDef *UARTx, uint8_t *buf, uint32_t len)
 ```
 
 - 调试发现不能直接打印常量字符串，分析得出`buf`直接把地址给`DMAx->SRC_ADDR.reg`了，因为常量区实在flash储存，DMA的发送地址只能在ram或者rom区，作出以下修改，加发送缓存：
-``` c
+```c
 int drv_usart_write(ESERIAL_DEV serial_dev,const void *buffer,uint32_t size)
 {
     UART_TypeDef *uart_handle = usart_handle_get(serial_dev);

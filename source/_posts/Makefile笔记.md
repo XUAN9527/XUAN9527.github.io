@@ -10,7 +10,6 @@ categories:
 description: 如何编写单片机的Makefile，以及选项、参数的详细解释，部分会有说明，不限于单片机开发。
 ---
 
-<br>
 
 ## makefile问题汇总
 
@@ -19,13 +18,13 @@ description: 如何编写单片机的Makefile，以及选项、参数的详细�
 - 定义`COMPILE_FLAGS = -MD`或者`-MMD`, 编译器标志，用于生成 `.d` 文件
 - `$(BUILD_DIR)`为编译文件目录，跟进自身makefile修改，原来的编译规则：
 
-``` makefile
+```makefile
 -include $(wildcard $(BUILD_DIR)/*/*.d)	# 包含所有生成的依赖文件，避免重复编译、提高效率
 ```
 `/*/*.d` 为当前目录下的二级所有文件检索。
 
 - 修改为以下编译规则：
-``` makefile
+```makefile
 # 找到所有的 .d 文件
 DEP_FILES := $(shell find $(BUILD_DIR) -type f -name '*.d')# 包含所有生成的依赖文件，避免重复编译、提高效率
 
@@ -33,14 +32,13 @@ DEP_FILES := $(shell find $(BUILD_DIR) -type f -name '*.d')# 包含所有生成�
 -include $(DEP_FILES)
 ```
 或者：
-``` c
+```c
 -include $(wildcard $(BUILD_DIR)/**/*.d)
 -include $(wildcard $(BUILD_DIR)/*/*/*.d)
 ```
 `/**/*.d` 它允许你搜索和匹配嵌套在任意深度的目录中的文件。
 `/*/*/*.d` 为当前目录下的三级所有文件检索，根据具体情况修改。
 
-<br>
 
 ### `$<` 和 `$^` 的区别
 
@@ -56,7 +54,7 @@ DEP_FILES := $(shell find $(BUILD_DIR) -type f -name '*.d')# 包含所有生成�
 
 举个例子来说明它们的不同：
 
-``` makefile
+```makefile
 # 假设有一个目标文件 main.o 需要两个源文件 main.c 和 utils.c 来生成
 main.o: main.c utils.c
     $(CC) $(CFLAGS) -c main.c -o $@
@@ -65,7 +63,7 @@ main.o: main.c utils.c
 ```
 
 再看一个示例：
-``` makefile
+```makefile
 $(BUILD_DIR)/%.o: %.c
 	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) $(INCLUDE) $< -o $@
@@ -79,12 +77,11 @@ $(BUILD_DIR)/%.o: %.c
 
 在实际编写Makefile时，根据你的需要选择合适的变量。
 
-<br>
 
 ### makefile伪指令
 在 `Makefile` 中，`.PHONY` 是一个特殊的声明，用来指出一些目标并不是实际的文件，而是一些需要执行的命令序列。这样做可以让 `Make` 工具在遇到同名文件时，不会误认为这些目标是要操作的文件，而是要执行的命令。
 
-``` makefile
+```makefile
 .PHONY : clean all copy mix download
 
 all: $(TARGET).bin $(TARGET).list $(TARGET).hex
@@ -116,12 +113,11 @@ clean:
 - `@`符号使得 `Make` 工具在执行命令时不会打印该命令本身,如`make copy`。
 - **拓展**：`$(OC) -I binary -O ihex --change-addresses 0x8000000 mix.bin mix.hex`表示将 `mix.bin` 的二进制文件转换为名为 `mix.hex` 的 `Intel HEX`格式文件，并将所有地址偏移设置为 `0x8000000`
 
-<br>
 
 ## n32g452rc的makefile解析
 
 **`makefile`源码：**
-``` makefile
+```makefile
 # C编译器的宏定义
 C_DEFS +=  \
 -DN32G45X \
@@ -287,49 +283,41 @@ DEP_FILES := $(shell find $(BUILD_DIR) -type f -name '*.d')# 包含所有生成�
 
 	- `-DN32G45X` 和 `-DUSE_STDPERIPH_DRIVER` 是编译器的宏定义，用于在编译时定义特定的预处理变量。
 
-<br>
 
 2. 头文件搜索路径 (`INCLUDE`):
 
 	`-ICMSIS/core`, `-ICMSIS/device`, `-Istd_periph_lib/inc` 指定了编译器搜索头文件的路径。
 
-<br>
 
 3. 应用层源文件 (`C_APP_SOURCES`):
 
 	- 列出了应用层的 `C` 源文件。
 
-<br>
 
 4. 中间层驱动源文件 (`C_DRV_SOURCES`):
 	
 	- 使用 $(wildcard rtt-nano/src/*.c) 来匹配 rtt-nano/src 目录下的所有 .c 文件。
 
-<br>
 
 5. 底层驱动源文件 (`C_LIB_SOURCES`):
 
 	- 列出了底层驱动的 C 源文件。
 
-<br>
 
 6. 源文件汇总 (`C_SOURCES`):
 
 	- 将应用层、中间层和底层驱动的源文件汇总到 `C_SOURCES。`
 
-<br>
 
 7. 汇编源文件 (`ASM_SOURCES`):
 
 	- 列出了汇编语言的源文件。
 
-<br>
 
 8. 交叉编译工具链 (`CROSS_COMPILE`, `CC`, `LD`, `AR`, `AS`, `OC`, `OD`, `SZ`):
 
 	- 定义了交叉编译工具链的前缀和各个工具（编译器、链接器、库管理器等）的命令。
 
-<br>
 
 9. 目标硬件的架构和浮点运算单元 (`MCU`):
 
@@ -359,7 +347,6 @@ DEP_FILES := $(shell find $(BUILD_DIR) -type f -name '*.d')# 包含所有生成�
 		- soft 浮点 ABI 指定浮点运算将通过软件库实现，而不是直接使用硬件 FPU。这种方式可以 **生成更小的代码**，因为不需要包含 FPU 的指令集，但运行时的 **浮点运算会较慢**，因为它们需要通过软件模拟。
 
 	**注意：**`-mfpu=fpv4-sp-d16` 与 `-mfloat-abi=hard` 或 `-mfloat-abi=soft` 选项一起使用。
-<br>
 
 10. 编译选项 (`CFLAGS`):
 	定义了编译 `C` 源文件时使用的选项,`$(MCU)` 和 `$(C_DEFS)`上面有解释，不过多阐述。
@@ -376,7 +363,6 @@ DEP_FILES := $(shell find $(BUILD_DIR) -type f -name '*.d')# 包含所有生成�
 	- `-Wall`:
 		- 这个选项告诉编译器打开大多数警告信息。虽然 `-Wall` 并不打开所有的警告选项，但它会启用大量标准警告，帮助开发者发现潜在的问题。
 
-<br>
 
 11. 链接器脚本和链接选项 (`LDSCRIPT`, `LDFLAGS`):
 	
@@ -396,18 +382,15 @@ DEP_FILES := $(shell find $(BUILD_DIR) -type f -name '*.d')# 包含所有生成�
 	- `-Wa,-mimplicit-it=thumb`:
 		- 这是传递给汇编器的选项（通过 `-Wa` 前缀）。`-mimplicit-it=thumb` 指定默认的指令集为 `Thumb` 模式，这是 `ARM 架构`的一种 `16 位指令集`，用于减小代码大小。
 
-<br>
 
 12.  目标文件格式转换选项 (`OCFLAGS`, `ODFLAGS`):
 	- `OCFLAGS = -Obinary`
 	- `ODFLAGS = -S`
 	
-<br>
 
 13. 输出目录和目标文件名 (`BUILD_DIR`, `TARGET`):
 	- 定义了构建输出目录和最终目标文件的名称。
 
-<br>
 
 14. 目标文件的生成 (`C_OBJECTS`, `ASM_OBJECTS`, `OBJECTS`):
 	- `C_OBJECTS = $(addprefix $(BUILD_DIR)/, $(C_SOURCES:.c=.o))`
@@ -421,12 +404,10 @@ DEP_FILES := $(shell find $(BUILD_DIR) -type f -name '*.d')# 包含所有生成�
 		- 这行代码使用 `+=` 操作符将 `$(ASM_OBJECTS)` 和 `$(C_OBJECTS)` 列表中的所有目标文件添加到 `OBJECTS` 变量中。
 		- OBJECTS 变量通常用于表示所有需要链接的文件的列表，它可能已经包含了一些其他目标文件，这里通过 `+=` 操作符将`汇编`和 `C` 语言的目标文件列表追加进去。
 		- 最终，`OBJECTS `包含了所有需要被链接器用来生成最终可执行文件或库文件的目标文件。
-<br>
 
 15. 伪目标 (`.PHONY`):
 	- 定义了 `clean`, `all`, `copy`, `mix`, `download` 等伪目标，用于执行特定的命令序列。
 
-<br>
 
 16. 条件命令 (`SYS`, `ifeq`):
 	- `SYS := $(shell uname -a)`:
@@ -442,7 +423,6 @@ DEP_FILES := $(shell find $(BUILD_DIR) -type f -name '*.d')# 包含所有生成�
 		- `"C:\\\...bat"`: 需要执行脚本的路径。
 		- **不知道为什么要用`\\\`**。
 
-<br>
 
 17. 生成目标文件的规则 (`$(TARGET).list`, `$(TARGET).bin`, `$(TARGET).elf`, `$(TARGET).hex`):
 	- `$(TARGET).list: $(TARGET).elf`:(以下规则类似)
@@ -476,18 +456,15 @@ DEP_FILES := $(shell find $(BUILD_DIR) -type f -name '*.d')# 包含所有生成�
 		- `-name '*.d'` 定义了搜索的文件名模式，`*.d` 匹配所有以 `.d` 结尾的文件，这通常是由编译器生成的依赖文件。
 		- `-include $(DEP_FILES)`： `make` 将会包含这些 `.d` ,这些文件包含了**头文件的依赖信息**,从而确保 `make` 能够正确地**检测到源文件的依赖关系**，并且在**源文件**或其**头文件**发生变化时**重新编译**相应的目标文件。
 
-<br>
 
 18. 编译C源文件和汇编源文件的规则 (`$(BUILD_DIR)/%.o: %.c`, `$(BUILD_DIR)/%.o: %.S`):
 
 	- 定义了如何编译 `C` 和汇编源文件为 `.o` 目标文件。
 
-<br>
 
 19. 包含生成的依赖文件 `(-include $(wildcard $(BUILD_DIR)/**/*.d), DEP_FILES)`:
 	- 使用 `find` 命令找到所有的 `.d` 文件，然后使用 `-include` 指令包含这些文件，以确保 `Make` 能够跟踪源文件的变化并避免不必要的重新编译。
 
-<br>
 
 ## 标准makefile基本语法
 [参考文档]：https://seisman.github.io/how-to-write-makefile/index.html
@@ -495,39 +472,38 @@ DEP_FILES := $(shell find $(BUILD_DIR) -type f -name '*.d')# 包含所有生成�
 ### 书写规则
 
 #### 规则的语法
-``` makefile
+```makefile
 targets : prerequisites
     command
     ...
 ```
 或是这样：
-``` makefile
+```makefile
 targets : prerequisites ; command
     command
     ...
 ```
 如果命令太长，你可以使用反斜杠（ `\` ）作为换行符
 
-<br>
 
 #### 在规则中使用通配符
 `make`支持三个通配符： `*` ， `?` 和 `~` 。这是和`Unix`的`B-Shell`是相同的。
 
 - `*`：通配符代替了你一系列的文件，如 `*.c` 表示所有后缀为c的文件。一个需要我们注意的是，如果我们的文件名中有通配符，如： `*` ，那么可以用转义字符 `\` ，如 `\*` 来表示真实的 `*` 字符，而不是任意长度的字符串。
-``` makefile
+```makefile
 clean:
     rm -f *.o
 ```
 `clean`是操作系统`Shell`所支持的通配符。
-``` makefile
+```makefile
 objects = *.o
 ```
 `objects`的值就是 `*.o`, 并不是说 *.o 会展开， 如需展开进行以下操作。
-``` makefile
+```makefile
 objects := $(wildcard *.o)
 ```
 **示例1**：
-``` makefile
+```makefile
 var = $(shell echo "Hello, World!")
 ```
 - `:=` 和 `=`区别：
@@ -536,7 +512,7 @@ var = $(shell echo "Hello, World!")
 
 **示例2** 
 可写出编译并链接所有 `.c` 和 `.o` 文件：
-``` makefile
+```makefile
 objects := $(patsubst %.c,%.o,$(wildcard *.c))
 foo : $(objects)
     cc -o foo $(objects)
@@ -544,31 +520,29 @@ foo : $(objects)
 - `patsubst` 函数用于将第一个参数中匹配第二个参数模式的部分替换为第三个参数中的相应模式
 - `patsubst` 函数用于将 `*.c` 替换为 `*.o`，`wildcard` 函数用于获取当前目录下所有 `.c` 文件。
 
-<br>
 
 #### 文件搜索
-``` makefile
+```makefile
 	VPATH = src:../headers
 ``` 
 - `Makefile`文件中的特殊变量 `VPATH`,当`make`就会在当前目录找不到的情况下，到所指定的目录中去找寻文件了。
 - “`src`”和“`../headers`”，make会按照这个顺序进行搜索。目录由“`冒号`”分隔。（当然，当前目录永远是最高优先搜索的地方）。
 
-``` makefile
+```makefile
 vpath <pattern> <directories>
 vpath %.h ../headers
 ```
 - `vpath`使用方法中的`<pattern>`需要包含 `%` 字符。 `%` 的意思是匹配`零`或`若干字符`，（需引用 `%` ，使用 `\` ）例如， `%.h` 表示所有以 `.h` 结尾的文件。`<pattern>`指定了要搜索的文件集，而`<directories>`则指定了`<pattern>`的文件集的搜索的目录。
 
-<br>
 
 #### 伪目标
-``` makefile
+```makefile
 .PHONY : clean
 clean :
     rm *.o temp
 ```
 伪目标一般没有依赖的文件。但是，我们也可以为伪目标指定所依赖的文件。伪目标同样可以作为“**默认目标**”，只要将其放在**第一个**。
-``` makefile
+```makefile
 all : prog1 prog2 prog3
 .PHONY : all
 
@@ -584,16 +558,15 @@ prog3 : prog3.o sort.o utils.o
 - `Makefile`中的第一个目标会被作为其**默认目标**。我们声明了一个“`all`”的伪目标，其依赖于其它三个目标。由于默认目标的特性是，总是被执行的，但由于“`all`”又是一个伪目标，伪目标只是一个标签不会生成文件，所以不会有“`all`”文件产生。于是，其它三个目标的规则总是会被决议。也就达到了我们一口气生成多个目标的目的。
 - `.PHONY : all` 声明了“`all`”这个目标为“伪目标”。（注：这里的显式“`.PHONY : all`” 不写的话一般情况也可以正确的执行，这样`make`可通过隐式规则推导出， “`all`” 是一个伪目标，执行`make`不会生成“`all`”文件，而执行后面的多个目标。建议：显式写出是一个好习惯。）
 
-<br>
 
 #### 多目标
 `Makefile`的规则中的目标可以不止一个，其支持多目标，有可能我们的多个目标同时依赖于一个文件，并且其生成的命令大体类似。
-``` makefile
+```makefile
 bigoutput littleoutput : text.g
     generate text.g -$(subst output,,$@) > $@
 ```
 上述规则等价于：
-``` makefile
+```makefile
 bigoutput : text.g
     generate text.g -big > bigoutput
 littleoutput : text.g
@@ -607,17 +580,16 @@ littleoutput : text.g
 	- `text` 是原始文本。
 -  `generate text.g -$(subst output,,$@) > $@`中的"`>`" 是一个`shell`命令，用于将 `generate text.g -$(subst output,,$@)` 的输出重定向到右侧`$@`文件中。
 
-<br>
 
 #### 静态模式
 静态模式可以更加容易地定义多目标的规则，可以让我们的规则变得更加的有弹性和灵活。我们还是先来看一下语法：
-``` makefile
+```makefile
 <targets ...> : <target-pattern> : <prereq-patterns ...>
     <commands>
     ...
 ```
 我们的“**目标模式**”或是“**依赖模式**”中都应该有 `%` 这个字符，如果你的文件名中有 `%` 那么你可以使用反斜杠 `\` 进行转义，来标明真实的 `%` 字符。看一个例子：
-``` makefile
+```makefile
 objects = foo.o bar.o
 
 all: $(objects)
@@ -631,14 +603,14 @@ $(objects): %.o: %.c
 - 命令中的 `$<` 和 `$@` 则是自动化变量， `$<` 表示 **第一个依赖文件**， `$@` 表示 **目标集**（也就是“`foo.o` `bar.o`”）
 
 上面的规则展开后等价于下面的规则：
-``` makefile
+```makefile
 foo.o : foo.c
     $(CC) -c $(CFLAGS) foo.c -o foo.o
 bar.o : bar.c
     $(CC) -c $(CFLAGS) bar.c -o bar.o
 ```
 如果我们的 `%.o` 有几百个，使用“**静态模式规则**”很方便，再看一个例子：
-``` makefile
+```makefile
 files = foo.elc bar.o lose.o
 
 $(filter %.o,$(files)): %.o: %.c
@@ -648,7 +620,6 @@ $(filter %.elc,$(files)): %.elc: %.el
 ```
 - `$(filter %.o,$(files))`表示调用`Makefile`的`filter`函数，过滤“`$files`”集，只要其中模式为“`%.o`”的内容。
 
-<br>
 
 #### 自动生成依赖性
 在`Makefile`中，我们的依赖关系可能会需要包含一系列的头文件，比如，如果我们的`main.c`中有一句 `#include "defs.h"` ，那么我们的依赖关系应该是：
@@ -666,7 +637,7 @@ $(filter %.elc,$(files)): %.elc: %.el
 需要提醒一句的是，如果你使用`GNU`的`C/C++`编译器，你得用 `-MM` 参数，不然，`-M` 参数会把一些 **标准库的头文件也包含进来**。
 
 - `gcc -M main.c`的输出是:
-``` makefile
+```makefile
 main.o: main.c defs.h /usr/include/stdio.h /usr/include/features.h \
     /usr/include/sys/cdefs.h /usr/include/gnu/stubs.h \
     /usr/lib/gcc-lib/i486-suse-linux/2.95.3/include/stddef.h \
@@ -678,7 +649,7 @@ main.o: main.c defs.h /usr/include/stdio.h /usr/include/features.h \
     /usr/include/bits/stdio_lim.h
 ```
 - `gcc -MM main.c`的输出则是:
-``` makefile
+```makefile
 main.o: main.c defs.h
 ```
 - `GNU`组织建议把编译器为每一个源文件的自动生成的依赖关系放到一个文件中，为每一个 `name.c` 的文件都生成一个 `name.d` 的`Makefile`文件， `.d` 文件中就存放对应 `.c` 文件的依赖关系。
@@ -706,7 +677,7 @@ main.o: main.c defs.h
 	main.o main.d : main.c defs.h
 
 于是，我们的 `.d` 文件也会自动更新了，并会自动生成了, 你还可以在这个 `.d` 文件中加入的不只是依赖关系，包括生成的命令也可一并加入，让每个 `.d` 文件都包含一个完整的规则, 例如：
-``` makefile 
+```makefile
 sources = foo.c bar.c
 
 include $(sources:.c=.d)
@@ -714,16 +685,15 @@ include $(sources:.c=.d)
 - `$(sources:.c=.d)` 中的 `.c=.d` 的意思是做一个替换，把变量 `$(sources)` 所有 `.c` 的字串都替换成 `.d`
 - 因为`include`是按次序来载入文件，最先载入的 `.d` 文件中的目标会成为默认目标。
 
-<br>
 
 ### 书写命令
 
 #### 显示命令
-``` makefile
+```makefile
 @echo 正在编译XXX模块......
 ```
 当`make`执行时，会输出“正在编译XXX模块……”字串，但不会输出命令，如果没有“`@`”，那么，`make`将输出:
-``` makefile
+```makefile
 echo 正在编译XXX模块......		//输出命令
 正在编译XXX模块......
 ```
@@ -733,13 +703,13 @@ echo 正在编译XXX模块......		//输出命令
 #### 命令执行
 当依赖目标新于目标时，也就是当规则的目标需要被更新时，make会一条一条的执行其后的命令。如果你要让上一条命令的结果应用在下一条命令时，你应该使用分号分隔这两条命令。比如你的第一条命令是`cd`命令，你希望第二条命令得在`cd`之后的基础上运行，那么你就不能把这两条命令写在两行上，而应该把这两条命令写在一行上，用分号分隔。
 - 示例一：
-``` makefile
+```makefile
 exec:
     cd /home/hchen
     pwd
 ```
 
-``` makefile
+```makefile
 exec:
     cd /home/hchen; pwd
 ```
@@ -747,7 +717,7 @@ exec:
 
 #### 命令出错
 忽略命令的出错，我们可以在`Makefile`的命令行前加一个减号 `-` （在`Tab`键之后），标记为不管命令出不出错都认为是成功的。如：
-``` makefile
+```makefile
 clean:
     -rm -f *.o
 ```
@@ -758,12 +728,12 @@ clean:
 在一些大的工程中，我们会把我们不同模块或是不同功能的源文件放在不同的目录中，我们可以在每个目录中都书写一个该目录的`Makefile`
 
 例如，我们有一个子目录叫`subdir`，这个目录下有个`Makefile`文件，来指明了这个目录下文件的编译规则。那么我们总控的`Makefile`可以这样书写：
-``` makefile
+```makefile
 subsystem:
     cd subdir && $(MAKE)
 ```
 其等价于：
-``` makefile
+```makefile
 subsystem:
     $(MAKE) -C subdir
 ```
@@ -794,26 +764,25 @@ subsystem:
 
 - 需要注意的是，有两个变量，一个是 `SHELL` ，一个是 `MAKEFLAGS` ，这两个变量不管你是否`export`，其总是要 **传递到下层** `Makefile`中，特别是 `MAKEFLAGS` 变量，其中包含了`make`的 **参数信息**，如果我们执行“`总控Makefile`”时有`make`参数或是在上层 `Makefile`中定义了这个变量，那么 `MAKEFLAGS` 变量将会是这些参数，并会传递到下层`Makefile`中，这是一个系统级的环境变量。
 - 但是`make`命令中的有几个参数并不往下传递，它们是 `-C` , `-f` , `-h`, `-o` 和 `-W` （有关`Makefile`参数的细节将在后面说明），如果你不想往下层传递参数，那么，你可以这样来：
-``` makefile
+```makefile
 subsystem:
 cd subdir && $(MAKE) MAKEFLAGS=
 ```
 - 如果你定义了环境变量 `MAKEFLAGS` ，那么你得确信其中的选项是大家都会用到的，如果其中有 `-t` , `-n` 和 `-q` 参数，那么将会有让你意想不到的结果，或许会让你异常地恐慌。
 - 还有一个在“**嵌套执行**”中比较有用的参数， `-w` 或是 `--print-directory` 会在`make`的过程中输出一些信息，让你看到目前的工作目录。比如，如果我们的下级`make`目录是“`/home/hchen/gnu/make`”，如果我们使用 `make -w` 来执行，那么当进入该目录时，我们会看到:
-``` shell
+```shell
 make: Entering directory `/home/hchen/gnu/make'.
 ```
 而在完成下层make后离开目录时，我们会看到:
-``` shell
+```shell
 make: Leaving directory `/home/hchen/gnu/make'
 ```
 - 当你使用 `-C` 参数来指定`make`下层`Makefile`时， `-w` 会被自动打开的。如果参数中有 `-s` （ `--slient` ）或是 `--no-print-directory` ，那么， `-w` 总是失效的。
 
-<br>
 
 #### 定义命令包
 如果Makefile中出现一些相同命令序列，那么我们可以为这些相同的命令序列定义一个变量。定义这种命令序列的语法以 `define` 开始，以 `endef` 结束，如:
-``` makefile
+```makefile
 define run-yacc
 yacc $(firstword $^)
 mv y.tab.c $@
@@ -821,13 +790,12 @@ endef
 ```
 - 这里，“run-yacc”是这个命令包的名字，其不要和Makefile中的变量重名。在 define 和 endef 中的两行就是命令序列。这个命令包中的第一个命令是运行Yacc程序，因为Yacc程序总是生成“y.tab.c”的文件，所以第二行的命令就是把这个文件改改名字。还是把这个命令包放到一个示例中来看看吧。
 
-``` makefile
+```makefile
 foo.c : foo.y
     $(run-yacc)
 ```
 我们可以看见，要使用这个命令包，我们就好像使用变量一样。在这个命令包的使用中，命令包“`run-yacc`”中的 `$^` 就是 `foo.y` ， `$@` 就是 `foo.c` （有关这种以 `$` 开头的特殊变量，我们会在后面介绍），`make`在执行命令包时，命令包中的每个命令会被依次独立执行。
 
-<br>
 
 ### 使用函数
 
@@ -841,7 +809,7 @@ foo.c : foo.y
 #### 字符串处理函数
 
 ##### subst
-``` makefile
+```makefile
 $(subst <from>,<to>,<text>)
 ```
 - 名称：字符串替换函数
@@ -850,14 +818,14 @@ $(subst <from>,<to>,<text>)
 
 ##### patsubst
 
-``` makefile
+```makefile
 $(patsubst <pattern>,<replacement>,<text>)
 ```
 - 名称：**模式** 字符串替换函数。
 - 功能：查找 `<text>` 中的单词（单词以“**空格**”、“**Tab**”或“**回车**”“**换行**”分隔）是否符合模式 `<pattern>` ，如果匹配的话，则以 `<replacement>` 替换。这里， `<pattern>` 可以包括通配符 `%` ，表示任意长度的字串。如果 `<replacement>` 中也包含 `%` ，那么， `<replacement>` 中的这个 `%` 将是 `<pattern>` 中的那个 % 所代表的字串。（可以用 `\` 来转义，以 `\%` 来表示真实含义的 `%` 字符）
 - 返回：函数返回被替换过后的字符串。
 - 示例：
-``` makefile
+```makefile
 $(patsubst %.c,%.o,x.c.c bar.c)
 ```
 把字串 `x.c.c` `bar.c` 符合模式 `%.c` 的单词替换成 `%.o` ，返回结果是 `x.c.o` `bar.o`
@@ -870,7 +838,7 @@ $(patsubst %.c,%.o,x.c.c bar.c)
 - 功能：去掉 `<string>` 字串中开头和结尾的空字符。
 - 返回：返回被去掉空格的字符串值。
 - 示例：
-``` makefile
+```makefile
 	$(strip a b c )
 ```
 把字串` a b c ` 去掉开头和结尾的空格，结果是 `a b c`。
@@ -884,7 +852,7 @@ $(patsubst %.c,%.o,x.c.c bar.c)
 - 功能：在字串 <in> 中查找 <find> 字串。
 - 返回：如果找到，那么返回 <find> ，否则返回空字符串。
 - 示例：
-``` makefile
+```makefile
 $(findstring a,a b c)
 $(findstring a,b c)
 ```
@@ -899,7 +867,6 @@ $(findstring a,b c)
 **注**：函数太多，不做概述。详见：https://seisman.github.io/how-to-write-makefile/functions.html
 **例程**：https://github.com/XUAN9527/linux_test/tree/main/make_demo
 
-<br>
 
 ## Makefile搭配Kconfig使用
 
@@ -911,7 +878,7 @@ $(findstring a,b c)
 
 - 安装必须组件：`Python3` + `kconfiglib`
 
-``` shell
+```shell
 sudo apt update
 sudo apt install python3
 sudo apt install python3-pip
@@ -919,7 +886,7 @@ pip3 install kconfiglib
 ```
 
 - 验证安装:
-``` shell
+```shell
 $ python3 --version
 Python 3.10.14
 
@@ -1001,7 +968,7 @@ endmenu
 - 选择好需要的参数后，保存退出，生成`.config`配置文件。
 - `shell`执行`genconfig`指令，将`.config`文件生成`config.h`文件，可供程序调用。
 - 如需搭配`makefile`使用，则需要将`config.h`文件添加到`Makefile`中,添加以下依赖规则。
-``` makefile
+```makefile
 all: genconfig ...
 	...
 
@@ -1020,7 +987,7 @@ genconfig:
 ## makefile隐藏打印输出
 
 - 以下是`makefile`使用`make`编译的`shell`输出信息：
-``` shell
+```shell
 xuan@DESKTOP-A52B6V9:~/work/wireless-charging/app$ make
 mkdir -p build/application/
 arm-none-eabi-gcc -ICMSIS/core -ICMSIS/device -Istd_periph_lib/inc -Iuser -Imsp -Idriver -Iapplication/inc -Icomponents/letter_shell -Icomponents/iap -Icomponents/ntc -Icomponents/soft_timer -Icomponents/comp_misc_lib -Icomponents/flexibleButton -Icomponents/aw9523b -c -fno-common --specs=rdimon.specs -std=gnu99 -mabi=aapcs -Wall -mcpu=cortex-m4 -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=hard -ffunction-sections -fdata-sections -lm --specs=nosys.specs --specs=nano.specs -Os -ggdb -DN32L40X -DUSE_STDPERIPH_DRIVER -D__FPU_PRESENT=1 -MMD -c application/main.c -o build/application/main.o
@@ -1046,7 +1013,7 @@ make[1]: Leaving directory '/home/xuan/work/wireless-charging/app'
 ```
 
 - 以下是`makefile`的代码：
-``` makefile
+```makefile
 .PHONY : clean all
 
 all: $(TARGET).bin $(TARGET).list $(TARGET).hex
@@ -1089,7 +1056,7 @@ download:
 	@$(MAKE) COPY_CMD
 ```
 - 使用`@`和`--no-print`来隐藏打印信息，改进后：
-``` makefile
+```makefile
 .PHONY : clean all
 
 all: $(TARGET).bin $(TARGET).list $(TARGET).hex
@@ -1137,7 +1104,7 @@ download:
 ### 编译路径问题
 
 - 下面一段是`makefile`在工程目录下的`.o`生成规则，`makefile`是跟`Libraries`同级目录，规则是生成到`BUILD_DIR`文件夹下，保持子目录结构：
-``` makefile
+```makefile
 C_SOURCES = \
 Libraries/core/system.c \
 Libraries/CMSIS/Device/YICHIP/YC3122/Source/Templates/system_yc3122.c \
@@ -1162,7 +1129,7 @@ $(BUILD_DIR)/%.o: %.c
 ```
 
 - 如果`makefile`跟`Libraries`不是同级目录，需要建立`PROJECT_PATH`开头，下面通配构建：
-``` makefile
+```makefile
 # 定义一个工程目录，C_SOURCES源文件链接地址统一开头，$(OBJ_DIR)/%.o: $(PROJECT_PATH)/%.c生成规则才能构建编译区目录
 PROJECT_PATH = ../../../../..
 
@@ -1190,7 +1157,7 @@ $(OBJ_DIR)/%.o: $(PROJECT_PATH)/%.c
 ```
 
 - 如果`C_SOURCES`路径比较混乱，又用的是通配`$(OBJ_DIR)/%.o: $(PROJECT_PATH)/%.c`，生成的编译文件`.o`就会比较混乱:
-``` makefile
+```makefile
 C_SOURCES = \
 ../../../../../Libraries/core/system.c \
 ../../../../../Libraries/CMSIS/Device/YICHIP/YC3122/Source/Templates/system_yc3122.c \

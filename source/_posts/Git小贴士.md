@@ -69,7 +69,6 @@ description: 主要记录Git的常用命令、一些非典型操作及其意义�
 `git fetch`用于从远程仓库获取最新的提交，保存到本地的远程跟踪分支中（`FETCH_HEAD`），可以通过查看此分支了解远程仓库的更新情况
 - `git diff FETCH_HEAD`比较查看该分支和当前工作分支的内容
 
-<br>
 
 `git pull`会自动获取远程仓库的更新，并且合并到当前分支上，相当于`git fetch` + `git merge FETCH_HEAD`
 - 将远程仓库中指定分支的最新提交 ID 保存到本地的 FETCH_HEAD 分支中
@@ -105,14 +104,12 @@ description: 主要记录Git的常用命令、一些非典型操作及其意义�
 - 使用`git commit`提交解决冲突后的更改，此时会进入提交信息的编辑界面，Git 通常会在其中自动填充一个合并提交信息，也可以自行修改。
   > 当然也可以直接执行`git commit -m "commit message"`，commit message 则为此次分支合并的提交信息。
 
-<br>
 
 ### 本地分支与远端分支各有一个新的提交时的做法
 
 当本地分支有一个提交，而远端分支也有一个新的提交时，如果使用`sourcetree`进行拉取，会提示错误，有以下解决方法：
 
 - **创建一个合并提交：** 将远端分支的更改合并到本地分支，这会创建一个新的“合并提交”（merge commit），将两个分支的更改历史合并在一起。可以用命令行直接执行`git pull`
-<br>
 
 - **变基：** 执行`git pull --rebase`，相当于`git fetch`+`git rebase`，此过程不会创建合并提交，仅会把远端的提交和本地的提交重写成一个线性的提交历史。
   > 如果存在修改冲突的话，git会停止变基过程，提示用户打开文件手动解决冲突。此时用户修改完冲突后，执行`git add <file>`，再执行`git rebase --continue`，git则会继续执行变基过程。
@@ -141,7 +138,6 @@ description: 主要记录Git的常用命令、一些非典型操作及其意义�
 **subject（主题）**：简洁明了地描述所做的更改，通常不超过50个字符，并且使用现在时态，如“Fix bug”而不是“Fixed bug”。
 **body（正文）**：更详细地描述更改的内容、原因和影响，如果需要的话。可以分成多行，但每行不超过72个字符。
 **footer（页脚）**：提交信息的最后一部分，可以包含关闭的issue、关联的pull request或breaking changes等信息。
-<br>
 
 一个具体的提交信息示例如下：
 ```
@@ -164,18 +160,15 @@ Closes #123
 ## 基础非典型操作
 
 ### 本地git配置
-<br>
 
 **配置本地与远端的SSH密钥连接流程：**
 - 本地生成SSH公钥和私钥(如果没有的话，另，linux下公钥通常存放于`~/.ssh/*.pub`)
   - `ssh-keygen -t rsa -b 4096 -C xxx@xxx.com`
 - 复制公钥，添加至远端平台的SSH设置上
-<br>
 
 **查看本地配置：**
 - `git config --list`查看当前项目的所有配置
 - `git config --global --list`查看全局配置
-<br>
 
 **修改用户名(全局/当前项目)**
 
@@ -184,7 +177,6 @@ Closes #123
   - 修改全局用户名：`git config --global user.name "xxx"`，影响用户的所有仓库
   - 修改当前路径项目的用户名：`git config user.name "xxx"`
   - 查看全局用户名：`git config user.name`
-<br>
 
 **初始化本地工程并与远端已有仓库的main分支关联：**
 - 进入工程根目录，`git init`初始化本地仓库
@@ -323,7 +315,6 @@ ERROR: Permission to xxx.git denied to xxx.
 fatal: 无法读取远程仓库。
 请确认您有正确的访问权限并且仓库存在。
 ```
-<br>
 
 解决步骤如下：
 - 如果需要使用两个不同的 Github 账户，则需要在本地主机上生成两个相应的 SSH Key，将公钥分别添加到不同 Github 账户上
@@ -348,18 +339,15 @@ fatal: 无法读取远程仓库。
 比如，将`git@github.com:Jindu-Chen/Jindu-Chen.github.io.git`改为`github-alias:Jindu-Chen/Jindu-Chen.github.io.git`
 
 ### 本地git配置
-<br>
 
 **配置本地与远端的SSH密钥连接流程：**
 - 本地生成SSH公钥和私钥(如果没有的话，另，linux下公钥通常存放于`~/.ssh/*.pub`)
   - `ssh-keygen -t rsa -b 4096 -C xxx@xxx.com`
 - 复制公钥，添加至远端平台的SSH设置上
-<br>
 
 **查看本地配置：**
 - `git config --list`查看当前项目的所有配置
 - `git config --global --list`查看全局配置
-<br>
 
 **修改用户名(全局/当前项目)**
 
@@ -369,7 +357,6 @@ fatal: 无法读取远程仓库。
   - 修改当前路径项目的用户名：`git config user.name "xxx"`
   - 查看全局用户名：`git config user.name`
 
-<br>
 
 **初始化本地工程并与远端已有仓库的main分支关联：**
 - 进入工程根目录，`git init`初始化本地仓库
@@ -377,12 +364,11 @@ fatal: 无法读取远程仓库。
 - `git branch -M main`将当前分支重命名为`main`，M即`--move --force`的缩写。（可以分别输入`git add --all`，`git commit -m "first commit"`完成对本地分支的首次提交）
 - 使用`git pull origin main`，将远程仓库的main分支拉取到本地，或者`git push -u origin main -f`将本地的xxx分支强制推送到远端main分支，其中-u是`--set-upstream`的缩写，后续会保持这个跟踪关系
 
-<br>
 
 ### 分支合并到main
 
 以下是完整的命令流程：
-``` shell
+```shell
 # 确保你的分支是最新的
 git checkout your-branch
 git pull origin your-branch
@@ -404,7 +390,7 @@ git push origin main
 
 如果你希望使用 `git rebase` 保持提交历史整洁，可以参考以下流程：
 
-``` shell
+```shell
 # 确保你的分支是最新的
 git checkout your-branch
 git pull origin your-branch
@@ -430,7 +416,7 @@ git push origin main
 ### main合并到分支
 
 使用 `git merge`：
-``` shell
+```shell
 # 确保本地 main 分支是最新的
 git checkout main
 git pull origin main
@@ -451,7 +437,7 @@ git push origin your-branch
 
 使用 `git rebase`:
 
-``` shell
+```shell
 # 确保本地 main 分支是最新的
 git checkout main
 git pull origin main
@@ -472,7 +458,7 @@ git push origin your-branch --force
 
 ### 推送被拒绝，远程冲突时
 
-``` bash
+```bash
 git fetch origin # 获取远程更新
 
 git diff HEAD origin/你的分支名 # 查看当前分支与远程分支的详细差异
@@ -499,14 +485,13 @@ git push origin 你的分支名
 
 
 ## git tag小贴士
-``` shell
+```shell
 git log                             // 或者 git log --oneline（近期提交）
 git tag -a v1.0.0 <commit-hash>     // 这里的 v1.0.0 是标签名，<commit-hash> 是你想要标记的提交的哈希。-a 表示创建一个带注释的标签（annotated tag），你也可以使用 -s 创建一个签名标签，或者不使用 -a 来创建一个轻量级标签（lightweight tag）。
 git tag                             // 查看所有标签
 git push origin v1.0.0              // git push origin --tags推送所有标签
 ```
 
-<br>
 
 ## 参考站点
 

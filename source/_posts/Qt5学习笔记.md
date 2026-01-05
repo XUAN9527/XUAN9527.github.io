@@ -13,7 +13,6 @@ description: Qt5学习过程中的一些笔记，遇到的问题及解决方法�
 - **Qt官方下载地址**: https://download.qt.io/archive/qt/
 - **参考教程文档**: https://subingwen.cn/qt/qt-primer/
 
-<br>
 
 ## 问题汇总
 

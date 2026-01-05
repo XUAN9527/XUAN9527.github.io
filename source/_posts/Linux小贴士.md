@@ -80,35 +80,31 @@ description: 使用Linux环境编程，Linux版本为 WSL1-Ubuntu 20.04。
 
 使用 `tree` 可以帮助你更直观地查看目录结构，特别是在处理复杂的文件系统时。
 
-<br>
 
 ## git小贴士
 
 ![git指令](../pictures/git指令.jpg)
 
-<br>
 
 ![vim指令](../pictures/vim指令.jpg)
 
-<br>
 
 ## Python问题
 
 - `python` 指向 `python3`
 - `Ubuntu` 系统中默认的 `python` 可能指向 `Python 2`，但 `Python 2` 已经停止使用。可以使用以下命令将 `python` 指向 `Python 3`：
 
-``` bash
+```bash
 sudo apt-get install python-is-python3
 ```
 
-<br>
 
 ## OpenHarmony学习笔记
 
 ### 环境搭建
 
 1. 安装所需的组件和配置`git`身份信息
-``` bash
+```bash
 sudo apt-get update
 sudo apt-get install git-lfs curl python3-pip ccache
 
@@ -119,7 +115,7 @@ git config --global user.email "YourEmail@example.com"
 2. 获取代码步骤
 
 - 安装`repo`工具
-``` bash
+```bash
 mkdir -p ~/bin
 curl https://gitee.com/oschina/repo/raw/fork_flow/repo-py3 > ~/bin/repo
 chmod a+x ~/bin/repo
@@ -127,7 +123,7 @@ export PATH=~/bin:$PATH  # 永久生效需写入~/.bashrc
 ```
 
 - 初始化仓库
-``` bash
+```bash
 (推荐SSH协议)
 repo init -u git@gitee.com:openharmony/manifest.git -b OpenHarmony-5.0.2-Release --no-repo-verify
 或者：
@@ -136,36 +132,36 @@ repo init -u https://gitee.com/openharmony/manifest.git -b OpenHarmony-5.0.2-Rel
 ```
 
 - 同步全量代码
-``` bash
+```bash
 repo sync -c -j8  # -c仅同步当前分支，-j8启用8线程加速
 repo forall -c 'git lfs pull'  # 拉取大文件（如图片/预编译库）
 ```
 
 3. 常见问题处理
 - 权限错误,若出现`Permission denied`，检查`SSH`公钥是否已正确绑定`Gitee`账户，并修复目录权限：
-``` bash
+```bash
 sudo chown -R $USER:$USER .repo/
 ex: sudo chown -R ubuntu:ubuntu /home/ubuntu/openharmony/.repo
 ```
 - 如果问题仍存在,可能是父目录权限问题，检查并修复整个`openharmony`目录的权限：
-``` bash
+```bash
 sudo chown -R ubuntu:ubuntu /home/ubuntu/openharmony
 sudo chmod -R 755 /home/ubuntu/openharmony
 ```
 
 - 网络中断导致同步失败
-``` bash
+```bash
 repo sync -c -j4 --fail-fast  # 失败时自动重试
 ```
 
 - 依赖缺失
-``` bash
+```bash
 ./build/prebuilts_download.sh  # 自动下载依赖:cite[3]:cite[6]
 ```
 
 4. 验证代码完整性
 - 目录结构检查
-``` bash
+```bash
 ls -la .repo/manifests/  # 应包含default.xml及版本分支文件
 ```
 

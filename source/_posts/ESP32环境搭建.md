@@ -17,41 +17,40 @@ description: ESP32 是一款由乐鑫科技开发的低成本、低功耗、具�
 [ESP-ADF快速上手连接](https://espressif-docs.readthedocs-hosted.com/projects/esp-adf/zh-cn/latest/get-started/index.html#quick-start)
 [ESP-IDF快速上手连接](https://docs.espressif.com/projects/esp-idf/zh_CN/stable/esp32/get-started/linux-macos-setup.html#get-started-linux-macos-first-steps)
 
-<br>
 
 ### 获取ESP-ADF
 - 打开Linux or macOS终端,新建搭建环境所需文件夹。
-``` bash
+```bash
 mkdir ~/esp
 cd ~/esp
 ```
 - 编译 ESP-IDF 需要以下软件包。请根据使用的 Linux 发行版本，选择合适的安装：
 
 - Ubuntu 和 Debian:
-``` bash
+```bash
 sudo apt-get install git wget flex bison gperf python3 python3-pip python3-venv cmake ninja-build ccache libffi-dev libssl-dev dfu-util libusb-1.0-0
 ```
 CentOS 7 & 8:
-``` bash
+```bash
 sudo yum -y update && sudo yum install git wget flex bison gperf python3 python3-setuptools cmake ninja-build ccache dfu-util libusbx
 ```
 Arch:
-``` bash
+```bash
 sudo pacman -S --needed gcc git make flex bison gperf python cmake ninja ccache dfu-util libusb
 ```
 
 - 克隆最新版ESP-ADF：
-``` bash
+```bash
 git clone --recursive https://github.com/espressif/esp-adf.git
 ```
 
 - 若克隆失败，尝试以下指令：
-``` bash
+```bash
 	git clone --recursive git@github.com:espressif/esp-adf.git
 ```
 
 - 若子模块拉取失败，尝试手动逐个拉取子模块：
-``` bash
+```bash
 cd ~/esp/esp-adf/components
 git clone git@github.com:espressif/esp-adf-libs.git 
 或者
@@ -69,30 +68,28 @@ git clone https://github.com/espressif/esp-idf.git
 ```
 
 - 当遇到网络比较卡时，`github`源改为`gitee`源（以设置`idf.py set-target esp32s3`的`esp32-wifi-lib`为例）：
-``` bash
+```bash
 	cd ~/esp/esp-adf/esp-idf
 	git config submodule."components/esp_wifi/lib".url https://gitee.com/EspressifSystems/esp32-wifi-lib.git
 	git submodule sync
 	git submodule update --init --depth 1 components/esp_wifi/lib
 ```
 
-<br>
 
 **预防措施**：
 1. 配置镜像源：
-``` bash
+```bash
 # 全局使用 Gitee 镜像
 git config --global url."https://gitee.com/EspressifSystems".insteadOf "https://github.com/espressif"
 ```
 
 2. 定期更新子模块：
-``` bash
+```bash
 # 空闲时更新所有子模块
 cd ~/esp/esp-adf
 git submodule update --init --recursive --depth 1
 ```
 
-<br>
 
 ### 设置环境变量
 按自己实际路径，可按自己喜好设置，也可不配置，手动敲指令也可。
@@ -137,7 +134,6 @@ export ADF_PATH=/home/ubuntu/esp/esp-adf
 
 	get-idf
 
-<br>
 
 ## ESP32工程示例
 
@@ -149,7 +145,6 @@ export ADF_PATH=/home/ubuntu/esp/esp-adf
 	get-idf
 	cp -r $IDF_PATH/examples/get-started/hello_world .
 
-<br>
 
 ### 配置工程
 	cd ~/esp/hello_world
@@ -225,7 +220,6 @@ export ADF_PATH=/home/ubuntu/esp/esp-adf
 	idf.py build
 	esp-download
 
-<br>
 
 ## 通过SSH远程访问本地的USB设备
 
@@ -336,53 +330,53 @@ usbipd server
 1. 安装`USB/IP`客户端工具
 
 - 安装USB/IP客户端工具
-``` shell
+```shell
 sudo apt install linux-tools-generic hwdata
 sudo update-alternatives --install /usr/local/bin/usbip usbip /usr/lib/linux-tools/*-generic/usbip 20
 ```
 
 - 若不兼容，安装与内核`5.15.0-126`兼容的`usbipd`工具及性能调试工具
-``` shell
+```shell
 sudo apt install linux-tools-5.15.0-126-generic linux-cloud-tools-5.15.0-126-generic
 ```
 
 - 验证安装：安装后检查 `usbipd` 是否存在:
-``` shell
+```shell
 which usbipd   # 输出路径
 ```
 
 - 为避免未来内核升级后再次出现版本不兼容问题，安装通用工具包：
-``` shell
+```shell
 sudo apt install linux-tools-generic linux-cloud-tools-generic
 ```
 
 2. 附加远程`USB`设备
 - 在`Ubuntu`服务器执行（需与本地网络互通）：
-``` shell
+```shell
 sudo modprobe usbip-core # 可以不需要
 sudo modprobe vhci-hcd
 sudo usbip attach -r <本地机器IP> -b <总线ID> # 替换为实际IP和总线ID
 ```
 - 验证设备是否挂载成功：
-``` shell
+```shell
 ls /dev/tty*  # 应出现类似/dev/ttyUSB0的设备节点
 dmesg | tail  # 查看内核日志确认设备识别
 ```
 
 3. 配置设备权限
-``` shell
+```shell
 sudo usermod -aG dialout $USER  # 将用户加入串口组,需注销重新登录
 sudo chmod a+rw /dev/ttyUSB0    # 临时权限（可选）
 ```
 
 #### 修改ubuntu环境变量
 
-``` shell
+```shell
 vim ~/.bashrc
 ```
 
 添加以下代码：
-``` shell
+```shell
 #开启ESP32编译环境
 alias get-idf='. $HOME/esp/esp-adf/esp-idf/export.sh'
 alias get-adf='. $HOME/esp/esp-adf/export.sh'
@@ -400,7 +394,7 @@ export ADF_PATH=/home/ubuntu/esp/esp-adf
 
 - 释放`USB`口:
 
-``` shell
+```shell
 ubuntu@compilation:~/esp/spi_lcd_touch$ lsof /dev/ttyUSB0
 COMMAND   PID   USER   FD   TYPE DEVICE SIZE/OFF NODE NAME
 python  85630 ubuntu    3uW  CHR  188,0      0t0  730 /dev/ttyUSB0

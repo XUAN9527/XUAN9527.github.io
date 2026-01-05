@@ -23,7 +23,7 @@ description: I2C 是一种简单、双向、二线制同步串行总线，由 Ph
 
 #### I2C协议初始化
 `I2C`协议的`scl`和`sda`配置为开漏输出,需要外部上拉（一般为`10K`电阻）
-``` bash
+```bash
 #define i2c_pin_mode(pin,mode)		drv_pin_mode(pin,mode)
 #define i2c_pin_write(pin,level) 	drv_pin_write(pin,level)
 #define i2c_pin_read(pin) 		drv_pin_read(pin)
@@ -123,7 +123,7 @@ int drv_hw_i2c_init(EI2C_DEVICE dev_e)
 ```
 
 #### 接口函数
-``` bash
+```bash
 int drv_i2c_bit_xfer(struct drv_i2c_bit_ops *bus,
                  struct drv_i2c_msg msgs[],
                  uint32_t num);
@@ -153,7 +153,7 @@ int drv_i2c_recv_data(EI2C_DEVICE dev_e,uint16_t addr,uint8_t reg_addr,uint8_t *
 发现每次读完都会多恢复一个`ack`，而协议上读完最后一个字节需要恢复`nack`。
 
 ###### 修改了以下代码
-``` bash
+```bash
 static int i2c_send_ack_or_nack(struct drv_i2c_bit_ops *bus, int ack)
 {
     struct drv_i2c_bit_ops *ops = bus;
@@ -177,4 +177,3 @@ static int i2c_send_ack_or_nack(struct drv_i2c_bit_ops *bus, int ack)
 	if(ack >= 0)表示每次都会回复ack/nack
 	if(ack)表示除最后一次数据不回复，其他每次都会回复ack/nack
 
-<br>

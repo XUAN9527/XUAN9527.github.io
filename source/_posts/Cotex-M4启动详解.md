@@ -13,7 +13,7 @@ description: 记录 Cotex-M4 启动文件的一些细节详解，以及遇到内
 
 `startup_n32l40x_gcc.s` 文件为例，以下是源代码：
 
-``` asm
+```asm
 /**
   ****************************************************************************
   Copyright (c) 2019, Nations Technologies Inc.
@@ -474,7 +474,6 @@ g_pfnVectors:
 /************************ (C) COPYRIGHT Nations Technologies Inc *****END OF FILE****/
 
 ```
-<br>
 
 **以下为这段`assembly`代码的注释**：
 

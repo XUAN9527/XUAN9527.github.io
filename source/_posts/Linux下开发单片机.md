@@ -88,7 +88,6 @@ dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux
 - cd n32g452_gcc
 - make
 
-<br>
 
 ## 环境配置及工具链
 
@@ -108,7 +107,6 @@ fi
 然后`:wq`保存即可。
 此时打开新终端可以自动执行`source ~/.bashrc`
 
-<br>
 
 ### arm-none-eabi-gcc工具链问题
 
@@ -119,7 +117,6 @@ export PATH=/home/xuan/OpenHarmony/install-software/gcc-arm-none-eabi-9-2019-q4-
 
 注意：需确认路径，否则找不到用户路径会搜索系统自带编译链 `/usr/lib/gcc/arm-none-eabi/10.3.1`
 
-<br>
 
 ## Linux下编写Python合并脚本
 
@@ -129,13 +126,11 @@ export PATH=/home/xuan/OpenHarmony/install-software/gcc-arm-none-eabi-9-2019-q4-
 
 	pip install pyinstaller
 
-<br>
 
 **2. 编写Python合并程序**
 	
 [代码链接](https://github.com/XUAN9527/script)
 
-<br>
 
 **3. 打包 Python 程序**
 
@@ -164,19 +159,16 @@ export PATH=/home/xuan/OpenHarmony/install-software/gcc-arm-none-eabi-9-2019-q4-
 	pyinstaller -F file.py
 	pyinstaller -F -w -i file.ico file.py
 
-<br>
 
 **4. 运行可执行文件**
 
 	./dist/file
 
-<br>
 
 **5. 例程**
 
 [代码链接](https://github.com/XUAN9527/script)
 
-<br>
 
 **6. 实际应用场景**
 
@@ -186,7 +178,7 @@ export PATH=/home/xuan/OpenHarmony/install-software/gcc-arm-none-eabi-9-2019-q4-
 	- 需要`bootloder.bin`在`../bootloader`目录下。
 	- 修改makefile生成规则。
 	- `$(BUILD_DIR)`为编译文件目录，跟进自身makefile修改。
-``` c
+```c
 .PHONY : clean all
 
 all: $(TARGET).bin $(TARGET).list $(TARGET).hex
@@ -215,7 +207,6 @@ clean:
 	rm mix.hex
 ```
 
-<br>
 
 
 

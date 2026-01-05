@@ -56,7 +56,6 @@ description: I.MX6ULL开发环境搭建，uboot移植，基于Linux版本为Ubun
 - 虚拟机右下角的USB是灰的，不能链接/断开。
 
 [参考资料](https://blog.csdn.net/weixin_44259058/article/details/127639566)
-<br>
 
 ## Uboot移植
 
@@ -75,7 +74,7 @@ description: I.MX6ULL开发环境搭建，uboot移植，基于Linux版本为Ubun
 - `cd /home/xuan/linux/uboot-imx-rel_imx_4.1.15_2.1.1_ga_alientek_v2.4`
 
 - 编写以下脚本：(`mx6ull_14x14_evk_emmc.sh`)
-``` shell
+```shell
 #!/bin/bash
 make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- distclean
 make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- mx6ull_alientek_emmc_defconfig
@@ -86,7 +85,7 @@ make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- V=1 -j12
 #### Uboot烧录到SD卡
 
 - 插上`SD卡`，启动`uboot`, `SD`卡和`EMMC`驱动检查:
-``` shell
+```shell
 mmc dev 0
 mmc info
 
@@ -96,17 +95,16 @@ mmc info
 - 烧写验证与驱动测试
 	- 挂载`SD卡`，不做描述，挂载上之后`ls /dev/sd*`显示。
 	- 执行以下`shell`指令。
-``` shell
+```shell
 cd ~/linux/uboot-alientek-v2.4		//进入uboot文件夹	
 chmod 777 imxdownload 				//给予 imxdownload 可执行权限
 ./imxdownload u-boot.bin /dev/sdb 	//烧写到 SD 卡中，不能烧写到/dev/sda 或 sda1 里面
 ```
 
-<br>
 
 - `U-Boot` 图形化配置
 
-``` shell
+```shell
 sudo apt-get install build-essential
 sudo apt-get install libncurses5-dev
 
@@ -115,7 +113,7 @@ make menuconfig
 ```
 
 - 配置网口的环境变量，开发板上的`ENET2`,上电进入`uboot`,打开的`USB_TTL`对应的串口控制台。
-``` shell
+```shell
 env default -a;saveenv				//default好像有问题
 setenv ipaddr 192.168.104.130		//开发板 ip 地址
 setenv ethaddr b8:ae:1d:01:00:00	//开发板的MAC地址，一定要设置, 如有多块开发板，MAC需不一致
@@ -125,7 +123,6 @@ setenv serverip 192.168.104.129		//服务器 IP 地址，也就是 Ubuntu 主机
 saveenv
 ```
 
-<br>
 
 ## Linux内核移植
 
@@ -136,18 +133,18 @@ saveenv
 **1.1 搭建网络tftp服务**
 
 - 执行以下指令，安装`xinetd`: 
-``` shell
+```shell
 sudo apt-get install xinetd
 ```
 
 - 查询`/etc/`下是否存在 `xinetd.conf` 文件，没有的话则自己新建一个。
-``` shell
+```shell
 ls /etc/xinetd.conf
 sudo vi /etc/xinetd.conf
 ```
 
 - 创建出来的文件是空白的， 修改 `xinetd.conf` 文件内容如下：
-``` shell
+```shell
 # Simple configuration file for xinetd
 #
 # Some defaults, and include /etc/xinetd.d/
@@ -162,7 +159,7 @@ includedir /etc/xinetd.d
 
 - 新建 `TFTP` 目录，这里建立在/home/xuan/linux 目录下，目录名为 tftp。将 tftp 目录赋予可读可写可执行权限。
 
-``` shell
+```shell
 mkdir -p /home/xuan/linux/tftp
 sudo chmod 777 /home/xuan/linux/tftp/
 cd /home/xuan/linux/
@@ -170,13 +167,13 @@ ls
 ```
 
 - 执行以下程序安装 `tftp-hpa` 和 `tftpd-hpa` 服务程序
-``` shell
+```shell
 sudo apt-get install tftp-hpa tftpd-hpa
 sudo vi /etc/default/tftpd-hpa
 ```
 
 - 执行以下指令创建`/etc/xinetd.d/tftp`配置文件。（如果没有 `xinetd.d` 这个目录，可以先自己手动创建）,注意 `server_args = -s` 后面要添加自己的 `tftp` 工作路径。
-``` shell
+```shell
 server tftp
 {
 socket_type = dgram
@@ -195,7 +192,7 @@ flags =IPv4
 ```
 
 - 修改/添加 `tftp` 文件后， 执行以下指令重启 `tftpd-hpa`, 重启 `xinetd` 服务。
-``` shell
+```shell
 sudo service tftpd-hpa restart
 sudo service xinetd restart
 ```
@@ -205,28 +202,27 @@ sudo service xinetd restart
 	- 虚拟机 IP： 192.168.104.129
 	- 电脑网口的 IP： 192.168.104.29
 
-<br>
 
 **1.2 搭建网络nfs服务**
 
 - 在 `Ubuntu` 终端执行以下指令安装 `NFS`
-``` shell
+```shell
 sudo apt-get install nfs-kernel-server
 ```
 
 - 新建 `NFS` 共享目录，并给予 `NFS` 目录可读可写可执行权限。
-``` shell
+```shell
 sudo mkdir /home/xuan/linux/nfs
 sudo chmod 777 /home/xuan/linux/nfs/
 ```
 
 - 执行以下指令打开 `etc/exports` 文件
-``` shell
+```shell
 sudo vi /etc/exports
 ```
 
 - 进入 `etc/exports` 文件，在最后添加如下内容
-``` shell
+```shell
 /home/alientek/linux/nfs *(rw,sync,no_root_squash)
 ```
 
@@ -237,31 +233,30 @@ sudo vi /etc/exports
 `no_root_squash` 表示访问者具有 `root` 权限。
 
 - 执行以下指令重启 `NFS` 服务器, 查看 `NFS` 共享目录。
-``` shell
+```shell
 sudo /etc/init.d/nfs-kernel-server restart
 showmount -e
 ```
 
 - 设置 `NFS` 服务开机自启
-``` shell
+```shell
 sudo systemctl enable nfs-kernel-server
 sudo reboot
 ```
 
 - 测试 `NFS` 服务，执行以下指令设置开发板 `IP`，创建一个 `get` 目录，将虚拟机（`192.168.104.129`） `NFS` 共享目
 录挂载到到开发板的 `get` 目录中。
-``` shell
+```shell
 mkdir get
 mount -t nfs -o nolock,nfsvers=3 192.168.104.129:/home/xuan/linux/nfs get/
 ```
 
 - 查看挂载的 `NFS` 目录：`df`, 显示如下：
-``` shell
+```shell
 192.168.104.129:/home/xuan/linux/nfs 204795392 14416896 179902464   8% /home/root/get
 ```
 - 卸载 `NFS` 目录：`umount get`
 
-<br>
 
 **2. 拷贝内核文件**
 
@@ -272,13 +267,13 @@ mount -t nfs -o nolock,nfsvers=3 192.168.104.129:/home/xuan/linux/nfs get/
 **3. 编译内核文件**
 
 按以下步骤进行编译：
-``` shell
+```shell
 make clean 					//第一次编译 Linux 内核之前先清理一下
 make imx_v7_mfg_defconfig 	//配置 Linux 内核
 make -j16					//编译 Linux 内核
 ```
 发现编译报错：
-``` shell
+```shell
   LZO     arch/arm/boot/compressed/piggy.lzo
 /bin/sh: 1: lzop: not found
 make[2]: *** [arch/arm/boot/compressed/Makefile:180：arch/arm/boot/compressed/piggy.lzo] 错误 1
@@ -291,12 +286,11 @@ make: *** 正在等待未完成的任务....
 2. 添加lzop到环境变量：export PATH=$PATH:/usr/bin(直接安装的不需要添加环境变量)
 3. 重新编译：make -j16
 
-<br>
 
 - 若执行 `./mx6ull_alientek_emmc.sh`
 
 发现编译报错：
-``` shell
+```shell
 <command-line>: fatal error: curses.h: 没有那个文件或目录
 ```
 解决方法：
@@ -305,7 +299,6 @@ make: *** 正在等待未完成的任务....
 sudo apt-get install libncurses*
 ```
 
-<br>
 
 **4. 整理编译后的镜像文件**
 
@@ -315,18 +308,17 @@ sudo apt-get install libncurses*
 - `Linux` 内核镜像文件： `zImage。`
 - `NXP`官方`I.MX6ULL EVK开发板`对应的设备树文件： imx6ull-alientek-emmc.dtb。
 
-<br>
 
 **5. 内核启动测试**
 
 - 修改`uboot` 中的环境变量 `bootargs`
-``` shell
+```shell
 console=ttymxc0,115200 root=/dev/mmcblk1p2 rootwait rw
 ```
 
 - 将上一小节编译出来的 `zImage` 和 `imx6ull-alientek-emmc.dtb` 复制到 `Ubuntu` 中的 `tftp` 目录下，
 因为我们要在 `uboot` 中使用 `tftp` 命令将其下载到开发板中，拷贝命令如下：
-``` shell
+```shell
 cp arch/arm/boot/zImage /home/xuan/linux/tftpboot/ -f
 cp arch/arm/boot/dtb/imx6ull-alientek-emmc.dtb /home/xuan/linux/tftpboot/ -f
 ```
@@ -335,26 +327,25 @@ cp arch/arm/boot/dtb/imx6ull-alientek-emmc.dtb /home/xuan/linux/tftpboot/ -f
 `zImage` 和 `imx6ull-alientek-emmc.dtb` 下载到开发板中：
 
 **从tftp启动：**
-``` shell
+```shell
 tftp 80800000 zImage
 tftp 83000000 imx6ull-alientek-emmc.dtb
 bootz 80800000 - 83000000
 ```
 
 **从EMMC启动：**
-``` shell
+```shell
 fatload mmc 1:1 80800000 zImage
 fatload mmc 1:1 83000000 imx6ull-alientek-emmc.dtb
 bootz 80800000 - 83000000
 ```
 或者在uboot中保存环境变量：
-``` shell
+```shell
 setenv bootcmd 'mmc dev 1;fatload mmc 1:1 80800000 zImage;fatload mmc 1:1 83000000 imx6ull-alientek-emmc.dtb;bootz 80800000 - 83000000'
 setenv bootargs 'console=ttymxc0,115200 root=/dev/mmcblk1p2 rootwait rw'
 saveenv
 ```
 
-<br>
 
 ### 从网络启动Linux系统
 
@@ -365,7 +356,7 @@ saveenv
 - 拨码到从`SD`卡启动，开发板上电/`RESET`，进入`uboot`。
 - 在`uboot`配置`bootargs`和`bootcmd`参数并保存。
 
-``` shell
+```shell
 //`root=/dev/mmcblk1p2 rootwait rw` 为使用 eMMC 中已有的根文件系统
 setenv bootargs 'console=ttymxc0,115200 root=/dev/mmcblk1p2 rootwait rw'	
 setenv bootcmd 'tftp 80800000 zImage; tftp 83000000 imx6ull-alientek-emmc.dtb; bootz 80800000 - 83000000'
@@ -377,13 +368,12 @@ saveenv
 
 - 拨码到从`SD`卡启动，开发板上电/`RESET`，进入`uboot`。
 - 在`uboot`配置`bootargs`参数并保存。
-``` shell
+```shell
 setenv bootargs 'console=ttymxc0,115200 root=/dev/nfs nfsroot=192.168.104.129:/home/xuan/linux/nfs/rootfs,proto=tcp rw ip=192.168.104.130:192.168.104.129:192.168.104.1:255.255.240.0::eth0:off' 		//设置 bootargs
 saveenv 				//保存环境变量
 ```
 - 输入`boot`启动
 
-<br>
 
 **Error solving**
 
@@ -392,11 +382,11 @@ saveenv 				//保存环境变量
 - 显示挂载失败，一大堆错误，显示没挂载上
 - `IMX6ULL`通过NFS挂载根文件系统失败的方法
 	- 修改`/etc/default/nfs-kernel-server`
-``` shell
+```shell
 sudo vi /etc/default/nfs-kernel-server
 ```
 - `nfs-kernel-server`文件修改内容如下：
-``` shell
+```shell
 # Number of servers to start up
 #RPCNFSDCOUNT=8
 RPCNFSDCOUNT="-V 2 8"
@@ -420,12 +410,11 @@ NEED_SVCGSSD=""
 RPCSVCGSSDOPTS="--nfs-version 2,3,4 --debug --syslog"
 ```
 - 重启NFS服务器
-``` shell
+```shell
 sudo service nfs-kernel-server restart
 ```
 - 重新开机挂载，问题解决。
 
-<br>
 
 ## Linux驱动开发
 
@@ -455,33 +444,32 @@ sudo cp led.ko led /home/xuan/linux/nfs/rootfs/lib/modules/4.1.15/ -f
 ```
 
 - `nfs`挂载`rootfs`，进入开发板
-``` shell
+```shell
 cd /lib/modules/4.1.15
 ```
-``` shell
+```shell
 depmod 					//第一次加载驱动的时候需要运行此命令
 insmod led.ko
 或者
 modprobe led.ko 		//加载 led.ko 驱动文件
 ```
-``` shell
+```shell
 cat /proc/devices		//查看当前系统中有没有 led 这个设备
 mknod /dev/led c 200 0		//创建设备节点文件
 ./ledApp /dev/led 1		//亮灯
 ./ledApp /dev/led 0		//灭灯
 ```
-``` shell
+```shell
 rmmod led.ko
 或者
 modprobe -r led.ko 		//卸载 led.ko 驱动文件
 ```
 
-<br>
 
 ### 老字符驱动开发（自动创建节点）
 
 - 编写 `Makefile` 文件
-``` shell
+```shell
 KERNELDIR := /home/xuan/linux/linux-ga
 CURRENT_PATH := $(shell pwd)
 
@@ -497,7 +485,7 @@ clean:
 ```
 
 - 编译出驱动模块文件,编译成功以后就会生成一个名为`newchrled.ko`的驱动模块文件
-``` shell
+```shell
 cd ~/linux/drivers/03_newchrled
 make -j32
 arm-linux-gnueabihf-gcc ledApp.c -o ledApp
@@ -505,7 +493,7 @@ cp ledApp newchrled.ko ~/linux/nfs/rootfs/lib/modules/4.1.15
 ```
 
 - 重新上电运行开发板
-``` shell
+```shell
 cd /lib/modules/4.1.15
 depmod 						//第一次加载驱动的时候需要运行此命令
 modprobe newchrled.ko 		//加载驱动
@@ -515,7 +503,6 @@ ls /dev/newchrled -l		//查看/dev/newchrdev 这个设备节点文件是否存�
 rmmod newchrled.ko
 ```
 
-<br>
 
 ### Linux 设备树
 
@@ -539,12 +526,12 @@ alphaled {
 - 编译完成以后得到`imx6ull-alientek-emmc.dtb`，使用新的 `imx6ull-alientek-emmc.dtb`启动`Linux`内核
 - `Linux`启动成功以后进入到`/proc/device-tree/`目录中查看是否有`alphaled`这个节点,若没有则修改失败
 - 编写`dtsled.c`文件和文件`ledApp.c`,修改`Makefile`中的`KERNELDIR`参数为`/home/xuan/linux/linux-ga`
-``` shell
+```shell
 make -j32
 arm-linux-gnueabihf-gcc ledApp.c -o ledApp
 ```
 - 编译出来的`dtsled.ko`和`ledApp`这两个文件拷贝到`rootfs/lib/modules/4.1.15`目录中，**重启开发板**，进入到目录`lib/modules/4.1.15`中，输入如下命令加载`dtsled.ko`驱动模块：
-``` shell
+```shell
 depmod 				//第一次加载驱动的时候需要运行此命令
 modprobe dtsled.ko 		//加载驱动
 ./ledApp /dev/dtsled 1 		//打开 LED 灯
@@ -552,7 +539,6 @@ modprobe dtsled.ko 		//加载驱动
 rmmod dtsled.ko
 ```
 
-<br>
 
 ### pinctrl 和 gpio 子系统实验
 
@@ -565,7 +551,6 @@ rmmod dtsled.ko
 
 对于我们使用者来讲，只需要在设备树里面设置好某个 `pin` 的相关属性即可，其他的初始化工作均由 `pinctrl` 子系统来完成， `pinctrl` 子系统源码目录为 `drivers/pinctrl`。
 
-<br>
 
 #### 设备树中添加 pinctrl 节点模板
 
@@ -583,11 +568,9 @@ pinctrl_test: testgrp {
 ```
 - 至此，我们已经在 `imx6ull-alientek-emmc.dts` 文件中添加好了 `test` 设备所使用的 `PIN` 配置信息。
 
-<br>
 
 #### gpio子系统
 
-<br>
 
 #### gpio实验
 
@@ -619,7 +602,6 @@ gpioled {
 - 在本章实验中 `LED` 灯使用的 `PIN` 为 `GPIO1_IO03`，在 `imx6ull-alientek-emmc.dts` 中，先检查 `GPIO_IO03` 这个 `PIN` 有没有被其他的 `pinctrl` 节点使用。
 - 如别的模块有使用到`GPIO_IO03`，需要注释掉。
 
-<br>
 
 ### Linux 蜂鸣器实验
 
@@ -651,7 +633,7 @@ beep {
 - 编译驱动程序: `make -j32`
 - 编译测试 `APP`: `arm-linux-gnueabihf-gcc beepApp.c -o beepApp`
 - 开发板运行测试
-``` shell
+```shell
 depmod 			//第一次加载驱动的时候需要运行此命令
 modprobe beep.ko 	//加载驱动
 ./beepApp /dev/beep 1 	//打开蜂鸣器
@@ -659,5 +641,4 @@ modprobe beep.ko 	//加载驱动
 rmmod beep.ko
 ```
 
-<br>
 

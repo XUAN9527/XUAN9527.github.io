@@ -77,7 +77,6 @@ dependencies:
   esp32-camera:
     git: git@github.com:espressif/esp32-camera.git
 ```
-<br>
 
 ### 代码和说明
 各文件的位置关系很重要，请对照前面的项目树看代码文件。
@@ -150,7 +149,7 @@ void app_main(void)
 
 **CMakeLists.txt**:
 
-``` shell
+```shell
 	idf_component_register(
 		SRCS "shell.c"
 			"shell_ext.c"
@@ -185,7 +184,6 @@ void app_main(void)
 #### 关于CMakeLists.txt文件
 根和每个目录都有一个`CMakeLists.txt`文件，开始遇到的问题是不知道目录结构和怎样写`CMakeLists.txt`文件，要注意每一层目录中`CMakeLists.txt`文件的写法，本文的例子给出了一个简单的示范。对于复杂的项目还需要更多编写`CMakeLists.txt`文件的知识，请看简介中给出的官方文档。
 
-<br>
 
 ## ESP32移植Letter_shell问题
 
@@ -221,22 +219,20 @@ void app_main(void)
 
 [ESP32移植letter_shell组件例程](https://github.com/XUAN9527/components_demo)
 
-<br>
 
 ## ESP32启动流程解析
 
-<br>
 
 ## ESP32-IDF组件下载安装路径
 
 - 安装所需组件：
-``` shell
+```shell
 cd ~/esp/esp-adf/esp-idf
 ./install.sh esp32,esp32s3 # 可按需求安装
 ```
 
 - 若下载很慢，可按以下路径在`Windows`/`Linux`下载:
-``` shell
+```shell
 cd ~/esp/esp-adf/esp-idf/tools
 vim tools.json
 {
@@ -294,7 +290,7 @@ vim tools.json
 - 当前`IDF5.4`版本在配置时可以连接下载组件，但是有时候网络不好，连接超时。
 
 1. 修改 `Git` 的 `URL` 为镜像源（如 `Gitee`）
-``` shell
+```shell
 # 修改 Git 的 URL 为镜像源（如 Gitee）
 git config --global url."git@github.com:espressif/esp32-camera.git".insteadOf "https://github.com/espressif/esp32-camera.git"
 
@@ -311,7 +307,7 @@ git config --global url."https://github.com/espressif/esp32-camera.git".insteadO
 3. 下载 `esp32-camera`
 - 从 `GitHub` 直接下载压缩包：https://github.com/espressif/esp32-camera/archive/refs/heads/master.zip
 - 解压后放到 `ESP-IDF` 的组件目录中：
-``` shell
+```shell
 unzip esp32-camera-master.zip
 mv esp32-camera-master ~/esp/esp-adf/esp-idf/components/esp32-camera
 ```
@@ -349,7 +345,6 @@ set(EXTRA_COMPONENT_DIRS ~/esp/esp-adf/esp-idf/components/esp32-camera)
 
 - `VLC`可能认为`192.168.4.2`是主机`IP`，没有请求`192.168.4.1`，需要注意修改。
 
-<br>
 
 ## ESP32S3开发摄像头模组
 
@@ -361,7 +356,7 @@ set(EXTRA_COMPONENT_DIRS ~/esp/esp-adf/esp-idf/components/esp32-camera)
 ### 创建仓库，设计框架
 - 复制一个`DEMO`创建仓库，有`main.c`函数，能跑通。
 - 添加`components`:
-``` shell
+```shell
 idf.py -C components create-component lcd_camera
 // 下载esp32-camera组件，地址：git@github.com:espressif/esp32-camera.git
 mv -rf esp32-camera ${workspaceFolder}/components
@@ -392,7 +387,6 @@ project(camera_test)
 
   **建议**：可以保持`EXTRA_COMPONENT_DIRS`写法用于组件扫描；但每一个`.c`文件所在组件，都必须有自己明确依赖的组件声明。
 
-<br>
 
 - `main`主文件夹的`CmakeLists.txt`:
 ``` CmakeLists
@@ -409,7 +403,6 @@ idf_component_register(
 )
 ```
 
-<br>
 
 ⚡ 为什么 `main` 里不需要 `REQUIRES`，在其他组件需要手动添加依赖？
 - 因为 `main` 是特殊组件，它会自动看到整个工程的公共 `include path` 和链接库。
@@ -444,7 +437,6 @@ set(EXTRA_COMPONENT_DIRS
 - `EXTRA_COMPONENT_DIRS += ADF_PATH/components` → 确保 `ADF` 组件能被找到。
 - 如果去掉 `ADF_PATH/components`，可能会导致 部分 `ADF` 组件无法被扫描到，编译时报错。
 
-<br>
 
 ## 流媒体协议全解析：RTSP/RTP/TCP/UDP
 
@@ -464,11 +456,9 @@ set(EXTRA_COMPONENT_DIRS
 	- `UDP`发送缓冲区不足
 	- 缺少重传机制
 
-<br>
 
 2. **分析调试**：
 - `frame2jpg(fb, 60, &jpeg_buf, &jpeg_len)`这个函数转换需要`100ms~150ms`，很慢。`PIXFORMAT_RGB565`适合LCD显示；`PIXFORMAT_JPEG`，只推流不显示速度会快很多，同时有以下问题。
-<br>
 
 - `camera`硬件解码（`PIXFORMAT_JPEG`）`VLC`显示闪屏：
 	- 已排除`errno=12` 对应 `ENOMEM`，即系统内存不足（尤其是 `LWIP UDP` 发送缓冲区）。这说明 `UDP` 发送缓冲区或堆内存压力过大，导致 `RTP` 数据包发送失败，从而客户端播放时卡顿闪屏。
@@ -476,7 +466,6 @@ set(EXTRA_COMPONENT_DIRS
 	- 已排除`VLC` 播放器问题
 	- 已排除`AP/UDP` 网络不稳定
 	- 已排除 `JPEG` 数据不完整
-<br>
 
 - 调试发现与`RTP JPEG Type`有很大关系，问题测试过程如下：
 
@@ -489,7 +478,6 @@ set(EXTRA_COMPONENT_DIRS
 | RGB565 → 软件 JPEG 编码 | 编码包含 DQT/DHT | `Type = 0`    | ❌ 不闪屏 | ✅ 正确 |
 | RGB565 → 软件 JPEG 编码 | 编码包含 DQT/DHT | `Type = 1`    | ⚠️ 闪屏 | ❌ 错误 |
 
-<br>
 
 - `RTP JPEG Type` 设置错误带来的解码行为：
 
@@ -502,7 +490,7 @@ set(EXTRA_COMPONENT_DIRS
 
 - 添加打印以验证分析理论：
 - 前置条件：`RGB565` → 软件 `JPEG` 编码; `type = 0`。
-``` c
+```c
 // 检测 JPEG 是否包含 DQT 段 (0xFFDB)
 static bool jpeg_has_dqt(const uint8_t *data, size_t len) {
     size_t i = 2; // 跳过 SOI 0xFFD8
@@ -552,23 +540,19 @@ static bool jpeg_has_dqt(const uint8_t *data, size_t len) {
 I (19451) RTSP_SERVER: JPEG header: FF D8, has_dqt=YES → type=0
 ```
 
-<br>
 
 - 前置条件：`RGB565` → 软件 `JPEG` 编码; `type = 1`。
-``` shell
+```shell
 // 打印结果说明具有0xFFD8，包含DQT。
 I (19451) RTSP_SERVER: JPEG header: FF D8, has_dqt=YES → type=0
 ```
 
-<br>
 
 - 结论：有 `DQT ≠` 可以用 `type=0`，只有 摄像头生成的标准 `JPEG`（完全按` MJPEG over RTP` 规范压缩的）才能稳定使用 `type=0`，否则必须使用 `type=1`。
 
-<br>
 
 3. **结论总结**：
 
-<br>
 
 ## ESP32S3偶发性重启
 
@@ -576,7 +560,7 @@ I (19451) RTSP_SERVER: JPEG header: FF D8, has_dqt=YES → type=0
 - Component config → LWIP → TCP -> (65535) Default send buffer size
 - Component config ---> HTTP Server ---> [*] WebSocket server support (CONFIG_HTTPD_WS_SUPPORT=y)
 - 会出现重启、传输时阻塞卡死、画面卡住以下是常见的`error`日志：
-``` shell
+```shell
 I (782633) RTSP_SERVER: Streaming: 10 FPS, 50 pkts, 5619 bytes, 0 errs (0.0%)
 W (782833) RTSP_SERVER: Sendto failed at offset 2760, errno=12 (Not enough space)
 W (782833) RTSP_SERVER: Non-first packet failed at offset 2760, continuing
@@ -639,7 +623,7 @@ W (18470) cam_hal: FB-OVF
 	- 用`JPEG`格式（`PIXFORMAT_JPEG`）采集数据会有概率重启?
 
 - `jpeg`转换成`rgb565`，参数跟`demo`有点不同.
-``` c
+```c
 // jpg2rgb565原始函数显示花屏，需要.flags.swap_color_bytes = 1
 static uint8_t work[3100];
 bool myjpg2rgb565(const uint8_t *src, size_t src_len, uint8_t * out, esp_jpeg_image_scale_t scale)
@@ -665,12 +649,11 @@ bool myjpg2rgb565(const uint8_t *src, size_t src_len, uint8_t * out, esp_jpeg_im
 }
 ```
 
-<br>
 
 ## ESP32系列初始化
 
 ### `NVS`（`Non-Volatile Storage`，非易失性存储）初始化：
-``` c
+```c
 esp_err_t ret = nvs_flash_init(); 
 if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) 
 { 
@@ -702,7 +685,6 @@ ESP_ERROR_CHECK(ret);
 - 这是很多 `ESP-IDF` 项目都会放在 `app_main()` 开头的“惯用初始化代码”，特别是 `Wi-Fi` 或 `BLE` 工程。
 - 如果你不用 `NVS`，可以不加，但 `ESP-IDF` 内部有些 `API` 会自动依赖它，比如 `esp_wifi_init()`。
 
-<br>
 ## 摄像头开发
 
 ### 摄像头配置
@@ -713,7 +695,7 @@ ESP_ERROR_CHECK(ret);
 
 ### 缓存配置
 - 默认发送缓存太小，需要调整`idf.py menuconfig`:
-``` shell
+```shell
 Component config  --->
 LWIP  --->
 [*] Enable SO_RCVBUF option # 打开后才能设置缓存大小(这是接收的，设置没用)
@@ -730,7 +712,7 @@ LWIP → TCP
 ```
 
 - 代码里设置缓存
-``` c
+```c
 // ✅ 设置发送缓冲区大小
 #define UDP_SEND_BUF_SIZE  (64 * 1024)  // UDP发送缓冲区
 int send_buf_size = UDP_SEND_BUF_SIZE;
@@ -740,7 +722,7 @@ setsockopt(udp_sock, SOL_SOCKET, SO_SNDBUF, &send_buf_size, sizeof(send_buf_size
 ### ESP32S3下载模式
 
 - `USB`下载模式(第一次启动需要使用`boot0`和`EN`启动？):
-``` shell
+```shell
 idf.py menuconfig
 
 (Top) → Component config → ESP System Settings → Channel for console output
@@ -752,7 +734,7 @@ idf.py menuconfig
 ```
 
 - 未使用`boot0`和`EN`启动（如果 `IO0（BOOT）`是浮空的，那芯片上电/复位时就可能被误判为“拉低”而进入下载模式）：
-``` shell
+```shell
 Uploading stub...
 Running stub...
 Stub running...

@@ -19,7 +19,7 @@ description: C++算法编译打包成.a文件，配合.h接口供给MCU使用。
 ## C++端配置和打包
 
 - **文件夹结构**
-``` shell
+```shell
 my_math
     ├── build
     │   ├── libmy_math.a
@@ -32,7 +32,7 @@ my_math
 ```
 
 - `my_math.h`
-``` c
+```c
 #ifndef MY_MATH_H
 #define MY_MATH_H
 
@@ -56,7 +56,7 @@ float my_process(const float* data, int len);
 ```
 
 - `my_math.cpp`
-``` cpp
+```cpp
 #include "my_math.h"
 #include <vector>
 #include <cmath>
@@ -90,7 +90,7 @@ float my_process(const float* data, int len) {
 ```
 
 - `Makefile` 文件，关键配置：`-mfpu=fpv4-sp-d16` `-mfloat-abi=hard` `-std=c++11`
-``` makefile
+```makefile
 # ======= 编译器选项 =======
 CC = arm-none-eabi-g++
 AR = arm-none-eabi-ar
@@ -146,14 +146,14 @@ clean:
 ## MCU端配置和打包
 
 - **添加文件夹**
-``` shell
+```shell
 lib
  ├── libmy_math.a
  └── my_math.h
 ```
 
 - `Makefile`中添加
-``` makefile
+```makefile
 # mcu中添加配置
 MCU = -mcpu=cortex-m4 -mthumb \
 	-mfpu=fpv4-sp-d16 -mfloat-abi=hard \ # 增加硬浮点编译
@@ -207,7 +207,7 @@ $(TARGET).elf: $(OBJECTS)
 ## 使用例程
 
 - 使用例程及堆栈
-``` c
+```c
 #include "my_math.h"
 // 打印rtthread heap的数据信息
 static void print_heap(const char* tag)
