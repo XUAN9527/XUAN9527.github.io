@@ -28,7 +28,7 @@
 <meta property="og:description" content="Docker 介绍 + 本地环境搭建 + 应用部署示例">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2025-12-12T04:12:00.000Z">
-<meta property="article:modified_time" content="2026-01-28T06:24:40.441Z">
+<meta property="article:modified_time" content="2026-01-28T07:19:52.201Z">
 <meta property="article:author" content="boollight">
 <meta property="article:tag" content="Linux">
 <meta property="article:tag" content="Docker">
@@ -227,7 +227,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2026-01-28 14:24:40" itemprop="dateModified" datetime="2026-01-28T14:24:40+08:00">2026-01-28</time>
+                <time title="Modified: 2026-01-28 15:19:52" itemprop="dateModified" datetime="2026-01-28T15:19:52+08:00">2026-01-28</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -385,6 +385,15 @@
 </ul>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">idf.py flash monitor</span><br></pre></td></tr></table></figure>
 
+<ul>
+<li>Docker 与宿主机的 ESP-IDF 环境不一致，导致方法二失败<ul>
+<li>IDF 版本不一致</li>
+<li>Python 虚拟环境不同</li>
+<li>工具链路径写死在 build 目录</li>
+<li>Component Manager 解析结果不同</li>
+</ul>
+</li>
+</ul>
 <hr>
 <h3 id="五、退出并关闭容器"><a href="#五、退出并关闭容器" class="headerlink" title="五、退出并关闭容器"></a>五、退出并关闭容器</h3><p>在 Docker 中使用 ESP-IDF 完成编译或调试后，可以按以下方式<strong>安全退出并关闭容器</strong>：</p>
 <h4 id="1️⃣-直接退出并关闭容器（推荐）"><a href="#1️⃣-直接退出并关闭容器（推荐）" class="headerlink" title="1️⃣ 直接退出并关闭容器（推荐）"></a>1️⃣ 直接退出并关闭容器（推荐）</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">exit</span>  <span class="comment"># 或 Ctrl+D</span></span><br></pre></td></tr></table></figure>
