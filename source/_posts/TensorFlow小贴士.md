@@ -1,3 +1,15 @@
+---
+title: TensorFlow小贴士
+date: 2026-04-28 00:00:00
+#updated: 2026-04-28
+tags:
+- [TensorFlow]
+categories:
+- [Linux]
+- [Docker]
+description: TensorFlow Jupyter 容器的快速启动与登录方法。
+---
+
 ## TensorFlow小贴士
 
 **tensorflow:latest-jupyter：**

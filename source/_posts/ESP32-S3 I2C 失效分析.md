@@ -1,3 +1,15 @@
+---
+title: ESP32-S3 I2C 多设备共享总线最佳实践
+date: 2026-04-28 00:00:00
+#updated: 2026-04-28
+tags:
+- [ESP32]
+- [I2C]
+categories:
+- [ESP32解决方案]
+description: ESP32-S3 I2C 总线多设备共享、初始化冲突与 clk_source 配置失效问题分析。
+---
+
 # 🚀 ESP32-S3 I2C 多设备共享总线最佳实践（进阶版）
 
 ## 📚 目录
