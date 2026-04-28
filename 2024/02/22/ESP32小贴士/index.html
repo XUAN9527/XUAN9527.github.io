@@ -174,18 +174,18 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">18</span>
+          <span class="site-state-item-count">21</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-count">15</span>
         <span class="site-state-item-name">categories</span></a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-count">19</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -312,7 +312,7 @@ rm -r build/*
 </code></pre>
 <p>该命令会创建一个新组件,新组件将包含构建组件所需的一组空文件。我们的工作就是在这一组空文件中写上我们的代码。<br>如果熟悉了组件结构，也可以直接在项目中手工创建。</p>
 <h4 id="项目树"><a href="#项目树" class="headerlink" title="项目树"></a>项目树</h4><p>构建好的项目结构如下:</p>
-<p><img src="/xuan9527.github.io/../pictures/component_demo%E8%AE%BE%E5%A4%87%E6%A0%91.png" alt="component_demo设备树"></p>
+<p><img src="/../pictures/component_demo%E8%AE%BE%E5%A4%87%E6%A0%91.png" alt="component_demo设备树"></p>
 <p><strong>注意：</strong></p>
 <ul>
 <li>组件目录<code>components</code>名字不能改，其下的组件名可以随意取。<code>build</code>目录是编译时生成的，编译的结果都放在其中。<code>dependencies.lock</code>是随原来的项目复制过来的不要改。<code>sdkconfig</code>文件可以用<code>idf.py menuconfig</code>命令修改。</li>
@@ -345,7 +345,7 @@ project(components_demo)
 <p><code>REQUIRES esp_driver_uart</code> 表示在<code>letter_shell</code>组件中要用到系统组件<code>esp_driver_uart</code>。</p>
 <p>3、系统组件的确定</p>
 <p>对于要依赖的系统组件不像私有依赖项那样一目了然，有时我们并不清楚所要的系统组件名称。比如我们不知道需要组件wpa_supplicant，这时我们可以先编译一次，看看错误信息：</p>
-<p><img src="/xuan9527.github.io/../pictures/requires_error.png" alt="requires_error"></p>
+<p><img src="/../pictures/requires_error.png" alt="requires_error"></p>
 <p>在<code>CMakeLists.txt</code>中添加依赖组件<code>REQUIRES esp_driver_uart</code>，编译通过。</p>
 <h4 id="关于CMakeLists-txt文件"><a href="#关于CMakeLists-txt文件" class="headerlink" title="关于CMakeLists.txt文件"></a>关于CMakeLists.txt文件</h4><p>根和每个目录都有一个<code>CMakeLists.txt</code>文件，开始遇到的问题是不知道目录结构和怎样写<code>CMakeLists.txt</code>文件，要注意每一层目录中<code>CMakeLists.txt</code>文件的写法，本文的例子给出了一个简单的示范。对于复杂的项目还需要更多编写<code>CMakeLists.txt</code>文件的知识，请看简介中给出的官方文档。</p>
 <h2 id="ESP32移植Letter-shell问题"><a href="#ESP32移植Letter-shell问题" class="headerlink" title="ESP32移植Letter_shell问题"></a>ESP32移植Letter_shell问题</h2><h3 id="添加shell组件及其log，编译出错"><a href="#添加shell组件及其log，编译出错" class="headerlink" title="添加shell组件及其log，编译出错"></a>添加shell组件及其log，编译出错</h3><h4 id="可能原因"><a href="#可能原因" class="headerlink" title="可能原因:"></a>可能原因:</h4><ol>
@@ -755,13 +755,13 @@ project(components_demo)
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-line"></i>
     </span>
-    <span title="Word count total">60k</span>
+    <span title="Word count total">61k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="Reading time total">3:18</span>
+    <span title="Reading time total">3:22</span>
   </span>
 </div>
   <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
