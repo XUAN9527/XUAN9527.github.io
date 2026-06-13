@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.1.1">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"xuan9527.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.26.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="记录Bootloader 跳转 APP 跑飞问题排查与修复过程">
+<meta property="og:type" content="article">
+<meta property="og:title" content="bootloader 跳转 APP 跑飞问题">
+<meta property="og:url" content="https://xuan9527.github.io/2026/06/01/boot_jump_fix_blog/index.html">
+<meta property="og:site_name" content="xuan9527">
+<meta property="og:description" content="记录Bootloader 跳转 APP 跑飞问题排查与修复过程">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2026-06-01T06:00:02.000Z">
+<meta property="article:modified_time" content="2026-06-13T12:07:03.476Z">
+<meta property="article:author" content="boollight">
+<meta property="article:tag" content="MCU">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://xuan9527.github.io/2026/06/01/boot_jump_fix_blog/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://xuan9527.github.io/2026/06/01/boot_jump_fix_blog/","path":"2026/06/01/boot_jump_fix_blog/","title":"bootloader 跳转 APP 跑飞问题"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>bootloader 跳转 APP 跑飞问题 | xuan9527</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">xuan9527</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">常能遣其欲而心自静，澄其心而神自清。</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li><li class="menu-item menu-item-schedule"><a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>Schedule</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="Searching..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Bootloader-%E8%B7%B3%E8%BD%AC-APP-%E8%B7%91%E9%A3%9E%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5%E4%B8%8E%E4%BF%AE%E5%A4%8D%E5%AE%9E%E5%BD%95"><span class="nav-number">1.</span> <span class="nav-text">Bootloader 跳转 APP 跑飞问题排查与修复实录</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E9%97%AE%E9%A2%98%E8%83%8C%E6%99%AF"><span class="nav-number">1.1.</span> <span class="nav-text">一、问题背景</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E7%8E%B0%E8%B1%A1"><span class="nav-number">1.1.1.</span> <span class="nav-text">问题现象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E6%B5%81"><span class="nav-number">1.1.2.</span> <span class="nav-text">数据流</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E6%8E%92%E6%9F%A5%E5%8E%86%E7%A8%8B"><span class="nav-number">1.2.</span> <span class="nav-text">二、排查历程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%9D%E8%AF%95-1%EF%BC%9AICACHE-%E5%A4%8D%E4%BD%8D%EF%BC%88%E4%BD%8D%E7%BD%AE%E9%94%99%E8%AF%AF-%E2%80%94-%E6%97%A0%E6%95%88%EF%BC%89"><span class="nav-number">1.2.1.</span> <span class="nav-text">尝试 1：ICACHE 复位（位置错误 — 无效）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%9D%E8%AF%95-2%EF%BC%9AIWDG-%E5%96%82%E7%8B%97%EF%BC%88%E6%8E%92%E9%99%A4%EF%BC%89"><span class="nav-number">1.2.2.</span> <span class="nav-text">尝试 2：IWDG 喂狗（排除）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%9D%E8%AF%95-3%EF%BC%9ASYSRESETREQ%EF%BC%88%E6%8E%92%E9%99%A4%EF%BC%89"><span class="nav-number">1.2.3.</span> <span class="nav-text">尝试 3：SYSRESETREQ（排除）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%9D%E8%AF%95-4%EF%BC%9AGPIO-%E8%AF%8A%E6%96%AD%E5%AE%9A%E4%BD%8D%EF%BC%88%E5%85%B3%E9%94%AE%E7%AA%81%E7%A0%B4%EF%BC%89"><span class="nav-number">1.2.4.</span> <span class="nav-text">尝试 4：GPIO 诊断定位（关键突破）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%9D%E8%AF%95-5%EF%BC%9A%E6%89%93%E5%8D%B0-jump2app-%E5%9C%B0%E5%9D%80%EF%BC%88%E5%85%B3%E9%94%AE%E8%AF%81%E6%8D%AE%EF%BC%89"><span class="nav-number">1.2.5.</span> <span class="nav-text">尝试 5：打印 jump2app 地址（关键证据）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E6%A0%B9%E5%9B%A0%E5%88%86%E6%9E%90"><span class="nav-number">1.3.</span> <span class="nav-text">三、根因分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E5%9C%B0%E5%9D%80%E6%AD%A3%E7%A1%AE%E4%BD%86%E8%B7%B3%E8%BD%AC%E5%A4%B1%E8%B4%A5%EF%BC%9F"><span class="nav-number">1.3.1.</span> <span class="nav-text">为什么地址正确但跳转失败？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E5%A4%A7%E5%B0%8F%E7%9B%B8%E5%90%8C%E6%B2%A1%E9%97%AE%E9%A2%98%EF%BC%9F"><span class="nav-number">1.3.2.</span> <span class="nav-text">为什么大小相同没问题？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9B%B4%E4%B9%8B%E5%89%8D-ICACHE-%E5%A4%8D%E4%BD%8D%E4%B8%BA%E4%BB%80%E4%B9%88%E6%97%A0%E6%95%88%EF%BC%9F"><span class="nav-number">1.3.3.</span> <span class="nav-text">更之前 ICACHE 复位为什么无效？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E6%9C%80%E7%BB%88%E4%BF%AE%E5%A4%8D"><span class="nav-number">1.4.</span> <span class="nav-text">四、最终修复</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8E%A8%E8%8D%90%E6%96%B9%E6%A1%88%EF%BC%9A%E5%9C%A8-kernel-reset-VECTRESET-%E4%B9%8B%E5%89%8D%E6%B8%85%E9%99%A4-ICACHE"><span class="nav-number">1.4.1.</span> <span class="nav-text">推荐方案：在 kernel_reset (VECTRESET) 之前清除 ICACHE</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%87%E9%80%89%E6%96%B9%E6%A1%88%EF%BC%9A%E5%9C%A8-jump2app-%E4%B9%8B%E5%89%8D%E6%B8%85%E9%99%A4-ICACHE"><span class="nav-number">1.4.2.</span> <span class="nav-text">备选方案：在 jump2app() 之前清除 ICACHE</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B9%E6%A1%88%E5%AF%B9%E6%AF%94"><span class="nav-number">1.4.3.</span> <span class="nav-text">方案对比</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94%E3%80%81%E7%BB%8F%E9%AA%8C%E6%80%BB%E7%BB%93"><span class="nav-number">1.5.</span> <span class="nav-text">五、经验总结</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Bootloader-%E8%B7%B3%E8%BD%AC-APP-%E8%B7%91%E9%A3%9E%E9%97%AE%E9%A2%98-%E2%80%94-%E9%80%9A%E4%BF%97%E8%A7%A3%E9%87%8A"><span class="nav-number">2.</span> <span class="nav-text">Bootloader 跳转 APP 跑飞问题 — 通俗解释</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E4%B8%AA%E6%AF%94%E5%96%BB%EF%BC%9A%E5%9B%BE%E4%B9%A6%E9%A6%86%E6%89%BE%E4%B9%A6"><span class="nav-number">2.1.</span> <span class="nav-text">一个比喻：图书馆找书</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#CPU-%E6%9C%89%E4%B8%A4%E6%9D%A1%E7%8B%AC%E7%AB%8B%E7%9A%84%E9%80%9A%E9%81%93%E5%8E%BB%E5%9B%BE%E4%B9%A6%E9%A6%86%EF%BC%9A"><span class="nav-number">2.1.1.</span> <span class="nav-text">CPU 有两条独立的通道去图书馆：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E6%98%AF%E6%80%8E%E4%B9%88%E5%8F%91%E7%94%9F%E7%9A%84"><span class="nav-number">2.1.2.</span> <span class="nav-text">问题是怎么发生的</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E5%8F%A5%E8%AF%9D%E6%80%BB%E7%BB%93"><span class="nav-number">2.1.3.</span> <span class="nav-text">一句话总结</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%AE%E5%A4%8D%E6%96%B9%E6%B3%95"><span class="nav-number">2.1.4.</span> <span class="nav-text">修复方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E5%A4%A7%E5%B0%8F%E7%9B%B8%E5%90%8C%E6%97%B6%E4%B8%8D%E5%87%BA%E9%97%AE%E9%A2%98%EF%BC%9F"><span class="nav-number">2.1.5.</span> <span class="nav-text">为什么大小相同时不出问题？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88-printf-%E5%8A%A0%E4%B8%8A%E5%90%8E%E7%9C%8B%E8%B5%B7%E6%9D%A5%E2%80%9D%E5%A5%BD%E4%BA%86%E4%B8%80%E6%AC%A1%E2%80%9D%EF%BC%9F"><span class="nav-number">2.1.6.</span> <span class="nav-text">为什么 printf 加上后看起来”好了一次”？</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">boollight</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">25</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://xuan9527.github.io/2026/06/01/boot_jump_fix_blog/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="boollight">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="xuan9527">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="bootloader 跳转 APP 跑飞问题 | xuan9527">
+      <meta itemprop="description" content="记录Bootloader 跳转 APP 跑飞问题排查与修复过程">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          bootloader 跳转 APP 跑飞问题
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2026-06-01 14:00:02" itemprop="dateCreated datePublished" datetime="2026-06-01T14:00:02+08:00">2026-06-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2026-06-13 20:07:03" itemprop="dateModified" datetime="2026-06-13T20:07:03+08:00">2026-06-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">嵌入式</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="Word count in article">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">Word count in article: </span>
+      <span>2.2k</span>
+    </span>
+    <span class="post-meta-item" title="Reading time">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">Reading time &asymp;</span>
+      <span>7 mins.</span>
+    </span>
+</div>
+
+            <div class="post-description">记录Bootloader 跳转 APP 跑飞问题排查与修复过程</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="Bootloader-跳转-APP-跑飞问题排查与修复实录"><a href="#Bootloader-跳转-APP-跑飞问题排查与修复实录" class="headerlink" title="Bootloader 跳转 APP 跑飞问题排查与修复实录"></a>Bootloader 跳转 APP 跑飞问题排查与修复实录</h1><h2 id="一、问题背景"><a href="#一、问题背景" class="headerlink" title="一、问题背景"></a>一、问题背景</h2><p><strong>硬件平台</strong>：N32G45x (Cortex-M4)<br><strong>软件架构</strong>：Bootloader + APP 双固件模式<br><strong>复位方式</strong>：VECTRESET（内核复位，保持 GPIO 引脚状态不变）</p>
+<h3 id="问题现象"><a href="#问题现象" class="headerlink" title="问题现象"></a>问题现象</h3><table>
+<thead>
+<tr>
+<th>场景</th>
+<th>结果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>直接烧录 APP</td>
+<td>✅ 正常启动</td>
+</tr>
+<tr>
+<td>新旧 APP 大小<strong>相同</strong>，通过 Ymodem 下载 → Bootloader 搬运 → 跳转</td>
+<td>✅ 正常启动</td>
+</tr>
+<tr>
+<td>新旧 APP 大小<strong>不同</strong>，通过 Ymodem 下载 → Bootloader 搬运 → 跳转</td>
+<td>❌ 跳转后卡死，串口无任何输出</td>
+</tr>
+</tbody></table>
+<h3 id="数据流"><a href="#数据流" class="headerlink" title="数据流"></a>数据流</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">┌──────────────────────────────────────────────────────────────┐</span><br><span class="line">│                     Flash 布局 (512K)                          │</span><br><span class="line">├──────────┬────────────────────┬───────────────────┬─────┬─────┤</span><br><span class="line">│ Boot     │ APP 运行区          │ 临时下载区          │升级标志│ DCD │</span><br><span class="line">│ 0x08000000│ 0x08002800/0x4000  │ 0x0803E800         │...│...│</span><br><span class="line">│ 10/16KB  │ 240KB              │ 240KB              │...│...│</span><br><span class="line">└──────────┴────────────────────┴───────────────────┴─────┴─────┘</span><br><span class="line"></span><br><span class="line">流程: APP Ymodem下载到临时区 → 清除 ICACHE → kernel_reset(VECTRESET) → Bootloader搬运到APP区 → jump2app() → ✅ 正常启动</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="二、排查历程"><a href="#二、排查历程" class="headerlink" title="二、排查历程"></a>二、排查历程</h2><h3 id="尝试-1：ICACHE-复位（位置错误-—-无效）"><a href="#尝试-1：ICACHE-复位（位置错误-—-无效）" class="headerlink" title="尝试 1：ICACHE 复位（位置错误 — 无效）"></a>尝试 1：ICACHE 复位（位置错误 — 无效）</h3><p>最初怀疑 ICACHE 缓存了旧 APP 的指令。在 <code>iap_load_app()</code> 的 <code>jump2app()</code> 之前加了一行 <code>FLASH-&gt;AC |= FLASH_AC_ICAHRST</code>：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ❌ 错误位置 — ICACHE 复位在读取 jump2app 之后!</span></span><br><span class="line">jump2app = (iapfun)*(vu32*)(appxaddr+<span class="number">4</span>);</span><br><span class="line">MSR_MSP(*(vu32*)appxaddr);</span><br><span class="line">FLASH-&gt;AC |= FLASH_AC_ICAHRST;  <span class="comment">// 太晚了</span></span><br><span class="line">__DSB(); __ISB();</span><br><span class="line">jump2app();</span><br></pre></td></tr></table></figure>
+
+<p><strong>结论</strong>：无效。但原因是位置错误，而非方向错误。</p>
+<h3 id="尝试-2：IWDG-喂狗（排除）"><a href="#尝试-2：IWDG-喂狗（排除）" class="headerlink" title="尝试 2：IWDG 喂狗（排除）"></a>尝试 2：IWDG 喂狗（排除）</h3><p>怀疑 VECTRESET 后 IWDG 继续倒计时，在 Bootloader 搬运大固件时超时复位。</p>
+<p><strong>结论</strong>：排除。IWDG 超时设为 10 秒，不会触发。</p>
+<h3 id="尝试-3：SYSRESETREQ（排除）"><a href="#尝试-3：SYSRESETREQ（排除）" class="headerlink" title="尝试 3：SYSRESETREQ（排除）"></a>尝试 3：SYSRESETREQ（排除）</h3><p>怀疑 VECTRESET 不复位外设状态导致问题。</p>
+<p><strong>结论</strong>：不可用。设备端 GPIO 控制外部供电，SYSRESETREQ 会导致 GPIO 回到默认状态使外部设备掉电。</p>
+<h3 id="尝试-4：GPIO-诊断定位（关键突破）"><a href="#尝试-4：GPIO-诊断定位（关键突破）" class="headerlink" title="尝试 4：GPIO 诊断定位（关键突破）"></a>尝试 4：GPIO 诊断定位（关键突破）</h3><p>在 Bootloader 跳转前和 APP 启动链路的 4 个位置操作 GPIO 来控制 LED：</p>
+<table>
+<thead>
+<tr>
+<th>位置</th>
+<th>LED 操作</th>
+<th>实测结果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Bootloader 跳转前</td>
+<td>关 LED</td>
+<td>✅ LED 灭</td>
+</tr>
+<tr>
+<td>APP Reset_Handler 第一条指令</td>
+<td>开 LED</td>
+<td>❌ <strong>未执行</strong></td>
+</tr>
+<tr>
+<td>APP SystemInit 完成</td>
+<td>关 LED</td>
+<td>❌ 未执行</td>
+</tr>
+<tr>
+<td>APP main 入口</td>
+<td>开 LED</td>
+<td>❌ 未执行</td>
+</tr>
+</tbody></table>
+<p><strong>结论</strong>：APP 的 Reset_Handler 从未被执行！<code>jump2app()</code> 跳到了错误位置。</p>
+<h3 id="尝试-5：打印-jump2app-地址（关键证据）"><a href="#尝试-5：打印-jump2app-地址（关键证据）" class="headerlink" title="尝试 5：打印 jump2app 地址（关键证据）"></a>尝试 5：打印 jump2app 地址（关键证据）</h3><p>在 <code>jump2app()</code> 前加入 <code>printf</code> 打印跳转地址：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">jump2app = (iapfun)*(vu32*)(appxaddr+<span class="number">4</span>);</span><br><span class="line"><span class="built_in">printf</span>(<span class="string">&quot;jump2app addr = 0x%08X\r\n&quot;</span>, (<span class="type">unsigned</span> <span class="type">int</span>)jump2app);</span><br><span class="line">jump2app();</span><br></pre></td></tr></table></figure>
+
+<p>输出：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jump2app addr = 0x0800D129    ← 与 map 文件中 Reset_Handler = 0x0800D128 | Thumb(1) 完全一致!</span><br></pre></td></tr></table></figure>
+
+<p><strong>关键矛盾出现</strong>：地址完全正确，但 Reset_Handler 的 LED 还是没亮！</p>
+<hr>
+<h2 id="三、根因分析"><a href="#三、根因分析" class="headerlink" title="三、根因分析"></a>三、根因分析</h2><h3 id="为什么地址正确但跳转失败？"><a href="#为什么地址正确但跳转失败？" class="headerlink" title="为什么地址正确但跳转失败？"></a>为什么地址正确但跳转失败？</h3><p>这是本次排查中最关键的认识突破：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Cortex-M4 有两条独立的总线:</span><br><span class="line">  ┌─────────────────────────────────────────────┐</span><br><span class="line">  │  D-Bus (数据总线) → *(vu32*)addr 数据读取     │</span><br><span class="line">  │    → Flash 数据读取不走 ICACHE ✅             │</span><br><span class="line">  │                                               │</span><br><span class="line">  │  I-Bus (指令总线) → CPU 取指                   │</span><br><span class="line">  │    → 指令取指走 ICACHE！⚡                     │</span><br><span class="line">  └─────────────────────────────────────────────┘</span><br></pre></td></tr></table></figure>
+
+<p><strong>过程还原</strong>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">1. jump2app = *(vu32*)(appxaddr+4)</span><br><span class="line">   → D-Bus 数据读取，不走 ICACHE</span><br><span class="line">   → 返回值: 0x0800D129 ✅ 正确！</span><br><span class="line"></span><br><span class="line">2. printf(...) 打印 0x0800D129 ✅</span><br><span class="line"></span><br><span class="line">3. jump2app() → CPU 跳转到 0x0800D128 取指令</span><br><span class="line">   → I-Bus 指令取指，走 ICACHE</span><br><span class="line">   → ICACHE 命中！返回旧 APP 在 0x0800D128 处的过期指令</span><br><span class="line">   → CPU 执行垃圾代码 ❌</span><br><span class="line">   → Reset_Handler 的 movs r1,#0 从未执行</span><br><span class="line">   → LED 不亮</span><br></pre></td></tr></table></figure>
+
+<h3 id="为什么大小相同没问题？"><a href="#为什么大小相同没问题？" class="headerlink" title="为什么大小相同没问题？"></a>为什么大小相同没问题？</h3><p>当新旧 APP 大小完全相同时，ICACHE 中的旧指令恰好与 Flash 中的新指令一致，即使 ICACHE 命中也不会出错。</p>
+<h3 id="更之前-ICACHE-复位为什么无效？"><a href="#更之前-ICACHE-复位为什么无效？" class="headerlink" title="更之前 ICACHE 复位为什么无效？"></a>更之前 ICACHE 复位为什么无效？</h3><p>之前加的 <code>FLASH-&gt;AC |= FLASH_AC_ICAHRST</code> 位置在 <code>jump2app</code> <strong>读取之后</strong>。此时 ICACHE 中需要被清除的是<strong>即将被取指的指令内容</strong>（不是数据），单纯复位 ICACHE 确实无效。<strong>正确做法是先禁用 ICACHE、再复位</strong>：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">FLASH-&gt;AC &amp;= ~FLASH_AC_ICAHEN;  <span class="comment">// 先禁用</span></span><br><span class="line">FLASH-&gt;AC |= FLASH_AC_ICAHRST;  <span class="comment">// 再复位</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="四、最终修复"><a href="#四、最终修复" class="headerlink" title="四、最终修复"></a>四、最终修复</h2><h3 id="推荐方案：在-kernel-reset-VECTRESET-之前清除-ICACHE"><a href="#推荐方案：在-kernel-reset-VECTRESET-之前清除-ICACHE" class="headerlink" title="推荐方案：在 kernel_reset (VECTRESET) 之前清除 ICACHE"></a>推荐方案：在 <code>kernel_reset</code> (VECTRESET) 之前清除 ICACHE</h3><p>问题的根源是 VECTRESET 不复位 ICACHE，导致 Bootloader 搬运完新固件后，旧固件的指令仍然残留在 ICACHE 中。既然 VECTRESET 是 ICACHE 未清除的<strong>唯一入口</strong>，最合理的修复位置就是 <code>kernel_reset()</code> 调用之前——在复位发起前把 ICACHE 清空，复位后 ICACHE 就是干净的，后续 Bootloader 取指不再受旧缓存影响。</p>
+<p><strong>文件</strong>：调用 <code>kernel_reset()</code> 的位置（具体文件视项目而定）</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* 关键修复：内核复位前必须清除 ICACHE！</span></span><br><span class="line"><span class="comment"> * VECTRESET 不复位 ICACHE 硬件，旧 APP 的指令仍残留在缓存中。</span></span><br><span class="line"><span class="comment"> * 复位前先禁用再复位 ICACHE，确保复位后 Bootloader 运行在干净的缓存环境。</span></span><br><span class="line"><span class="comment"> * 这样后续 jump2app() 取指时 I-Cache 未命中，从 Flash 获取真实指令 */</span></span><br><span class="line">FLASH-&gt;AC &amp;= ~FLASH_AC_ICAHEN;  <span class="comment">// 禁用 ICACHE</span></span><br><span class="line">FLASH-&gt;AC |= FLASH_AC_ICAHRST;  <span class="comment">// 复位 ICACHE（硬件自动清零）</span></span><br><span class="line">__DSB();</span><br><span class="line">__ISB();</span><br><span class="line">kernel_reset();                  <span class="comment">// 发起内核复位</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="备选方案：在-jump2app-之前清除-ICACHE"><a href="#备选方案：在-jump2app-之前清除-ICACHE" class="headerlink" title="备选方案：在 jump2app() 之前清除 ICACHE"></a>备选方案：在 <code>jump2app()</code> 之前清除 ICACHE</h3><p>如果无法在 <code>kernel_reset()</code> 前插入清除逻辑，也可以在 <code>iap_load_app()</code> 的 <code>jump2app()</code> 之前清除 ICACHE，效果相同。</p>
+<p><strong>文件</strong>：<code>code/bootloader/user/iap.c</code></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">iap_load_app</span><span class="params">(u32 appxaddr)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span>(((*(vu32*)appxaddr)&amp;<span class="number">0x2FFE0000</span>)==<span class="number">0x20000000</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        jump2app = (iapfun)*(vu32*)(appxaddr+<span class="number">4</span>);</span><br><span class="line">        MSR_MSP(*(vu32*)appxaddr);</span><br><span class="line"></span><br><span class="line">        FLASH-&gt;AC &amp;= ~FLASH_AC_ICAHEN;  <span class="comment">// 禁用 ICACHE</span></span><br><span class="line">        FLASH-&gt;AC |= FLASH_AC_ICAHRST;  <span class="comment">// 复位 ICACHE（硬件自动清零）</span></span><br><span class="line">        __DSB();</span><br><span class="line">        __ISB();</span><br><span class="line"></span><br><span class="line">        jump2app();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="方案对比"><a href="#方案对比" class="headerlink" title="方案对比"></a>方案对比</h3><table>
+<thead>
+<tr>
+<th>方案</th>
+<th>修复位置</th>
+<th>优点</th>
+<th>缺点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>推荐</strong></td>
+<td><code>kernel_reset()</code> 前</td>
+<td>根因处修复，不侵入 Bootloader 跳转逻辑</td>
+<td>需要找到 kernel_reset 调用点</td>
+</tr>
+<tr>
+<td>备选</td>
+<td><code>jump2app()</code> 前</td>
+<td>改动集中在一个函数内</td>
+<td>修复位置离根因较远</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="五、经验总结"><a href="#五、经验总结" class="headerlink" title="五、经验总结"></a>五、经验总结</h2><ol>
+<li><p><strong>D-Bus 和 I-Bus 分离是诊断关键</strong>：数据读取走 D-Bus，指令取指走 I-Bus，两者缓存行为不同。用 <code>printf</code> 打印地址验证时发现地址正确，容易误判”取指没问题”。</p>
+</li>
+<li><p><strong>ICACHE 复位需要先禁用再复位</strong>：仅写 <code>ICAHRST</code> 位可能不够。</p>
+</li>
+<li><p><strong>GPIO&#x2F;LED 诊断是最可靠的定位手段</strong>：在没有 JTAG 的情况下，通过在 Reset_Handler 最初加 GPIO 操作，精确定位了”跳转成功但未执行第一条指令”这个关键事实。</p>
+</li>
+<li><p><strong>MSP 的值不影响取指</strong>：<code>MSR_MSP</code> 设置的是堆栈指针，不影响第一条指令的取指路径，之前的排查一直没有混淆这一点。</p>
+</li>
+<li><p><strong>修复应放在根因入口处</strong>：ICACHE 未被清除的根因是 VECTRESET 不复位 ICACHE，因此在 <code>kernel_reset()</code> 之前清除 ICACHE 是最自然、最推荐的修复位置。放在 <code>jump2app()</code> 之前也能工作，但不如前者直观。</p>
+</li>
+</ol>
+<h1 id="Bootloader-跳转-APP-跑飞问题-—-通俗解释"><a href="#Bootloader-跳转-APP-跑飞问题-—-通俗解释" class="headerlink" title="Bootloader 跳转 APP 跑飞问题 — 通俗解释"></a>Bootloader 跳转 APP 跑飞问题 — 通俗解释</h1><h2 id="一个比喻：图书馆找书"><a href="#一个比喻：图书馆找书" class="headerlink" title="一个比喻：图书馆找书"></a>一个比喻：图书馆找书</h2><p>把 CPU 想象成一个人，Flash 存储器是一个<strong>图书馆</strong>。</p>
+<h3 id="CPU-有两条独立的通道去图书馆："><a href="#CPU-有两条独立的通道去图书馆：" class="headerlink" title="CPU 有两条独立的通道去图书馆："></a>CPU 有两条独立的通道去图书馆：</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">通道1：数据通道（D-Bus）— 查书号、读数据</span><br><span class="line">通道2：指令通道（I-Bus）— 把书的内容读出来执行</span><br><span class="line"></span><br><span class="line">ICACHE 是&quot;指令通道&quot;的一个快速缓存 — 它只缓存&quot;书的内容&quot;，</span><br><span class="line">不缓存&quot;书号&quot;。</span><br></pre></td></tr></table></figure>
+
+<h3 id="问题是怎么发生的"><a href="#问题是怎么发生的" class="headerlink" title="问题是怎么发生的"></a>问题是怎么发生的</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">第1步：旧APP在运行</span><br><span class="line">        CPU 通过&quot;指令通道&quot;把 Flash 中旧APP的代码全部读进了 ICACHE 缓存</span><br><span class="line">        ICACHE 里现在装满了旧APP的指令</span><br><span class="line"></span><br><span class="line">第2步：APP 复位，Bootloader 启动</span><br><span class="line">        Bootloader 擦除了旧APP的 Flash，写入了新APP的代码</span><br><span class="line">        但 ICACHE 里的旧内容没有被清除！</span><br><span class="line">        Flash 中的代码已经更新了，但 ICACHE 缓存还是旧的</span><br><span class="line"></span><br><span class="line">第3步：Bootloader 读取跳转地址</span><br><span class="line">        jump2app = *(APP区 + 4)</span><br><span class="line">        ↑ 这是&quot;数据通道&quot;的读取操作，不走 ICACHE</span><br><span class="line">        ↑ 直接从 Flash 读到了正确的新地址：0x0800D129</span><br><span class="line"></span><br><span class="line">第4步：printf 打印跳转地址</span><br><span class="line">        printf(&quot;jump2app = 0x0800D129&quot;)</span><br><span class="line">        ↑ 打印出来是正确的！因为地址是从&quot;数据通道&quot;读的，没经过 ICACHE</span><br><span class="line"></span><br><span class="line">第5步：jump2app() 跳转执行</span><br><span class="line">        CPU 跳到 0x0800D128 去取指令执行</span><br><span class="line">        ↑ 这是&quot;指令通道&quot;的取指操作，走 ICACHE！</span><br><span class="line">        ↑ ICACHE 说：&quot;0x0800D128 这里我缓存过了，给你旧数据&quot;</span><br><span class="line">        ↑ CPU 拿到了旧APP在 0x0800D128 处的过期指令</span><br><span class="line">        ↑ 执行垃圾代码 → 卡死</span><br></pre></td></tr></table></figure>
+
+<h3 id="一句话总结"><a href="#一句话总结" class="headerlink" title="一句话总结"></a>一句话总结</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">数据读取 → D-Bus → 不走 ICACHE → 地址是对的 ✅</span><br><span class="line">指令取指 → I-Bus →   走 ICACHE  → 指令是旧的 ❌</span><br><span class="line"></span><br><span class="line">printf 打印地址是&quot;数据读取&quot;，所以地址正确。</span><br><span class="line">但 jump2app() 之后 CPU 取指令是&quot;指令取指&quot;，被 ICACHE 坑了。</span><br></pre></td></tr></table></figure>
+
+<h3 id="修复方法"><a href="#修复方法" class="headerlink" title="修复方法"></a>修复方法</h3><p><strong>推荐：在内核复位之前，先把 ICACHE 清空</strong>（只有内核复位才会出现此问题，不用改动 Bootloader 跳转逻辑）：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">FLASH-&gt;AC &amp;= ~FLASH_AC_ICAHEN;  <span class="comment">// 关闭 ICACHE</span></span><br><span class="line">FLASH-&gt;AC |= FLASH_AC_ICAHRST;  <span class="comment">// 清空 ICACHE 内容</span></span><br><span class="line">__DSB(); __ISB();               <span class="comment">// 确保操作完成</span></span><br><span class="line">kernel_reset();                 <span class="comment">// 复位后 ICACHE 干净，取指令不会命中旧缓存</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>备选：在跳转之前，先把 ICACHE 清空：</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">FLASH-&gt;AC &amp;= ~FLASH_AC_ICAHEN;  <span class="comment">// 关闭 ICACHE</span></span><br><span class="line">FLASH-&gt;AC |= FLASH_AC_ICAHRST;  <span class="comment">// 清空 ICACHE 内容</span></span><br><span class="line">__DSB(); __ISB();               <span class="comment">// 确保操作完成</span></span><br><span class="line">jump2app();                     <span class="comment">// 现在取指令不会命中旧缓存了</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="为什么大小相同时不出问题？"><a href="#为什么大小相同时不出问题？" class="headerlink" title="为什么大小相同时不出问题？"></a>为什么大小相同时不出问题？</h3><p>新旧 APP 大小相同 → 同一个物理地址上写的是相同数据 → ICACHE 中的旧内容碰巧和新 Flash 内容一致 → 缓存命中也不会出错。</p>
+<h3 id="为什么-printf-加上后看起来”好了一次”？"><a href="#为什么-printf-加上后看起来”好了一次”？" class="headerlink" title="为什么 printf 加上后看起来”好了一次”？"></a>为什么 printf 加上后看起来”好了一次”？</h3><p><code>printf</code> 本身会执行大量代码，可能在内部触发了某些缓存行的替换，偶然把关键地址的旧缓存行替换掉了。但这是不可靠的偶然行为。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/MCU/" rel="tag"># MCU</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2026/06/01/Codex_slash_commands/" rel="prev" title="Codex &#96;&#x2F;&#96; 指令大全">
+                  <i class="fa fa-angle-left"></i> Codex `/` 指令大全
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2026/06/01/Claude_Code_slash_commands/" rel="next" title="Claude Code &#96;&#x2F;&#96; 指令大全">
+                  Claude Code `/` 指令大全 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">boollight</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="Word count total">72k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="Reading time total">4:01</span>
+  </span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

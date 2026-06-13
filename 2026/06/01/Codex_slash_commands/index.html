@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.1.1">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"xuan9527.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.26.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="Codex &#96;&#x2F;&#96; 指令大全">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Codex &#96;&#x2F;&#96; 指令大全">
+<meta property="og:url" content="https://xuan9527.github.io/2026/06/01/Codex_slash_commands/index.html">
+<meta property="og:site_name" content="xuan9527">
+<meta property="og:description" content="Codex &#96;&#x2F;&#96; 指令大全">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2026-06-01T06:00:02.000Z">
+<meta property="article:modified_time" content="2026-06-13T12:08:03.636Z">
+<meta property="article:author" content="boollight">
+<meta property="article:tag" content="Linux">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://xuan9527.github.io/2026/06/01/Codex_slash_commands/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://xuan9527.github.io/2026/06/01/Codex_slash_commands/","path":"2026/06/01/Codex_slash_commands/","title":"Codex `/` 指令大全"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Codex `/` 指令大全 | xuan9527</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">xuan9527</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">常能遣其欲而心自静，澄其心而神自清。</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li><li class="menu-item menu-item-schedule"><a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>Schedule</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="Searching..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Codex-%E6%8C%87%E4%BB%A4%E5%A4%A7%E5%85%A8"><span class="nav-number">1.</span> <span class="nav-text">Codex &#x2F; 指令大全</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%85%88%E8%AE%B0%E6%9C%80%E5%B8%B8%E7%94%A8%E7%9A%84"><span class="nav-number">1.1.</span> <span class="nav-text">1. 先记最常用的</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Codex-CLI-%E5%86%85%E7%BD%AE-%E6%8C%87%E4%BB%A4"><span class="nav-number">1.2.</span> <span class="nav-text">2. Codex CLI 内置 &#x2F; 指令</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E4%BC%9A%E8%AF%9D-%E4%B8%8A%E4%B8%8B%E6%96%87%E7%B1%BB"><span class="nav-number">1.2.1.</span> <span class="nav-text">2.1 会话 &#x2F; 上下文类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E9%A1%B9%E7%9B%AE-%E6%96%87%E4%BB%B6-%E4%BB%A3%E7%A0%81%E6%94%B9%E5%8A%A8%E7%B1%BB"><span class="nav-number">1.2.2.</span> <span class="nav-text">2.2 项目 &#x2F; 文件 &#x2F; 代码改动类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-%E6%9D%83%E9%99%90-%E5%AE%89%E5%85%A8-%E6%B2%99%E7%AE%B1%E7%B1%BB"><span class="nav-number">1.2.3.</span> <span class="nav-text">2.3 权限 &#x2F; 安全 &#x2F; 沙箱类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-%E6%A8%A1%E5%9E%8B-%E9%80%9F%E5%BA%A6-%E9%A3%8E%E6%A0%BC%E7%B1%BB"><span class="nav-number">1.2.4.</span> <span class="nav-text">2.4 模型 &#x2F; 速度 &#x2F; 风格类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-5-MCP-%E6%8F%92%E4%BB%B6-Skills-Hooks-%E7%B1%BB"><span class="nav-number">1.2.5.</span> <span class="nav-text">2.5 MCP &#x2F; 插件 &#x2F; Skills &#x2F; Hooks 类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-6-Agent-%E5%90%8E%E5%8F%B0-%E5%AE%9E%E9%AA%8C%E5%8A%9F%E8%83%BD%E7%B1%BB"><span class="nav-number">1.2.6.</span> <span class="nav-text">2.6 Agent &#x2F; 后台 &#x2F; 实验功能类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-7-UI-%E8%BE%93%E5%85%A5%E4%BD%93%E9%AA%8C%E7%B1%BB"><span class="nav-number">1.2.7.</span> <span class="nav-text">2.7 UI &#x2F; 输入体验类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-8-%E5%8F%8D%E9%A6%88-%E7%99%BB%E5%BD%95%E7%B1%BB"><span class="nav-number">1.2.8.</span> <span class="nav-text">2.8 反馈 &#x2F; 登录类</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-Codex-IDE-Extension-%E6%8C%87%E4%BB%A4"><span class="nav-number">1.3.</span> <span class="nav-text">3. Codex IDE Extension &#x2F; 指令</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-Codex-Desktop-App-%E6%8C%87%E4%BB%A4"><span class="nav-number">1.4.</span> <span class="nav-text">4. Codex Desktop App &#x2F; 指令</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E5%B8%B8%E7%94%A8-CLI-%E5%90%AF%E5%8A%A8%E5%8F%82%E6%95%B0%EF%BC%8C%E4%B8%8D%E6%98%AF-%E6%8C%87%E4%BB%A4%EF%BC%8C%E4%BD%86%E5%BE%88%E5%AE%9E%E7%94%A8"><span class="nav-number">1.5.</span> <span class="nav-text">5. 常用 CLI 启动参数，不是 &#x2F; 指令，但很实用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-%E8%87%AA%E5%AE%9A%E4%B9%89-Prompt-Skills-%E8%AF%B4%E6%98%8E"><span class="nav-number">1.6.</span> <span class="nav-text">6. 自定义 Prompt &#x2F; Skills 说明</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#6-1-%E6%97%A7%E7%9A%84-custom-prompts"><span class="nav-number">1.6.1.</span> <span class="nav-text">6.1 旧的 custom prompts</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-2-%E7%8E%B0%E5%9C%A8%E6%9B%B4%E6%8E%A8%E8%8D%90-Skills"><span class="nav-number">1.6.2.</span> <span class="nav-text">6.2 现在更推荐 Skills</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%B7%A5%E7%A8%8B%E6%8E%A8%E8%8D%90%E4%BD%BF%E7%94%A8%E6%96%B9%E5%BC%8F"><span class="nav-number">1.7.</span> <span class="nav-text">7. 嵌入式工程推荐使用方式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#7-1-%E6%96%B0%E9%A1%B9%E7%9B%AE%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">1.7.1.</span> <span class="nav-text">7.1 新项目初始化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-2-%E5%8F%AA%E8%AF%BB%E5%88%86%E6%9E%90%EF%BC%8C%E4%B8%8D%E7%9B%B4%E6%8E%A5%E6%94%B9"><span class="nav-number">1.7.2.</span> <span class="nav-text">7.2 只读分析，不直接改</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-3-%E4%BF%AE%E6%94%B9%E5%89%8D%E5%85%88%E7%9C%8B%E4%B8%8A%E4%B8%8B%E6%96%87-%E6%96%87%E4%BB%B6"><span class="nav-number">1.7.3.</span> <span class="nav-text">7.3 修改前先看上下文&#x2F;文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-4-%E7%A1%AE%E8%AE%A4%E6%96%B9%E6%A1%88%E5%90%8E%E5%86%8D%E6%94%B9"><span class="nav-number">1.7.4.</span> <span class="nav-text">7.4 确认方案后再改</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-5-%E6%94%B9%E5%AE%8C%E6%9F%A5%E7%9C%8B-diff"><span class="nav-number">1.7.5.</span> <span class="nav-text">7.5 改完查看 diff</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-6-%E6%94%B9%E5%AE%8C%E5%81%9A-review"><span class="nav-number">1.7.6.</span> <span class="nav-text">7.6 改完做 review</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-7-%E9%95%BF%E5%AF%B9%E8%AF%9D%E5%8E%8B%E7%BC%A9"><span class="nav-number">1.7.7.</span> <span class="nav-text">7.7 长对话压缩</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-%E9%80%82%E5%90%88%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%B7%A5%E7%A8%8B%E7%9A%84-Codex-%E5%B7%A5%E4%BD%9C%E6%B5%81"><span class="nav-number">1.8.</span> <span class="nav-text">8. 适合嵌入式工程的 Codex 工作流</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#8-1-%E5%B8%B8%E8%A7%84-bug-%E4%BF%AE%E5%A4%8D"><span class="nav-number">1.8.1.</span> <span class="nav-text">8.1 常规 bug 修复</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-2-%E6%9E%B6%E6%9E%84%E4%BC%98%E5%8C%96-%E7%8A%B6%E6%80%81%E6%9C%BA%E9%87%8D%E6%9E%84"><span class="nav-number">1.8.2.</span> <span class="nav-text">8.2 架构优化 &#x2F; 状态机重构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-3-DMA-%E4%B8%B2%E5%8F%A3%E5%8D%8F%E8%AE%AE%E8%A7%A3%E6%9E%90%E4%B8%93%E9%A1%B9%E5%AE%A1%E6%9F%A5"><span class="nav-number">1.8.3.</span> <span class="nav-text">8.3 DMA &#x2F; 串口协议解析专项审查</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-4-Bootloader-IAP-%E8%B7%B3%E8%BD%AC%E4%B8%93%E9%A1%B9%E5%AE%A1%E6%9F%A5"><span class="nav-number">1.8.4.</span> <span class="nav-text">8.4 Bootloader &#x2F; IAP 跳转专项审查</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#9-%E6%8E%A8%E8%8D%90%E8%AE%B0%E5%BF%86%EF%BC%9A%E6%9C%80%E6%A0%B8%E5%BF%83%E7%9A%84%E4%B8%80%E5%A5%97"><span class="nav-number">1.9.</span> <span class="nav-text">9. 推荐记忆：最核心的一套</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#10-%E5%92%8C-Claude-Code-%E6%8C%87%E4%BB%A4%E7%9A%84%E5%B7%AE%E5%BC%82"><span class="nav-number">1.10.</span> <span class="nav-text">10. 和 Claude Code 指令的差异</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#11-%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="nav-number">1.11.</span> <span class="nav-text">11. 注意事项</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#12-%E6%8E%A8%E8%8D%90%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%9B%BA%E5%AE%9A%E6%B5%81%E7%A8%8B"><span class="nav-number">1.12.</span> <span class="nav-text">12. 推荐嵌入式固定流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#13-%E5%8F%82%E8%80%83%E6%9D%A5%E6%BA%90"><span class="nav-number">1.13.</span> <span class="nav-text">13. 参考来源</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">boollight</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">25</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://xuan9527.github.io/2026/06/01/Codex_slash_commands/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="boollight">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="xuan9527">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Codex &#96;&#x2F;&#96; 指令大全 | xuan9527">
+      <meta itemprop="description" content="Codex &#96;&#x2F;&#96; 指令大全">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Codex `/` 指令大全
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2026-06-01 14:00:02" itemprop="dateCreated datePublished" datetime="2026-06-01T14:00:02+08:00">2026-06-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2026-06-13 20:08:03" itemprop="dateModified" datetime="2026-06-13T20:08:03+08:00">2026-06-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">嵌入式</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="Word count in article">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">Word count in article: </span>
+      <span>3.4k</span>
+    </span>
+    <span class="post-meta-item" title="Reading time">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">Reading time &asymp;</span>
+      <span>11 mins.</span>
+    </span>
+</div>
+
+            <div class="post-description">Codex `/` 指令大全</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="Codex-指令大全"><a href="#Codex-指令大全" class="headerlink" title="Codex / 指令大全"></a>Codex <code>/</code> 指令大全</h1><blockquote>
+<p>适用范围：Codex CLI &#x2F; Codex IDE Extension &#x2F; Codex Desktop App。<br>注意：不同端的 <code>/</code> 指令不完全一致；以当前环境输入 <code>/</code> 后弹出的菜单为准。<br>本文按“CLI 终端为主，IDE &#x2F; App 单独补充”的方式整理。</p>
+</blockquote>
+<hr>
+<h2 id="1-先记最常用的"><a href="#1-先记最常用的" class="headerlink" title="1. 先记最常用的"></a>1. 先记最常用的</h2><table>
+<thead>
+<tr>
+<th>指令</th>
+<th>适用端</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>/init</code></td>
+<td>CLI</td>
+<td>在当前目录生成 <code>AGENTS.md</code> 项目规则</td>
+</tr>
+<tr>
+<td><code>/status</code></td>
+<td>CLI &#x2F; IDE &#x2F; App</td>
+<td>查看线程、上下文、速率限制、状态信息</td>
+</tr>
+<tr>
+<td><code>/permissions</code></td>
+<td>CLI</td>
+<td>调整 Codex 权限&#x2F;审批模式</td>
+</tr>
+<tr>
+<td><code>/clear</code></td>
+<td>CLI</td>
+<td>清屏并开始新对话</td>
+</tr>
+<tr>
+<td><code>/new</code></td>
+<td>CLI</td>
+<td>在同一个 CLI 会话里开启新对话</td>
+</tr>
+<tr>
+<td><code>/compact</code></td>
+<td>CLI</td>
+<td>压缩当前上下文，释放 token</td>
+</tr>
+<tr>
+<td><code>/diff</code></td>
+<td>CLI</td>
+<td>查看 Git diff，包括未跟踪文件</td>
+</tr>
+<tr>
+<td><code>/review</code></td>
+<td>CLI &#x2F; IDE &#x2F; App</td>
+<td>审查当前工作区改动</td>
+</tr>
+<tr>
+<td><code>/model</code></td>
+<td>CLI</td>
+<td>切换模型</td>
+</tr>
+<tr>
+<td><code>/fast</code></td>
+<td>CLI</td>
+<td>开关 Fast mode</td>
+</tr>
+<tr>
+<td><code>/personality</code></td>
+<td>CLI</td>
+<td>调整回答风格</td>
+</tr>
+<tr>
+<td><code>/mention</code></td>
+<td>CLI</td>
+<td>指定文件&#x2F;目录加入对话</td>
+</tr>
+<tr>
+<td><code>/mcp</code></td>
+<td>CLI &#x2F; App</td>
+<td>查看 MCP 工具&#x2F;服务状态</td>
+</tr>
+<tr>
+<td><code>/skills</code></td>
+<td>CLI</td>
+<td>浏览和使用 skills</td>
+</tr>
+<tr>
+<td><code>/goal</code></td>
+<td>CLI &#x2F; IDE &#x2F; App</td>
+<td>设置持续目标</td>
+</tr>
+<tr>
+<td><code>/plan</code></td>
+<td>App</td>
+<td>进入&#x2F;切换计划模式</td>
+</tr>
+<tr>
+<td><code>/resume</code></td>
+<td>CLI</td>
+<td>恢复历史会话</td>
+</tr>
+<tr>
+<td><code>/quit</code> &#x2F; <code>/exit</code></td>
+<td>CLI</td>
+<td>退出 Codex CLI</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="2-Codex-CLI-内置-指令"><a href="#2-Codex-CLI-内置-指令" class="headerlink" title="2. Codex CLI 内置 / 指令"></a>2. Codex CLI 内置 <code>/</code> 指令</h2><h3 id="2-1-会话-上下文类"><a href="#2-1-会话-上下文类" class="headerlink" title="2.1 会话 &#x2F; 上下文类"></a>2.1 会话 &#x2F; 上下文类</h3><table>
+<thead>
+<tr>
+<th>指令</th>
+<th>说明</th>
+<th>建议使用场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>/clear</code></td>
+<td>清理终端并开始 fresh chat</td>
+<td>当前上下文混乱，想彻底重新开始</td>
+</tr>
+<tr>
+<td><code>/new</code></td>
+<td>在同一个 CLI 会话中开启新对话</td>
+<td>不退出 Codex，但切换到新任务</td>
+</tr>
+<tr>
+<td><code>/compact</code></td>
+<td>总结当前对话，释放上下文 token</td>
+<td>长任务、上下文快满、改动阶段结束</td>
+</tr>
+<tr>
+<td><code>/copy</code></td>
+<td>复制最近一次 Codex 输出</td>
+<td>复制计划、总结、命令、代码片段</td>
+</tr>
+<tr>
+<td><code>/resume</code></td>
+<td>从历史 session 列表恢复会话</td>
+<td>回到之前未完成的任务</td>
+</tr>
+<tr>
+<td><code>/quit</code></td>
+<td>退出 CLI</td>
+<td>结束当前 Codex</td>
+</tr>
+<tr>
+<td><code>/exit</code></td>
+<td><code>/quit</code> 的别名</td>
+<td>结束当前 Codex</td>
+</tr>
+</tbody></table>
+<h3 id="2-2-项目-文件-代码改动类"><a href="#2-2-项目-文件-代码改动类" class="headerlink" title="2.2 项目 &#x2F; 文件 &#x2F; 代码改动类"></a>2.2 项目 &#x2F; 文件 &#x2F; 代码改动类</h3><table>
+<thead>
+<tr>
+<th>指令</th>
+<th>说明</th>
+<th>建议使用场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>/init</code></td>
+<td>在当前目录生成 <code>AGENTS.md</code> 脚手架</td>
+<td>新项目第一次使用 Codex</td>
+</tr>
+<tr>
+<td><code>/mention</code></td>
+<td>把指定文件或目录附加到对话</td>
+<td>明确让 Codex 看某几个文件</td>
+</tr>
+<tr>
+<td><code>/diff</code></td>
+<td>显示 Git diff，包括未跟踪文件</td>
+<td>每轮修改后检查改动</td>
+</tr>
+<tr>
+<td><code>/review</code></td>
+<td>让 Codex 审查当前 working tree</td>
+<td>改完后做二次审查</td>
+</tr>
+<tr>
+<td><code>/ide</code></td>
+<td>引入 IDE 打开的文件、选区等上下文</td>
+<td>在 VSCode 里选中代码后让 Codex 分析</td>
+</tr>
+</tbody></table>
+<h3 id="2-3-权限-安全-沙箱类"><a href="#2-3-权限-安全-沙箱类" class="headerlink" title="2.3 权限 &#x2F; 安全 &#x2F; 沙箱类"></a>2.3 权限 &#x2F; 安全 &#x2F; 沙箱类</h3><table>
+<thead>
+<tr>
+<th>指令</th>
+<th>说明</th>
+<th>建议使用场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>/permissions</code></td>
+<td>设置 Codex 不用询问即可执行哪些操作</td>
+<td>调整 Read Only &#x2F; Auto &#x2F; Agent 等权限</td>
+</tr>
+<tr>
+<td><code>/approve</code></td>
+<td>对最近一次被自动审查拒绝的动作批准重试</td>
+<td>命令被 auto review 拦截，但你确认安全</td>
+</tr>
+<tr>
+<td><code>/sandbox-add-read-dir</code></td>
+<td>给沙箱额外增加可读目录，Windows only</td>
+<td>命令需要读当前工作区外的绝对路径</td>
+</tr>
+</tbody></table>
+<h3 id="2-4-模型-速度-风格类"><a href="#2-4-模型-速度-风格类" class="headerlink" title="2.4 模型 &#x2F; 速度 &#x2F; 风格类"></a>2.4 模型 &#x2F; 速度 &#x2F; 风格类</h3><table>
+<thead>
+<tr>
+<th>指令</th>
+<th>说明</th>
+<th>建议使用场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>/model</code></td>
+<td>切换当前模型</td>
+<td>轻任务用快模型，复杂重构用强模型</td>
+</tr>
+<tr>
+<td><code>/fast on</code></td>
+<td>开启 Fast mode</td>
+<td>轻量修改、快速问答</td>
+</tr>
+<tr>
+<td><code>/fast off</code></td>
+<td>关闭 Fast mode</td>
+<td>复杂分析、深度审查</td>
+</tr>
+<tr>
+<td><code>/fast status</code></td>
+<td>查看 Fast mode 状态</td>
+<td>不确定当前模式时</td>
+</tr>
+<tr>
+<td><code>/personality</code></td>
+<td>切换回答风格</td>
+<td>想要更简洁&#x2F;更解释型&#x2F;默认风格</td>
+</tr>
+<tr>
+<td><code>/status</code></td>
+<td>查看当前状态</td>
+<td>查模型、上下文、rate limit、线程信息</td>
+</tr>
+</tbody></table>
+<h3 id="2-5-MCP-插件-Skills-Hooks-类"><a href="#2-5-MCP-插件-Skills-Hooks-类" class="headerlink" title="2.5 MCP &#x2F; 插件 &#x2F; Skills &#x2F; Hooks 类"></a>2.5 MCP &#x2F; 插件 &#x2F; Skills &#x2F; Hooks 类</h3><table>
+<thead>
+<tr>
+<th>指令</th>
+<th>说明</th>
+<th>建议使用场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>/mcp</code></td>
+<td>列出已配置的 MCP 工具</td>
+<td>检查外部工具是否可用</td>
+</tr>
+<tr>
+<td><code>/mcp verbose</code></td>
+<td>查看 MCP server 细节</td>
+<td>排查 MCP 连接或权限问题</td>
+</tr>
+<tr>
+<td><code>/skills</code></td>
+<td>浏览和使用 skills</td>
+<td>调用特定任务能力</td>
+</tr>
+<tr>
+<td><code>/plugins</code></td>
+<td>浏览已安装和可发现插件</td>
+<td>查看插件工具、安装或管理插件</td>
+</tr>
+<tr>
+<td><code>/apps</code></td>
+<td>浏览 connectors&#x2F;apps 并插入 prompt</td>
+<td>需要连接外部 app&#x2F;context</td>
+</tr>
+<tr>
+<td><code>/hooks</code></td>
+<td>查看和管理生命周期 hooks</td>
+<td>hooks 有风险、需要信任&#x2F;禁用时</td>
+</tr>
+<tr>
+<td><code>/memories</code></td>
+<td>配置 memory 注入和生成</td>
+<td>控制 Codex 是否使用&#x2F;生成记忆</td>
+</tr>
+</tbody></table>
+<h3 id="2-6-Agent-后台-实验功能类"><a href="#2-6-Agent-后台-实验功能类" class="headerlink" title="2.6 Agent &#x2F; 后台 &#x2F; 实验功能类"></a>2.6 Agent &#x2F; 后台 &#x2F; 实验功能类</h3><table>
+<thead>
+<tr>
+<th>指令</th>
+<th>说明</th>
+<th>建议使用场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>/agent</code></td>
+<td>切换当前 active agent thread</td>
+<td>查看或继续子 agent 线程</td>
+</tr>
+<tr>
+<td><code>/goal</code></td>
+<td>设置、暂停、恢复、查看或清除持续目标</td>
+<td>长任务、迁移、反复验证类工作</td>
+</tr>
+<tr>
+<td><code>/ps</code></td>
+<td>查看实验性后台终端及近期输出</td>
+<td>有后台命令在跑时查看状态</td>
+</tr>
+<tr>
+<td><code>/experimental</code></td>
+<td>开关实验功能</td>
+<td>需要启用 subagents 等实验能力</td>
+</tr>
+</tbody></table>
+<h3 id="2-7-UI-输入体验类"><a href="#2-7-UI-输入体验类" class="headerlink" title="2.7 UI &#x2F; 输入体验类"></a>2.7 UI &#x2F; 输入体验类</h3><table>
+<thead>
+<tr>
+<th>指令</th>
+<th>说明</th>
+<th>建议使用场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>/keymap</code></td>
+<td>重映射 TUI 快捷键</td>
+<td>自定义快捷键</td>
+</tr>
+<tr>
+<td><code>/vim</code></td>
+<td>切换 composer 的 Vim 模式</td>
+<td>习惯 Vim 输入</td>
+</tr>
+<tr>
+<td><code>/theme</code></td>
+<td>选择语法高亮主题</td>
+<td>调整终端显示</td>
+</tr>
+<tr>
+<td><code>/title</code></td>
+<td>配置终端窗口&#x2F;标签标题字段</td>
+<td>想在标题栏显示项目、分支、模型等</td>
+</tr>
+</tbody></table>
+<h3 id="2-8-反馈-登录类"><a href="#2-8-反馈-登录类" class="headerlink" title="2.8 反馈 &#x2F; 登录类"></a>2.8 反馈 &#x2F; 登录类</h3><table>
+<thead>
+<tr>
+<th>指令</th>
+<th>说明</th>
+<th>建议使用场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>/feedback</code></td>
+<td>给 Codex 维护者发送反馈和日志</td>
+<td>报 bug、提交诊断信息</td>
+</tr>
+<tr>
+<td><code>/logout</code></td>
+<td>退出 Codex 登录</td>
+<td>共用机器、账号切换</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="3-Codex-IDE-Extension-指令"><a href="#3-Codex-IDE-Extension-指令" class="headerlink" title="3. Codex IDE Extension / 指令"></a>3. Codex IDE Extension <code>/</code> 指令</h2><p>IDE 扩展里的 slash commands 比 CLI 少，主要用于切换运行模式和查看状态。</p>
+<table>
+<thead>
+<tr>
+<th>指令</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>/auto-context</code></td>
+<td>开关 Auto Context，自动包含最近文件和 IDE 上下文</td>
+</tr>
+<tr>
+<td><code>/cloud</code></td>
+<td>切换到 cloud mode，远程运行任务</td>
+</tr>
+<tr>
+<td><code>/cloud-environment</code></td>
+<td>选择 cloud mode 使用的云环境</td>
+</tr>
+<tr>
+<td><code>/feedback</code></td>
+<td>打开反馈窗口，可附带日志</td>
+</tr>
+<tr>
+<td><code>/goal</code></td>
+<td>设置持续目标</td>
+</tr>
+<tr>
+<td><code>/local</code></td>
+<td>切换到 local mode，在本地 workspace 运行</td>
+</tr>
+<tr>
+<td><code>/review</code></td>
+<td>进入代码审查模式，审查未提交改动或和 base branch 对比</td>
+</tr>
+<tr>
+<td><code>/status</code></td>
+<td>显示 thread ID、上下文占用、rate limits</td>
+</tr>
+</tbody></table>
+<p>如果 <code>/goal</code> 没显示，可能需要在 <code>~/.codex/config.toml</code> 开启：</p>
+<figure class="highlight toml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">[features]</span></span><br><span class="line"><span class="attr">goals</span> = <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<p>也可以在命令行执行：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">codex features <span class="built_in">enable</span> goals</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="4-Codex-Desktop-App-指令"><a href="#4-Codex-Desktop-App-指令" class="headerlink" title="4. Codex Desktop App / 指令"></a>4. Codex Desktop App <code>/</code> 指令</h2><p>Codex App 的 <code>/</code> 指令更偏向线程控制、计划、审查和 MCP 状态。</p>
+<table>
+<thead>
+<tr>
+<th>指令</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>/feedback</code></td>
+<td>打开反馈窗口，可附带日志</td>
+</tr>
+<tr>
+<td><code>/goal</code></td>
+<td>设置持续目标，建议先用 <code>/plan</code> 梳理目标</td>
+</tr>
+<tr>
+<td><code>/mcp</code></td>
+<td>打开 MCP 状态，查看已连接 server</td>
+</tr>
+<tr>
+<td><code>/plan</code></td>
+<td>切换 plan mode，用于多步骤规划</td>
+</tr>
+<tr>
+<td><code>/review</code></td>
+<td>进入代码审查模式</td>
+</tr>
+<tr>
+<td><code>/status</code></td>
+<td>查看 thread ID、上下文占用、rate limits</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="5-常用-CLI-启动参数，不是-指令，但很实用"><a href="#5-常用-CLI-启动参数，不是-指令，但很实用" class="headerlink" title="5. 常用 CLI 启动参数，不是 / 指令，但很实用"></a>5. 常用 CLI 启动参数，不是 <code>/</code> 指令，但很实用</h2><p>这些是在终端启动 Codex 时用的参数，不是在 Codex 交互界面里输入的 <code>/</code> 指令。</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>codex -C &lt;path&gt;</code></td>
+<td>指定工作目录</td>
+</tr>
+<tr>
+<td><code>codex --cd &lt;path&gt;</code></td>
+<td>同上，指定工作目录</td>
+</tr>
+<tr>
+<td><code>codex -m &lt;model&gt;</code></td>
+<td>指定模型</td>
+</tr>
+<tr>
+<td><code>codex --model &lt;model&gt;</code></td>
+<td>同上</td>
+</tr>
+<tr>
+<td><code>codex -a &lt;mode&gt;</code></td>
+<td>指定审批模式</td>
+</tr>
+<tr>
+<td><code>codex --ask-for-approval &lt;mode&gt;</code></td>
+<td>指定审批模式</td>
+</tr>
+<tr>
+<td><code>codex -s &lt;policy&gt;</code></td>
+<td>指定 sandbox 策略</td>
+</tr>
+<tr>
+<td><code>codex --sandbox &lt;policy&gt;</code></td>
+<td>指定 sandbox 策略</td>
+</tr>
+<tr>
+<td><code>codex --add-dir &lt;path&gt;</code></td>
+<td>额外授权目录</td>
+</tr>
+<tr>
+<td><code>codex -i &lt;image&gt;</code></td>
+<td>初始 prompt 附带图片</td>
+</tr>
+<tr>
+<td><code>codex --image &lt;image&gt;</code></td>
+<td>同上</td>
+</tr>
+<tr>
+<td><code>codex --search</code></td>
+<td>开启 live web search</td>
+</tr>
+<tr>
+<td><code>codex -c key=value</code></td>
+<td>临时覆盖配置项</td>
+</tr>
+<tr>
+<td><code>codex --profile &lt;name&gt;</code></td>
+<td>使用指定 profile</td>
+</tr>
+<tr>
+<td><code>codex --oss</code></td>
+<td>使用本地 OSS provider，例如 Ollama</td>
+</tr>
+<tr>
+<td><code>codex --remote &lt;endpoint&gt;</code></td>
+<td>连接远程 app-server</td>
+</tr>
+<tr>
+<td><code>codex --no-alt-screen</code></td>
+<td>禁用 alternate screen TUI</td>
+</tr>
+<tr>
+<td><code>codex --yolo</code></td>
+<td>跳过 approvals 和 sandbox，风险很高，不建议日常使用</td>
+</tr>
+</tbody></table>
+<p>审批模式常见值：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">untrusted</span><br><span class="line">on-request</span><br><span class="line">never</span><br></pre></td></tr></table></figure>
+
+<p>sandbox 常见值：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">read-only</span><br><span class="line">workspace-write</span><br><span class="line">danger-full-access</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="6-自定义-Prompt-Skills-说明"><a href="#6-自定义-Prompt-Skills-说明" class="headerlink" title="6. 自定义 Prompt &#x2F; Skills 说明"></a>6. 自定义 Prompt &#x2F; Skills 说明</h2><h3 id="6-1-旧的-custom-prompts"><a href="#6-1-旧的-custom-prompts" class="headerlink" title="6.1 旧的 custom prompts"></a>6.1 旧的 custom prompts</h3><p>Codex 曾支持把 <code>~/.codex/prompts/*.md</code> 作为可调用 slash command，例如：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/prompts:draftpr FILES=&quot;src/main.c&quot; PR_TITLE=&quot;Fix UART DMA&quot;</span><br></pre></td></tr></table></figure>
+
+<p>但官方现在标注：<strong>Custom prompts 已废弃，建议使用 Skills。</strong></p>
+<p>旧 prompt 文件示例：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> -p ~/.codex/prompts</span><br><span class="line">vim ~/.codex/prompts/draftpr.md</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">---</span><br><span class="line">description: Prep a branch, commit, and open a draft PR</span><br><span class="line"><span class="section">argument-hint: [FILES=<span class="language-xml"><span class="tag">&lt;<span class="name">paths</span>&gt;</span></span>] [PR<span class="emphasis">_TITLE=&quot;<span class="language-xml"><span class="tag">&lt;<span class="name">title</span>&gt;</span></span>&quot;]</span></span></span><br><span class="line"><span class="emphasis"><span class="section">---</span></span></span><br><span class="line"><span class="emphasis"><span class="section"></span></span></span><br><span class="line"><span class="emphasis"><span class="section">Create a branch named dev/<span class="language-xml"><span class="tag">&lt;<span class="name">feature_name</span>&gt;</span></span>.</span></span></span><br><span class="line"><span class="emphasis"><span class="section">If files are specified, stage them first: $FILES.</span></span></span><br><span class="line"><span class="emphasis"><span class="section">Commit the staged changes with a clear message.</span></span></span><br><span class="line"><span class="emphasis"><span class="section">Open a draft PR. Use $PR_</span>TITLE when supplied.</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="6-2-现在更推荐-Skills"><a href="#6-2-现在更推荐-Skills" class="headerlink" title="6.2 现在更推荐 Skills"></a>6.2 现在更推荐 Skills</h3><p>建议把长期复用的工作流改成 Codex Skill，例如：</p>
+<ul>
+<li>嵌入式 DMA 接收审查</li>
+<li>RT-Thread 队列&#x2F;中断安全检查</li>
+<li>状态机架构分析</li>
+<li>IAP&#x2F;Bootloader 跳转检查</li>
+<li>协议栈解析边界检查</li>
+<li>代码最小改动审查</li>
+</ul>
+<hr>
+<h2 id="7-嵌入式工程推荐使用方式"><a href="#7-嵌入式工程推荐使用方式" class="headerlink" title="7. 嵌入式工程推荐使用方式"></a>7. 嵌入式工程推荐使用方式</h2><h3 id="7-1-新项目初始化"><a href="#7-1-新项目初始化" class="headerlink" title="7.1 新项目初始化"></a>7.1 新项目初始化</h3><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/init</span><br></pre></td></tr></table></figure>
+
+<p>然后检查生成的：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">AGENTS.md</span><br></pre></td></tr></table></figure>
+
+<p>建议你的全局规则保持通用，项目内 <code>AGENTS.md</code> 写具体工程约束。</p>
+<h3 id="7-2-只读分析，不直接改"><a href="#7-2-只读分析，不直接改" class="headerlink" title="7.2 只读分析，不直接改"></a>7.2 只读分析，不直接改</h3><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">先只读分析，不要修改代码。</span><br><span class="line">请梳理这个问题涉及的模块、调用链、关键状态变量、并发风险、内存风险。</span><br><span class="line">最后输出最小修改方案、涉及文件和风险点。</span><br></pre></td></tr></table></figure>
+
+<p>如果要指定文件：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/mention application/uart_dma.c</span><br><span class="line">/mention application/protocol_parser.c</span><br></pre></td></tr></table></figure>
+
+<h3 id="7-3-修改前先看上下文-文件"><a href="#7-3-修改前先看上下文-文件" class="headerlink" title="7.3 修改前先看上下文&#x2F;文件"></a>7.3 修改前先看上下文&#x2F;文件</h3><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/mention &lt;相关文件&gt;</span><br></pre></td></tr></table></figure>
+
+<p>然后提示：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">基于这些文件分析，不要猜测未读取的代码。</span><br><span class="line">如果缺少调用链文件，先告诉我需要补充哪些文件。</span><br></pre></td></tr></table></figure>
+
+<h3 id="7-4-确认方案后再改"><a href="#7-4-确认方案后再改" class="headerlink" title="7.4 确认方案后再改"></a>7.4 确认方案后再改</h3><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">按刚才方案修改，保持最小改动。</span><br><span class="line">不要大面积重构，不要修改无关格式和注释。</span><br><span class="line">修改后说明改了哪些文件、为什么这样改、风险点是什么。</span><br></pre></td></tr></table></figure>
+
+<h3 id="7-5-改完查看-diff"><a href="#7-5-改完查看-diff" class="headerlink" title="7.5 改完查看 diff"></a>7.5 改完查看 diff</h3><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/diff</span><br></pre></td></tr></table></figure>
+
+<p>重点检查：</p>
+<ul>
+<li>是否改了无关文件</li>
+<li>是否大面积格式化</li>
+<li>是否引入隐藏依赖</li>
+<li>是否修改了公共接口</li>
+<li>是否破坏 ISR &#x2F; task 并发边界</li>
+<li>是否有内存越界风险</li>
+<li>是否把阻塞逻辑放进中断</li>
+</ul>
+<h3 id="7-6-改完做-review"><a href="#7-6-改完做-review" class="headerlink" title="7.6 改完做 review"></a>7.6 改完做 review</h3><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/review</span><br></pre></td></tr></table></figure>
+
+<p>可以追加要求：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">重点审查嵌入式 C 风险：</span><br><span class="line">1. ISR 里是否有阻塞调用</span><br><span class="line">2. 队列/环形缓冲是否有并发问题</span><br><span class="line">3. DMA 接收是否可能覆盖未解析数据</span><br><span class="line">4. 半包/粘包/超时处理是否正确</span><br><span class="line">5. 是否有栈溢出、堆分配失败、越界访问</span><br><span class="line">6. 修改是否保持最小化</span><br></pre></td></tr></table></figure>
+
+<h3 id="7-7-长对话压缩"><a href="#7-7-长对话压缩" class="headerlink" title="7.7 长对话压缩"></a>7.7 长对话压缩</h3><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/compact</span><br></pre></td></tr></table></figure>
+
+<p>建议压缩前补一句：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">压缩时保留：</span><br><span class="line">1. 工程背景</span><br><span class="line">2. 已读取文件</span><br><span class="line">3. 已确认结论</span><br><span class="line">4. 已修改文件</span><br><span class="line">5. 未解决问题</span><br><span class="line">6. 下一步计划</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="8-适合嵌入式工程的-Codex-工作流"><a href="#8-适合嵌入式工程的-Codex-工作流" class="headerlink" title="8. 适合嵌入式工程的 Codex 工作流"></a>8. 适合嵌入式工程的 Codex 工作流</h2><h3 id="8-1-常规-bug-修复"><a href="#8-1-常规-bug-修复" class="headerlink" title="8.1 常规 bug 修复"></a>8.1 常规 bug 修复</h3><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">/mention &lt;问题相关文件&gt;</span><br><span class="line"></span><br><span class="line">先只读分析，不要修改代码。</span><br><span class="line">请输出：</span><br><span class="line">1. 问题可能原因</span><br><span class="line">2. 涉及文件和调用链</span><br><span class="line">3. 最小修改方案</span><br><span class="line">4. 修改风险</span><br><span class="line">5. 需要我确认的点</span><br></pre></td></tr></table></figure>
+
+<p>确认后：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">按方案修改，保持最小改动。</span><br></pre></td></tr></table></figure>
+
+<p>修改后：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/diff</span><br><span class="line">/review</span><br></pre></td></tr></table></figure>
+
+<h3 id="8-2-架构优化-状态机重构"><a href="#8-2-架构优化-状态机重构" class="headerlink" title="8.2 架构优化 &#x2F; 状态机重构"></a>8.2 架构优化 &#x2F; 状态机重构</h3><p>不要一上来让 Codex 直接重构。推荐：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">先只读分析当前状态机架构，不要修改代码。</span><br><span class="line">重点梳理：</span><br><span class="line">1. 事件来源</span><br><span class="line">2. 队列流向</span><br><span class="line">3. 状态变量</span><br><span class="line">4. 当前事件与历史事件的比较逻辑</span><br><span class="line">5. 模块耦合点</span><br><span class="line">6. 哪些逻辑适合抽象成 adapter</span><br><span class="line">7. 哪些逻辑不建议改</span><br><span class="line"></span><br><span class="line">输出 2~3 个重构方案，分别比较：</span><br><span class="line">- 改动量</span><br><span class="line">- 风险</span><br><span class="line">- 收益</span><br><span class="line">- 对现有调试习惯的影响</span><br><span class="line">- 是否适合当前项目阶段</span><br></pre></td></tr></table></figure>
+
+<p>确认后再让它按阶段改：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">只实施第一阶段，目标是降低耦合，但不改变外部行为。</span><br><span class="line">保持可回退，禁止大面积格式化。</span><br></pre></td></tr></table></figure>
+
+<h3 id="8-3-DMA-串口协议解析专项审查"><a href="#8-3-DMA-串口协议解析专项审查" class="headerlink" title="8.3 DMA &#x2F; 串口协议解析专项审查"></a>8.3 DMA &#x2F; 串口协议解析专项审查</h3><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">/mention &lt;uart_dma_file&gt;</span><br><span class="line">/mention &lt;protocol_parser_file&gt;</span><br><span class="line"></span><br><span class="line">只读审查 UART DMA + 空闲中断 + 队列 + 协议解析链路。</span><br><span class="line">重点检查：</span><br><span class="line">1. DMA 缓冲是否可能被覆盖</span><br><span class="line">2. idle 中断和任务解析是否有并发风险</span><br><span class="line">3. 拷贝数据是否需要临界区</span><br><span class="line">4. 队列传递的是指针还是数据副本</span><br><span class="line">5. 半包超时如何处理</span><br><span class="line">6. 粘包 while 解析是否正确</span><br><span class="line">7. 长帧/异常帧是否会卡死解析状态机</span><br><span class="line">8. 是否有栈/堆/数组越界风险</span><br><span class="line">不要修改代码，先输出结论。</span><br></pre></td></tr></table></figure>
+
+<h3 id="8-4-Bootloader-IAP-跳转专项审查"><a href="#8-4-Bootloader-IAP-跳转专项审查" class="headerlink" title="8.4 Bootloader &#x2F; IAP 跳转专项审查"></a>8.4 Bootloader &#x2F; IAP 跳转专项审查</h3><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">只读分析 Bootloader 到 APP 跳转流程。</span><br><span class="line">重点检查：</span><br><span class="line">1. 中断是否关闭</span><br><span class="line">2. SysTick 是否关闭</span><br><span class="line">3. 外设中断是否清理</span><br><span class="line">4. NVIC pending 是否清理</span><br><span class="line">5. MSP/PC 设置是否正确</span><br><span class="line">6. VTOR 是否设置</span><br><span class="line">7. Cache 是否需要关闭或失效</span><br><span class="line">8. APP 起始地址和向量表是否合法</span><br><span class="line">9. reset 与 power cycle 行为差异</span><br><span class="line">不要修改代码，先输出风险点和最小修复方案。</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="9-推荐记忆：最核心的一套"><a href="#9-推荐记忆：最核心的一套" class="headerlink" title="9. 推荐记忆：最核心的一套"></a>9. 推荐记忆：最核心的一套</h2><p>不用记所有命令，先记这几个就够：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">/init</span><br><span class="line">/mention</span><br><span class="line">/status</span><br><span class="line">/permissions</span><br><span class="line">/compact</span><br><span class="line">/diff</span><br><span class="line">/review</span><br><span class="line">/resume</span><br><span class="line">/quit</span><br></pre></td></tr></table></figure>
+
+<p>如果使用 Codex App，再补：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">/plan</span><br><span class="line">/goal</span><br><span class="line">/mcp</span><br></pre></td></tr></table></figure>
+
+<p>如果使用 IDE 扩展，再补：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">/local</span><br><span class="line">/cloud</span><br><span class="line">/auto-context</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="10-和-Claude-Code-指令的差异"><a href="#10-和-Claude-Code-指令的差异" class="headerlink" title="10. 和 Claude Code 指令的差异"></a>10. 和 Claude Code 指令的差异</h2><table>
+<thead>
+<tr>
+<th>维度</th>
+<th>Codex</th>
+<th>Claude Code</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>项目规则文件</td>
+<td><code>AGENTS.md</code></td>
+<td><code>CLAUDE.md</code></td>
+</tr>
+<tr>
+<td>初始化</td>
+<td><code>/init</code> 生成 <code>AGENTS.md</code></td>
+<td><code>/init</code> 生成 <code>CLAUDE.md</code></td>
+</tr>
+<tr>
+<td>上下文压缩</td>
+<td><code>/compact</code></td>
+<td><code>/compact</code></td>
+</tr>
+<tr>
+<td>查看改动</td>
+<td><code>/diff</code></td>
+<td><code>/diff</code></td>
+</tr>
+<tr>
+<td>代码审查</td>
+<td><code>/review</code></td>
+<td><code>/code-review</code> &#x2F; <code>/review</code></td>
+</tr>
+<tr>
+<td>权限管理</td>
+<td><code>/permissions</code></td>
+<td><code>/permissions</code></td>
+</tr>
+<tr>
+<td>文件指定</td>
+<td><code>/mention</code></td>
+<td>常见是 <code>@file</code> 或相关上下文机制</td>
+</tr>
+<tr>
+<td>Skills</td>
+<td><code>/skills</code></td>
+<td><code>/skills</code></td>
+</tr>
+<tr>
+<td>MCP</td>
+<td><code>/mcp</code></td>
+<td><code>/mcp</code></td>
+</tr>
+<tr>
+<td>计划模式</td>
+<td>App 有 <code>/plan</code>；CLI 主要靠自然语言规划</td>
+<td><code>/plan</code> 更常用</td>
+</tr>
+<tr>
+<td>自定义 prompts</td>
+<td>已废弃，推荐 Skills</td>
+<td>slash&#x2F;custom command 机制更像一等功能</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="11-注意事项"><a href="#11-注意事项" class="headerlink" title="11. 注意事项"></a>11. 注意事项</h2><ol>
+<li><code>/</code> 指令必须以你当前端实际弹出的菜单为准。</li>
+<li>Codex CLI、IDE 扩展、Desktop App 的命令不完全相同。</li>
+<li><code>custom prompts</code> 已不推荐，长期复用工作流建议做成 skills。</li>
+<li><code>/permissions</code> 不要随便开太大权限，尤其不要日常使用 <code>--yolo</code>。</li>
+<li>嵌入式项目要优先使用“只读分析 → 最小改动 → diff → review”的流程。</li>
+<li>大重构不要一次性全放开，分阶段执行更稳。</li>
+<li>长对话要主动 <code>/compact</code>，否则上下文会变脏，后续容易改偏。</li>
+<li><code>/diff</code> 和 <code>/review</code> 是防止 agent 乱改的关键步骤。</li>
+</ol>
+<hr>
+<h2 id="12-推荐嵌入式固定流程"><a href="#12-推荐嵌入式固定流程" class="headerlink" title="12. 推荐嵌入式固定流程"></a>12. 推荐嵌入式固定流程</h2><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">/init</span><br><span class="line">/mention &lt;相关文件&gt;</span><br><span class="line">先只读分析，不要修改代码，输出调用链、原因、最小修改方案和风险点</span><br><span class="line">确认方案后让 Codex 修改</span><br><span class="line">/diff</span><br><span class="line">/review</span><br><span class="line">/compact</span><br></pre></td></tr></table></figure>
+
+<p>核心原则：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">先分析，再修改；先小改，再验证；先看 diff，再 review。</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="13-参考来源"><a href="#13-参考来源" class="headerlink" title="13. 参考来源"></a>13. 参考来源</h2><ul>
+<li>OpenAI Developers：Codex CLI Slash Commands</li>
+<li>OpenAI Developers：Codex IDE Extension Slash Commands</li>
+<li>OpenAI Developers：Codex App Commands</li>
+<li>OpenAI Developers：Codex CLI Command Line Options</li>
+<li>OpenAI Developers：Codex Custom Prompts &#x2F; Skills 说明</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Linux/" rel="tag"># Linux</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2026/06/01/uart-fifo-optimization-blog/" rel="prev" title="UART 环形缓冲区">
+                  <i class="fa fa-angle-left"></i> UART 环形缓冲区
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2026/06/01/boot_jump_fix_blog/" rel="next" title="bootloader 跳转 APP 跑飞问题">
+                  bootloader 跳转 APP 跑飞问题 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">boollight</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="Word count total">72k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="Reading time total">4:01</span>
+  </span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

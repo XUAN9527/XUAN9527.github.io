@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.1.1">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"xuan9527.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.26.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="UART 环形缓冲区：从 DMA&#x2F;中断共存到优雅的溢出处理">
+<meta property="og:type" content="article">
+<meta property="og:title" content="UART 环形缓冲区">
+<meta property="og:url" content="https://xuan9527.github.io/2026/06/01/uart-fifo-optimization-blog/index.html">
+<meta property="og:site_name" content="xuan9527">
+<meta property="og:description" content="UART 环形缓冲区：从 DMA&#x2F;中断共存到优雅的溢出处理">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2026-06-01T06:00:02.000Z">
+<meta property="article:modified_time" content="2026-06-13T12:08:46.384Z">
+<meta property="article:author" content="boollight">
+<meta property="article:tag" content="MCU">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://xuan9527.github.io/2026/06/01/uart-fifo-optimization-blog/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://xuan9527.github.io/2026/06/01/uart-fifo-optimization-blog/","path":"2026/06/01/uart-fifo-optimization-blog/","title":"UART 环形缓冲区"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>UART 环形缓冲区 | xuan9527</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">xuan9527</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">常能遣其欲而心自静，澄其心而神自清。</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li><li class="menu-item menu-item-schedule"><a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>Schedule</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="Searching..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#UART-%E7%8E%AF%E5%BD%A2%E7%BC%93%E5%86%B2%E5%8C%BA%EF%BC%9A%E4%BB%8E-DMA-%E4%B8%AD%E6%96%AD%E5%85%B1%E5%AD%98%E5%88%B0%E4%BC%98%E9%9B%85%E7%9A%84%E6%BA%A2%E5%87%BA%E5%A4%84%E7%90%86"><span class="nav-number">1.</span> <span class="nav-text">UART 环形缓冲区：从 DMA&#x2F;中断共存到优雅的溢出处理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E8%83%8C%E6%99%AF"><span class="nav-number">1.1.</span> <span class="nav-text">1. 背景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E7%8E%AF%E5%BD%A2%E7%BC%93%E5%86%B2%E5%8C%BA%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">1.2.</span> <span class="nav-text">2. 环形缓冲区数据结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E6%A0%B8%E5%BF%83%E6%8A%80%E5%B7%A7%EF%BC%9A%E9%95%9C%E5%83%8F%E4%BD%8D%E5%8C%BA%E5%88%86%E7%A9%BA%E5%92%8C%E6%BB%A1"><span class="nav-number">1.2.1.</span> <span class="nav-text">2.1 核心技巧：镜像位区分空和满</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E7%A9%BA-%E6%BB%A1%E6%A3%80%E6%B5%8B"><span class="nav-number">1.2.2.</span> <span class="nav-text">2.2 空&#x2F;满检测</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-DMA-%E6%8E%A5%E6%94%B6-IDLE-%E4%B8%AD%E6%96%AD%E7%9A%84%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B"><span class="nav-number">1.3.</span> <span class="nav-text">3. DMA 接收 + IDLE 中断的工作流程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-%E4%B8%AD%E6%96%AD%E6%9C%8D%E5%8A%A1%E5%87%BD%E6%95%B0"><span class="nav-number">1.3.1.</span> <span class="nav-text">3.1 中断服务函数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-Bug-%E5%88%86%E6%9E%90%EF%BC%9AFIFO-%E6%BB%A1%E6%97%B6%E7%9A%84%E8%A1%8C%E4%B8%BA"><span class="nav-number">1.4.</span> <span class="nav-text">4. Bug 分析：FIFO 满时的行为</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-%E9%97%AE%E9%A2%98%E5%9C%BA%E6%99%AF"><span class="nav-number">1.4.1.</span> <span class="nav-text">4.1 问题场景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-%E9%97%AE%E9%A2%98%E6%9C%AC%E8%B4%A8"><span class="nav-number">1.4.2.</span> <span class="nav-text">4.2 问题本质</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-%E8%BF%99%E4%B8%8D%E6%98%AF%E4%B8%80%E4%B8%AA-Bug%EF%BC%8C%E8%80%8C%E6%98%AF-FIFO-%E6%BA%A2%E5%87%BA%E7%9A%84%E5%9B%BA%E6%9C%89%E7%89%B9%E6%80%A7"><span class="nav-number">1.4.3.</span> <span class="nav-text">4.3 这不是一个 Bug，而是 FIFO 溢出的固有特性</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E4%BF%AE%E5%A4%8D%E6%96%B9%E6%A1%88%EF%BC%9A%E5%80%9F%E5%8A%A9%E5%9B%9E%E8%B0%83%E5%87%BD%E6%95%B0%E2%80%9D%E5%8D%B3%E6%97%B6%E6%8E%92%E7%A9%BA%E2%80%9D"><span class="nav-number">1.5.</span> <span class="nav-text">5. 修复方案：借助回调函数”即时排空”</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1-%E6%80%9D%E8%B7%AF"><span class="nav-number">1.5.1.</span> <span class="nav-text">5.1 思路</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-2-%E6%8A%80%E6%9C%AF%E7%BB%86%E8%8A%82"><span class="nav-number">1.5.2.</span> <span class="nav-text">5.2 技术细节</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-3-%E6%95%B0%E6%8D%AE%E6%B5%81%E6%9E%B6%E6%9E%84"><span class="nav-number">1.5.3.</span> <span class="nav-text">5.3 数据流架构</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-%E4%B8%AD%E9%97%B4%E5%B1%82%EF%BC%9A%E9%9D%99%E6%80%81%E7%8E%AF%E5%BD%A2%E7%BC%93%E5%86%B2%E5%8C%BA"><span class="nav-number">1.6.</span> <span class="nav-text">6. 中间层：静态环形缓冲区</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#6-1-%E4%B8%BA%E4%BB%80%E4%B9%88%E6%98%AF-512%EF%BC%882-%E7%9A%84%E5%B9%82%EF%BC%89%EF%BC%9F"><span class="nav-number">1.6.1.</span> <span class="nav-text">6.1 为什么是 512（2 的幂）？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-IT-%E6%A8%A1%E5%BC%8F-vs-DMA-%E6%A8%A1%E5%BC%8F%E5%AF%B9%E6%AF%94"><span class="nav-number">1.7.</span> <span class="nav-text">7. IT 模式 vs DMA 模式对比</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-IT-%E6%A8%A1%E5%BC%8F%E5%9C%A8-921600bps-%E4%B8%8B%E7%9A%84%E4%B8%A2%E6%95%B0%E9%97%AE%E9%A2%98%E4%B8%8E%E4%BC%98%E5%8C%96"><span class="nav-number">1.8.</span> <span class="nav-text">8. IT 模式在 921600bps 下的丢数问题与优化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#8-1-%E4%B8%BA%E4%BB%80%E4%B9%88%E6%99%AE%E9%80%9A%E7%BB%88%E7%AB%AF%E6%A8%A1%E5%BC%8F%E4%BC%9A%E2%80%9D%E6%8E%A5%E4%B8%8D%E5%85%A8%E2%80%9D%EF%BC%9F"><span class="nav-number">1.8.1.</span> <span class="nav-text">8.1 为什么普通终端模式会”接不全”？</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#8-1-1-%E6%97%B6%E9%97%B4%E9%A2%84%E7%AE%97%E5%88%86%E6%9E%90"><span class="nav-number">1.8.1.1.</span> <span class="nav-text">8.1.1 时间预算分析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#8-1-2-IT-%E6%A8%A1%E5%BC%8F%E7%9A%84-ISR-%E8%B0%83%E7%94%A8%E8%B7%AF%E5%BE%84"><span class="nav-number">1.8.1.2.</span> <span class="nav-text">8.1.2 IT 模式的 ISR 调用路径</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#8-1-3-%E4%B8%A2%E6%95%B0%E7%9A%84%E4%B8%89%E4%B8%AA%E6%A0%B9%E5%9B%A0"><span class="nav-number">1.8.1.3.</span> <span class="nav-text">8.1.3 丢数的三个根因</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-2-%E6%95%B0%E6%8D%AE%E6%B5%81%E7%93%B6%E9%A2%88%E5%85%A8%E6%99%AF%E5%9B%BE"><span class="nav-number">1.8.2.</span> <span class="nav-text">8.2 数据流瓶颈全景图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-3-%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="nav-number">1.8.3.</span> <span class="nav-text">8.3 注意事项</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-4-%E4%BC%98%E5%8C%96%E5%BB%BA%E8%AE%AE"><span class="nav-number">1.8.4.</span> <span class="nav-text">8.4 优化建议</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%96%B9%E6%A1%88%E4%B8%80%EF%BC%88%E6%8E%A8%E8%8D%90%EF%BC%89%EF%BC%9A%E5%9D%9A%E6%8C%81%E4%BD%BF%E7%94%A8-DMA-IDLE-%E6%A8%A1%E5%BC%8F"><span class="nav-number">1.8.4.1.</span> <span class="nav-text">方案一（推荐）：坚持使用 DMA + IDLE 模式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%96%B9%E6%A1%88%E4%BA%8C%EF%BC%9A%E8%8B%A5%E5%BF%85%E9%A1%BB%E4%BD%BF%E7%94%A8-IT-%E6%A8%A1%E5%BC%8F%EF%BC%8C%E5%81%9A%E4%BB%A5%E4%B8%8B%E4%BC%98%E5%8C%96"><span class="nav-number">1.8.4.2.</span> <span class="nav-text">方案二：若必须使用 IT 模式，做以下优化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%96%B9%E6%A1%88%E4%B8%89%EF%BC%9A%E6%8A%98%E4%B8%AD%E2%80%94%E2%80%94%E9%99%8D%E4%BD%8E%E6%B3%A2%E7%89%B9%E7%8E%87"><span class="nav-number">1.8.4.3.</span> <span class="nav-text">方案三：折中——降低波特率</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-5-%E6%80%BB%E7%BB%93"><span class="nav-number">1.8.5.</span> <span class="nav-text">8.5 总结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#9-%E5%AE%8C%E6%95%B4%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">1.9.</span> <span class="nav-text">9. 完整初始化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#10-%E6%80%BB%E7%BB%93"><span class="nav-number">1.10.</span> <span class="nav-text">10. 总结</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">boollight</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">25</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://xuan9527.github.io/2026/06/01/uart-fifo-optimization-blog/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="boollight">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="xuan9527">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="UART 环形缓冲区 | xuan9527">
+      <meta itemprop="description" content="UART 环形缓冲区：从 DMA&#x2F;中断共存到优雅的溢出处理">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          UART 环形缓冲区
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2026-06-01 14:00:02" itemprop="dateCreated datePublished" datetime="2026-06-01T14:00:02+08:00">2026-06-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2026-06-13 20:08:46" itemprop="dateModified" datetime="2026-06-13T20:08:46+08:00">2026-06-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">嵌入式</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="Word count in article">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">Word count in article: </span>
+      <span>3k</span>
+    </span>
+    <span class="post-meta-item" title="Reading time">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">Reading time &asymp;</span>
+      <span>10 mins.</span>
+    </span>
+</div>
+
+            <div class="post-description">UART 环形缓冲区：从 DMA/中断共存到优雅的溢出处理</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="UART-环形缓冲区：从-DMA-中断共存到优雅的溢出处理"><a href="#UART-环形缓冲区：从-DMA-中断共存到优雅的溢出处理" class="headerlink" title="UART 环形缓冲区：从 DMA&#x2F;中断共存到优雅的溢出处理"></a>UART 环形缓冲区：从 DMA&#x2F;中断共存到优雅的溢出处理</h1><h2 id="1-背景"><a href="#1-背景" class="headerlink" title="1. 背景"></a>1. 背景</h2><p>在嵌入式串口通信中，我们常常需要同时使用 <strong>DMA 接收</strong>（降低 CPU 负载）和 <strong>普通中断接收</strong>（低延迟响应）。这就需要设计一个统一的 FIFO 环形缓冲区来管理数据。</p>
+<p>本文分析一个基于 <strong>镜像位（mirror bit）</strong> 的环形缓冲区设计，探讨其在 DMA 模式下满溢时的行为，并给出一个简洁优雅的修复方案。</p>
+<h2 id="2-环形缓冲区数据结构"><a href="#2-环形缓冲区数据结构" class="headerlink" title="2. 环形缓冲区数据结构"></a>2. 环形缓冲区数据结构</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">    <span class="type">uint16_t</span> head;          <span class="comment">// 读指针</span></span><br><span class="line">    <span class="type">uint16_t</span> tail;          <span class="comment">// 写指针</span></span><br><span class="line">    <span class="type">uint16_t</span> mirror:<span class="number">1</span>;      <span class="comment">// 镜像位，区分空/满</span></span><br><span class="line">    <span class="type">uint16_t</span> lenth:<span class="number">15</span>;      <span class="comment">// 数据长度</span></span><br><span class="line">    <span class="type">uint8_t</span> *data;          <span class="comment">// 数据缓冲区（由 DMA Circular 模式写入）</span></span><br><span class="line">&#125; structUsartData;</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-1-核心技巧：镜像位区分空和满"><a href="#2-1-核心技巧：镜像位区分空和满" class="headerlink" title="2.1 核心技巧：镜像位区分空和满"></a>2.1 核心技巧：镜像位区分空和满</h3><p>环形缓冲区中，<code>tail == head</code> 可以同时表示”空”和”满”两个状态。引入 1-bit <code>mirror</code> 来区分：</p>
+<table>
+<thead>
+<tr>
+<th>状态</th>
+<th>tail &#x3D;&#x3D; head</th>
+<th>mirror</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>空</td>
+<td>✅ 是</td>
+<td>0</td>
+</tr>
+<tr>
+<td>满</td>
+<td>✅ 是</td>
+<td>1</td>
+</tr>
+</tbody></table>
+<p>每次 <code>tail</code> 绕回（wrap around）时，<code>mirror</code> 翻转一次。</p>
+<h3 id="2-2-空-满检测"><a href="#2-2-空-满检测" class="headerlink" title="2.2 空&#x2F;满检测"></a>2.2 空&#x2F;满检测</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 写入时检测是否满</span></span><br><span class="line"><span class="type">int</span> used_size = rx_buff-&gt;tail + rx_buff-&gt;mirror * fifo_size - rx_buff-&gt;head;</span><br><span class="line"><span class="type">int</span> current_size = fifo_size - used_size;  <span class="comment">// 剩余空间</span></span><br><span class="line"><span class="keyword">if</span> (current_size == <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="comment">// 满了，拒绝写入</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 读取时检测数据量</span></span><br><span class="line"><span class="keyword">if</span> (tail == head) &#123;</span><br><span class="line">    <span class="keyword">if</span> (mirror) <span class="keyword">return</span> fifo_size;  <span class="comment">// 满</span></span><br><span class="line">    <span class="comment">/* else */</span>  <span class="keyword">return</span> <span class="number">0</span>;          <span class="comment">// 空</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="3-DMA-接收-IDLE-中断的工作流程"><a href="#3-DMA-接收-IDLE-中断的工作流程" class="headerlink" title="3. DMA 接收 + IDLE 中断的工作流程"></a>3. DMA 接收 + IDLE 中断的工作流程</h2><p>硬件配置：DMA 工作在 <strong>Circular 模式</strong>（环形模式），使能 <strong>IDLE 中断</strong>（空闲中断）。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">DMA Circular Mode: 持续将 UART 数据写入 data[]</span><br><span class="line">    ↓ 总线空闲触发 IDLE 中断</span><br><span class="line">IDLE ISR:</span><br><span class="line">    ① 计算本次接收长度 recv_len</span><br><span class="line">    ② 组装事件 event = EC_SERIAL_EVENT_RX_DMADONE | (recv_len &lt;&lt; 8)</span><br><span class="line">    ③ 调用 drv_serial_isr(dev, event)</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-1-中断服务函数"><a href="#3-1-中断服务函数" class="headerlink" title="3.1 中断服务函数"></a>3.1 中断服务函数</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">case</span> EC_SERIAL_EVENT_RX_DMADONE:</span><br><span class="line">    <span class="type">uint16_t</span> rx_lenth = (event &amp; (~<span class="number">0xff</span>)) &gt;&gt; <span class="number">8</span>;  <span class="comment">// DMA 写入的字节数</span></span><br><span class="line">    <span class="keyword">if</span> (rx_lenth)</span><br><span class="line">        ec_serial_update_write_index(serial, rx_lenth);  <span class="comment">// 推进 tail</span></span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        ec_serial_push_one_data(serial);                  <span class="comment">// IT 模式：逐字节写入</span></span><br><span class="line"></span><br><span class="line">    rx_lenth = ec_fifo_data_len(serial);                  <span class="comment">// FIFO 中可读数据量</span></span><br><span class="line">    rx_fifo-&gt;lenth = rx_lenth;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (serial-&gt;rx_indicate != <span class="literal">NULL</span>)</span><br><span class="line">        serial-&gt;rx_indicate(serial_dev, rx_lenth);        <span class="comment">// 回调通知上层</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="4-Bug-分析：FIFO-满时的行为"><a href="#4-Bug-分析：FIFO-满时的行为" class="headerlink" title="4. Bug 分析：FIFO 满时的行为"></a>4. Bug 分析：FIFO 满时的行为</h2><h3 id="4-1-问题场景"><a href="#4-1-问题场景" class="headerlink" title="4.1 问题场景"></a>4.1 问题场景</h3><p>假设 FIFO 大小 <code>fifo_size=8</code>，缓冲区已满，DMA 又接收了 3 字节：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">步骤 | 操作                              | head | tail | mirror | data[]</span><br><span class="line">------|-----------------------------------|------|------|--------|--------</span><br><span class="line">  1   | 缓冲区填满 [A B C D E F G H]      |  0   |  0   |   1    | 全部有效</span><br><span class="line">  2   | DMA 又写入 X Y Z 到 data[0][1][2] |  0   |  0   |   1    | [X Y Z D E F G H]</span><br><span class="line">  3   | IDLE 中断触发, recv_len=3         |      |      |        |</span><br><span class="line">      | ec_serial_update_write_index(3):  |      |      |        |</span><br><span class="line">      | tail==head &amp;&amp; mirror==1 → 返回 0  |  0   |  0   |   1    | tail 没推进！</span><br><span class="line">  4   | ec_fifo_data_len = 8              |      |      |        | 认为还有 8 字节</span><br><span class="line">  5   | 消费者读 data[0..7]                | →?   |  0   |        | 读到 [X Y Z D E F G H]</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-2-问题本质"><a href="#4-2-问题本质" class="headerlink" title="4.2 问题本质"></a>4.2 问题本质</h3><table>
+<thead>
+<tr>
+<th>问题</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>数据丢失</strong></td>
+<td><code>[A B C]</code>（最旧的 3 字节）被 DMA 覆写，丢失</td>
+</tr>
+<tr>
+<td><strong>指针不同步</strong></td>
+<td><code>tail</code> 未推进，但实际数据已变</td>
+</tr>
+<tr>
+<td><strong>镜像位不一致</strong></td>
+<td><code>mirror</code> 应翻转但未翻转</td>
+</tr>
+<tr>
+<td><strong>根源</strong></td>
+<td><code>ec_serial_update_write_index</code> 在满时返回 0，但 DMA 硬件已写入</td>
+</tr>
+</tbody></table>
+<h3 id="4-3-这不是一个-Bug，而是-FIFO-溢出的固有特性"><a href="#4-3-这不是一个-Bug，而是-FIFO-溢出的固有特性" class="headerlink" title="4.3 这不是一个 Bug，而是 FIFO 溢出的固有特性"></a>4.3 这不是一个 Bug，而是 FIFO 溢出的固有特性</h3><p>任何环形缓冲区在满溢时都必须做出选择：</p>
+<table>
+<thead>
+<tr>
+<th>策略</th>
+<th>行为</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>丢弃新数据</strong></td>
+<td>返回 0 拒绝写入</td>
+<td>数据完整 &gt; 实时性</td>
+</tr>
+<tr>
+<td><strong>覆盖旧数据</strong></td>
+<td>允许写入，覆盖最旧数据</td>
+<td>实时性 &gt; 数据完整</td>
+</tr>
+</tbody></table>
+<p>当前代码选择了”丢弃新数据”策略——但问题是 DMA 硬件<strong>不受软件控制</strong>，它已经写入了数据。所以实际效果是：</p>
+<blockquote>
+<p>丢旧数据（被覆盖）+ 保留新数据 + 状态不一致</p>
+</blockquote>
+<h2 id="5-修复方案：借助回调函数”即时排空”"><a href="#5-修复方案：借助回调函数”即时排空”" class="headerlink" title="5. 修复方案：借助回调函数”即时排空”"></a>5. 修复方案：借助回调函数”即时排空”</h2><h3 id="5-1-思路"><a href="#5-1-思路" class="headerlink" title="5.1 思路"></a>5.1 思路</h3><p>既然满溢无法避免，不如让上层立即把数据取走，清空 FIFO，让后续写入恢复正常。</p>
+<h3 id="5-2-技术细节"><a href="#5-2-技术细节" class="headerlink" title="5.2 技术细节"></a>5.2 技术细节</h3><p>在 IDLE&#x2F;DMA_DONE 中断的回调中，立即读取所有数据：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">static</span> <span class="type">int</span> <span class="title function_">usart1_rx_indicate</span><span class="params">(ESERIAL_DEV serial_dev, <span class="type">uint16_t</span> size)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">uint8_t</span> temp[<span class="number">64</span>];</span><br><span class="line">    <span class="type">uint16_t</span> total_read = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> (total_read &lt; size) &#123;</span><br><span class="line">        <span class="type">uint16_t</span> chunk = MIN(size - total_read, <span class="keyword">sizeof</span>(temp));</span><br><span class="line">        <span class="type">uint16_t</span> read_len = drv_fifo_data_get(serial_dev, temp, chunk);</span><br><span class="line">        <span class="keyword">if</span> (read_len == <span class="number">0</span>) <span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">uint16_t</span> i = <span class="number">0</span>; i &lt; read_len; i++)</span><br><span class="line">            rx_buf_push(temp[i]);</span><br><span class="line"></span><br><span class="line">        total_read += read_len;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>drv_fifo_data_get</code> 在内核读取后会推进 <code>head</code> 指针并翻转 <code>mirror</code>，FIFO 状态自动恢复。</p>
+<h3 id="5-3-数据流架构"><a href="#5-3-数据流架构" class="headerlink" title="5.3 数据流架构"></a>5.3 数据流架构</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">┌─────────────────────────────────────────────────────────────┐</span><br><span class="line">│                       硬件层                                │</span><br><span class="line">│  UART RX → DMA Circular Mode → data[] (内核 FIFO)           │</span><br><span class="line">└──────────────────────────┬──────────────────────────────────┘</span><br><span class="line">                           │ IDLE 中断</span><br><span class="line">                           ▼</span><br><span class="line">┌─────────────────────────────────────────────────────────────┐</span><br><span class="line">│                       驱动层                                │</span><br><span class="line">│  drv_serial_isr → ec_serial_update_write_index              │</span><br><span class="line">│                → ec_fifo_data_len                            │</span><br><span class="line">│                → rx_indicate(dev, size)                      │</span><br><span class="line">└──────────────────────────┬──────────────────────────────────┘</span><br><span class="line">                           │ 回调</span><br><span class="line">                           ▼</span><br><span class="line">┌─────────────────────────────────────────────────────────────┐</span><br><span class="line">│                       应用层                                │</span><br><span class="line">│  usart1_rx_indicate → drv_fifo_data_get → temp[64]          │</span><br><span class="line">│                    → rx_buf_push → receive_buffer[512]       │</span><br><span class="line">│                    → shellTask → User_Shell_Read             │</span><br><span class="line">└─────────────────────────────────────────────────────────────┘</span><br></pre></td></tr></table></figure>
+
+<h2 id="6-中间层：静态环形缓冲区"><a href="#6-中间层：静态环形缓冲区" class="headerlink" title="6. 中间层：静态环形缓冲区"></a>6. 中间层：静态环形缓冲区</h2><p>为什么需要第二个缓冲区？因为 shell 的读取操作是在任务上下文中执行，而非中断上下文。需要一个中间缓冲区暂存数据。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">static</span> <span class="type">uint8_t</span> receive_buffer[<span class="number">512</span>];       <span class="comment">// 静态环形缓冲区</span></span><br><span class="line"><span class="type">static</span> <span class="keyword">volatile</span> <span class="type">uint16_t</span> receive_head;     <span class="comment">// 读指针</span></span><br><span class="line"><span class="type">static</span> <span class="keyword">volatile</span> <span class="type">uint16_t</span> receive_tail;     <span class="comment">// 写指针</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> RX_BUF_MASK (512 - 1)</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 生产者：中断中调用</span></span><br><span class="line"><span class="type">static</span> <span class="type">void</span> <span class="title function_">rx_buf_push</span><span class="params">(<span class="type">uint8_t</span> data)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">uint16_t</span> next = (receive_tail + <span class="number">1</span>) &amp; RX_BUF_MASK;</span><br><span class="line">    <span class="keyword">if</span> (next == receive_head) <span class="keyword">return</span>;      <span class="comment">// 满则丢弃</span></span><br><span class="line">    receive_buffer[receive_tail] = data;</span><br><span class="line">    receive_tail = next;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 消费者：任务中调用</span></span><br><span class="line"><span class="type">signed</span> <span class="type">short</span> <span class="title function_">User_Shell_Read</span><span class="params">(<span class="type">char</span>* buff, <span class="type">unsigned</span> <span class="type">short</span> len)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">uint16_t</span> i;</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; len; i++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (receive_head == receive_tail) <span class="keyword">break</span>;</span><br><span class="line">        buff[i] = receive_buffer[receive_head];</span><br><span class="line">        receive_head = (receive_head + <span class="number">1</span>) &amp; RX_BUF_MASK;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> i;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="6-1-为什么是-512（2-的幂）？"><a href="#6-1-为什么是-512（2-的幂）？" class="headerlink" title="6.1 为什么是 512（2 的幂）？"></a>6.1 为什么是 512（2 的幂）？</h3><p>使用 <code>&amp; 511</code> 替代 <code>% 512</code>，编译后是一条位与指令，比取模快数倍。</p>
+<h2 id="7-IT-模式-vs-DMA-模式对比"><a href="#7-IT-模式-vs-DMA-模式对比" class="headerlink" title="7. IT 模式 vs DMA 模式对比"></a>7. IT 模式 vs DMA 模式对比</h2><table>
+<thead>
+<tr>
+<th>特性</th>
+<th>IT 中断模式</th>
+<th>DMA + IDLE 中断模式</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>谁写 data[]</td>
+<td>CPU: <code>ec_serial_push_one_data</code> 逐字节</td>
+<td>DMA 硬件: 批量自动写入</td>
+</tr>
+<tr>
+<td>CPU 负载</td>
+<td>高（每字节一次中断）</td>
+<td>低（一批数据一次中断）</td>
+</tr>
+<tr>
+<td>回调频率</td>
+<td>每字节触发一次</td>
+<td>每次 IDLE 空闲触发一次</td>
+</tr>
+<tr>
+<td>回调逻辑</td>
+<td>完全相同</td>
+<td>完全相同</td>
+</tr>
+<tr>
+<td>适用场景</td>
+<td>低速通信、shell 交互</td>
+<td>高速通信、大数据量</td>
+</tr>
+</tbody></table>
+<p><strong>关键结论：回调函数无需关心数据来源。</strong> <code>drv_fifo_data_get</code> 统一从 <code>data[]</code> 中读取，无论数据是谁写入的。</p>
+<h2 id="8-IT-模式在-921600bps-下的丢数问题与优化"><a href="#8-IT-模式在-921600bps-下的丢数问题与优化" class="headerlink" title="8. IT 模式在 921600bps 下的丢数问题与优化"></a>8. IT 模式在 921600bps 下的丢数问题与优化</h2><h3 id="8-1-为什么普通终端模式会”接不全”？"><a href="#8-1-为什么普通终端模式会”接不全”？" class="headerlink" title="8.1 为什么普通终端模式会”接不全”？"></a>8.1 为什么普通终端模式会”接不全”？</h3><p>当用户将 <a href="code/app/components/letter_shell/shell_port.c:133"><code>User_Shell_Init()</code></a> 中的模式从 <code>ESERIAL_MODE_DMA_RX</code> 切换为 <code>ESERIAL_MODE_IT</code> 时，921600bps 下会出现严重的丢数现象。本节从时序角度分析根因。</p>
+<h4 id="8-1-1-时间预算分析"><a href="#8-1-1-时间预算分析" class="headerlink" title="8.1.1 时间预算分析"></a>8.1.1 时间预算分析</h4><p>921600bps、8N1 格式下：</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>数值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>每字节位数</td>
+<td>1 start + 8 data + 1 stop &#x3D; 10 bit</td>
+</tr>
+<tr>
+<td>每字节时间</td>
+<td>10 &#x2F; 921600 ≈ <strong>10.85 μs</strong></td>
+</tr>
+<tr>
+<td>连续数据流速率</td>
+<td>~92 KB&#x2F;s</td>
+</tr>
+<tr>
+<td>内核 FIFO (64B) 填满时间</td>
+<td>64 × 10.85 ≈ <strong>0.7 ms</strong></td>
+</tr>
+<tr>
+<td>应用层 receive_buffer (512B) 填满时间</td>
+<td>512 × 10.85 ≈ <strong>5.5 ms</strong></td>
+</tr>
+</tbody></table>
+<h4 id="8-1-2-IT-模式的-ISR-调用路径"><a href="#8-1-2-IT-模式的-ISR-调用路径" class="headerlink" title="8.1.2 IT 模式的 ISR 调用路径"></a>8.1.2 IT 模式的 ISR 调用路径</h4><p>IT 模式下，<strong>每个字节</strong>触发一次 <code>USART_INT_RXDNE</code> 中断，ISR 执行路径如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">USART1_IRQHandler</span><br><span class="line">  → uart_isr                              // 判断中断源</span><br><span class="line">    → drv_serial_isr(EC_SERIAL_EVENT_RX_IND)</span><br><span class="line">      → ec_serial_push_one_data           // 从 DR 读1字节写入内核 FIFO</span><br><span class="line">        → ec32_uart_getc                  // 读 USART-&gt;DAT</span><br><span class="line">        → ec_serial_update_write_index    // 推进 tail，翻转 mirror</span><br><span class="line">      → ec_fifo_data_len                  // 查询可读字节数</span><br><span class="line">      → rx_indicate(dev, size)            // 回调 → usart1_rx_indicate</span><br><span class="line">        → drv_fifo_data_get               // 从内核 FIFO 读出</span><br><span class="line">        → rx_buf_push                     // 推入 receive_buffer[512]</span><br></pre></td></tr></table></figure>
+
+<p>在 72MHz N32G452 上，上述路径保守估计需 <strong>5~8 μs</strong>。乍看之下 &lt; 10.85μs 似乎可行，但：</p>
+<h4 id="8-1-3-丢数的三个根因"><a href="#8-1-3-丢数的三个根因" class="headerlink" title="8.1.3 丢数的三个根因"></a>8.1.3 丢数的三个根因</h4><p><strong>根因一：高优先级中断抢占导致 OREF（硬件溢出）</strong></p>
+<p>系统中存在多个更高&#x2F;同级优先级的 DMA 中断和定时器中断：</p>
+<table>
+<thead>
+<tr>
+<th>中断源</th>
+<th>抢占优先级</th>
+<th>子优先级</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>DMA1_CH5 (RX done)</td>
+<td>0</td>
+<td>7</td>
+</tr>
+<tr>
+<td>UART1 (RXDNE)</td>
+<td>0</td>
+<td>可配(默认7)</td>
+</tr>
+<tr>
+<td>TIM4</td>
+<td>0</td>
+<td>~</td>
+</tr>
+</tbody></table>
+<p>当 DMA TX 完成中断（逐字节 DMA 发送产生大量中断）、PWM 输入捕获中断、或 SysTick 等抢占 UART1 ISR 时，ISR 延迟可能超过 10.85μs。UART 硬件只有 1 字节的接收移位寄存器缓冲（加上 DR），若前一个字节未被及时读取，下一个字节到达时硬件置位 <a href="code/app/driver/drv_usart.c:587"><code>USART_FLAG_OREF</code></a> —— <strong>该字节永久丢失</strong>。</p>
+<p>当前 OREF 处理仅是丢弃性读取（<a href="code/app/driver/drv_usart.c:587"><code>drv_usart.c:587-590</code></a>），不会恢复数据。</p>
+<p><strong>根因二：<code>shellTaskPort</code> 在 idle hook 中执行，消费不及时</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">idle_hook (最低优先级线程)</span><br><span class="line">  → shellTaskPort</span><br><span class="line">    → shellTask → User_Shell_Read</span><br><span class="line">      → 从 receive_buffer[512] 逐字节读取</span><br></pre></td></tr></table></figure>
+
+<p><code>receive_buffer[512]</code> 在 921600bps 下仅 <strong>~5.5ms</strong> 即可填满。而 <code>idle_hook</code> 只在没有其他就绪线程时才会执行。如果系统中有任何持续运行的任务（如 heater PID 控制、BLE 数据处理、ADC 采样等），<code>shellTaskPort</code> 可能数毫秒甚至数十毫秒得不到调度，导致 <code>rx_buf_push</code> 静默丢弃数据（<a href="code/app/components/letter_shell/shell_port.c:92"><code>shell_port.c:92-93</code></a>）。</p>
+<p><strong>根因三：回调逐字节触发，开销放大</strong></p>
+<p>IT 模式下 <code>rx_indicate</code> 回调<strong>每字节触发一次</strong>。对比 DMA 模式的”每帧触发一次”：</p>
+<table>
+<thead>
+<tr>
+<th>模式</th>
+<th>每帧(假设 100 字节)回调次数</th>
+<th>回调总开销</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>DMA + IDLE</td>
+<td>1 次</td>
+<td>~O(1)</td>
+</tr>
+<tr>
+<td>IT (RXDNE)</td>
+<td>100 次</td>
+<td>~O(n) × 每次调用的固定开销</td>
+</tr>
+</tbody></table>
+<p><code>drv_fifo_data_get</code> → <code>rx_buf_push</code> 的逐字节循环开销在高速率下累积显著。</p>
+<h3 id="8-2-数据流瓶颈全景图"><a href="#8-2-数据流瓶颈全景图" class="headerlink" title="8.2 数据流瓶颈全景图"></a>8.2 数据流瓶颈全景图</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">921600bps 数据流 (10.85μs/byte)</span><br><span class="line">        │</span><br><span class="line">        ▼</span><br><span class="line">┌──────────────────────────────────────┐</span><br><span class="line">│  UART 硬件 RX Shift Reg → DR         │  ← 仅1字节缓冲！</span><br><span class="line">│  若 DR 未被及时读取 → OREF → 丢字节  │</span><br><span class="line">└──────────────┬───────────────────────┘</span><br><span class="line">               │ RXDNE ISR (每字节)</span><br><span class="line">               ▼</span><br><span class="line">┌──────────────────────────────────────┐</span><br><span class="line">│  内核 FIFO (64B)                      │  ← 0.7ms 填满</span><br><span class="line">│  ec_serial_push_one_data             │</span><br><span class="line">│  满时 tail 不推进，但硬件已覆盖旧数据  │</span><br><span class="line">└──────────────┬───────────────────────┘</span><br><span class="line">               │ rx_indicate (每字节!）</span><br><span class="line">               ▼</span><br><span class="line">┌──────────────────────────────────────┐</span><br><span class="line">│  receive_buffer[512]                  │  ← 5.5ms 填满</span><br><span class="line">│  rx_buf_push → 满则静默丢弃           │</span><br><span class="line">└──────────────┬───────────────────────┘</span><br><span class="line">               │ shellTaskPort (idle_hook)</span><br><span class="line">               ▼</span><br><span class="line">┌──────────────────────────────────────┐</span><br><span class="line">│  shell_buffer[8192]                   │</span><br><span class="line">│  shellTask → User_Shell_Read          │</span><br><span class="line">└──────────────────────────────────────┘</span><br></pre></td></tr></table></figure>
+
+<p>瓶颈从硬件层逐级传导：UART DR（1B）→ 内核 FIFO（64B）→ receive_buffer（512B），每一级都在高速率下成为新的短板。</p>
+<h3 id="8-3-注意事项"><a href="#8-3-注意事项" class="headerlink" title="8.3 注意事项"></a>8.3 注意事项</h3><table>
+<thead>
+<tr>
+<th>#</th>
+<th>注意点</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td><strong>IT 模式不适用于 ≥460800bps</strong></td>
+<td>460800bps 下字节间隔 ~21.7μs，尚有余量；921600bps 下 ~10.85μs 已接近临界值</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>IDLE 中断在 IT 模式默认未开启</strong></td>
+<td>IT 模式下只使能 <code>USART_INT_RXDNE</code>，无法利用 IDLE 来减少回调频率</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>OREF 不可恢复</strong></td>
+<td>硬件溢出标志仅表示”至少丢失 1 字节”，无法知道丢失了多少，数据流完整性已破坏</td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong><code>receive_buffer[512]</code> 可能不够用</strong></td>
+<td>在高速率 + 低优先级消费场景下，512B 可能还需增大（如改为 1024 或 2048）</td>
+</tr>
+<tr>
+<td>5</td>
+<td><strong>shell 缓冲区大小影响</strong></td>
+<td><code>shell_buffer[8192]</code> 足够大，但数据必须先经过 receive_buffer 才能到达这里</td>
+</tr>
+</tbody></table>
+<h3 id="8-4-优化建议"><a href="#8-4-优化建议" class="headerlink" title="8.4 优化建议"></a>8.4 优化建议</h3><h4 id="方案一（推荐）：坚持使用-DMA-IDLE-模式"><a href="#方案一（推荐）：坚持使用-DMA-IDLE-模式" class="headerlink" title="方案一（推荐）：坚持使用 DMA + IDLE 模式"></a>方案一（推荐）：坚持使用 DMA + IDLE 模式</h4><p>当前 <a href="code/app/components/letter_shell/shell_port.c:137"><code>User_Shell_Init()</code></a> 使用的 <code>ESERIAL_MODE_DMA_RX</code> 已经是正确选择：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ✅ 推荐配置 —— 已经在用</span></span><br><span class="line">drv_usart_init(ESERIAL_1, ESERIAL_MODE_DMA_RX | ESERIAL_MODE_DMA_TX, &amp;config);</span><br></pre></td></tr></table></figure>
+
+<p>DMA 模式优势：硬件自动搬数据到 <code>data[]</code>，IDLE 中断一批回调一次，大幅降低 ISR 频率。</p>
+<h4 id="方案二：若必须使用-IT-模式，做以下优化"><a href="#方案二：若必须使用-IT-模式，做以下优化" class="headerlink" title="方案二：若必须使用 IT 模式，做以下优化"></a>方案二：若必须使用 IT 模式，做以下优化</h4><p><strong>2a. 提升 UART 中断优先级</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 将 UART1 中断子优先级设为最高 (0)，高于其他外设</span></span><br><span class="line">config.nvic = <span class="number">0</span>;  <span class="comment">// 子优先级 0，抢占优先级保持 0</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>2b. 增大内核 FIFO</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// drv_usart.h 中修改默认值，或在初始化前 #define</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> EC_SERIAL_RB_BUFSZ  256   <span class="comment">// 从 64 增大到 256</span></span></span><br></pre></td></tr></table></figure>
+
+<p>256 字节在 921600bps 下可缓冲 ~2.8ms，给 ISR 延迟更多余量。</p>
+<p><strong>2c. 增大应用层 receive_buffer</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">static</span> <span class="type">uint8_t</span> receive_buffer[<span class="number">1024</span>];  <span class="comment">// 从 512 增大到 1024</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> RX_BUF_MASK (1024 - 1)</span></span><br></pre></td></tr></table></figure>
+
+<p>但需注意这只能延缓溢出，不能根治——如果消费端长期得不到调度，仍会溢出。</p>
+<p><strong>2d. 将 shellTask 移至独立线程</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 不要依赖 idle_hook，创建一个中等优先级的线程专门消费数据</span></span><br><span class="line"><span class="type">rt_thread_t</span> shell_thread = rt_thread_create(</span><br><span class="line">    <span class="string">&quot;shell&quot;</span>, shell_task_entry, RT_NULL,</span><br><span class="line">    <span class="number">2048</span>, RT_THREAD_PRIORITY_MAX / <span class="number">3</span>, <span class="number">10</span>);</span><br></pre></td></tr></table></figure>
+
+<p>这样 <code>shellTask</code> 不会因为 idle 线程的低优先级而被饿死。</p>
+<p><strong>2e. 在 rx_indicate 中合并批量处理</strong></p>
+<p>当前 IT 模式下每个字节回调一次，可以将小批量数据在 <code>temp[64]</code> 中积攒到一定数量再推入 <code>receive_buffer</code>，但需要权衡延迟——这属于微观优化的范畴，不推荐在没有实测 profiler 数据的情况下盲目实施。</p>
+<h4 id="方案三：折中——降低波特率"><a href="#方案三：折中——降低波特率" class="headerlink" title="方案三：折中——降低波特率"></a>方案三：折中——降低波特率</h4><p>如果业务场景不要求 921600bps 的吞吐量：</p>
+<table>
+<thead>
+<tr>
+<th>推荐波特率</th>
+<th>字节间隔</th>
+<th>适用范围</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>115200</td>
+<td>~86.8 μs</td>
+<td>通用调试</td>
+</tr>
+<tr>
+<td>230400</td>
+<td>~43.4 μs</td>
+<td>适中速率</td>
+</tr>
+<tr>
+<td>460800</td>
+<td>~21.7 μs</td>
+<td>IT 模式上限</td>
+</tr>
+<tr>
+<td>921600</td>
+<td>~10.85 μs</td>
+<td><strong>仅推荐 DMA 模式</strong></td>
+</tr>
+</tbody></table>
+<h3 id="8-5-总结"><a href="#8-5-总结" class="headerlink" title="8.5 总结"></a>8.5 总结</h3><table>
+<thead>
+<tr>
+<th>结论</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>IT 模式 921600bps 不推荐</strong></td>
+<td>字节间隔 10.85μs 逼近 ISR 处理极限，任何中断延迟都会导致 OREF 丢字节</td>
+</tr>
+<tr>
+<td><strong>DMA + IDLE 是正确的解决方案</strong></td>
+<td>当前项目已经在使用，无需修改</td>
+</tr>
+<tr>
+<td><strong>若必须 IT 模式</strong></td>
+<td>至少提升中断优先级 + 增大缓冲区 + shell 独立线程</td>
+</tr>
+<tr>
+<td><strong>实在不好改就别改</strong></td>
+<td>DMA 模式已经是最优解</td>
+</tr>
+</tbody></table>
+<h2 id="9-完整初始化"><a href="#9-完整初始化" class="headerlink" title="9. 完整初始化"></a>9. 完整初始化</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">User_Shell_Init</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">serial_configure</span> <span class="title">config</span> =</span> EC_SERIAL_CONFIG_DEFAULT;</span><br><span class="line">    config.baud_rate = BAUD_RATE_921600;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// DMA 接收 + DMA 发送（推荐组合，921600bps 下避免丢数）</span></span><br><span class="line">    drv_usart_init(ESERIAL_1, ESERIAL_MODE_DMA_RX | ESERIAL_MODE_DMA_TX, &amp;config);</span><br><span class="line">    drv_device_set_rx_indicate(ESERIAL_1, usart1_rx_indicate);</span><br><span class="line"></span><br><span class="line">    shell.write = User_Shell_Write;</span><br><span class="line">    shell.read = User_Shell_Read;</span><br><span class="line">    shellInit(&amp;shell, shell_buffer, <span class="keyword">sizeof</span>(shell_buffer));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="10-总结"><a href="#10-总结" class="headerlink" title="10. 总结"></a>10. 总结</h2><table>
+<thead>
+<tr>
+<th>要点</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>镜像位技巧</strong></td>
+<td>1-bit mirror 区分环形缓冲区空&#x2F;满，简洁高效</td>
+</tr>
+<tr>
+<td><strong>FIFO 溢出</strong></td>
+<td>在 DMA Circular 模式下，满溢后软件指针与硬件数据不一致</td>
+</tr>
+<tr>
+<td><strong>回调排空策略</strong></td>
+<td>在中断回调中立即读取所有数据，恢复 FIFO 状态</td>
+</tr>
+<tr>
+<td><strong>双层缓冲</strong></td>
+<td>内核 FIFO + 应用静态环形缓冲区，解耦中断和任务</td>
+</tr>
+<tr>
+<td><strong>IT&#x2F;DMA 兼容</strong></td>
+<td>回调函数统一使用 <code>drv_fifo_data_get</code>，不依赖数据来源</td>
+</tr>
+</tbody></table>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/MCU/" rel="tag"># MCU</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2026/04/28/ESP32-S3%20I2C%20%E5%A4%B1%E6%95%88%E5%88%86%E6%9E%90/" rel="prev" title="ESP32-S3 I2C 多设备共享总线最佳实践">
+                  <i class="fa fa-angle-left"></i> ESP32-S3 I2C 多设备共享总线最佳实践
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2026/06/01/Codex_slash_commands/" rel="next" title="Codex &#96;&#x2F;&#96; 指令大全">
+                  Codex `/` 指令大全 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">boollight</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="Word count total">72k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="Reading time total">4:01</span>
+  </span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>
